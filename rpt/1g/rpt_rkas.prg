@@ -95,6 +95,8 @@ private aUsl1:={}
 private aUsl2:={}
 private fPrik:="O"
 private cFilter:=".t."
+private cSifraDob:=SPACE(8)
+private cPartId:=SPACE(8)
 
 if fZaklj==nil
 	fZaklj:=.f.
@@ -150,7 +152,7 @@ if fZaklj
 	aUsl2:=".t."
 else
 	
-	if FrmRptVars(@cK1, @cIdPos, @dDat0, @dDat1, @cSmjena, @cRD, @cVrijOd, @cVrijDo, @aUsl1, @aUsl2, @cVrsteP, @cAPrometa, @cGotZir)==0
+	if FrmRptVars(@cK1, @cIdPos, @dDat0, @dDat1, @cSmjena, @cRD, @cVrijOd, @cVrijDo, @aUsl1, @aUsl2, @cVrsteP, @cAPrometa, @cGotZir, @cSifraDob, @cPartId)==0
 		return 0
 	endif
 
@@ -170,14 +172,14 @@ endif // fZaklj
 
 
 O_DOKS
-SetFilter(@cFilter, aUsl1, aUsl2, cVrijOd, cVrijDo, cGotZir)
+SetFilter(@cFilter, aUsl1, aUsl2, cVrijOd, cVrijDo, cGotZir, cPartId)
 
 // fZaklj - zakljucenje smjene
 if !fZaklj  
-	KasaIzvuci("01")
+	KasaIzvuci("01", cSifraDob)
 endif
-KasaIzvuci("42")
 
+KasaIzvuci("42", cSifraDob)
 
 private nTotal:=0
 
@@ -225,7 +227,7 @@ return .t.
  *  \brief Uzmi varijable potrebne za izvjestaj
  *  \return 0 - nije uzeo, 1 - uzeo uspjesno
  */
-function FrmRptVars(cK1, cIdPos, dDat0, dDat1, cSmjena, cRD, cVrijOd, cVrijDo, aUsl1, aUsl2, cVrsteP, cAPrometa, cGotZir)
+function FrmRptVars(cK1, cIdPos, dDat0, dDat1, cSmjena, cRD, cVrijOd, cVrijDo, aUsl1, aUsl2, cVrsteP, cAPrometa, cGotZir, cSifraDob, cPartId)
 *{
 local aNiz
 
@@ -271,6 +273,9 @@ AADD(aNiz,{"Vrijeme do","cVrijDo","cVrijDo>=cVrijOd","99:99",})
 if gPVrsteP
 	AADD(aNiz,{"Izvrsiti azuriranje tabele prometa prodavnice (D/N)","cAPrometa","cAPrometa$'DN'","@!",})
 endif
+
+AADD(aNiz,{"Dobavljac (prazno-svi)","cSifraDob",".t.",,})
+AADD(aNiz,{"Partner (prazno-svi)","cPartId",".t.",,})
 
 do while .t.
 	if cVarijanta<>"1"  // onda nema read-a
@@ -358,7 +363,7 @@ return
 *}
 
 
-static function SetFilter(cFilter, aUsl1, aUsl2, cVrijOd, cVrijDo, cGotZir)
+static function SetFilter(cFilter, aUsl1, aUsl2, cVrijOd, cVrijDo, cGotZir, cPartId)
 *{
 
 SELECT DOKS
@@ -382,6 +387,10 @@ if !empty(cGotZir)
 	else
 		cFilter+=".and. placen<>'Z'"
 	endif
+endif
+
+if !Empty(cPartId)
+	cFilter+=".and. idgost==" + Cm2Str(cPartId)
 endif
 
 if !(cFilter==".t.")

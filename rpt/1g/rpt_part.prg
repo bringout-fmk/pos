@@ -58,6 +58,8 @@ private dDat:=gDatum
 private dDatOd:=gDatum-30
 private cSpec:="D"
 private cVrstP:=SPACE(2)
+private cGotZir:=SPACE(1)
+private cSifraDob:=SPACE(8)
 altd()
 // generisanje stanja partnera
 if IsTigra()
@@ -73,8 +75,10 @@ do while .t.
 	  {"Prikaz partnera sa stanjem 0 (D/N)", "cNula","cNula$'DN'","@!",}, ;
 	  {"Prikazati stanje od dana ", "dDatOd",".t.",,},;
 	  {"Prikazati stanje do dana ", "dDat",".t.",,},;
+	  {"Prikaz G/Z/sve ", "cGotZir","cGotZir$'GZ '", "@!" ,},;
 	  {"Vrsta placanja (prazno-sve) ", "cVrstP",".t.",,},;
-	  {"Prikazati specifikaciju", "cSpec","cSpec$'DN'","@!",} },11,5,19,74,'USLOVI ZA IZVJESTAJ "STANJE PARTNERA"',"B1")
+	  {"Dobavljac ", "cSifraDob", ".t.",,},;
+	  {"Prikazati specifikaciju", "cSpec","cSpec$'DN'","@!",} }, 8, 5, 19, 74,'USLOVI ZA IZVJESTAJ "STANJE PARTNERA"',"B1")
 		CLOSERET
 	else
 		exit
@@ -85,6 +89,7 @@ if IsTigra()
 	GenPartnSt(@lGenPartnSt, @nSldMinIzn)
 endif
 
+O_ROBA
 O_POS
 O_DOKS
 O_RNGOST
@@ -137,6 +142,21 @@ do while !eof()
 		loop
 	endif
 	
+	// G-gotovina Z-ziral
+	if !Empty(cGotZir)
+		do case
+		case cGotZir == "G"
+			if doks->placen <> " "
+				skip
+				loop
+			endif
+		case cGotZir == "Z"
+			if doks->placen <> cGotZir
+				skip
+				loop
+			endif
+		endcase
+	endif
 	
 	nPrviRec:=RECNO()
 	fPisi:=.f.
@@ -161,12 +181,26 @@ do while !eof()
 		SELECT POS
 		hseek DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
 		nIznos:=0
-		
 		nDuguje:=0
 		nPotrazuje:=0
 		do while !eof().and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
 			
-			altd()	
+			// pretraga po sifri dobavljaca
+			select roba
+			if roba->(fieldpos("sifdob"))<>0
+				hseek pos->idroba
+				if roba->id == pos->idroba
+					if !EMPTY(cSifraDob)
+						if (roba->sifdob <> cSifraDob)
+							select pos
+							skip
+							loop
+						endif
+					endif
+				endif
+			endif
+			
+			select pos
 			if doks->IdVrsteP=="01"
 				nPom:=pos->kolicina*pos->cijena*iif(pos->idvd=="00",-1,1)
 				//placanje gotovinom povecava promet na obje strane
