@@ -387,23 +387,59 @@ return cCode
 
 
 
-/*! \fn StartFisCTTInterface(cPath)
+/*! \fn StartFisCTTInterface(cPath, bSilent)
  *  \brief Starta FisCTT interfejs
  *  \param cPath - lokacija interfejsa
+ *  \param bSilent - .t. - startaj FisCTT bez pitanja, .f. - postavi pitanje
  */
-function StartFisCTTInterface(cPath)
+function StartFisCTTInterface(cPath, bSilent)
 *{
+
+if bSilent == nil
+	bSilent:=.t.
+endif
+
+if !bSilent .and. Pitanje(,"Startati FisCTT interfejs (D/N)?", "D")=="N"
+	return
+endif
 
 cPath:=ALLTRIM(cPath)
 
-if LEFT(cPath, 1) <> SLASH
+if RIGHT(cPath, 1) <> SLASH
 	cPath += SLASH
 endif
+
+if !DirExists(cPath)
+	MsgBeep("Ne postoji direktorij: " + cPath + "# Prekidam operaciju!")
+	return
+endif
+
+// Prije pokretanja interfejsa postavi kod za inicijalizaciju
+WriteMainInCode("0", cPath)
 
 cKomLin:="start " + cPath + "fiscal28.jar"
 
 // pokreni komandu
 run &cKomLin
+
+bError:=.t.
+nCnt:=0
+
+while bError == .t.
+	nCnt ++
+	cErr:=ReadMainInCode(cPath)
+	if (cErr == "9")
+		bError:=.f.
+	endif
+	if nCnt > 20
+		MsgBeep("Problem sa pokretanjem interfejsa !")
+		return
+	endif
+end
+
+if !bError
+	MsgBeep("Interfejs pokrenut ...")
+endif
 
 return
 *}
