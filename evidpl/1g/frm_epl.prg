@@ -111,7 +111,7 @@ do while .t.
 	set cursor on
 	@ 1+m_x,2+m_y SAY "Podaci kupac:" 
 	@ 2+m_x,2+m_y SAY  REPLICATE("-", 58)
-	@ 3+m_x,2+m_y SAY "          Ime i prezime:" GET cSKKupac VALID !Empty(dGpDate) 
+	@ 3+m_x,2+m_y SAY "          Ime i prezime:" GET cSKKupac VALID !Empty(cSKKupac) 
 	@ 4+m_x,2+m_y SAY "                Broj LK:" GET cSKBrLk VALID !Empty(cSKBrLK) 
 	@ 5+m_x,2+m_y SAY "                   JMBG:" GET cSkJMBG VALID !Empty(cSKJMBG) 
 	@ 6+m_x,2+m_y SAY "                  Firma:" GET cSkFirma VALID !Empty(cSKFirma) 
