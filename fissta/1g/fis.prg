@@ -1201,7 +1201,10 @@ endif
 
 if !FisRptDnevni()
 	MsgBeep("Greska pri formiranju dnevnog izvjestaja")
+	return
 endif
+
+WriteLastFisRpt("1", DATE(), TIME())
 
 return
 *}
@@ -1225,7 +1228,10 @@ endif
 
 if !FisRptPeriod()
 	MsgBeep("Greska pri formiranju izvjestaja za period")
+	return
 endif
+
+WriteLastFisRpt("2", DATE(), TIME())
 
 return
 *}
