@@ -2,12 +2,12 @@
 
 
 
-/*! \fn WriteArtikliXml(aArtikli, cFileName)
+/*! \fn WriteArtikliXml(aArtikli, cFilePath)
  *  \brief Kreira fajl ARTIKLI.XML i upisuje sadrzaj iz matrice aArtikli
  *  \param aArtikli  - matrica sa podacima o artiklima; struktura: 			{"idartikal","naziv","cijena","poreska stopa", "odjeljenje", "jmj"}
- *  \param cFileName - putanja ime izlaznog fajla
+ *  \param cFilePath - lokacija fajla ARTIKLI.XML, mora biti lokacija interfejsa FisCTT
  */
-function WriteArtikliXML(aArtikli, cFileName)
+function WriteArtikliXML(aArtikli, cFilePath)
 *{
    local nH
 

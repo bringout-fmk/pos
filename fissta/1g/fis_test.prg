@@ -25,27 +25,32 @@ return
 function FisTestWriteArtikliXml()
 *{
 
-lReturn:=.f.
 aInput:={}
+aOutPut:={}
+cFilePath:="h:\dev\fmk\pos\fissta\1g\testxml\"
+
 // aInput: id artikla (oid), naziv, cijena, por.stopa, odjeljenje, jmj
 AADD(aInput, {"100000000010", "EFFEGI 2340", 1000.00, "3", "1", "6"})
 AADD(aInput, {"100000000251", "KLOMPE Z.BIJELE", 890.50, "3", "1", "6"})
 AADD(aInput, {"100000003120", "ILLUMINATI 22/33", 2780.00, "3", "1", "6"})
 AADD(aInput, {"100000006129", "PLACENTE 2350/80", 3020.40, "3", "1", "6"})
 
-cOriginalFile:="h:\dev\fmk\pos\fissta\1g\testxml\art01.xml"
-cOutPutFile:="h:\dev\fmk\pos\fissta\1g\testxml\art01g.xml"
+WriteArtikliXML(aInput, cFilePath)
+// iscitaj iz kreiranog artikli.xml podatke u aOutPut
+aOutPut:=ReadArtikliXml(cFilePath)
 
-WriteArtikliXML(aInput, cOutPutFile)
-
-// uporedi kreirani fajl sa originalnim fajlom
-lReturn:=ReadXmlError(cOriginalFile, cOutPutFile)
-
-if lReturn
-	? "Rezultat testa: OK"
-else
-	? "Rezultat testa: nepravilna struktura fajla"
+// uporedi matrice 
+if LEN(aInput) <> LEN(aOutPut) 
+	? "Razlika u duzini matrice"
 endif
+
+// pogledaj ima li gresaka u elementima matrice
+for i:=1 to LEN(aInput)
+	if aInput[1, i] <> aOutPut[1, i]
+		? "Razlika u elementu 1"
+	endif
+	// TO DO: jos razraditi
+next
 
 
 return 
