@@ -184,6 +184,8 @@ return
  */
 function AzurPosDokument(cIdVd, nRBRSt, nIdent, cBrDok, cIdPos, cBody, nIznos1, nIznos2, nKolicina, dDatum)
 *{
+altd()
+
 
 O_POS
 select pos
@@ -196,8 +198,8 @@ SmReplace("idodj", STR(nIdent, 2))
 SmReplace("brdok", cBrDok)
 SmReplace("idpos", cIdPos)
 SmReplace("idradnik", SUBSTR(cBody, 1, 4))
-SmReplace("idroba", SUBSTR(cBody, 5, 14))
-SmReplace("idtarifa", SUBSTR(cBody, 15, 20))
+SmReplace("idroba", SUBSTR(cBody, 5, 10))
+SmReplace("idtarifa", SUBSTR(cBody, 15, 6))
 SmReplace("datum", dDatum)
 SmReplace("kolicina", nKolicina)
 SmReplace("cijena", nIznos1)
