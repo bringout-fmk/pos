@@ -773,11 +773,14 @@ if gDuplo=="D"
 endif
 
 // ako se koristi varijanta evidentiranja podataka o nacinu placanja
+// nIznRn = iznos zakljucenog racuna
+// cStalRac = broj zakljucenog racuna
+// cVrijeme = vrijeme zakljucenog racuna
+
 if gEvidPl=="D"
-	altd()
 	AzurCek(aCKData, nIznRN, cStalRac, cVrijeme)
-	//AzurSindKred(aSKData, nIznRN, cStalRac, cVrijeme)
-	AzurGarPismo(aGPData, cStalRac, cVrijeme)
+	AzurSindKredit(aSKData, nIznRN, cStalRac, cVrijeme)
+	AzurGarPismo(aGPData, nIznRN, cStalRac, cVrijeme)
 endif
 
 return
