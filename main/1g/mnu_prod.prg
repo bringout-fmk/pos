@@ -90,7 +90,8 @@ endif
 
 if gnDebug==5
 	AADD(opc,"X. TEST COM PORT")
-	AADD(opcexe,{|| ProdTestCP() })
+	//AADD(opcexe,{|| ProdTestCP() })
+	AADD(opcexe,{|| NotImp() })
 endif
 
 Menu_SC("prod")
@@ -105,11 +106,6 @@ CLOSERET
 return
 *}
 
-function ProdTestCP
-*{
-
-return
-*}
 
 function MnuZakljRacuna()
 *{
