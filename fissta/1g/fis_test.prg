@@ -9,26 +9,57 @@ function Fis_test_main()
 
 // test kreiranja fajla ARTIKLI.XML te provjera njegovog sadrzaja
 TestRWArtikliXml()
-Sleep(5)
+//Sleep(5)
+?
+? 'Press any key to continue...'
+inkey(0)
+clear screen
+
 // test kreiranja fajla ARTRACUN.XML te provjera njegovog sadrzaja
 TestRWArtRacunXml()
-Sleep(5)
+//Sleep(5)
+?
+? 'Press any key to continue...'
+inkey(0)
+clear screen
+
 // test kreiranja fajla PLACANJA.XML te provjera njegovog sadrzaja
 TestRWPlacanjaXml()
-Sleep(5)
+//Sleep(5)
+?
+? 'Press any key to continue...'
+inkey(0)
+clear screen
+
 // test upisivanja i citanja kodova iz fajlova mainin.dat i mainout.dat
 TestRWMainInOut()
-Sleep(5)
+//Sleep(5)
+?
+? 'Press any key to continue...'
+inkey(0)
+clear screen
 
 // test izdavanja racuna
-//TestFisRn1()
+TestFisRn1()
+//Sleep(5)
+?
+? 'Press any key to continue...'
+inkey(0)
+clear screen
 
 TestFisRn2()
-Sleep(5)
+//Sleep(5)
+?
+? 'Press any key to continue...'
+inkey(0)
+clear screen
 
 TestFisRn3()
-Sleep(5)
-
+//Sleep(5)
+?
+? 'Press any key to continue...'
+inkey(0)
+clear screen
 
 return
 *}
@@ -46,8 +77,7 @@ function TestRWArtikliXml()
 
 aInput:={}
 aOutPut:={}
-//cFilePath:="h:\dev\fmk\pos\fissta\1g\testxml\"
-cFilePath:="C:\FisCTT\"
+cFilePath:=gFisCTTPath
 
 // aInput: id artikla (oid), naziv, cijena, por.stopa, odjeljenje, jmj
 AADD(aInput, {"100000000010", "EFFEGI 2340", 1000.00, "3", "1", "6"})
@@ -107,8 +137,7 @@ function TestRWArtRacunXml()
 
 aInput:={}
 aOutPut:={}
-//cFilePath:="h:\dev\fmk\pos\fissta\1g\testxml\"
-cFilePath:="C:\FisCTT\"
+cFilePath:=gFisCTTPath
 
 // aInput: kolicina, id artikla (oid)
 AADD(aInput, {1.00, "100000000010"})
@@ -167,8 +196,7 @@ function TestRWPlacanjaXml()
 
 
 aOutPut:={}
-//cFilePath:="h:\dev\fmk\pos\fissta\1g\testxml\"
-cFilePath:="C:\FisCTT\"
+cFilePath:=gFisCTTPath
 
 nIznos:=100.50
 
@@ -228,8 +256,7 @@ function TestRWMainInOut()
 
 cCode:=""
 cReadCode:=""
-//cFilePath:="h:\dev\fmk\pos\fissta\1g\testdat\"
-cFilePath:="C:\FisCTT\"
+cFilePath:=gFisCTTPath
 
 // test1: upisivanja i citanja kod-a iz fajla mainin.dat
 // upisi kodove od -10 do 10
@@ -291,8 +318,7 @@ function TestFisRn1()
 ? "Test: izdavanje racuna"
 ? REPLICATE("-", 70)
 
-//cFilePath:="h:\dev\fmk\pos\fissta\1g\"
-cFilePath:="C:\FisCTT\"
+cFilePath:=gFisCTTPath
 
 aArtikli:={}
 AADD(aArtikli, {"100000000010", "EFFEGI 2340", 1000.00, "3", "1", "6"})
@@ -306,8 +332,8 @@ if LEN(aArtikli) <> LEN(aOutPut)
 endif
 
 aArtRacun:={}
-AADD(aArtRacun, {"1.00", "100000000010"})
-AADD(aArtRacun, {"2.00", "100000006129"})
+AADD(aArtRacun, {1.00, "100000000010"})
+AADD(aArtRacun, {2.00, "100000006129"})
 WriteArtRacunXml(aArtRacun, cFilePath)
 aOutPut:=ReadArtRacunXml(cFilePath)
 if LEN(aArtRacun) <> LEN(aOutPut)
@@ -341,8 +367,8 @@ else
 endif
 
 ? "Cekam mogucu gresku ..."
-WriteMainOutCode(cFileName)
-cOutCode:=ReadMainOutCode(cFileName)
+WriteMainOutCode(cFilePath)
+cOutCode:=ReadMainOutCode(cFilePath)
 if cOutCode <> "999" .or. cOutCode <> "0" 
 	? "Postoji greska : " + cOutCode
 	bErr:=.t.
@@ -366,8 +392,8 @@ else
 endif
 
 ? "Cekam mogucu gresku ..."
-WriteMainOutCode(cFileName)
-cOutCode:=ReadMainOutCode(cFileName)
+WriteMainOutCode(cFilePath)
+cOutCode:=ReadMainOutCode(cFilePath)
 if cOutCode <> "999" .or. cOutCode <> "0" 
 	? "Postoji greska : " + cOutCode
 	bErr:=.t.
@@ -392,8 +418,8 @@ else
 endif
 
 ? "Cekam mogucu gresku ..."
-WriteMainOutCode(cFileName)
-cOutCode:=ReadMainOutCode(cFileName)
+WriteMainOutCode(cFilePath)
+cOutCode:=ReadMainOutCode(cFilePath)
 if cOutCode <> "999" .or. cOutCode <> "0" 
 	? "Postoji greska : " + cOutCode
 else
