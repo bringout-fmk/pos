@@ -397,17 +397,27 @@ return nil
 *}
 
 
+/*! \fn AutoReal2Kalk(cDate1, cDate2)
+ *  \brief APPSRV prenos real2kalk 
+ *  \param cDate1 - datum od
+ *  \param cDate2 - datum do
+ */
 function AutoReal2Kalk(cDate1, cDate2)
 *{
 local dD1
 local dD2
-altd()
+private gPPort:="8"
+
+InigEpson()
+
 if (!Empty(cDate1) .and. !Empty(cDate2))
 	dD1 := CToD(cDate1)
 	dD2 := CToD(cDate2)
 	? "Vrsim prenos realizacija za datum od: " + DToC(dD1) + " do " + DToC(dD2)
+	// pozovi f-ju Real2Kalk() sa argumentima
 	Real2Kalk(dD1, dD2)
 	? "Izvrsen prenos ..."
+	Sleep(1)
 endif
 
 return
@@ -597,9 +607,9 @@ if gModemVeza=="D"
 	endif
            	
 	// radi app servera ne mogu ovo formirati	
-  	if !gAppSrv
+  	//if !gAppSrv
 		RealKase(.f.,dDatOd,dDatDo,"1")  // formirace outf.txt
-  	endif
+  	//endif
 	cDestMod:=StrTran(cKalkDbf,"TOPSKA.",cPrefix+cDestMod)
   	FileCopy(cKalkDBF,cDestMod)
   	cDestMod:=StrTran(cDestMod,".DBF",".TXT")
