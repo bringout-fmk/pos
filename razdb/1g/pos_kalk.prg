@@ -592,111 +592,72 @@ cIdPos:=gIdPos
 
 gFmkSif:=Trim(gFmkSif)
 ADDBS(gFmkSif)
+
 if !empty(gFMKSif) 
-  if !FILE(gFmkSif+"ROBA.DBF")
-      MsgBeep("Na lokaciji "+trim(gFmkSif)+"ROBA.DBF nema tabele")
-      return
-  endif
-  AzurSifIzFmk()
-  return
+	if !FILE(gFmkSif+"ROBA.DBF")
+      		MsgBeep("Na lokaciji "+trim(gFmkSif)+"ROBA.DBF nema tabele")
+      		return
+  	endif
+  	AzurSifIzFmk()
+  	return
 endif
 
 // stara varijanta preuzimanja iz ZIP-a
-if gSQL=="D"
-  MsgBeep("Ne koristiti ovu opciju za SQL=D")
-  return
+//if gSQL=="D"
+//	MsgBeep("Ne koristiti ovu opciju za SQL=D")
+//  	return
+//endif
+
+O_PARAMS
+Private cSection:="T"
+private cHistory:=" "
+private aHistory:={}
+RPar("Dz",@cDirZip)
+Params1()
+
+cDirZip:=Padr(cDirZip,30)
+
+Box(,5,70) 
+	@ m_x+1,m_y+2 SAY "Lokacija arhive sifrarnika:"
+   	@ m_x+2,m_y+2 GET cDirZip
+   	read
+BoxC()
+
+cDirzip:=trim(cDirZip)
+ 
+if Params2()
+	WPar("Dz",cDirZip)
 endif
 
- O_PARAMS
- Private cSection:="T",cHistory:=" ",aHistory:={}
- RPar("Dz",@cDirZip)
- Params1()
- 
- 
- cDirZip:=Padr(cDirZip,30)
- Box(,5,70) 
-   @ m_x+1,m_y+2 SAY "Lokacija arhive sifrarnika:"
-   @ m_x+2,m_y+2 GET cDirZip
-   read
- BoxC()
+select params
+use
 
- cDirzip:=trim(cDirZip)
- 
- if Params2()
-  WPar("Dz",cDirZip)
- endif
- select params
- use
- 
+select (F_ROBA)
+use
+save screen to cScr
+cls
 
- select (F_ROBA)
- use
- save screen to cScr
- cls
+cKomlin:="dir /p "+cDirzip+"robknj.zip"
+run &cKomLin
 
- cKomlin:="dir /p "+cDirzip+"robknj.zip"
- run &ckomlin
+private cKomLin:="unzip -o " + cDirZip + "ROBKNJ.ZIP " + cDirZip
+run &cKomLin
 
- private ckomlin:="unzip -o "+cDirZip+"ROBKNJ.ZIP "+cDirZip
- run &ckomlin
+private cKomLin:="pause"
+run &cKomLin
 
- private ckomlin:="pause"
- run &ckomlin
+restore screen from cScr
+if gSifK=="D"
+	O_SIFK
+  	O_SIFV
+endif
 
- restore screen from cScr
- if gSifK=="D"
-  O_SIFK
-  O_SIFV
- endif
-
- if pitanje(,"Osvjeziti sifrarnik iz arhive "+cDirZip+"ROBKNJ.ZIP"," ")=="D"
-
-     fDodaj:=(pitanje(,"Dodati nepostojece sifre D/N ?"," ")=="D" )
-     O_ROBA
-     usex (cDirZip+"ROBA") alias ROBKNJ NEW
-     go top
-
-     MsgO("Osvjezavam sifranik.....")
-
-     do while !eof()
-       select roba
-       seek robknj->id
-       if !found() .and. fDodaj
-          append blank
-          replace id with robknj->id
-       endif
-       if found() .or. fDodaj
-        replace naz with robknj->naz ,;
-              jmj with robknj->jmj,;
-              cijena1 with robknj->mpc,;     // ?! sta ako je inventura sa promjenom cijena
-              idtarifa with robknj->idtarifa
-        if roba->(fieldpos("K1"))<>0  .and. robknj->(fieldpos("K1"))<>0
-           replace K1 with robknj->k1, K2 with robknj->k2
-        endif
-        if roba->(fieldpos("K7"))<>0  .and. robknj->(fieldpos("K7"))<>0
-           replace K7 with robknj->k7, K8 with robknj->k8, k9 with robknj->k9
-        endif
-
-        if roba->(fieldpos("BARKOD"))<>0 .and. robknj->(fieldpos("BARKOD"))<>0
-          replace BARKOD with robknj->BARKOD
-        endif
-
-        if roba->(fieldpos("N1"))<>0 .and. robknj->(fieldpos("N1"))<>0
-         replace N1 with robknj->N1, N2 with robknj->N2
-        endif
-       endif // found()
-
-       select robknj
-       skip
-     enddo
-
-     MsgC()
-     select robknj; use
-
-     select roba; use
-     O_ROBA
-     P_RobaPos()
- endif
+if pitanje(,"Osvjeziti sifrarnik iz arhive " + cDirZip + "ROBKNJ.ZIP"," ")=="D"
+	fDodaj:=(Pitanje(,"Dodati nepostojece sifre D/N ?"," ")=="D" )
+	AzurSifIzFmk(cDirZip, fDodaj)	
+     	O_ROBA
+     	P_RobaPos()
+endif
 
 closeret
 *}
