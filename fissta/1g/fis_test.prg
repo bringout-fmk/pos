@@ -9,17 +9,16 @@ function Fis_test_main()
 
 // test kreiranja fajla ARTIKLI.XML te provjera njegovog sadrzaja
 TestRWArtikliXml()
-
-
+Sleep(5)
 // test kreiranja fajla ARTRACUN.XML te provjera njegovog sadrzaja
 TestRWArtRacunXml()
-
+Sleep(5)
 // test kreiranja fajla PLACANJA.XML te provjera njegovog sadrzaja
 TestRWPlacanjaXml()
-
+Sleep(5)
 // test upisivanja i citanja kodova iz fajlova mainin.dat i mainout.dat
 TestRWMainInOut()
-
+Sleep(5)
 
 // test izdavanja racuna
 //TestFisRn1()
