@@ -432,7 +432,13 @@ O_StAzur()
 
 private cIdGost:=SPACE(8)
 private cIdVrsteP
-altd()
+
+if gEvidPl=="D"
+	private aCKData:={}
+	private aSKData:={}
+	private aGPData:={}
+endif
+
 if gClanPopust
 	// ako je rijec o clanovima pusti da izaberem vrstu placanja
 	cIdVrsteP:=SPACE(2)
@@ -586,7 +592,12 @@ do while .t.
 	set cursor on
    	@ m_x+1,m_y+2 SAY "Nacin placanja " GET cIdVrsteP pict "@!" valid p_Vrstep(@cIdVrstep)
    	read
-   	if (cIdVrstep<>gGotPlac .or. cIdVrsteP=="01" .and. IzFMKINI("Tigra","Partner01","N")=="D")
+   	
+	if gEvidPl=="D"
+		FrmVPGetData(cIdVrsteP, aCKData, aSKData, aGPData)
+	endif
+	
+	if (cIdVrstep<>gGotPlac .or. cIdVrsteP=="01" .and. IzFMKINI("Tigra","Partner01","N")=="D")
     		@ m_x+2,m_y+2 SAY "Partner:" GET cIdGost PICT "@!" VALID P_Gosti (@cIdGost)
     		read
    	else
