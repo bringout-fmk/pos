@@ -29,14 +29,6 @@ private cIdPos:=gIdPos
 private dDat0
 private dDat1
 private cFilter:=".t."
-private cSmjena
-private cK1
-private cRD
-private cVrijOd
-private cVrijDo
-private cIdDio:=gIdDio
-private cIdOdj:=SPACE(2)
-
 
 set cursor on
 
@@ -52,14 +44,7 @@ if (cVarijanta==nil)
 	cVarijanta:="0"
 endif
 
-TblCrePom()
 ODbRpt()
-
-cK1:="N"
-cSmjena:=gSmjena
-cRD:="R"
-cVrijOd:="00:00"
-cVrijDo:="23:59"
 
 if (cVarijanta == "0")
 	cIdPos:=gIdPos
@@ -76,7 +61,20 @@ Zagl(dDat0, dDat1, cIdPos)
 O_DOKS
 SetFilter(@cFilter, cIdPos, dDat0, dDat1)
 
-KasaIzvuci("98")
+nCnt:=0
+? "----------------------------------------"
+? "Rbr  Datum     BrDok           Iznos"
+? "----------------------------------------"
+go top
+
+do while !EOF() .and. idvd == VD_REK
+	++ nCnt
+	? STR(nCnt, 3)
+	?? SPACE(2) + DTOC(field->datum)
+	?? SPACE(2) + PADR(ALLTRIM(field->idvd) + "-" +  ALLTRIM(field->brdok),10)
+	?? SPACE(2) + DokIznos(.t., field->idpos, field->idvd, field->datum, field->brdok)
+	skip
+enddo
 
 END PRINT
 
