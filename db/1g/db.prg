@@ -705,6 +705,7 @@ endif
 SELECT _POS
 // uzmi gDatum za azuriranje
 cDatum:=dtos(gDatum)  
+nUkIznRn:=0
 
 do while !eof() .and. _POS->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+"42"+cDatum+cRadRac)
 	Scatter()
@@ -715,7 +716,8 @@ do while !eof() .and. _POS->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+"42"+cDatum+
       			// vodi se po trebovanjima, a za ovu stavku trebovanje nije izgenerisano
       			replace kolicina with 0 // nuliraj kolicinu
     		endif
-    		_Kolicina += _POS->Kolicina
+		
+		_Kolicina += _POS->Kolicina
     		REPLACE m1 WITH "Z"
     		if lNaX
       			SKIP 1
@@ -726,7 +728,10 @@ do while !eof() .and. _POS->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+"42"+cDatum+
     		else
       			SKIP 1
     		endif
-  	enddo
+  		
+		nUkIznRn+=_POS->Kolicina*_POS->cijena
+		
+	enddo
   	_Prebacen:=OBR_NIJE
   	SELECT ODJ
   	HSEEK _IdOdj
@@ -766,7 +771,14 @@ endif
 
 // TIGRA-AURA
 if gDuplo=="D"   
-  		tgrDuploAzur()
+  	tgrDuploAzur()
+endif
+
+// ako se koristi varijanta evidentiranja podataka o nacinu placanja
+if gEvidPl=="D"
+	AzurCek(aCKData, nUkIznRN, cStalRac, cVrijeme)
+	//AzurSindKred(aSKData, nUkIznRN, cStalRac, cVrijeme)
+	AzurGarPismo(aGPData, cStalRac, cVrijeme)
 endif
 
 return
@@ -779,7 +791,7 @@ return
  *  \param cIdVd
  */
  
-function AzurPriprZ(cBrDok,cIdVD)
+function AzurPriprZ(cBrDok, cIdVd)
 *{
 
 SELECT PRIPRZ
