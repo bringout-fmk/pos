@@ -158,7 +158,6 @@ else
 
 endif
 
-
 if fZaklj
 	START PRINT2 CRET gLocPort,.f.
 	ZagFirma()
@@ -167,9 +166,7 @@ else
 	START PRINT CRET
 	ZagFirma()
 	Zagl(dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP, cIdOdj, cGotZir)
-	
 endif // fZaklj
-
 
 O_DOKS
 SetFilter(@cFilter, aUsl1, aUsl2, cVrijOd, cVrijDo, cGotZir, cPartId)
@@ -218,7 +215,9 @@ if fZaklj
 else
 	END PRINT
 endif
+
 close all
+
 return .t.
 *}
 

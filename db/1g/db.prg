@@ -1441,13 +1441,19 @@ return nUkupno
  *  \brief Punjenje podacima pomocne tabele za izvjestaj realizacije kase (tabela pos->pom)
  */
 
-function KasaIzvuci(cIdVd)
+function KasaIzvuci(cIdVd, cDobId)
 *{
 
 // cIdVD - Id vrsta dokumenta
 // Opis: priprema pomoce baze POM.DBF za realizaciju
 
-MsgO("formiram pomocnu tabelu izvjestaja...")
+if ( cDobId == nil )
+	cDobId := ""
+endif
+
+if !gAppSrv
+	MsgO("formiram pomocnu tabelu izvjestaja...")
+endif
 
 SEEK cIdVd+DTOS(dDat0)
 do while !eof().and.doks->IdVd==cIdVd.and.doks->Datum<=dDat1
@@ -1468,9 +1474,20 @@ do while !eof().and.doks->IdVd==cIdVd.and.doks->Datum<=dDat1
     		
 		SELECT roba 
 		HSEEK pos->IdRoba
+
+		if roba->(fieldpos("sifdob"))<>0
+			if !Empty(cDobId)
+				if roba->sifdob <> cDobId
+					select pos
+					skip
+					loop
+				endif
+			endif
+		endif
+		
     		SELECT odj 
 		HSEEK roba->IdOdj
-    		
+		
 		nNeplaca:=0
     		
 		if RIGHT(odj->naz,5)=="#1#0#"  // proba!!!
@@ -1512,10 +1529,11 @@ do while !eof().and.doks->IdVd==cIdVd.and.doks->Datum<=dDat1
 
 enddo
 
-MsgC()
+if !gAppSrv
+	MsgC()
+endif
 
 return
-
 *}
 
 
