@@ -21,6 +21,7 @@ all:
 	make -C stela/1g
 	make -C rabat/1g
 	make -C fissta/1g
+	make -C evidpl/1g
 	make -C 1g
 
 clean:	
@@ -46,4 +47,5 @@ clean:
 	cd stela/1g; make clean
 	cd rabat/1g; make clean
 	cd fissta/1g; make clean
+	cd evidpl/1g; make clean
 	

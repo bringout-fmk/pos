@@ -468,6 +468,9 @@
 #define VD_RZS       "96"       // razduzenje sirovina-otprema pr. magacina
 #define VD_PCS       "00"       // pocetno stanje
 #define VD_PRR       "01"       // prenos realizacije iz prethodnih sezona
+#define VD_CK        "90"       // dokument cek
+#define VD_SK        "91"       // dokument sindikalni kredit
+#define VD_GP        "92"       // dokument garatno pismo
 
 #define DOK_ULAZA "00#16"
 #define DOK_IZLAZA "42#01#96#98"
