@@ -446,3 +446,31 @@ BoxC()
 return
 
 *}
+
+
+/*! \fn TestFisRn3()
+ *  \brief Test stampe FISSTA racuna
+ */
+ 
+function TestFisRn3()
+*{
+
+aArtikli:={}
+AADD(aArtikli, {"100000000010", "EFFEGI 2340", 1000.00, "3", "1", "6"})
+AADD(aArtikli, {"100000000251", "KLOMPE Z.BIJELE", 890.50, "3", "1", "6"})
+AADD(aArtikli, {"100000003120", "ILLUMINATI 22/33", 2780.00, "3", "1", "6"})
+AADD(aArtikli, {"100000006129", "PLACENTE 2350/80", 3020.40, "3", "1", "6"})
+
+aArtRacun:={}
+AADD(aArtRacun, {1.00, "100000000010"})
+AADD(aArtRacun, {2.00, "100000006129"})
+
+nIznos:=7040.80
+cTipPl:="1"
+
+if !FisRacun(aArtikli, aArtRacun, nIznos, cTipPl)
+	MsgBeep("Greska pri izdavanju racuna")
+endif
+
+return
+*}

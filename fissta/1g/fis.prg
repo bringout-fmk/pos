@@ -789,13 +789,13 @@ function IsFisCTTStarted()
 
 cPath:=gFisCTTPath
 bRet:=.t.
-
-WriteMainInCode("0", cPath)
+// testiraj interfejs
+WriteMainInCode("0_1", cPath)
 Sleep(gFisTimeOut)
 
-cReadCode:=ReadMainInCode(cPath)
+cReadCode:=ReadMainOutCode(cPath)
 
-if cReadCode != "9"
+if cReadCode != "0"
 	bRet:=.f.
 endif
 
@@ -808,11 +808,30 @@ return bRet
  */
 function IsFisError()
 *{
+local bRead:=.f.
+local cLastErr:=""
+
 bRet:=.f.
-cLastErr:=ReadMainOutCode(gFisCTTPath)
+
+do while !bRead
+	Sleep(gFisTimeOut)
+	cLastErr:=ReadMainOutCode(gFisCTTPath)
+	if gnDebug==5
+		MsgBeep("Zadnja greska: " + cLastErr)
+	endif
+	
+	if cLastErr<>"999"
+		bRead:=.t.
+		if gnDebug==5
+			MsgBeep("Set bRead = .t.")
+		endif
+	endif
+enddo
 
 if (cLastErr <> "0")
-	
+        if gnDebug == 5
+        	MsgBeep("Obradi gresku: " + cLastErr)	
+	endif
 	// ako postoji greska, obradi gresku
 	cErrDescr:=GetErrFromCode(cLastErr)
 	MsgBeep(cErrDescr)
@@ -837,7 +856,7 @@ return bRet
 
 /*! \fn RunFisCommand(cCode)
  *  \brief Zadaje komandu interfejsu
- *  \cCode - "kod" komande
+ *  \param cCode - "kod" komande
  */
 
 function RunFisCommand(cCode)
@@ -847,7 +866,7 @@ cCode:=ALLTRIM(cCode)
 
 // upisuju se kodovi od "0" do "9"
 
-if (LEN(cCode) > 1)
+if (LEN(cCode) > 2)
 	MsgBeep("Greska: neispravna duzina kod-a!")
 	return
 endif
@@ -857,10 +876,6 @@ WriteMainOutCode(gFisCTTPath)
 
 // upisi u IN kod cCode 
 WriteMainInCode(cCode, gFisCTTPath)
-
-// zaustavi izvrsenje aplikacije.
-// interfejsu treba par sec. da sazvace komandu
-sleep(gFisTimeOut)
 
 return
 *}
@@ -878,47 +893,83 @@ return
 function FisRacun(aArtikli, aArtRacun, nIznos, cTipPlacanja)
 *{
 
-bErr:=.f.
+Box(,5, 60)
+
+bFisRnOk:=.t.
+
+@ 1+m_x, 2+m_y SAY "Izdavanje racuna na FISSTA u toku..."
+
+@ 2+m_x, 2+m_y SAY REPLICATE("-", 58)
+
+@ 3+m_x, 2+m_y SAY "Zadaje se komanda: "
+
+@ 4+m_x, 2+m_y SAY "Zadna greska: "
+
+@ 5+m_x, 2+m_y SAY "Status:"
 
 // provjeri prvo da li je interfejs startan
-CheckFisCTTStarted()
+CheckFisCTTStarted(.t.)
+
+@ 5+m_x, 9+m_y SAY "FisCTT pokrenut ...  "
 
 // upisi stavke u ARTIKLI.XML
 WriteArtikliXml(aArtikli, gFisCTTPath)
-
 // upisi stavke u ARTRACUN.XML
 WriteArtRacunXml(aArtRacun, gFisCTTPath)
-
 // upisi stavke u PLACANJA.XML
 WritePlacanjaXml(nIznos, cTipPlacanja, gFisCTTPath)
+@ 5+m_x, 9+m_y SAY "kreirani xml fajlovi "
+
 
 // sada smo spremni za izdavanje racuna
 
 // pokreni komandu 1: artikli.xml => CPU
 RunFisCommand("1")
 
-if IsFisError()
-	bErr:=.t.
-	return bErr
+@ 3+m_x, 22+m_y SAY " komanda 1"
+
+if gnDebug == 5
+	MsgBeep("proslijedio komandu 1")
 endif
+
+if IsFisError()
+	bFisRnOk:=.f.
+	return bFisRnOk
+endif
+
+
 
 // pokreni komandu 8: artikli.xml => FISSTA
 RunFisCommand("8")
 
+@ 3+m_x, 22+m_y SAY " komanda 8"
+
+if gnDebug == 5
+	MsgBeep("proslijedio komandu 8")
+endif
+
 if IsFisError()
-	bErr:=.t.
-	return bErr
+	bFisRnOk:=.f.
+	return bFirRnOk
 endif
 
 // pokreni komandu 2: izdaj racun
 RunFisCommand("2")
 
-if IsFisError()
-	bErr:=.t.
-	return bErr
+@ 3+m_x, 22+m_y SAY " komanda 2"
+
+if gnDebug == 5
+	MsgBeep("proslijedio komandu 2")
 endif
 
-return bErr
+if IsFisError()
+	bFisRnOk:=.f.
+	return bFisRnOk
+endif
+
+BoxC()
+
+return bFisRnOk
 *}
 
 
