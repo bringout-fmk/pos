@@ -294,19 +294,29 @@ if cLevel<="0"
     		return DE_CONT
   	endif
   	if ch==K_CTRL_F9
-    		return BrisiRacun()
+    		if SigmaSif("BRISRN")
+			return BrisiRacun()
+		endif
   	endif
 	if ch==K_F2
-      		return PromBrRN()
+		if SigmaSif("PRBRRN")
+      			return PromBrRN()
+		endif
   	endif
   	if ch==K_SH_F9
-      		return  BrisiRNVP()
+		if SigmaSif("BRSVE")
+      			return  BrisiRNVP()
+		endif
   	endif
   	if ch==K_F5
-       		return PromIdPM()
+		if SigmaSif("STELA")
+			return PromIdPM()
+		endif
   	endif
   	if ch==K_CTRL_F5
-    		return PromIdPMVP()
+		if SigmaSif("STELA")
+    			return PromIdPMVP()
+		endif
   	endif
 endif // KLEVEL - vlasnik
 return (DE_CONT)

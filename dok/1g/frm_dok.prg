@@ -185,6 +185,9 @@ do case
         	endif
 		return DE_CONT
 	case Ch==K_CTRL_F9
+		if !SigmaSif("BRISRN")
+			return DE_CONT
+		endif
 		O_STRAD
         	select strad
 		hseek gStrad
