@@ -81,10 +81,9 @@ else
 	AADD(opcexe,{|| TopN()})
 	AADD(opc,"7. stanje partnera")
 	AADD(opcexe,{|| StanjePartnera()})
-  	
 	if IsTigra()
-		//AADD(opc, "8. stanje partnera - otvorene stavke")
-		//AADD(opcexe, {|| MnuStanjePartnera()})
+		AADD(opc, "8. stanje partnera - pregled HH")
+		AADD(opcexe, {|| Rpt_Ostav()})
 	endif
 	AADD(opc,"K. stanje artikala po K1 ")
   	AADD(opcexe,{|| StanjeK1()})
