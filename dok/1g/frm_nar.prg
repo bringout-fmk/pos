@@ -578,6 +578,13 @@ if LASTKEY()==K_UP
 	return .t.
 endif
 
+if (IsPlNS() .and. gFisStorno=="N")
+	if (nKol < 0)
+		MsgBeep("Storno nije dozvoljen. Ponovite unos!")
+		return .f.
+	endif
+endif
+
 if (nKol==0)
 	MsgBeep("Nepravilan unos kolicine robe! Ponovite unos!", 15)
    	return .f.
