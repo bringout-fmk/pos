@@ -598,7 +598,8 @@ if !EMPTY(gFMKSif)
       		MsgBeep("Na lokaciji " + TRIM(gFmkSif) + "ROBA.DBF nema tabele")
       		return
   	endif
-  	AzurSifIzFmk()
+	lAddNew:=(Pitanje(,"Dodati nepostojece sifre D/N ?"," ")=="D")
+  	AzurSifIzFmk("", lAddNew)
   	return
 endif
 
