@@ -396,11 +396,32 @@ enddo
 return nil
 *}
 
-/*! \fn Real2Kalk()
- *  \brief
+
+function AutoReal2Kalk(cDate1, cDate2)
+*{
+local dD1
+local dD2
+altd()
+if (!Empty(cDate1) .and. !Empty(cDate2))
+	dD1 := CToD(cDate1)
+	dD2 := CToD(cDate2)
+	? "Vrsim prenos realizacija za datum od: " + DToC(dD1) + " do " + DToC(dD2)
+	Real2Kalk(dD1, dD2)
+	? "Izvrsen prenos ..."
+endif
+
+return
+*}
+
+
+
+/*! \fn Real2Kalk(dDatOd, dDatDo)
+ *  \brief Generisanje datoteke prenosa realizacije u modul KALK
+ *  \param dDatOd - datum od
+ *  \param dDatDo - datum do
  */
  
-function Real2Kalk()
+function Real2Kalk(dDateOd, dDateDo)
 *{
 
 // prenos realizacija POS - KALK
@@ -410,17 +431,28 @@ O_POS
 O_DOKS
 
 cIdPos:=gIdPos
-dDatOd:=DATE()
-dDatDo:=DATE()
 
-SET CURSOR ON
-Box(,4,60,.f.,"PRENOS REALIZACIJE POS->KALK")
-@ m_x+1,m_y+2 SAY "Prodajno mjesto " GET cIdPos pict "@!" Valid !EMPTY(cIdPos).or.P_Kase(@cIdPos,5,20)
-@ m_x+2,m_y+2 SAY "Prenos za period" GET dDatOd
-@ m_x+2,col()+2 SAY "-" GET dDatDo
-read
-ESC_BCR
-BOXC()
+altd()
+
+if ((dDateOd == nil) .and. (dDateDo == nil))
+	dDatOd:=DATE()
+	dDatDo:=DATE()
+else
+	dDatOd:=dDateOd
+	dDatDo:=dDateDo
+endif
+
+// ako nije APPSRV prikazi box za prenos
+if !gAppSrv
+	SET CURSOR ON
+	Box(,4,60,.f.,"PRENOS REALIZACIJE POS->KALK")
+		@ m_x+1,m_y+2 SAY "Prodajno mjesto " GET cIdPos pict "@!" Valid !EMPTY(cIdPos).or.P_Kase(@cIdPos,5,20)
+		@ m_x+2,m_y+2 SAY "Prenos za period" GET dDatOd
+		@ m_x+2,col()+2 SAY "-" GET dDatDo
+	read
+	ESC_BCR
+	BoxC()
+endif
 
 if gVrstaRS<>"S"
 	//sasa, ne znam sta je ovo znacilo
@@ -455,7 +487,7 @@ if roba->(FieldPos("barkod"))<>0
 endif
 select doks
 NaprPom(aDbf)
-
+altd()
 USEX (PRIVPATH+"POM") NEW
 INDEX ON IdPos+IdRoba+STR(mpc,13,4)+STR(stmpc,13,4) TAG ("1") TO (PRIVPATH+"POM")
 INDEX ON brisano+"10" TAG "BRISAN"    //TO (PRIVPATH+"ZAKSM")
@@ -468,111 +500,127 @@ IF gVrstaRS=="S"
 	DirMak2(ALLTRIM(gKalkDest)+ALLTRIM(cIdPos))
 	cKalkDbf:=ToUnix(ALLTRIM(gKalkDest)+ALLTRIM(cIdPos)+SLASH+"TOPSKA.DBF")
 endif
-
 DbCreate2(cKALKDBF,aDbf)
 USEX (cKALKDBF) NEW
 ZAPP()
 __dbPack()
 
+altd()
 select DOKS
 nRbr:=0
-do while !eof() .and. doks->IdVd==VD_RN .and. doks->Datum<=dDatDo
+do while !eof() .and. doks->IdVd=="42" .and. doks->Datum<=dDatDo
 	if !EMPTY(cIdPos) .and. doks->IdPos<>cIdPos
     		SKIP
 		LOOP
   	endif
   	SELECT pos
   	SEEK doks->(IdPos+IdVd+DTOS(datum)+BrDok)
-  		do while !eof().and.pos->(IdPos+IdVd+DTOS(datum)+BrDok)==doks->(IdPos+IdVd+DTOS(datum)+BrDok)
+  	do while !eof().and.pos->(IdPos+IdVd+DTOS(datum)+BrDok)==doks->(IdPos+IdVd+DTOS(datum)+BrDok)
     			
-			Scatter()
-    			if roba->(fieldpos("barkod"))<>0
-				select roba
-				set order to tag "ID"
-				hseek pos->idroba
-			endif
-			select POM
-    			HSEEK POS->(IdPos+IdRoba+STR(cijena,13,4)+STR(nCijena,13,4))
-    			// seekuj i cijenu i popust (koji je pohranjen u ncijena)
-    				if !FOUND().or.IdTarifa<>POS->IdTarifa.OR.MPC<>POS->Cijena
-     					append blank
-      					
-					replace IdPos WITH POS->IdPos
-					replace IdRoba WITH POS->IdRoba
-					replace Kolicina WITH POS->Kolicina
-					replace IdTarifa WITH POS->IdTarifa
-					replace mpc With POS->Cijena
-					replace IdCijena WITH POS->IdCijena
-					replace Datum WITH dDatDo
-					
-					if gModul=="HOPS"	
-						replace IdVd With "47"
-					else
-						if IsTehnoprom() .and. doks->idvrstep$"03"
-						
-							replace IdVd With "41"
-						else
-							replace IdVd With POS->IdVd
-						endif
-					endif
-					
-					replace StMPC WITH pos->ncijena
-					
-					if roba->(FieldPos("barkod"))<>0
-						replace barkod with roba->barkod
-					endif
-						
-					if !EMPTY(doks->idgost)
-						replace idpartner with doks->idgost
-					endif
-      					
-					++nRbr
-    				else
-       					replace Kolicina WITH Kolicina + _Kolicina
-    				endif
-				
-    				select pos
-    				SKIP
-  				END
-  				SELECT doks
-  				SKIP
-		enddo
-		SELECT POM 
-		GO TOP
-		while !eof()
-  			Scatter()
-  			SELECT TOPSKA
-			append blank
-  			Gather()
-  			SELECT POM
-  			SKIP
-		enddo
-		if gModemVeza=="D"
-  			close all
-  			cDestMod:=RIGHT(DTOS(dDatDo),4)  // 1998 1105  - 11 mjesec, 05 dan
-  			cDestMod:="TK"+cDestMod+"."
-			
-			cPm:=GetPm()
-			if !EMPTY(cPm)
-				cPrefix:=(TRIM(cPm))+SLASH
-			else
-				cPrefix:=""
-			endif
-           	
-  			RealKase(.f.,dDatOd,dDatDo,"1")  // formirace outf.txt
-  			cDestMod:=StrTran(cKalkDbf,"TOPSKA.",cPrefix+cDestMod)
-  			FileCopy(cKalkDBF,cDestMod)
-  			cDestMod:=StrTran(cDestMod,".DBF",".TXT")
-  			FileCopy(PRIVPATH+"outf.txt",cDestMod)
-  			cDestMod:=StrTran(cDestMod,".TXT",".DBF")
-  			MsgBeep("Datoteka "+cDestMod+"je izgenerisana#Broj stavki "+str(nRbr,4))
-		else
-			close all
-  			aPom:=IntegDbf(cKalkDBF)
-  			NapraviCRC( trim(gKalkDEST)+"CRCTK.CRC" , aPom[1] , aPom[2] )
-  			MsgBeep("Datoteka TOPSKA je izgenerisana#Broj stavki "+str(nRbr,4))
+		Scatter()
+    		if roba->(fieldpos("barkod"))<>0
+			select roba
+			set order to tag "ID"
+			hseek pos->idroba
 		endif
-		CLOSERET
+		select POM
+    		HSEEK POS->(IdPos+IdRoba+STR(cijena,13,4)+STR(nCijena,13,4))
+    			// seekuj i cijenu i popust (koji je pohranjen u ncijena)
+    		if !FOUND().or.IdTarifa<>POS->IdTarifa.OR.MPC<>POS->Cijena
+     			append blank
+      			
+			replace IdPos WITH POS->IdPos
+			replace IdRoba WITH POS->IdRoba
+			replace Kolicina WITH POS->Kolicina
+			replace IdTarifa WITH POS->IdTarifa
+			replace mpc With POS->Cijena
+			replace IdCijena WITH POS->IdCijena
+			replace Datum WITH dDatDo
+			
+			if gModul=="HOPS"	
+				replace IdVd With "47"
+			else
+				if IsTehnoprom() .and. doks->idvrstep$"03"
+			
+					replace IdVd With "41"
+				else
+					replace IdVd With POS->IdVd
+				endif
+			endif
+					
+			replace StMPC WITH pos->ncijena
+					
+			if roba->(FieldPos("barkod"))<>0
+				replace barkod with roba->barkod
+			endif
+						
+			if !EMPTY(doks->idgost)
+				replace idpartner with doks->idgost
+			endif
+      					
+			++nRbr
+    		else
+       			replace Kolicina WITH Kolicina + _Kolicina
+    		endif
+				
+    		select pos
+    		SKIP
+  	END
+  	SELECT doks
+  	SKIP
+enddo
+
+SELECT POM 
+GO TOP
+while !eof()
+	Scatter()
+	SELECT TOPSKA
+	append blank
+	Gather()
+	SELECT POM
+	SKIP
+enddo
+
+if gModemVeza=="D"
+	close all
+	cDestMod:=RIGHT(DTOS(dDatDo),4)  // 1998 1105  - 11 mjesec, 05 dan
+	cDestMod:="TK"+cDestMod+"."
+	
+	if !gAppSrv	
+		cPm:=GetPm()
+	endif
+	
+	if (!gAppSrv .and. !EMPTY(cPm))
+		cPrefix:=(TRIM(cPm))+SLASH
+	else
+		cPrefix:=""
+	endif
+           	
+	// radi app servera ne mogu ovo formirati	
+  	if !gAppSrv
+		RealKase(.f.,dDatOd,dDatDo,"1")  // formirace outf.txt
+  	endif
+	cDestMod:=StrTran(cKalkDbf,"TOPSKA.",cPrefix+cDestMod)
+  	FileCopy(cKalkDBF,cDestMod)
+  	cDestMod:=StrTran(cDestMod,".DBF",".TXT")
+  	FileCopy(PRIVPATH+"outf.txt",cDestMod)
+  	cDestMod:=StrTran(cDestMod,".TXT",".DBF")
+	if !gAppSrv  	
+		MsgBeep("Datoteka "+cDestMod+"je izgenerisana#Broj stavki "+str(nRbr,4))
+	else
+		? "Datoteka " + cDestMod + "je izgenerisana. Broj stavki: "+STR(nRbr,4)
+	endif
+else
+	close all
+	aPom:=IntegDbf(cKalkDBF)
+	NapraviCRC(trim(gKalkDEST)+"CRCTK.CRC" , aPom[1] , aPom[2] )
+	if !gAppSrv	
+		MsgBeep("Datoteka TOPSKA je izgenerisana#Broj stavki "+str(nRbr,4))
+	endif
+endif
+
+CLOSERET
+return
 *}
 
 
