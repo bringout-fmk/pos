@@ -1329,7 +1329,7 @@ if !bRptExists
 	
 	cTipDok:="77"
 	
-	if cRptd==2
+	if cRptId=="2"
 		cTipDok:="78"	
 	endif
 	
