@@ -647,20 +647,18 @@ O__PRIPR
 select _pripr
 go top
 
-nr:=1
 do while !eof() //.and. field->idvd=="42"
 	cID:=GetArtCodeFromRoba(_pripr->idroba)
       	cNaziv      := left(alltrim(_pripr->robanaz),18) 
-      	nCijena1    := val(str(_pripr->Cijena,9,2))
-      	cCijena     := str(_pripr->Cijena,9,2) 
+      	nCij        := val(str(_pripr->Cijena,9,2))
       	cPorez      := GetCodeTarifa(alltrim(_pripr->idtarifa)) 
       	cDepartment := '1'
       	cJedMjere   := GetCodeForArticleUnit(alltrim(_pripr->jmj)) 
       	nKolicina   := val(str(_pripr->kolicina,8,2))
       
-      	AADD(aArtikli, {cID, cNaziv, nCijena1, cPorez, cDepartment, cJedMjere})
+      	AADD(aArtikli, {cID, cNaziv, nCij, cPorez, cDepartment, cJedMjere})
       	AADD(aArtRacun, {nKolicina, cID})
-      	nUkupno += nCijena1 * nKolicina
+      	nUkupno += nCij * nKolicina
       	skip
 enddo
 
