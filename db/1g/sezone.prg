@@ -317,6 +317,7 @@ SET FILTER TO &cFilt1
 
 
 FillPriprG(dDat, lSpajanjeRazdCijene)
+
 PobrisiStareDok(dDat)
 
 SELECT DOKS
@@ -347,7 +348,7 @@ ZAP
 
 // "3": "IdVd+IdPos+IdVrsteP+IdGost+Placen+IdDio+IdOdj+IdRoba+..."
 SET ORDER TO 3
-
+altd()
 Scatter()
 
 SELECT POS
@@ -384,7 +385,9 @@ do while !EOF()
 			_idvd:="00"
 			_placen:="9" 
 	      		_datum:=CTOD("31.12."+ALLTRIM(STR(YEAR(dDat)-1)))
-	      		_idVrsteP:=space(len(_idVrsteP))
+	      		//_idVrsteP:=space(len(_idVrsteP))
+	
+	      		_idVrsteP:=doks->idvrstep
 		else
 	       		// tekuca godina
 	       		if idvd $ "00#01"
@@ -399,7 +402,7 @@ do while !EOF()
 			SetTGKolIdVdDatumMui(@_kolicina, @_kol2, @_IdVd, @_MU_I, @_Placen)
 		 
 		endif
-
+		
 		SELECT priprg
 
 		_IdDio:=SPACE(LEN(_iddio))
@@ -438,7 +441,7 @@ return
  */
 static function SetSGKolicina(_kolicina)
 *{
-
+altd()
 do case 
 	case pos->idvd $ "NI"
 		_kolicina:=0
@@ -472,7 +475,7 @@ return
  */
 static function SetTGKolIdVdDatumMui(_kolicina, _kol2, _IdVd, _MU_I, _placen)
 *{
-
+altd()
 // mislim da polje mu_i nigdje ne koristimo ... ovo se moze izbaciti
 if POS->IdVd $ "42"  
 	
@@ -630,6 +633,7 @@ return cBrDok
 
 static function DodajUDok(cAkcija)
 *{
+altd()
 
 AppBlank2(.f., .f.)
 sql_append(0, cAkcija )
@@ -661,8 +665,8 @@ return
 static function DodajUPos(cIdVd, cIdPos, cBrDok, cIdVrsteP, cIdGost, cAkcija)
 *{
 
-//local cPlacen
-	    
+//local cPlacenje
+altd()
 SELECT priprg
 
 //cPlacen := priprg->placen
@@ -723,6 +727,9 @@ MsgO("priprg -> pos, doks")
 SELECT priprg
 SET ORDER TO 3
 GO TOP
+
+altd()
+
 do while !EOF()
 	cIdVd:=priprg->idVd
 	cIdPos:=priprg->idPos
