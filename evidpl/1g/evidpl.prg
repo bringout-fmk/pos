@@ -259,6 +259,7 @@ cKpData:=""
 cBody:=""
 dDokDate:=DATE()
 nDokIznos:=0
+dKpLKDate:=CToD("")
 
 // Uzmi podatke
 

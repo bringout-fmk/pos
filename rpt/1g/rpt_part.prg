@@ -65,6 +65,8 @@ if IsTigra()
 	private lGenPartnSt
 endif
 
+O_RNGOST
+
 do while .t.
 	if !VarEdit({ ;
 	  {"Sifra partnera (prazno-svi)","cGost","IF(!EMPTY(cGost),P_Gosti(@cGost),.t.)","@!",}, ;
@@ -115,6 +117,7 @@ nSumaNije:=0
 nSumaJest:=0
 nBrojacPartnera:=1
 nBrojacStavki:=1
+altd()
 
 SELECT DOKS
 
@@ -156,12 +159,13 @@ do while !eof()
 		endif
 		
 		SELECT POS
-		seek DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
+		hseek DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
 		nIznos:=0
 		
 		nDuguje:=0
 		nPotrazuje:=0
 		do while !eof().and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
+			
 			altd()	
 			if doks->IdVrsteP=="01"
 				nPom:=pos->kolicina*pos->cijena*iif(pos->idvd=="00",-1,1)
@@ -186,7 +190,7 @@ do while !eof()
 		
 		SELECT RNGOST
 		hseek cIdGost
-		? REPL("-",75)
+		? REPL("-",80)
 		? ALLTRIM(STR(nBrojacPartnera)) + ") " + PADR(ALLTRIM(cIdGost)+" "+RNGOST->Naz,35)+" "
 		if gVrstaRS=="K"
 			? SPACE(4)
@@ -195,7 +199,7 @@ do while !eof()
 		?? STR(nStanje,12,2)
 		nSumaSt+=nStanje
 		fPisi:=.t.
-		? REPL("-",75)
+		? REPL("-",80)
 		++ nBrojacPartnera	
 		if IsTigra() .and. lGenPartnSt
 			AzurTopsOstav(RNGOST->IDN, RNGOST->IDFMK, RNGOST->Naz, nStanje, nSldMinIzn)
@@ -228,11 +232,11 @@ do while !eof()
 			do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
 				
 				if doks->IdVrsteP=="01"
+				
 					nPom:=pos->kolicina*pos->cijena*iif(pos->idvd=="00",-1,1)
 					//placanje gotovinom povecava promet na obje strane
 					nDuguje+=nPom
 					nPotrazuje+=nPom
-					
 				elseif (LEFT(idroba,5)=='PLDUG')
 					//ako je placanje, dug je negativan
 					//za poc stanje promjeni znak ????

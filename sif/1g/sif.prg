@@ -462,6 +462,8 @@ local aZabrane
 private ImeKol
 private Kol:={}
 
+O_RNGOST
+
 if gModul=="TOPS"
 	ImeKol:={{"ID ",{|| id },"id",{|| .t.},{|| vpsifra(wId)}},{PADC("Naziv",30),{|| naz},LEFT("naz",30)},{"Tip",{|| tip},"tip",{|| wTip:=iif(empty(wTip),"P",wTip),.T.},{|| wTip$"SP"}},{"Aktivan",{|| PADC(IIF(Status=="D","DA","NE"),7)},"Status",{|| wStatus:=iif(empty(wStatus),"D",wStatus), .t.},{|| wStatus $ "DN"}}}
 	

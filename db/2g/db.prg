@@ -628,6 +628,8 @@ if (nArea==-1 .or. nArea==(F_PRIPRG))
 	else
 		CREATE_INDEX ("3", "IdVd+IdPos+IdVrsteP+IdGost+Placen+IdDio+IdOdj+IdRoba", PRIVPATH+"PRIPRG")
 	endif
+	
+	CREATE_INDEX ("4", "IdVd+IdPos+IdVrsteP+IdGost+DToS(datum)", PRIVPATH+"PRIPRG")
 
 	if IsPlanika()
 		CreDB_Message()
