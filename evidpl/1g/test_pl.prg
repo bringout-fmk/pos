@@ -131,7 +131,7 @@ function TestStr2Niz()
 
 cStr:="12345678901234567890" + REPLICATE("A", 20) + REPLICATE("B", 20) + REPLICATE("C", 10)
 aTmp:={}
-aTmp:=StrToNiz(cStr, 20)
+aTmp:=StrToArray(cStr, 20)
 aRes:={}
 AADD(aRes, "12345678901234567890")
 AADD(aRes, "AAAAAAAAAAAAAAAAAAAA")
