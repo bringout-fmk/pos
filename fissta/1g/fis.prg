@@ -423,15 +423,15 @@ cKomLin:="start " + cPath + "fiscal28.jar"
 run &cKomLin
 
 bError:=.t.
-nCnt:=0
+nTimeOut:=0
 
 while bError == .t.
-	nCnt ++
+	nTimeOut ++
 	cErr:=ReadMainInCode(cPath)
 	if (cErr == "9")
 		bError:=.f.
 	endif
-	if nCnt > 20
+	if nTimeOut > 20
 		MsgBeep("Problem sa pokretanjem interfejsa !")
 		return
 	endif
