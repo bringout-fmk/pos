@@ -958,8 +958,10 @@ MsgO("Provjeravam FisCTT...")
 cPath:=gFisCTTPath
 bRet:=.t.
 // testiraj interfejs
+// upisi u out "999"
+WriteMainOutCode(cPath)
 WriteMainInCode("0_1", cPath)
-Sleep(gFisTimeOut)
+Sleep(gFisTimeOut + 2)
 
 cReadCode:=ReadMainOutCode(cPath)
 
@@ -1241,7 +1243,7 @@ if !PostojiDokument("42", DATE())
 endif
 
 // provjeri da li je izvjestaj vec radjen
-if ReadLastFisRpt("1", DATE())
+if gFisRptEvid=="D" .and. ReadLastFisRpt("1", DATE())
 	MsgBeep("Dnevni izvjestaj vec formiran!#Prekidam operaciju.")
 	return
 endif
@@ -1258,7 +1260,9 @@ if !FisRptDnevni()
 endif
 
 // evidentiraj izvjestaj
-WriteLastFisRpt("1", DATE(), TIME())
+if gFisRptEvid=="D"
+	WriteLastFisRpt("1", DATE(), TIME())
+endif
 
 return
 *}
@@ -1278,7 +1282,7 @@ if !PostojiDokument("42", DATE())
 endif
 
 // provjeri da li je izvjestaj vec formiran
-if ReadLastFisRpt("2", DATE())
+if gFisRptEvid=="D" .and. ReadLastFisRpt("2", DATE())
 	MsgBeep("Izvjestaj za period vec formiran!#Prekidam operaciju.")
 	return
 endif
