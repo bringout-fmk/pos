@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=pos_1rf
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\pos\\razoff\\1g\\
+SRCDOSROOT=h:\\dev\\fmk\\pos\\razoff\\1g\\
 
 PRGS=modem.prg posdisk.prg
 

@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=pos_s1pf
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\pos\\specif\\planika\\1g\\
+SRCDOSROOT=h:\\dev\\fmk\\pos\\specif\\planika\\1g\\
 
 
 PRGS=planika.prg promvp.prg

@@ -1,11 +1,11 @@
 VERZIJA=CDX
 MODUL=TOPS
 
-PRGS=/cl/sigma/fmk/pos/main/1g/e.prg
+PRGS=/dev/fmk/pos/main/1g/e.prg
 CS=
 ASMS=
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
 FMKLIBS=fmk_roba$(LIBEXT) fmk_svi$(LIBEXT) sc1g_arh$(LIBEXT) sc1g_ba$(LIBEXT) sc1g_cui$(LIBEXT) sc1g_db$(LIBEXT) sc1g_os$(LIBEXT) sc1g_ost$(LIBEXT) sc1g_par$(LIBEXT) sc1g_pr$(LIBEXT) sc1g_sif$(LIBEXT) sc1g_sql$(LIBEXT) sc1g_ut$(LIBEXT) sc2g_app$(LIBEXT) sc2g_db$(LIBEXT) sc2g_cui$(LIBEXT) sc1g_key$(LIBEXT) fmk_sec$(LIBEXT) fmk_evn$(LIBEXT) fmk_mes$(LIBEXT) ka_s1pf$(LIBEXT)
 
@@ -38,7 +38,7 @@ FMKLIBCMD=$(addprefix $(PREF2), $(MODLIBS) $(FMKLIBS) )
 
 #FMKLIBCMD=/clip/fmk.a /clip/pos.a
 mod: $(OBJS)
-	clip --output=e.exe -e  $(CLIPPERFLAGS) /cl/sigma/fmk/pos/main/1g/e.prg  $(FMKLIBCMD)
+	clip --output=e.exe -e  $(CLIPPERFLAGS) /dev/fmk/pos/main/1g/e.prg  $(FMKLIBCMD)
 	cp e.exe $(EXEDEST)/$(MODUL)_clip.exe
 
 else
@@ -46,9 +46,9 @@ else
 mod: $(OBJS)
 	echo Prilikom kompilacije obj se napravi u tekucem direktoriju
 	echo a blinker opet trazi obj fajl u orig direktoriju
-	cp e.obj /cl/sigma/fmk/pos/main/1g/
-	/cl/sigma/form_blinker_lnk.sh $(LINKCMD)
-	/cl/sigma/form_blinker_lnk_2.sh $(FMKLIBCMD)
+	cp e.obj /dev/fmk/pos/main/1g/
+	/sclib/form_blinker_lnk.sh $(LINKCMD)
+	/sclib/form_blinker_lnk_2.sh $(FMKLIBCMD)
 	$(LINKEREXE) @_bl_.lnk @_bl_2_.lnk $(DEBUGLINK) @H:\\CLIPPER\\$(VERZIJA)\\BL.LNK output e.exe
 	cp e.exe $(EXEDEST)/$(MODUL).EXE
 	cp e.exe $(EXEDEST)/$(MODUL2).EXE
@@ -57,9 +57,9 @@ endif
 
 zip:
 	rm -f /z/fmk/$(MODUL).zip
-	/cl/sigma/zip.sh z:\\fmk\\$(MODUL).zip ..\\chs\\\*.chs \\cl\\sigma\\fmk\\roba\\\*.chs  $(EXEDOSDEST)\\$(MODUL).EXE 
+	/sclib/zip.sh z:\\fmk\\$(MODUL).zip ..\\chs\\\*.chs \\dev\\fmk\\AF\\cl-AF\\roba\\\*.chs  $(EXEDOSDEST)\\$(MODUL).EXE 
 	rm -f /z/fmk/$(MODUL2).zip
-	/cl/sigma/zip.sh z:\\fmk\\$(MODUL2).zip ..\\chs\\\*.chs \\cl\\sigma\\fmk\\roba\\\*.chs  $(EXEDOSDEST)\\$(MODUL2).EXE 
+	/sclib/zip.sh z:\\fmk\\$(MODUL2).zip ..\\chs\\\*.chs \\dev\\fmk\\AF\\cl-AF\\roba\\\*.chs  $(EXEDOSDEST)\\$(MODUL2).EXE 
 
 
 

@@ -1,5 +1,5 @@
-#include "\cl\sigma\fmk\pos\pos.ch"
-#include "\cl\sigma\fmk\pos\specif\tigra\1g\tigra.ch"
+#include "\dev\fmk\pos\pos.ch"
+#include "\dev\fmk\pos\specif\tigra\1g\tigra.ch"
 
 /*! \fn MnuStanjePartnera()
  *  \brief Menij izvjestaja stanja partnera - otvorene stavke

@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=pos_1sif
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\pos\\sif\\1g\\
+SRCDOSROOT=h:\\dev\\fmk\\pos\\sif\\1g\\
 
 PRGS=sif.prg mnu_sif.prg
 

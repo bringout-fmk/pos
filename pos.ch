@@ -424,7 +424,7 @@
  */
  
 #ifndef SC_DEFINED
-	#include "\cl\sigma\sclib\sc.ch"
+	#include "sc.ch"
 #endif
 
 
@@ -440,7 +440,7 @@
 #endif
 
 #ifndef FMK_DEFINED
-	#include "\cl\sigma\fmk\fmk.ch"
+	#include "\dev\fmk\AF\cl-AF\fmk.ch"
 #endif
 
 // definicija korisnickih nivoa
@@ -491,6 +491,6 @@
 
 
 #IFDEF C52
-#include "\cl\sigma\fmk\pos\cdx\pos.ch"
+#include "\dev\fmk\pos\cdx\pos.ch"
 #ENDIF
 

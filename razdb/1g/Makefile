@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=pos_1rd
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\pos\\razdb\\1g\\
+SRCDOSROOT=h:\\dev\\fmk\\pos\\razdb\\1g\\
 
 PRGS=pos_kalk.prg pos_fakt.prg
 

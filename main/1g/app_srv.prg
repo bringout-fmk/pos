@@ -1,5 +1,4 @@
-#include "\cl\sigma\fmk\pos\pos.ch"
-
+#include "\dev\fmk\pos\pos.ch"
 /* Copyright (C) 1997-2002, Sigma-com Zenica BiH
  * 
  * Header  : $Header: c:/cvsroot/cl/sigma/fmk/pos/main/1g/app_srv.prg,v 1.4 2003/10/27 13:01:23 sasavranic Exp $

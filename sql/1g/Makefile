@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=pos_1sql
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\pos\\sql\\1g\\
+SRCDOSROOT=h:\\dev\\fmk\\pos\\sql\\1g\\
 
 PRGS=sql.prg parser.prg
 

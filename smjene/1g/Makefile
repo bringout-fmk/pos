@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=pos_1smj
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\pos\\smjene\\1g\\
+SRCDOSROOT=h:\\dev\\fmk\\pos\\smjene\\1g\\
 
 PRGS=smjene.prg
 

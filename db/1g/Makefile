@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=pos_1db
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\pos\\db\\1g\\
+SRCDOSROOT=h:\\dev\\fmk\\pos\\db\\1g\\
 
 
 PRGS=db.prg db_admin.prg sezone.prg

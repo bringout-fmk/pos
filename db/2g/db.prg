@@ -1,4 +1,4 @@
-
+#include "\dev\fmk\pos\pos.ch"
 /*
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
@@ -111,7 +111,7 @@
  *
  */
  
-#include "\cl\sigma\fmk\pos\pos.ch"
+
 
 function TDBPosNew()
 *{

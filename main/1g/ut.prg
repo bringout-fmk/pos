@@ -1,4 +1,4 @@
-#include "\cl\sigma\fmk\pos\pos.ch"
+#include "\dev\fmk\pos\pos.ch"
 #include "dbstruct.ch"
 #include "directry.ch"
 

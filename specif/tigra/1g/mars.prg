@@ -1,5 +1,4 @@
-#include "\cl\sigma\fmk\pos\pos.ch"
-
+#include "\dev\fmk\pos\pos.ch"
 /*
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 

@@ -1,4 +1,4 @@
-#include "\cl\sigma\fmk\pos\pos.ch"
+#include "\dev\fmk\pos\pos.ch"
 
 *string IzFmkIni_KumPath_POS_Polog1;
 
