@@ -15,7 +15,7 @@ local nH, cFileName
 cFileName := cFilePath+'artikli.xml'
 // Kreiraj file
 if (nH:=fcreate(cFileName))==-1
-	Beep(4)
+   Beep(4)
    Msg("Greška pri kreiranju fajla: "+cFileName+" !",6)
    return
 endif
@@ -174,6 +174,48 @@ return
 function ReadArtikliXml(cFilePath)
 *{
 // aArtikli = {"id artikla", "naziv", "cijena", "poreska stopa", "odjeljenje", "jmj"}
+
+local cFileName, cXML
+
+aArtikli = {}
+cFileName := cFilePath+'artikli.xml'
+
+//cXML := MEMOREAD(cFileName)
+cXML := FILESTR(cFileName)
+
+nStart := at('<Plu', cXML)
+while (nStart>0)
+   nEnd := at('</Plu>', cXML)+6
+   cTemp := substr(cXML, nStart, (nEnd-nStart))
+
+   nS     := at('">', cTemp)+2
+   nE     := at('</Plu>', cTemp)
+   cID    := substr(cTemp, nS, nE-nS)
+   
+   nS     := at('Des="', cTemp)+5
+   nE     := at('" Price="', cTemp)
+   cName  := substr(cTemp, nS, nE-nS)
+
+   nS     := at('Price="', cTemp)+7
+   nE     := at('" Vat="', cTemp)
+   cPrice := substr(cTemp, nS, nE-nS)
+
+   nS     := at('Vat="', cTemp)+5
+   nE     := at('" Dep="', cTemp)
+   cVat   := substr(cTemp, nS, nE-nS)
+
+   nS     := at('Dep="', cTemp)+5
+   nE     := at('" Mes="', cTemp)
+   cDep   := substr(cTemp, nS, nE-nS)
+
+   nS     := at('Mes="', cTemp)+5
+   nE     := at('">', cTemp)
+   cMes   := substr(cTemp, nS, nE-nS)
+
+   AADD(aArtikli, {cID, cName, val(cPrice), cVat, cDep, cMes})
+
+   cXML := substr(cXML, nEnd)
+   nStart := at('<Plu', cXML)
 
 return aArtikli
 *}
