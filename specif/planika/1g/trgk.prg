@@ -76,7 +76,7 @@ O_POS
 
 MsgO("Azuriram dokument pologa...")
 cBrDok:=NarBrDok(gIdPos, VD_PP)
-cTimeDok:=TIME()
+cTimeDok:=SubStr(TIME(), 1, 5)
 
 // Azuriraj stavku u DOKS
 AzurDoksDokument(VD_PP, gIdPos, cBrDok, cTimeDok, dDatPol)
