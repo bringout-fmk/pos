@@ -218,7 +218,13 @@ if empty(cRoba)
 	Seek2(cIdOdj)
 else
 	Seek2(cIdOdj+cRoba)
+	// da li postoji stanje ovog artikla
+	if pos->idroba <> cRoba
+		MsgBeep("Ne postoje trazeni podaci!")
+		return
+	endif
 endif
+
 
 EOF CRET
 
