@@ -200,17 +200,15 @@ do while !eof().and. &cPosDB->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+VD_RN+dtos
   	SKIP
 enddo
 
-/*
-if VarPopPrekoOdrIzn() 
-	if cIdVrsteP=="01" .and. !IsPopPrekoOdrIznosa(nIznos)
-		// izracunaj ponovo vrijednost rabata ali bez popprekoodrizn
-		nNeplaca:=CalcArrRabat(aRabat, .t., .t., .t., .f., .t., .t.)
-		gIsPopust:=.f.
-	elseif cIdVrsteP=="01" .and. IsPopPrekoOdrIznosa(nIznos)
-		gIsPopust:=.t.
-	endif
+if gDisplay=="D"
+	Send2ComPort(CHR(10)+CHR(13))
+	Send2ComPort(CHR(10)+CHR(13))
+	Send2ComPort(CHR(30) + "UKUPAN IZNOS RN:")
+	//Send2ComPort(CHR(30))
+	Send2ComPort(CHR(22))
+	Send2ComPort(CHR(13))
+	Send2ComPort(ALLTRIM(STR(nIznos-nNeplaca, 10, 2)))
 endif
-*/
 
 // Ispisi iznos racuna velikim slovima
 PisiIznRac(nIznos-nNeplaca)
