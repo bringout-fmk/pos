@@ -1,0 +1,8 @@
+*ROBA.DBF
+A N1 N 12 2
+A N2 N 12 2
+
+
+*SIROV.DBF
+A N1 N 12 2
+A N2 N 12 2

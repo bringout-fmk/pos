@@ -1,0 +1,158 @@
+
+#include "\cl\sigma\fmk\pos\pos.ch"
+
+#include "class(y).ch"
+
+
+
+CREATE CLASS TDBPos 
+	EXPORTED:
+	method skloniSezonu	
+	method install	
+	method setgaDBFs	
+	method ostalef	
+	method obaza	
+	method kreiraj	
+	method konvZn
+
+END CLASS
+
+
+
+method skloniSezonu(cSezona,finverse,fda,fnulirati, fRS)
+
+local cScr
+save screen to cScr
+
+  if fda==NIL
+    fDA:=.f.
+  endif
+  if finverse==NIL
+    finverse:=.f.
+  endif
+  if fNulirati==NIL
+    fnulirati:=.f.
+  endif
+  if fRS==NIL
+   // mrezna radna stanica , sezona je otvorena
+   fRS:=.f.
+  endif
+if fRS // radna stanica
+  if file(ToUnix(PRIVPATH+cSezona+"\_PRIPR.DBF"))
+      // nema se sta raditi ......., pripr.dbf u sezoni postoji !
+      return
+  endif
+  aFilesK:={}
+  aFilesS:={}
+  aFilesP:={}
+endif
+
+  cls
+
+  ?
+  if finverse
+   ? "Prenos iz  sezonskih direktorija u radne podatke"
+  else
+   ? "Prenos radnih podataka u sezonske direktorije"
+  endif
+  ?
+  // privatne datoteke
+  fnul:=.f.
+  Skloni(PRIVPATH,"PARAMS.DBF",cSezona,finverse,fda,fnul)
+  Skloni(PRIVPATH,"K2C.DBF",cSezona,finverse,fda,fnul)
+  Skloni(PRIVPATH,"MJTRUR.DBF",cSezona,finverse,fda,fnul)
+
+  // radne (pomocne) datoteke
+  Skloni(PRIVPATH,"_POS.DBF",cSezona,finverse,fda,fnul)
+  Skloni(PRIVPATH,"_PRIPR.DBF", cSezona,finverse,fda,fnul)
+  Skloni(PRIVPATH,"PRIPRZ.DBF", cSezona,finverse,fda,fnul)
+  Skloni(PRIVPATH,"PRIPRG.DBF", cSezona,finverse,fda,fnul)
+  Skloni(PRIVPATH,"FMK.INI", cSezona,finverse,fda,fnul)
+
+
+  if fRS
+   // mrezna radna stanica!!! , baci samo privatne direktorije
+   ?
+   ?
+   ?
+   Beep(4)
+   ? "pritisni nesto za nastavak.."
+
+   restore screen from cScr
+   return
+  endif
+
+  // datoteke prometa
+  //
+  if fnulirati; fnul:=.t.; else; fnul:=.f.; endif  // kumulativ datoteke
+  Skloni(KUMPATH,"DOKS.DBF",cSezona,finverse,fda,fnul)
+  Skloni(KUMPATH,"POS.DBF",cSezona,finverse,fda,fnul)
+  Skloni(KUMPATH,"FMK.INI",cSezona,finverse,fda,fnul)
+
+  //sifrarnici
+  fnul:=.f.
+  Skloni(SIFPATH,"roba.dbf",cSezona,finverse,fda,fnul)
+  Skloni(SIFPATH,"roba.ftp",cSezona,finverse,fda,fnul)
+  Skloni(SIFPATH,"SIROV.dbf",cSezona,finverse,fda,fnul)
+  Skloni(SIFPATH,"SAST.dbf",cSezona,finverse,fda,fnul)
+  Skloni(SIFPATH,"STRAD.dbf",cSezona,finverse,fda,fnul)
+  Skloni(SIFPATH,"OSOB.dbf",cSezona,finverse,fda,fnul)
+  Skloni(SIFPATH,"TARIFA.dbf",cSezona,finverse,fda,fnul)
+  Skloni(SIFPATH,"VALUTE.dbf",cSezona,finverse,fda,fnul)
+  Skloni(SIFPATH,"VRSTEP.dbf",cSezona,finverse,fda,fnul)
+  Skloni(SIFPATH,"KASE.dbf",cSezona,finverse,fda,fnul)
+  Skloni(SIFPATH,"ODJ.dbf",cSezona,finverse,fda,fnul)
+  Skloni(SIFPATH,"DIO.dbf",cSezona,finverse,fda,fnul)
+  Skloni(SIFPATH,"RNGOST.dbf",cSezona,finverse,fda,fnul)
+  Skloni(SIFPATH,"UREDJ.dbf",cSezona,finverse,fda,fnul)
+  Skloni(SIFPATH,"FMK.INI",cSezona,finverse,fda,fnul)
+
+  ?
+  ?
+  ?
+  Beep(4)
+  ? "pritisni nesto za nastavak.."
+
+  restore screen from cScr
+return
+
+
+method setgaDBFs()
+PUBLIC gaDBFs:={ ;
+{  F_DOKS      , "DOKS", P_KUMPATH },;
+{  F_POS       , "POS", P_KUMPATH },;
+{  F_RNGPLA    , "RNGPLA", P_KUMPATH },;
+{  F__POS      , "_POS", P_PRIVPATH },;
+{  F__PRIPR    , "_PRIPR", P_PRIVPATH },;
+{  F_PRIPRZ    , "PRIPRZ", P_PRIVPATH },;
+{  F_PRIPRG    , "PRIPRG", P_PRIVPATH },;
+{  F_K2C       , "K2C", P_PRIVPATH},;
+{  F_MJTRUR    , "MJTRUR", P_SIFPATH },;
+{  F_ROBAIZ    , "ROBAIZ", P_SIFPATH },;
+{  F_RAZDR     , "RAZDR",  P_SIFPATH },;
+{  F_ROBA      , "ROBA",   P_SIFPATH },;
+{  F_SIROV     , "SIROV",  P_SIFPATH },;
+{  F_SAST      , "SAST",   P_SIFPATH },;
+{  F_STRAD     , "STRAD",  P_SIFPATH },;
+{  F_OSOB      , "OSOB",   P_SIFPATH },;
+{  F_TARIFA    , "TARIFA", P_SIFPATH },;
+{  F_VALUTE    , "VALUTE", P_SIFPATH },;
+{  F_VRSTEP    , "VRSTEP", P_SIFPATH },;
+{  F_KASE      , "KASE",   P_SIFPATH },;
+{  F_ODJ       , "ODJ",    P_SIFPATH },;
+{  F_UREDJ     , "UREDJ",  P_SIFPATH },;
+{  F_RNGOST    , "RNGOST", P_SIFPATH },;
+{  F_DIO       , "DIO",    P_SIFPATH },;
+{  F_MARS      , "MARS",   P_SIFPATH },;
+{  F_PROMVP    , "PROMVP", P_KUMPATH },;
+{  F_DOKS_S    , "DOKS_S", 0 , "DOKS" },;
+{  F_POS_S     , "POS_S",  0 , "POS" },;
+{  F_DOKS_K    , "DOKS_K", 0 , "DOKS" },;
+{  F_POS_K     , "POS_K",  0 , "POS" },;
+{  F_DOKS_SEZ  , "DOKS_SEZ", 0 , "DOKS" },;
+{  F_POS_SEZ   , "POS_SEZ" , 0 , "POS"  };
+}
+return
+
+#include "install.prg"
+

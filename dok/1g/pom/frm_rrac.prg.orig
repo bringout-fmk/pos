@@ -1,0 +1,80 @@
+
+#include "\cl\sigma\fmk\pos\pos.ch"
+*
+*
+*   Daje pregled svih otvorenih racuna radniku , kada
+*   ovaj zeli unijeti narudzbu
+
+FUNCTION P_RadniRac (cBroj)
+cBroj := IIF (cBroj==NIL, SPACE (LEN (_POS->BrDok)), cBroj)
+cBroj := PADL (ALLTRIM (cBroj), LEN (cBroj))
+SELECT _POS
+Seek2 (gIdPos+VD_RN+dtos(gDatum)+cBroj)
+// prvo provjeri da ne pokusa uzeti tudji
+IF FOUND() .and. M1<>"Z" .and. IdRadnik!=gIdRadnik
+  RETURN (.T.)
+ENDIF
+ImeKol:={ { "Datum",       {|| Datum }, },;
+          { "Broj",        {|| BrDok }, },;
+          { "Sto",         {|| Sto   }, },;
+          { "Roba",        {|| Left (RobaNaz, 30) }, },;
+          { "Kolicina",    {|| STR (Kolicina, 8, 2) }, },;
+          { "Cijena",      {|| STR (Cijena, 8, 2) }, },;
+          { "Iznos stavke",{|| STR (Kolicina*Cijena, 12, 2) }, },;
+          { "G.T.",        {|| IIF (GT=="1"," NE "," DA ")},};
+        }
+#IFDEF HOPS
+  Kol:={1, 2, 3, 4, 5, 6, 7,8}
+#ELSE
+  Kol:={1, 3, 4, 5, 6, 7 }
+#ENDIF
+cFilt1:="IDRADNIK=="+cm2str(gIdRadnik)+".and.IdVd=='42'.and.(M1<>'Z')"
+SET FILTER TO &cFilt1
+GO TOP
+Skip 0
+ObjDBedit ( , 20, 77, {|| P_RRproc () }, ;
+            "  OTVORENI RADNI RACUNI  ", "", .F., ;
+            "<Enter> - Odabir         </> - Tekuci iznos")
+SET FILTER TO
+
+IF LASTKEY () == K_ESC
+   RETURN (.F.)
+ENDIF
+IF Empty (_POS->BrDok)
+  Return (.F.)
+EndIF
+cBroj := _POS->BrDok
+RETURN (.T.)
+
+
+FUNCTION P_RRproc()
+
+// M->Ch je iz OBJDB
+IF M->Ch == 0
+  RETURN (DE_CONT)
+ENDIF
+IF LASTKEY () == K_ESC .OR. LASTKEY () == K_ENTER
+  RETURN (DE_ABORT)
+ENDIF
+IF CHR (LASTKEY()) == "/"
+  Msg ("Tekuci iznos racuna je: " + ;
+       STR (RR_iznos(_POS->IdPos, _POS->BrDok), 10, 2), 20)
+ENDIF
+RETURN (DE_CONT)
+
+
+FUNCTION RR_Iznos (cIdPos, cBrDok)
+*
+* - koristi gDatum
+
+SELECT _POS
+nTekRec := RECNO ()
+nIznos := 0
+Seek2 (cIdPos+VD_RN+dtos(gdatum)+cBrDok)
+DO WHILE !EOF() .and. _POS->(IdPos+IdVd+dtos(datum)+BrDok)==(cIdPos+VD_RN+dtos(gDatum)+cBrDok)
+  nIznos += _POS->(Kolicina * Cijena)
+  SKIP
+ENDDO
+GO nTekRec
+RETURN (nIznos)
+

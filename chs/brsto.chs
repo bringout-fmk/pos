@@ -1,0 +1,3 @@
+*DOKS.DBF
+A ZAKLJUCEN C 1 0
+

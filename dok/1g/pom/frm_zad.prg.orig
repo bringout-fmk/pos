@@ -1,0 +1,449 @@
+#include "\cl\sigma\fmk\pos\pos.ch"
+
+*
+*  cIdVD -  16 ulaz
+*           95 otpis
+*           IN inventura
+*           NI nivelacija
+*           96 razduzenje sirovina - ako se radi o proizvodnji
+*           PD - predispozicija
+*
+*  Zaduzenje odjeljenje/punktova robama/sirovinama
+*	     lForsSir .T. - radi se o forsiranom zaduzenju odjeljenja
+*                           sirovinama
+PROCEDURE Zaduzenje
+PARAMETERS cIdVd
+
+LOCAL   cOdg, PrevDn, PrevUp, nSign
+
+
+if gSamoProdaja=="D"
+   MsgBeep("Ne mozete vrsiti zaduzenja !")
+   return
+endif
+
+PRIVATE ImeKol := {}, Kol := {}, oBrowse, ;
+      cBrojZad, cIdOdj, cRSdbf, bRSblok, cIdVd, cRobSir := " ",;
+      dDatRada := DATE()
+
+// koristim ga kod sirovinskog zaduzenja odjeljenja
+// ma kako se ono vodilo
+cIdVd := IIF (cIdVd==NIL, "16", cIdVd)
+// lForsSir := IIF (lForsSir==NIL, .F., .T.)
+
+ImeKol := { { "Sifra",    {|| idroba},      "idroba" }, ;
+            { "Naziv",    {|| RobaNaz  },   "RobaNaz" },;
+            { "JMJ",      {|| JMJ},         "JMJ"       },;
+            { "Kolicina", {|| kolicina   }, "Kolicina"  },;
+            { "Cijena",   {|| Cijena},      "Cijena"    } ;
+          }
+Kol := {1, 2, 3, 4, 5}
+
+OpenZad()
+
+
+Box (, 6, 60)
+
+cIdOdj    := SPACE (2)
+cIdDio    := SPACE (2)
+cRazlog   := SPACE (40)
+cIdOdj2   := SPACE(2)
+cIdPos:=gIdPos
+
+SET CURSOR ON
+
+if gVrstaRS=="S"
+ @ m_x+1,m_y+3 SAY "Prodajno mjesto:" GET cIdPos pict "@!" valid cIdPos<="X " .and. !empty(cIdPos)
+endif
+
+if gvodiodj=="D"
+  @ m_x+3,m_y+3 SAY   " Odjeljenje:" GET cIdOdj;
+                  VALID P_Odj (@cIdOdj, 3, 28)
+  if cIdVD=="PD"
+    @ m_x+4,m_y+3 SAY " Prenos na :" GET cIdOdj2;
+                       VALID P_Odj (@cIdOdj2, 4, 28)
+  endif
+endif
+
+#IFDEF HOPS
+  IF gPostDO=="D"
+    @ m_x+5,m_y+3 SAY "Dio objekta:" GET cIdDio;
+                      VALID P_Dio (@cIdDio, 3, 28)
+  EndIF
+#ENDIF
+@ m_x+6,m_y+3 SAY " Datum dok:" GET dDatRada PICT "@D" ;
+                    VALID dDatRada<=DATE()
+READ
+ESC_BCR
+BoxC()
+
+SELECT ODJ
+cRSDbf:="ROBA"
+IF ODJ->Zaduzuje == "S" .or. cRobSir=="S"
+  cRSdbf := "SIROV"
+  bRSblok := {|x,y| P_Sirov (@_IdRoba, x, y)}
+  cUI_I  := S_I ; cUI_U  := S_U
+ELSE
+  cRSdbf := "ROBA"
+  bRSblok := {|x,y| Barkod(@_IdRoba), P_RobaPOS (@_IdRoba, x, y)}
+  cUI_I  := R_I ; cUI_U  := R_U
+ENDIF
+
+SELECT PRIPRZ
+IF RecCount2 () > 0
+  //ako je sta bilo ostalo, spasi i oslobodi pripremu
+  SELECT _POS
+  AppFrom ("PRIPRZ", .F.)
+  SELECT PRIPRZ
+EndIF
+
+Zapp()
+__dbPack()
+
+// vrati ili pobrisi ono sto je poceo raditi ili prekini s radom
+IF !VratiPripr (cIdVd, gIdRadnik, cIdOdj, cIdDio)
+  CLOSERET
+EndIF
+
+fSadAz:=.f.
+private cBrDok:=NIL
+if Kalk2Pos (@cIdVd, @cBrDok ,cRsDBF)
+  IF priprz->(RecCount2 ()) > 0
+    if cBrDok<>NIL .and. Pitanje(,"Odstampati prenesni dokument na stampac ?","D")=="D"
+        if cidvd $ "16#96#95"
+          StampZaduz (cIdVd, cBrDok)
+        elseif cIdvd $ "IN#NI"
+          StampaInv()
+        endif
+
+        if Pitanje(,"Ako je sve u redu, zelite li staviti na stanje dokument ?","N")=="D"
+          fSadAz:=.t.
+        endif
+    endif
+  endif
+endif
+
+if cIdVD == "NI"
+  // cidodj, ciddio - prosljedjujem ove priv varijable u InventNivel
+  close all
+  InventNivel (.f.,.t.,fSadaz,dDatRada)  // drugi parametar - poziv iz zaduzenja
+                                // treci odmah podatke azurirati
+  return
+elseif cIdVD == "IN"
+  close all
+  InventNivel (.t.,.t.,fSadAz,dDatRada)
+  return
+endif
+
+select (F_PRIPRZ); if !used(); return; endif
+
+if !fSadAz
+ // browsanje dokumenta ...........
+SELECT PRIPRZ; SET ORDER TO
+go  top
+
+Box (, 20, 77,, {"<*> - Ispravka stavke ", "Storno - negativna kolicina"})
+
+@ m_x,m_y+4 SAY PADC ( "PRIPREMA "+;
+     IIF (cIdVd=="16","ZADUZENJA",iif(cIdVD=="PD","PREDISPOZICIJA","OTPISA"))+" NA ODJELJENJE " +;
+                       ALLTRIM (ODJ->Naz)+;
+                       IIF (!Empty(cIdDio), "-"+DIO->Naz,""), 70) ;
+                COLOR Invert
+
+oBrowse := FormBrowse ( m_x+6, m_y+1, m_x+19, m_y+77, ImeKol, Kol, ;
+                    { "Í", "Ä", "³"}, 0)
+oBrowse:autolite := .F.
+
+PrevDn := SETKEY (K_PGDN, {|| DummyProc()})
+PrevUp := SETKEY (K_PGUP, {|| DummyProc()})
+PostaviSpec ()
+
+SELECT PRIPRZ
+Scatter()
+_IdPos     := cIdPos
+_IdVrsteP  := cIdOdj2   // vrste placanja su iskoristene za idodj2
+
+_IdOdj     := cIdOdj  ; _IdDio     := cIdDio
+_IdVd      := cIdVd   ; _BrDok     := SPACE (LEN (DOKS->BrDok))
+_Datum     := dDatRada  ; _Smjena    := gSmjena
+_IdRadnik  := gIdRadnik
+_IdCijena  := "1"                   // ne interesuje me set cijena
+_Prebacen  := OBR_NIJE
+_MU_I      := cUI_U                 // ulaz
+IF cIdVd==VD_OTP
+  _MU_I := cUI_I                    // kad je otpis imam izlaz
+ENDIF
+
+SET CURSOR ON
+
+DO WHILE .T.
+  WHILE !oBrowse:Stabilize() .AND. ((Ch := INKEY ()) == 0)
+  ENDDO
+
+  _idroba   := SPACE (LEN (_idroba))
+  _Kolicina := 0
+
+  _cijena   := 0
+  _ncijena  := 0
+  _marza2   := 0
+  _TMarza2  := "%"
+  fMarza    := " "
+
+  @ m_x+2,m_y+25 SAY SPACE (40)
+
+  cDSFINI:=IzFMKINI('SifRoba','DuzSifra','10')
+
+  @ m_x+2,m_y+5 SAY " Artikal:" GET _idroba pict "@!S"+cDSFINI ;
+                    when {|| _idroba:=padr(_idroba,VAL(cDSFINI)),.t.}  ;
+                    VALID EVAL (bRSblok, 2, 25);
+                          .AND. (gDupliArt=="D" .or. ZadProvDuple (_idroba))
+  @ m_x+4,m_y+5 SAY "Kolicina:" GET _Kolicina PICTURE "999999.999" ;
+                    WHEN {|| OsvPrikaz(),ShowGets(),.t.} ;
+                    VALID ZadKolOK (_Kolicina)
+
+
+  IF gZadCij=="D"
+    @ m_x+ 3,m_y+35  SAY "N.cijena:" GET _ncijena PICT "99999.9999"
+    @ m_x+ 3,m_y+56  SAY "Marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
+    @ m_x+ 3,col()+2 GET _Marza2 PICTURE "9999.99"
+
+    IF IzFMKINI("POREZI","PPUgostKaoPPU","N")=="D"
+      @ m_x+ 3,col()+1 GET fMarza pict "@!" VALID {|| _marza2:=iif(_cijena<>0 .and. empty(fMarza), 0, _marza2),;
+                               Marza2(fmarza),;
+                               _cijena:=iif(_cijena==0,_cijena:=_ncijena*(1+TARIFA->Opp/100)*(1+TARIFA->PPP/100+tarifa->zpp/100),_cijena),;
+                               fmarza:=" ",;
+                               .t.}
+    ELSE
+      @ m_x+ 3,col()+1 GET fMarza pict "@!" VALID {|| _marza2:=iif(_cijena<>0 .and. empty(fMarza), 0, _marza2),;
+                               Marza2(fmarza),;
+                               _cijena:=iif(_cijena==0,_cijena:=_ncijena*(tarifa->zpp/100+(1+TARIFA->Opp/100)*(1+TARIFA->PPP/100)),_cijena),;
+                               fmarza:=" ",;
+                               .t.}
+    ENDIF
+    @ m_x+ 4,m_y+35 SAY "MPC SA POREZOM:" GET _cijena  PICT "99999.999" ;
+                valid {|| _marza2:=0, Marza2(), ShowGets(), .t.}
+  ENDIF
+
+
+  READ
+  IF LASTKEY () = K_ESC
+    EXIT
+  ELSE
+    StUSif()
+    select PRIPRZ
+    append blank
+    SELECT (cRSdbf)
+    _RobaNaz   := _field->Naz      ; _Jmj       := _field->Jmj
+    _IdTarifa  := _field->IdTarifa ; _Cijena    := IF( EMPTY(_cijena) , _field->Cijena1 , _cijena )
+    SELECT PRIPRZ
+    Gather() // PRIPRZ
+    // reci mu da ide na kraj
+    oBrowse:goBottom()
+    oBrowse:refreshAll()
+    oBrowse:dehilite()
+  ENDIF
+ENDDO
+SETKEY (K_PGUP, PrevUp)
+SETKEY (K_PGDN, PrevDn)
+SkiniSpec ()
+
+// kraj browsanja
+BoxC()
+endif // fSadAz
+
+//parametri croba
+fCroba:=(IzFmkIni('CROBA','GledajTops','N',KUMPATH)=='D')
+
+if fCROBA
+  nH:=0
+  // zapocni sql
+  cSQLFile:='c:\sigma\sql'
+  ASQLCRoba(@nH,cSQLFile)
+endif
+
+SELECT PRIPRZ      // ZADRP
+IF RecCount2 () > 0
+  SELECT DOKS
+  set order to 1
+  cBrDok := NarBrDok (cIdPos, iif(cIdvd=="PD","16",cIdVd)," ",dDatRada)
+  SELECT PRIPRZ
+  Beep (4)
+  if !fSadAz .and. Pitanje(,"Zelite li odstampati dokument ?","D")=="D"
+        StampZaduz (cIdVd, cBrDok)
+  endif
+  IF fSadAz .or. Pitanje (,"Zelite li staviti dokument na stanje? (D/N)", "D")=="D"
+    AzurPriprZ(cBrDok, cIdVD)
+  ELSE
+    SELECT _POS
+    AppFrom ("PRIPRZ", .F.)
+    SELECT PRIPRZ
+    Zapp()
+    __dbPack()
+    MsgBeep ("Dokument nije stavljen na stanje!#"+;
+             "Ostavljen je za doradu!", 20)
+  ENDIF
+ENDIF
+
+
+CLOSERET
+
+
+PROCEDURE OsvPrikaz()
+  IF gZadCij=="D"
+    nArr:=SELECT()
+    SELECT (F_TARIFA)
+    IF !USED(); O_TARIFA; ENDIF
+    SEEK ROBA->idtarifa; SELECT (nArr)
+    @ m_x+ 5,  m_y+2 SAY "PPP (%):"; @ row(),col()+2 SAY TARIFA->OPP PICTURE "99.99"
+    @ m_x+ 5,col()+8 SAY "PPU (%):"; @ row(),col()+2 SAY TARIFA->PPP PICTURE "99.99"
+    @ m_x+ 5,col()+8 SAY "PP (%):" ; @ row(),col()+2 SAY TARIFA->ZPP PICTURE "99.99"
+    _cijena := &("ROBA->cijena"+gIdCijena)
+  ENDIF
+RETURN
+
+PROCEDURE StUSif()
+  IF gZadCij=="D"
+    IF _cijena <> &("ROBA->cijena"+gIdCijena) .and. Pitanje(,"Staviti u sifrarnik novu cijenu? (D/N)","D")=="D"
+      nArr:=SELECT()
+      SELECT (F_ROBA)
+      Scatter("s"); &("scijena"+gIdCijena) := _cijena; Gather("s")
+      sql_azur(.t.)
+      GathSQL("s")
+      SELECT (nArr)
+    ENDIF
+  ENDIF
+RETURN
+
+
+
+STATIC FUNCTION PostaviSpec ()
+  bPrevZv   := SETKEY (ASC ("*"), {|| IspraviZaduzenje()})
+RETURN .T.
+
+
+STATIC FUNCTION SkiniSpec ()
+  SETKEY (ASC ("*"), {|| bPrevZv})
+RETURN .F.
+
+
+
+FUNCTION ZadKolOK (nKol)
+  IF LASTKEY () = K_UP
+      RETURN .T.
+  ENDIF
+  IF nKol = 0
+     MsgBeep ("Kolicina mora biti razlicita od nule!#Ponovite unos!", 20)
+     RETURN (.F.)
+  ENDIF
+RETURN (.T.)
+
+
+STATIC FUNCTION ZadProvDuple (cSif)
+*
+*       Provjerava da li se unijeta sifra vec pojavljuje na zaduzenju
+
+LOCAL lFlag := .T.
+  SELECT PRIPRZ
+  SET ORDER TO 1
+  nPrevRec := RECNO()
+  Seek cSif
+  IF FOUND()
+    MsgBeep ("Na zaduzenju se vec nalazi isti artikal!#" + ;
+             "U slucaju potrebe ispravite stavku zaduzenja!", 20)
+    lFlag := .F.
+  ENDIF
+  SET ORDER TO
+  GO (nPrevRec)
+RETURN (lFlag)
+
+*
+*   IspraviZaduzenje ()
+*      Ispravka zaduzenja od strane korisnika
+*      Koristi privatnu varijablu oTB (browse objekt) iz ZADUZENJE
+
+PROCEDURE IspraviZaduzenje ()
+
+LOCAL cGetId, nGetKol, aConds, aProcs
+  SkiniSpec ()
+  cGetId  := _idroba
+  nGetKol := _Kolicina
+
+  OpcTipke ({"<Enter>-Ispravi stavku", "<B>-Brisi stavku", ;
+             "<Esc>-Zavrsi"})
+
+  oBrowse:autolite := .T.
+  oBrowse:configure()
+  aConds := { {|Ch| Ch == ASC ("b") .OR. Ch == ASC ("B")}, ;
+              {|Ch| Ch == K_ENTER} ;
+            }
+  aProcs := { {|| BrisStavZaduz ()}, {|| EditStavZaduz ()}}
+  ShowBrowse (oBrowse, aConds, aProcs)
+  oBrowse:autolite := .F.
+  oBrowse:dehilite()
+  oBrowse:stabilize()
+
+  // vrati stari meni
+  Prozor0()
+  // vrati sto je bilo u GET-u
+  _idroba := cGetId
+  _Kolicina := nGetKol
+  PostaviSpec()
+RETURN
+
+*   BrisStavZaduz ()
+*       Brise stavku zaduzenja
+*       Koristi privatni parametar OBROWSE iz SHOWBROWSE
+*
+
+
+FUNCTION BrisStavZaduz ()
+  SELECT PRIPRZ
+  IF RecCount2 () == 0
+     MsgBeep ("Zaduzenje nema nijednu stavku!#Brisanje nije moguce!", 20)
+     RETURN (DE_CONT)
+  ENDIF
+  Beep (2)
+  DELETE
+  oBrowse:refreshAll()
+RETURN (DE_CONT)
+
+*
+*      Vrsi editovanje stavke zaduzenja, i to samo artikla ili samo kolicine
+*      Koristi privatni varijablu OBROWSE iz SHOWBROWSE
+
+FUNCTION EditStavZaduz ()
+
+LOCAL PrevRoba, nARTKOL := 2, nKOLKOL := 4
+PRIVATE GetList := {}
+  IF RecCount2 () == 0
+     MsgBeep ("Zaduzenje nema nijednu stavku!#Ispravka nije moguca!", 20)
+     RETURN (DE_CONT)
+  ENDIF
+  //
+  // uradi edit samo vrijednosti u tekucoj koloni
+  //
+  PrevRoba  := _IdRoba := PRIPRZ->idroba
+  _Kolicina := PRIPRZ->Kolicina
+  Box (, 3, 60)
+  @ m_x+1,m_y+3 SAY "Novi artikal:" GET _idroba;
+                    PICTURE "@K" ;
+                    VALID EVAL (bRSblok, 1, 27) .AND. ;
+                          (_IdRoba==PrevRoba.or.ZadProvDuple (_idroba))
+  @ m_x+2,m_y+3 SAY "Nova kolicina:" GET _Kolicina;
+                    VALID ZadKolOK (_Kolicina)
+  READ
+  IF LASTKEY () <> K_ESC
+    IF _idroba <> PrevRoba
+      // priprz
+      REPLACE RobaNaz WITH &cRSdbf.->Naz, ;
+              Jmj     WITH &cRSdbf.->Jmj, ;
+              Cijena  WITH &cRSdbf.->Cijena, ;
+              IdRoba  WITH _IdRoba
+    EndIF
+    // priprz
+    REPLACE Kolicina WITH _Kolicina
+  ENDIF
+  BoxC()
+  oBrowse:refreshCurrent()
+RETURN (DE_CONT)
+
