@@ -57,6 +57,7 @@ private cNula:="D"
 private dDat:=gDatum
 private dDatOd:=gDatum-30
 private cSpec:="D"
+private cVrstP:=SPACE(2)
 altd()
 // generisanje stanja partnera
 if IsTigra()
@@ -70,6 +71,7 @@ do while .t.
 	  {"Prikaz partnera sa stanjem 0 (D/N)", "cNula","cNula$'DN'","@!",}, ;
 	  {"Prikazati stanje od dana ", "dDatOd",".t.",,},;
 	  {"Prikazati stanje do dana ", "dDat",".t.",,},;
+	  {"Vrsta placanja (prazno-sve) ", "cVrstP",".t.",,},;
 	  {"Prikazati specifikaciju", "cSpec","cSpec$'DN'","@!",} },11,5,19,74,'USLOVI ZA IZVJESTAJ "STANJE PARTNERA"',"B1")
 		CLOSERET
 	else
@@ -99,14 +101,14 @@ if gVrstaRS=="K"
 	? SPACE(4)
 endif
 
-?? PADR("Dugovanje",10), PADR("Placeno",10),"   STANJE    "
+?? PADR("Dugovanje",12), PADR("Placeno",12),"   STANJE    "
 ? REPLICATE("-",39)+" "
 
 if gVrstaRS=="K"
 	? SPACE(4)
 endif
 
-?? REPL("-",10), REPL("-",10), REPL("-",14)
+?? REPL("-",12), REPL("-",12), REPL("-",14)
 
 nSumaSt:=0
 nSumaNije:=0
@@ -132,6 +134,7 @@ do while !eof()
 		loop
 	endif
 	
+	
 	nPrviRec:=RECNO()
 	fPisi:=.f.
 	nPlacJest:=0
@@ -145,6 +148,13 @@ do while !eof()
 			loop
 		endif
 		
+		if !EMPTY(cVrstP)
+			if (DOKS->IdVrsteP <> cVrstP)
+				skip
+				loop
+			endif
+		endif
+		
 		SELECT POS
 		seek DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
 		nIznos:=0
@@ -152,7 +162,7 @@ do while !eof()
 		nDuguje:=0
 		nPotrazuje:=0
 		do while !eof().and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
-			
+			altd()	
 			if doks->IdVrsteP=="01"
 				nPom:=pos->kolicina*pos->cijena*iif(pos->idvd=="00",-1,1)
 				//placanje gotovinom povecava promet na obje strane
@@ -181,7 +191,7 @@ do while !eof()
 		if gVrstaRS=="K"
 			? SPACE(4)
 		endif
-		?? STR(nPlacNije,10,2), STR(nPlacJest,10,2)+" "
+		?? STR(nPlacNije,12,2), STR(nPlacJest,12,2)+" "
 		?? STR(nStanje,12,2)
 		nSumaSt+=nStanje
 		fPisi:=.t.
@@ -204,6 +214,13 @@ do while !eof()
 				loop
 			endif
 			
+			if !EMPTY(cVrstP)
+				if (DOKS->IdVrsteP <> cVrstP)
+					skip
+					loop
+				endif
+			endif
+		
 			SELECT POS
 			seek DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
 			nDuguje:=0
@@ -232,7 +249,7 @@ do while !eof()
 			? ALLTRIM(STR(nBrojacStavki)) + " " + PADL(doks->idvd,4)+" "+PADR(ALLTRIM(DOKS->IdPos)+"-"+ALLTRIM(DOKS->BrDok),9), FormDat1(DOKS->Datum)
 			++ nBrojacStavki
 			?? " "+doks->IdVrsteP+"       "
-			?? STR(nDuguje, 10, 2), STR(nPotrazuje, 10, 2)
+			?? STR(nDuguje, 12, 2), STR(nPotrazuje, 12, 2)
 			skip
 		enddo
 		?
