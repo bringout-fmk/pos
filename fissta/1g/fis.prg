@@ -1190,20 +1190,30 @@ return bRptOk
 function FormRptDnevni()
 *{
 
+// provjeri prvo da li uopste postoji promet na dan DATE()
+if !PostojiDokument("42", DATE())
+	MsgBeep("Za dan " + DToS(DATE()) + " nema racuna#Izvjestaj nije moguc.")
+	return
+endif
+
+// provjeri da li je izvjestaj vec radjen
 if ReadLastFisRpt("1", DATE())
 	MsgBeep("Dnevni izvjestaj vec formiran!#Prekidam operaciju.")
 	return
 endif
 
+// postavi konacni upit
 if Pitanje(,"Formirati dnevni izvjestaj (D/N)?", "D") == "N"
 	return
 endif
 
+// stampaj izvjestaj
 if !FisRptDnevni()
 	MsgBeep("Greska pri formiranju dnevnog izvjestaja")
 	return
 endif
 
+// evidentiraj izvjestaj
 WriteLastFisRpt("1", DATE(), TIME())
 
 return
@@ -1217,20 +1227,30 @@ return
 function FormRptPeriod()
 *{
 
+// provjeri prvo da li uopste postoji promet na dan DATE()
+if !PostojiDokument("42", DATE())
+	MsgBeep("Za dan " + DToS(DATE()) + " nema racuna#Izvjestaj nije moguc.")
+	return
+endif
+
+// provjeri da li je izvjestaj vec formiran
 if ReadLastFisRpt("2", DATE())
 	MsgBeep("Izvjestaj za period vec formiran!#Prekidam operaciju.")
 	return
 endif
 
+// postavi konacan upit
 if Pitanje(,"Formirati izvjestaj za period (D/N)?", "D") == "N"
 	return
 endif
 
+// stampaj izvjestaj
 if !FisRptPeriod()
 	MsgBeep("Greska pri formiranju izvjestaja za period")
 	return
 endif
 
+// evidentiraj izvjestaj
 WriteLastFisRpt("2", DATE(), TIME())
 
 return
