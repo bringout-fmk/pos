@@ -272,6 +272,8 @@ do case
 				StDokGP()
 			case DOKS->IdVd==VD_PP
 				StDokPP()
+			case DOKS->IdVd==VD_ROP // reklamacija ostali podaci
+				StDokROP(.t.)
       		endcase
     	Case Ch==Asc("T").or.Ch==Asc("t")
       		select doks

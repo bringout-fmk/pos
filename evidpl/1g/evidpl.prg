@@ -228,7 +228,9 @@ Sql_Append()
 SmReplace("idvd", cIdVd)
 SmReplace("idpos", cIdPos)
 SmReplace("brdok", cBrDok)
-SmReplace("vrijeme", cTimeDok)
+if (cTimeDok <> nil)
+	SmReplace("vrijeme", cTimeDok)
+endif
 SmReplace("datum", dDateDok)
 
 return

@@ -268,6 +268,10 @@ EndIF
  ?
  ? cLM
 
+ if (IsPlanika() .and. "REKL" $ cNazDok)
+ 	StDokROP()
+ endif
+
  if gModul=="TOPS"
    RekTarife(aTarife)
  endif

@@ -428,8 +428,8 @@
 #endif
 
 
-#define D_PO_VERZIJA '1.w.1.2.29'
-#define D_PO_PERIOD  '09.97-26.02.05'
+#define D_PO_VERZIJA '1.w.1.2.30'
+#define D_PO_PERIOD  '09.97-28.02.05'
 
 #define SC_HEADER
 
@@ -472,6 +472,7 @@
 #define VD_SK        "91"       // dokument sindikalni kredit
 #define VD_GP        "92"       // dokument garatno pismo
 #define VD_PP        "88"       // dokument polog pazara
+#define VD_ROP       "99"       // reklamacije ostali podaci
 
 #define DOK_ULAZA "00#16"
 #define DOK_IZLAZA "42#01#96#98"

@@ -102,6 +102,13 @@ private cRobSir:=" "
 private dDatRada:=DATE()
 private cBrDok:=nil
 
+// dodatni podaci o reklamaciji
+if (IsPlanika() .and. cIdVd == VD_REK)
+	private cRekOp1
+	private cRekOp2
+	private cRekOp3
+endif
+
 // koristim ga kod sirovinskog zaduzenja odjeljenja
 // ma kako se ono vodilo
 
@@ -272,8 +279,8 @@ if !fSadAz
 
 		@ m_x+2,m_y+5 SAY " Artikal:" GET _idroba pict "@!S"+cDSFINI when {|| _idroba:=padr(_idroba,VAL(cDSFINI)),.t.} VALID EVAL (bRSblok, 2, 25).and.(gDupliArt=="D" .or. ZadProvDuple(_idroba))
 		@ m_x+4,m_y+5 SAY "Kolicina:" GET _Kolicina PICTURE "999999.999" WHEN{|| OsvPrikaz(),ShowGets(),.t.} VALID ZadKolOK(_Kolicina)
-
-
+		
+		
   		if gZadCij=="D"
     			@ m_x+ 3,m_y+35  SAY "N.cijena:" GET _ncijena PICT "99999.9999"
     			@ m_x+ 3,m_y+56  SAY "Marza:" GET _TMarza2  VALID _Tmarza2 $ "%AU" PICTURE "@!"
@@ -334,12 +341,18 @@ if RecCount2()>0
   	cBrDok:=NarBrDok(cIdPos,iif(cIdvd=="PD","16",cIdVd)," ",dDatRada)
   	SELECT PRIPRZ
   	Beep(4)
-  	if !fSadAz.and.Pitanje(,"Zelite li odstampati dokument ?","D")=="D"
-        	StampZaduz(cIdVd,cBrDok)
+  	// reklamacije dodatni opis
+	if (IsPlanika() .and. cIdVd==VD_REK)
+		RekOpis()
+	endif
+	if !fSadAz.and.Pitanje(,"Zelite li odstampati dokument ?","D")=="D"
+        	StampZaduz(cIdVd, cBrDok)
   	endif
   	if fSadAz.or.Pitanje(,"Zelite li staviti dokument na stanje? (D/N)", "D")=="D"
-    		AzurPriprZ(cBrDok,cIdVD)
-  	else
+    		AzurPriprZ(cBrDok, cIdVD)
+		// azuriraj i dodatne podatke o reklamaciji
+  		AzurRekOpis(cBrDok, cIdVD)
+	else
     		SELECT _POS
     		AppFrom("PRIPRZ",.f.)
     		SELECT PRIPRZ
@@ -576,3 +589,4 @@ endcase
 
 return
 *}
+
