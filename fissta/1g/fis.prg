@@ -768,7 +768,7 @@ do case
 		cCode:="0"
 	// 1 - por 20%
 	case cIdTarifa=="1"
-		cCode:="3"
+		cCode:="2"
 endcase
 
 return cCode
