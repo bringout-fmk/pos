@@ -406,7 +406,9 @@ if gStariObrPor
 	endif
 
 else // stari obracun poreza
-	POSRekapTar(aRekPor)
+	if gPoreziRaster=="D"
+		POSRekapTar(aRekPor)
+	endif
 endif
 
 RacFuter(cIdRadnik, cSmjena)
