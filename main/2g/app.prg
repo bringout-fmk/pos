@@ -454,7 +454,8 @@ if (mpar37("/TEST", goModul))
 	if (self:cP5 == "/FIS")
 		? "Test cases: fiskalna stampa"
 		Fis_test_main()
-		goModul:quit()
+		quit	
+		//goModul:quit()
 	endif
 endif
 
@@ -814,6 +815,12 @@ public glRetroakt
 
 glRetroakt:=(IzFmkIni("POS","Retroaktivno","N",KUMPATH)=="D")
 
+public gFisCTTPath
+gFisCTTPath:=(IzFmkIni("FISSTA","FisCTTPath","c:\fisctt",EXEPATH))
+
+public gFisTimeOut
+gFisTimeOut:=VAL((IzFmkIni("FISSTA","FisTimeOut","5",EXEPATH)))
+
 gPosSirovine:="D"
 gPosKalk:="D"
 gPosPrimPak="D"
@@ -857,7 +864,6 @@ if (!self:oDatabase:lAdmin)
 endif
 
 SetBoje(gVrstaRS)
-
 
 return
 *}
