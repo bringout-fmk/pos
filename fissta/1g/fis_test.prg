@@ -490,6 +490,28 @@ return
 *}
 
 
+/*! \fn TestRptDn2()
+ *  \brief Test fisklanog dnevnog izvjestaja sa evidentiranjem posljednjeg formiranja
+ */
+function TestRptDn2()
+*{
+
+CheckFisCTTStarted(.t.)
+
+if !ReadLastFisRpt("1", DATE())
+	if FisRptDnevni()
+		WriteLastFisRpt("1", DATE(), TIME())
+	else
+		MsgBeep("Greska pri formiranju izvjestaja...")
+	endif
+else
+	MsgBeep("Dnevni izvjestaj vec formiran...")
+endif
+
+return
+*}
+
+
 /*! \fn TestFisPeriod1()
  *  \brief Test stampe fisk.izvjestaja za period
  */

@@ -63,6 +63,9 @@ AADD(opcexe, {|| TestFisDnevni1() })
 AADD(opc, "3. fiskalni izvjestaj za period   ")
 AADD(opcexe, {|| TestFisPeriod1() })
 
+AADD(opc, "4. fiskalni dnevni izvjestaj EVID ")
+AADD(opcexe, {|| TestRptDn2() })
+
 Menu_Sc("fts")
 
 return

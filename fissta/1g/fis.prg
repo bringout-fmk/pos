@@ -1078,7 +1078,7 @@ function FisRptDnevni()
 
 MsgO("Formiranje dnevnog izvjestaja u toku...")
 
-bErr:=.f.
+bRptOk:=.t.
 
 // provjeri prvo da li je interfejs startan
 CheckFisCTTStarted()
@@ -1087,13 +1087,12 @@ CheckFisCTTStarted()
 RunFisCommand("3")
 
 if IsFisError()
-	bErr:=.t.
-	return bErr
+	bRptOk:=.f.
 endif
 
 MsgC()
 
-return bErr
+return bRptOk
 *}
 
 
@@ -1107,7 +1106,7 @@ function FisRptPeriod()
 
 MsgO("Formiranje izvjestaja za period u toku ...")
 
-bErr:=.f.
+bRptOk:=.t.
 
 // provjeri prvo da li je interfejs startan
 CheckFisCTTStarted()
@@ -1116,13 +1115,12 @@ CheckFisCTTStarted()
 RunFisCommand("4")
 
 if IsFisError()
-	bErr:=.t.
-	return bErr
+	bRptOk:=.f.
 endif
 
 MsgC()
 
-return bErr
+return bRptOk
 *}
 
 
