@@ -670,6 +670,47 @@ return
 *}
 
 
+/*! \fn ChkRnType()
+ *  \brief Provjerava o kakvom se tipu racuna radi
+ *  \return nRet -
+ *                 -1: cisti storno (sve kolicine -)
+ *                  0: miksani racun (kolicine +/-)
+ *                  1: cist racun (sve kolicine +)
+ */
+function ChkRnType()
+*{
+local nArr
+nArr:=SELECT()
+
+nRet:=0
+
+O__PRIPR
+go top
+
+nZbirKol:=0
+nZbirABS:=0
+
+do while !EOF()
+	nZbirKol+=field->kolicina
+	nZbirABS+=ABS(field->kolicina)
+	skip
+enddo
+
+if (nZbirKol == nZbirABS)
+	nRet := 1
+elseif (nZbirKol == -nZbirABS)
+	nRet := -1
+else
+	nRet :=0
+endif
+
+select (nArr)
+
+return nRet 
+*}
+
+
+
 /*! \fn GetArtCodeFromRoba(cIDRoba)
  *  \brief Vraca roba._oid_ za roba.idroba
  *  \param cIDRoba - id robe (roba->idroba)
@@ -1281,7 +1322,14 @@ bRptExists:=ReadLastFisRpt(cRptId, dDate)
 if !bRptExists
 	MsgO("Evidentiram dnevni izvjestaj")
 	append blank
-	replace field->idvd with "77" 
+	
+	cTipDok:="77"
+	
+	if cRptd==2
+		cTipDok:="78"	
+	endif
+	
+	replace field->idvd with cTipDok 
 	replace field->datum with dDate
 	replace field->vrijeme with cTime
 	replace field->sto with cRptId
@@ -1302,19 +1350,26 @@ return
  */
 function ReadLastFisRpt(cRptId, dDate)
 *{
+// ako se radi o cRptId=1
+cTipDok:="77"
+// ako se radi o cRptId=2
+if cRptId=="2"
+	cTipDok:="78"
+endif
 
 O_DOKS
 select doks
 set order to tag "2" // idvd + DTOS(datum) + smjena
-seek "77" + DToS(dDate)
+seek cTipDok + DToS(dDate)
 
 bRet:=.f.
 
 if Found()
-	if ALLTRIM(field->sto) == cRptId
-		bRet:=.t.
-	endif
+	//if ALLTRIM(field->sto) == cRptId
+	bRet:=.t.
+	//endif
 endif
 
 return bRet
 *}
+
