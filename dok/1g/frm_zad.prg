@@ -353,7 +353,9 @@ if RecCount2()>0
   	if fSadAz.or.Pitanje(,"Zelite li staviti dokument na stanje? (D/N)", "D")=="D"
     		AzurPriprZ(cBrDok, cIdVD)
 		// azuriraj i dodatne podatke o reklamaciji
-  		AzurRekOpis(cBrDok, cIdVD)
+  		if (IsPlanika() .and. cIdVd==VD_REK)
+			AzurRekOpis(cBrDok, cIdVD)
+		endif
 	else
     		SELECT _POS
     		AppFrom("PRIPRZ",.f.)
