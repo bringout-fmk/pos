@@ -3,7 +3,7 @@ MODUL=pos_1m
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\pos\\main\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\pos\\main\\1g\\
 
 PRGS=app_srv.prg dummy.prg mnu_adm.prg mnu_prod.prg mnu_upr.prg params.prg prijava.prg ut.prg zakrpe.prg
 
