@@ -27,11 +27,13 @@ endif
 
 // uzmi ime i prezime kupca
 cKupac:=PADR(aCKData[1], 20)
+// uzmi datum izdavanja LK
+dKpLKDate:=aCKData[6]
 
 // napuni matricu aKupData sa podacima kupca
 // aCKData: od [2] do [6]
 aKupData:={}
-for i:=2 to 6
+for i:=2 to 5
 	AADD(aKupData, aCkData[i])
 next
 
@@ -66,7 +68,12 @@ next
 // identifikator 3: podaci o kupcu
 for i:=1 to LEN(aKpData)
 	nRbr++
-	AzurPosDokument(VD_CK, nRbr, 3, cBrDok, gIdPos, aKpData[i], 0, 0, 0, DATE())
+	dDate:=CToD("")
+	// za prvu stavku azuriraj datum izdavanja LK
+	if (i==1)
+		dDate:=dKpLKDate
+	endif
+	AzurPosDokument(VD_CK, nRbr, 3, cBrDok, gIdPos, aKpData[i], 0, 0, 0, dDate)
 next
 
 
@@ -275,6 +282,9 @@ do while !EOF() .and. pos->brdok==cBrDok .and. pos->idpos==cIdPos
 	
 	// identifikator 3, podaci o kupcu
 	if ALLTRIM(pos->idodj)=="3"
+		if !Empty(pos->datum)
+			dKpLKDate:=pos->datum
+		endif
 		cKpData+=cBody
 	endif
 
@@ -315,7 +325,7 @@ next
 ? "      Ime i prezime: " + TRIM(cKupac)
 ? "   Broj licne karte: " + aKpData[1]
 ? "                SUP: " + aKpData[2]
-? " Datum izdavanja lk: " + aKpData[5]
+? " Datum izdavanja lk: " + DToC(dKpLKDate)
 ? "        Naziv banke: " + aKpData[3]
 ? "      Ziro rn.banke: " + aKpData[4]
 ?
