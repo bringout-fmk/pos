@@ -9,7 +9,6 @@
  */
 function WriteArtikliXML(aArtikli, cFilePath)
 *{
-
 local nH, cFileName
 
 cFileName := cFilePath+'artikli.xml'
@@ -28,7 +27,7 @@ set printer on
 set console off
 
    // Upiši zaglavlje XML file
-   XMLWriteHeader()
+   XMLWriteHeader('Artikli')
    // Upiši body
    lResult := XMLWriteArticles(aArtikli)
    // Upiši footer
@@ -49,11 +48,12 @@ return
 
 /*! \fn XMLWriteHeader()
  *  \brief Ispisuje Header XML fajla ARTIKLI.XML, prereqiust set printer to (cFileName)
+ *  \param cFile - naziv XML fajla
  */
-function XMLWriteHeader()
+function XMLWriteHeader(cFile)
 *{
    ?? '<?xml version="1.0" standalone="no"?>'
-   ? '<!DOCTYPE Artikli SYSTEM "Artikli.dtd">'
+   ? '<!DOCTYPE '+cFile+' SYSTEM "'+cFile+'.dtd">'
 
 return
 *}
@@ -144,9 +144,10 @@ return lResult
 
 
 /*! \fn XMLWriteFooter()
- *  \brief Ispisuje Footer XML fajla ARTIKLI.XML, fajl ARTIKLI.XML nema footera pa je zato prazno
+ *  \brief Ispisuje Footer XML fajlova, XML fajlovi nemaju footera pa je zato prazno
+ *  \param cFile - naziv XML fajla
  */
-function XMLWriteFooter()
+function XMLWriteFooter(cFile)
 *{
 
 return
@@ -156,27 +157,154 @@ return
 /*! \fn WriteArtRacunXml(aArtRacun, cFileName)
  *  \brief Kreira fajl ARTRACUN.XML i upisuje sadrzaj iz matrice aArtRacun
  *  \param aArtRacun  - matrica sa stavkama racuna; struktura:	{"kolicina","id artikal"}
- *  \param cFileName - putanja i ime izlaznog fajla
+ *  \param cFilePath - lokacija fajla ARTRACUN.XML, mora biti lokacija interfejsa FisCTT
  */
-function WriteArtRacunXML(aArtRacun, cFileName)
+function WriteArtRacunXML(aArtRacun, cFilePath)
 *{
+local nH, cFileName
 
+cFileName := cFilePath+'artracun.xml'
+// Kreiraj file
+if (nH:=fcreate(cFileName))==-1
+   Beep(4)
+   Msg("Greska pri kreiranju fajla: "+cFileName+" !",6)
+   return
+endif
 
+fclose(nH)
+
+// Otvori file za upis
+set printer to (cFileName)
+set printer on
+set console off
+
+   // Upiši zaglavlje XML file
+   XMLWriteHeader('ArtRacun')
+   // Upiši body
+   lResult := XMLWriteCheck(aArtRacun)
+   // Upiši footer
+   XMLWriteFooter('ArtRacun')
+   
+// Zatvori file
+set printer to
+set printer off
+set console on
+
+// ako je nastupila greska izbrisi artracun.xml
+if !lResult
+   FERASE(cFileName)
+endif
 
 return
 *}
 
+/*! \fn XMLWriteCheck(aArtCheck)
+ *  \brief upisuje body ARTRACUN.XML 
+ *  \param aArtCheck - matrica napunjena podacima o racunima iz ARTRACUN.XML
+ *  \return .t. ako nema greske, inace .f.
+ */
+function XMLWriteCheck(aArtCheck)
+*{
+local nRowCount, nRow, sXMLLine
+
+   ? '<ArtRacun>'
+   nRowCount = LEN(aArtCheck)
+   FOR nRow = 1 TO nRowCount
+      sXMLLine := '<Plu ' 
+
+      if (CheckLength(alltrim(str(aArtCheck[nRow, 1])), 8))
+         // provjerava broj decimala
+         if (right(alltrim(str(aArtCheck[nRow, 1])), 3) = '.')
+            sXMLLine += 'kol="'+alltrim(str(aArtCheck[nRow, 1]))+'">'
+         else
+            Beep(4)
+            Msg("Neispravan broj decimala "+alltrim(str(aArtCheck[nRow, 1]))+", potrebno dvije decimale !",6)
+            return .f.
+         endif
+      else
+         return .f.
+      endif
+
+      if (CheckLength(aArtCheck[nRow, 2], 12))
+         sXMLLine += aArtCheck[nRow, 2]
+      else
+         return .f.
+      endif
+      sXMLLine += '</Plu>'
+      ? sXMLLine
+   NEXT
+   ? '</ArtRacun>'
+
+return .t.
+*}
 
 /*! \fn WritePlacanjaXml(nIznos, cTipPlacanja, cFileName)
  *  \brief Kreira fajl PLACANJA.XML i popunjava ga sa stavkama nIznos i cTipPlacanja
  *  \param nIznos  - ukupan iznos racuna
  *  \param cTipPlacanja - tip placanja (1, 2 ili 3)
- *  \param cFileName - putanja i ime izlaznog fajla
+ *  \param cFilePath - lokacija fajla PLACANJA.XML, mora biti lokacija interfejsa FisCTT
  */
-function WritePlacanjaXML(nIznos, cTipPlacanja, cFileName)
+function WritePlacanjaXML(nIznos, cTipPlacanja, cFilePath)
 *{
+local nH, cFileName, lResult
 
+lResult := .t.
+cFileName := cFilePath+'placanja.xml'
+// Kreiraj file
+if (nH:=fcreate(cFileName))==-1
+   Beep(4)
+   Msg("Greska pri kreiranju fajla: "+cFileName+" !",6)
+   return
+endif
 
+fclose(nH)
+
+// Otvori file za upis
+set printer to (cFileName)
+set printer on
+set console off
+
+   // Upiši zaglavlje XML file
+   XMLWriteHeader('Placanja')
+   // Upiši body
+   ? '<Placanja>'
+   if ((nIznos <> nil) .and. (cTipPlacanja <> nil))
+      sXMLLine := '<Vrsta '
+      if (CheckLength(alltrim(str(nIznos)), 9))
+         // provjerava broj decimala
+         if (right(alltrim(str(nIznos)), 3) = '.')
+            sXMLLine += 'kol="'+alltrim(str(nIznos))+'">'
+         else
+            Beep(4)
+            Msg("Neispravan broj decimala "+alltrim(str(nIznos))+", potrebno dvije decimale !",6)
+            lResult := .f.
+         endif
+      else
+         lResult := .f.
+      endif
+
+      if (CheckLength(alltrim(cTipPlacanja), 1))
+         sXMLLine += alltrim(cTipPlacanja)
+      else
+         lResult := .f.
+      endif
+      sXMLLine += '</Vrsta>'
+      ? sXMLLine
+   endif
+   ? '</Placanja>'
+   
+   // Upiši footer
+   XMLWriteFooter('Placanja')
+   
+// Zatvori file
+set printer to
+set printer off
+set console on
+
+// ako je nastupila greska izbrisi artracun.xml
+if !lResult
+   FERASE(cFileName)
+endif
 
 return
 *}
@@ -245,7 +373,32 @@ return aArtikli
 function ReadArtRacunXml(cFilePath)
 *{
 // aArtRacun = {"kolicina", "id artikla"}
-aArtRacun:={}
+local cFileName, cXML
+
+   aArtRacun:={}
+   cFileName := cFilePath+'artracun.xml'
+
+   cXML := FILESTR(cFileName)
+
+   nStart := at('<Plu', cXML)
+   while (nStart>0)
+      nEnd     := at('</Plu>', cXML)+6
+      cXMLLine := substr(cXML, nStart, (nEnd-nStart))
+
+      nStartField := at('">', cXMLLine)+2
+      nEndField   := at('</Plu>', cXMLLine)
+      cID         := substr(cXMLLine, nStartField, nEndField-nStartField)
+   
+      nStartField := at('kol="', cXMLLine)+5
+      nEndField   := at('">', cXMLLine)
+      cKol        := substr(cXMLLine, nStartField, nEndField-nStartField)
+
+      AADD(aArtRacun, {val(cKol), cID})
+
+      cXML   := substr(cXML, nEnd)
+      nStart := at('<Plu', cXML)
+   end
+   
 return aArtRacun
 *}
 
@@ -258,10 +411,34 @@ return aArtRacun
 function ReadPlacanjaXml(cFilePath)
 *{
 // aPlacanja = {"iznos", "tip placanja"}
+local cFileName, cXML
 
+   aPlacanja:={}
+   cFileName := cFilePath+'placanja.xml'
+   
+   cXML := FILESTR(cFileName)
+   
+   nStart := at('<Vrsta', cXML)
+   while (nStart>0)
+      nEnd     := at('</Vrsta>', cXML)+8
+      cXMLLine := substr(cXML, nStart, (nEnd-nStart))
+   
+      nStartField := at('">', cXMLLine)+2
+      nEndField   := at('</Vrsta>', cXMLLine)
+      cID         := substr(cXMLLine, nStartField, nEndField-nStartField)
+      
+      nStartField := at('kol="', cXMLLine)+5
+      nEndField   := at('">', cXMLLine)
+      cKol        := substr(cXMLLine, nStartField, nEndField-nStartField)
+   
+      AADD(aPlacanja, {val(cKol), cID})
+   
+      cXML   := substr(cXML, nEnd)
+      nStart := at('<Plu', cXML)
+   end
+   
 return aPlacanja
 *}
-
 
 
 /*! \fn WriteMainInCode(cCode, cFilePath)
@@ -286,7 +463,8 @@ return
 /*! \fn ReadMainInCode(cFilePath)
  *  \brief Cita kod iz fajl-a mainin.dat
  *  \param cFilePath - lokacija fajla "mainin.dat"
- */
+ *  \return cCode - proèitani kod
+*/
 function ReadMainInCode(cFilePath)
 *{
    local cFileName, cCode
@@ -458,5 +636,53 @@ return
 
 
 
+function FisRacun()
+*{
+
+Box(,4, 50)
+	
+	cRd:=""
+	
+	WriteMainOutCode(gFisCTTPath)
+	@ 1+m_x, 2+m_y SAY "mainout: Upisao kod 999"
+	
+	WriteMainInCode("1", gFisCTTPath)
+	@ 2+m_x, 2+m_y SAY "mainin: upisao 1"
+	inkey(gFisTimeOut)
+	
+	cRd:=ReadMainOutCode(gFisCTTPath)
+	@ 3+m_x, 2+m_y SAY "greska: " + cRd
+	
+	if cRd <> "0"
+		return
+	endif
+		
+	WriteMainOutCode(gFisCTTPath)
+	
+	WriteMainInCode("8", gFisCTTPath)
+	@ 2+m_x, 2+m_y SAY "mainin: upisao 8"
+	inkey(gFisTimeOut)
+	
+	cRd:=ReadMainOutCode(gFisCTTPath)
+	@ 3+m_x, 2+m_y SAY "greska: " + cRd
+	
+	if cRd <> "0"
+		return
+	endif
+	
+	WriteMainOutCode(gFisCTTPath)
+	
+	WriteMainInCode("2", gFisCTTPath)
+	@ 2+m_x, 2+m_y SAY "mainin: upisao 2"
+	inkey(gFisTimeOut)
+	
+	cRd:=ReadMainOutCode(gFisCTTPath)
+	@ 3+m_x, 2+m_y SAY "greska: " + cRd
+
+BoxC()
+
+return
+
+*}
 
 

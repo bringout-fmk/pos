@@ -12,10 +12,10 @@ TestRWArtikliXml()
 
 
 // test kreiranja fajla ARTRACUN.XML te provjera njegovog sadrzaja
-//TestRWArtRacunXml()
+TestRWArtRacunXml()
 
 // test kreiranja fajla PLACANJA.XML te provjera njegovog sadrzaja
-//TestRWPlacanjaXml()
+TestRWPlacanjaXml()
 
 // test upisivanja i citanja kodova iz fajlova mainin.dat i mainout.dat
 TestRWMainInOut()
@@ -103,10 +103,10 @@ aOutPut:={}
 cFilePath:="h:\dev\fmk\pos\fissta\1g\testxml\"
 
 // aInput: kolicina, id artikla (oid)
-AADD(aInput, {"1.00", "100000000010"})
-AADD(aInput, {"2.00", "100000000251"})
-AADD(aInput, {"10.00", "100000003120"})
-AADD(aInput, {"1.00", "100000006129"})
+AADD(aInput, {1.00, "100000000010"})
+AADD(aInput, {2.00, "100000000251"})
+AADD(aInput, {10.00, "100000003120"})
+AADD(aInput, {1.00, "100000006129"})
 
 WriteArtRacunXML(aInput, cFilePath)
 // iscitaj iz kreiranog artracun.xml podatke u aOutPut
@@ -126,7 +126,7 @@ endif
 nErr:=0
 for nCnt:=1 to LEN(aInput)
 	for nCnt2:=1 to 2
-		if aInput[nCnt, nCnt2] <> aOutPut[nCnt, nCnt2]
+		if (aInput[nCnt, nCnt2] <> aOutPut[nCnt, nCnt2])
 			nErr ++
 			? "Razlika u elementu: " + STR(nCnt) + "-" + STR(nCnt2)
 		endif
@@ -139,6 +139,8 @@ endif
 
 ?
 ? "ARTRACUN.XML: test zavrsen ..."
+?
+?
 
 return 
 *}
@@ -151,6 +153,11 @@ return
 function TestRWPlacanjaXml()
 *{
 
+? REPLICATE("-", 70)
+? "Test: read/write PLACANJA.XML"
+? REPLICATE("-", 70)
+
+
 aOutPut:={}
 cFilePath:="h:\dev\fmk\pos\fissta\1g\testxml\"
 
@@ -161,6 +168,7 @@ nIznos:=100.50
 // 2. iznos = 100.50 * 2, tip = 2
 // 3. iznos = 100.50 * 3, tip = 3
 
+nErr:=0
 for i:=1 to 3
 	WritePlacanjaXML(nIznos * i, STR(i), cFilePath)
 	// iscitaj iz kreiranog placanja.xml podatke u aOutPut
@@ -168,6 +176,7 @@ for i:=1 to 3
 
 	// provjeri ima li podataka u PLACANJA.XML
 	if LEN(aOutPut) == 0
+		nErr ++
 		? "Fajl PLACANJA.XML je prazan"
 	endif
 
@@ -175,14 +184,24 @@ for i:=1 to 3
 		// provjeri ispravnost podataka
 		// iznos
 		if nIznos * i <> aOutPut[1, 1]
+   		nErr ++
 			? "Neispravan parametar 1"
 		endif
 		// oznaku vrste placanja
-		if STR(i) <> aOutPut[1, 2]
+		if alltrim(STR(i)) <> alltrim(aOutPut[1, 2])
+   		nErr ++
 			? "Neispravan parametar 2"
 		endif
 	endif
 next
+
+?
+? "PLACANJA.XML: test zavrsen ..."
+if (nErr == 0)
+	?? " [OK] "
+endif
+?
+?
 
 return 
 *}
