@@ -108,15 +108,17 @@ return
 *}
 
 
-/*! \fn ReadXmlError(cInputFile, cOriginalFile)
- *  \brief Vrsi komparaciju dva xml fajla
- *  \return true or false
+/*! \fn ReadArtikliXml(cFilePath)
+ *  \brief Vrsi iscitavanje podataka cFilePath + "ARTIKLI.XML" u matricu
+ *  \param cFilePath - lokacija fajla ARTIKLI.XML
+ *  \return aArtikli - matrica napunjena podacima o artiklima iz ARTIKLI.XML 
  */
  
-function ReadXmlError(cInputFile, cOriginalFile)
+function ReadArtikliXml(cFilePath)
 *{
+// aArtikli = {"id artikla", "naziv", "cijena", "poreska stopa", "odjeljenje", "jmj"}
 
-return .f.
+return aArtikli
 *}
 
 
