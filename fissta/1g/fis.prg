@@ -346,32 +346,35 @@ return cCode
  */
 function WriteMainFileCode(cCode, cFileName)
 *{
-   local nH
+local nH
    
-	// kreiraj fajl ponovo, tako da smo sigurni da je prazan
-	if file(cFileName)
-	  ferase(cFileName)
-	end if
-   if (nH:=fcreate(cFileName))==-1
-      Beep(4)
-      Msg("Greska pri kreiranju fajla: "+cFileName+" !",6)
-      return
-   endif
-   fclose(nH)
+// kreiraj fajl ponovo, tako da smo sigurni da je prazan
+if file(cFileName)
+	ferase(cFileName)
+endif
    
-   // Otvori file za upis
-   set printer to (cFileName)
-   set printer on
-   set console off
+if (nH:=fcreate(cFileName))==-1
+	Beep(4)
+      	Msg("Greska pri kreiranju fajla: "+cFileName+" !",6)
+      	return
+endif
+fclose(nH)
 
-   // Upisi cCode
-   // kada probam upisati sa ? - doda jednu praznu liniju viska
-   ?? alltrim(cCode)
+// Otvori file za upis
+set printer to (cFileName)
+set printer on
+set console off
+
+// Upisi cCode
+// kada probam upisati sa ? - doda jednu praznu liniju viska
+
+?? ALLTRIM(cCode)
       
-   // Zatvori file
-   set printer to
-   set printer off
-   set console on
+// Zatvori file
+set printer to
+set printer off
+set console on
+
 
 return
 *}
@@ -429,25 +432,79 @@ cKomLin:="start " + cPath + "fiscal28.jar"
 // pokreni komandu
 run &cKomLin
 
-bError:=.t.
-nTimeOut:=0
 
-while bError == .t.
-	nTimeOut ++
-	cErr:=ReadMainInCode(cPath)
-	if (cErr == "9")
-		bError:=.f.
-	endif
-	if nTimeOut > 20
-		MsgBeep("Problem sa pokretanjem interfejsa !")
-		return
-	endif
-end
+return
+*}
 
-if !bError
-	MsgBeep("Interfejs pokrenut ...")
+
+/*! \fn IsFisCTTStarted(cPath)
+ *  \brief Provjerava da li je FisCTT started
+ *  \param cPath - lokacija interfejsa
+ */
+function IsFisCTTStarted()
+*{
+
+cCode:=ReadMainInCode(gFisCTTPath)
+
+if cCode=="9"
+	MsgBeep("OK")
+else
+	MsgBeep("NOT OK")
 endif
 
 return
 *}
+
+
+
+
+function FisRacun()
+*{
+
+Box(,4, 50)
+	
+	cRd:=""
+	
+	WriteMainOutCode(gFisCTTPath)
+	@ 1+m_x, 2+m_y SAY "mainout: Upisao kod 999"
+	
+	WriteMainInCode("1", gFisCTTPath)
+	@ 2+m_x, 2+m_y SAY "mainin: upisao 1"
+	inkey(gFisTimeOut)
+	
+	cRd:=ReadMainOutCode(gFisCTTPath)
+	@ 3+m_x, 2+m_y SAY "greska: " + cRd
+	
+	if cRd <> "0"
+		return
+	endif
+		
+	WriteMainOutCode(gFisCTTPath)
+	
+	WriteMainInCode("8", gFisCTTPath)
+	@ 2+m_x, 2+m_y SAY "mainin: upisao 8"
+	inkey(gFisTimeOut)
+	
+	cRd:=ReadMainOutCode(gFisCTTPath)
+	@ 3+m_x, 2+m_y SAY "greska: " + cRd
+	
+	if cRd <> "0"
+		return
+	endif
+	
+	WriteMainOutCode(gFisCTTPath)
+	
+	WriteMainInCode("2", gFisCTTPath)
+	@ 2+m_x, 2+m_y SAY "mainin: upisao 2"
+	inkey(gFisTimeOut)
+	
+	cRd:=ReadMainOutCode(gFisCTTPath)
+	@ 3+m_x, 2+m_y SAY "greska: " + cRd
+
+BoxC()
+
+return
+
+*}
+
 
