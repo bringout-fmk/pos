@@ -302,7 +302,7 @@ endif
 self:oDatabase:scan()
 close all
 
-if IsPlNS()
+if IsPlNS() .and. gFissta=="D"
 	CheckFisCTTStarted(.t.)
 endif
 
@@ -829,6 +829,8 @@ gFisTimeOut:=VAL((IzFmkIni("FISSTA","FisTimeOut","5",EXEPATH)))
 public gFisStorno
 gFisStorno:=(IzFmkIni("FISSTA","FisStorno","N",EXEPATH))
 
+public gFissta
+gFissta:=(IzFmkIni("FISSTA", "Fissta", "N", EXEPATH))
 
 gPosSirovine:="D"
 gPosKalk:="D"
