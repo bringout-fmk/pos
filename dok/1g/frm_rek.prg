@@ -27,12 +27,14 @@ private GetList:={}
 cRekOp1:=SPACE(20)
 cRekOp2:=SPACE(4)
 cRekOp3:=SPACE(40)
+cRekOp4:="R"
 
 Box(,5, 60)
 	@ 1+m_x, 2+m_y SAY "REKLAMACIJA: DODATNI PODACI" COLOR "I"
-	@ 2+m_x, 2+m_y SAY "Ime kupca  " GET cRekOp1
-	@ 3+m_x, 2+m_y SAY "Broj cipele" GET cRekOp2
+	@ 2+m_x, 2+m_y SAY "Ime kupca  " GET cRekOp1 VALID !Empty(cRekOp1)
+	@ 3+m_x, 2+m_y SAY "Broj cipele" GET cRekOp2 VALID !Empty(cRekOp2)
 	@ 4+m_x, 2+m_y SAY "Opis greske" GET cRekOp3
+	@ 5+m_x, 2+m_y SAY "Rekl. u (P)ripremi/(R)ealizovana" GET cRekOp4 VALID cRekOp4 $ "RP" PICT "@!"
 	read
 BoxC()
 
@@ -90,17 +92,24 @@ endif
 
 // Selektuj stavke dokumenta
 select pos
-// idpos+idvd+brdok+iddio+idodj
+// idpos+idvd+brdok+DTOS(_DATAZ_)+iddio+idodj
 set order to tag "7"
-hseek doks->(IdPos + VD_ROP + BrDok)
+hseek doks->(IdPos + VD_ROP + BrDok + DTOS(_DATAZ_) + " 1" + " 1")
 
 cBrDok:=pos->brdok
 cIdPos:=pos->idpos
 
+// ako nisam nista nasao - izadji
+if (doks->idvd <> pos->idvd .and. doks->brdok <> pos->brdok .and. doks->datum <> pos->datum)
+	set order to tag "1"
+	select (nArr)
+	return
+endif
+
 cROPKupac:=""
 cROPBrCip:=""
 cROPOpis:=""
-
+altd()
 do while !EOF() .and. pos->brdok==cBrDok .and. pos->idpos==cIdPos .and. pos->idvd==VD_ROP .and. doks->datum==pos->datum
 	do case
 		case (ALLTRIM(pos->idodj)=="1")
@@ -156,7 +165,17 @@ return
 static function ROP_Row(cOpis, cVrijednost)
 *{
 ? cOpis
-?? SPACE(3) + cVrijednost
+?? SPACE(3)
+
+aPom := SjeciStr(cVrijednost, 20)
+for i:=1 to len(aPom)
+	if i == 1
+		?? aPom[i]
+	else
+		? SPACE(LEN(cOpis) + 3) + aPom[i]
+	endif
+next
+   		
 return
 *}
 

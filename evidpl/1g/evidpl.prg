@@ -247,9 +247,9 @@ nArr:=SELECT()
 
 // Selektuj stavke dokumenta
 select pos
-// idpos+idvd+brdok+iddio+idodj
+// idpos+idvd+brdok+DTOS(_DATAZ_)+iddio+idodj
 set order to tag "7"
-hseek doks->(IdPos+IdVd+BrDok)
+hseek doks->(IdPos+IdVd+BrDok+DTOS(_DATAZ_))
 
 cBrDok:=pos->brdok
 cIdPos:=pos->idpos
@@ -358,9 +358,9 @@ nArr:=SELECT()
 
 // Selektuj stavke dokumenta
 select pos
-// idpos+idvd+brdok+iddio+idodj
+// idpos+idvd+brdok+DTOS(_DATAZ_)+iddio+idodj
 set order to tag "7"
-hseek doks->(IdPos+IdVd+BrDok)
+hseek doks->(IdPos+IdVd+BrDok+DTOS(_DATAZ_))
 
 cBrDok:=pos->brdok
 cIdPos:=pos->idpos
@@ -434,9 +434,9 @@ nArr:=SELECT()
 
 // Selektuj stavke dokumenta
 select pos
-// idpos+idvd+brdok+iddio+idodj
+// idpos+idvd+brdok+DTOS(_dataz_)+iddio+idodj
 set order to tag "7"
-hseek doks->(IdPos+IdVd+BrDok)
+hseek doks->(IdPos+IdVd+BrDok+DTOS(_DATAZ_))
 
 cBrDok:=pos->brdok
 cIdPos:=pos->idpos

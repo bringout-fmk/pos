@@ -809,7 +809,12 @@ APPEND BLANK
 sql_append()
 
 _BrDok:=cBrDok 
-
+	
+if (IsPlanika() .and. cIdVd==VD_REK)
+	// reklamacija u pripremi ili realizovana
+	_sto:=cRekOp4
+endif
+      
 if cIdVd=="PD"
 	_IdVd:="16"
 else
@@ -833,7 +838,8 @@ do while !eof()
 	else
 		_IdVd:=cIdVd
 	endif
-      	if cIdVD=="PD"
+	
+	if cIdVD=="PD"
         	// !prva stavka storno
 		_IdVd:="16"
         	_IdDio:=_IdVrsteP

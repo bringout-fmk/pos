@@ -91,6 +91,10 @@ else
 	AADD(ImeKol,{"Datum",{||datum}})
 	AADD(ImeKol,{"Smj",{||smjena}})
 	AADD(ImeKol,{PADC("Iznos",10),{|| DokIznos(NIL)}})
+	if IsPlanika()
+		// reklamacije (R)ealizovane, (P)riprema
+		AADD(ImeKol,{"Rekl",{||sto}})
+	endif
 	AADD(ImeKol,{"Radnik",{||IdRadnik}})
 endif
 
@@ -183,6 +187,20 @@ do case
            		Gather()
            		return DE_REFRESH
         	endif
+		return DE_CONT
+	case Ch==K_F6 // ispravka reklamacije
+		if (IsPlanika() .and. idvd==VD_REK .and. Pitanje(,"Zelite promjeniti status reklamacije (D/N)?", "D")=="D")
+			cRekInfo:=PADR(sto, 1)
+			if !VarEdit({{"Novi status: (R)ealizovana (P)riprema","cRekInfo","!Empty (cRekInfo)","@!",}},10,5,14,74,'PROMJENA STATUSA REKLAMACIJE, DOKUMENT:'+idvd+"/"+idpos+"-"+brdok+" OD "+DTOC(datum),"B1")
+             			return DE_CONT
+           		endif
+           		Scatter()
+            		_sto:=cRekInfo
+           		Gather()
+			Sql_Azur(.t.)
+			GathSql()
+           		return DE_REFRESH
+		endif
 		return DE_CONT
 	case Ch==K_CTRL_F9
 		if !SigmaSif("BRISRN")

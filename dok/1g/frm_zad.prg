@@ -107,6 +107,8 @@ if (IsPlanika() .and. cIdVd == VD_REK)
 	private cRekOp1
 	private cRekOp2
 	private cRekOp3
+	// postavi odmah da je "R" - realizovana radi odustajanja
+	private cRekOp4:="R"
 endif
 
 // koristim ga kod sirovinskog zaduzenja odjeljenja
@@ -340,11 +342,11 @@ if RecCount2()>0
   	set order to 1
   	cBrDok:=NarBrDok(cIdPos,iif(cIdvd=="PD","16",cIdVd)," ",dDatRada)
   	SELECT PRIPRZ
-  	Beep(4)
   	// reklamacije dodatni opis
 	if (IsPlanika() .and. cIdVd==VD_REK)
 		RekOpis()
 	endif
+  	Beep(4)
 	if !fSadAz.and.Pitanje(,"Zelite li odstampati dokument ?","D")=="D"
         	StampZaduz(cIdVd, cBrDok)
   	endif

@@ -174,7 +174,7 @@ nTRec:=RecNO()
 
 select pos
 set order to tag "7"
-hseek doks->(IdPos+VD_CK+BrDok+" 2")
+hseek doks->(IdPos+VD_CK+BrDok+DTOS(_DATAZ_)+" 2")
 
 do while !EOF() .and. pos->idodj=" 2"
 	if pos->iddio == " 2"
