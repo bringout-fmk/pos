@@ -814,8 +814,9 @@ return cErr
 
 
 
-/*! \fn CheckFisCTTStarted()
- *  \brief Centralna funkcija za provjeru FisCTT, da li je vec pokrenut
+/*! \fn CheckFisCTTStarted(bSilent)
+ *  \brief Centralna funkcija za provjeru FisCTT, da li je vec pokrenut?
+ *  \param bSilent - tihi rezim, nema pitanja i poruka
  */
 
 function CheckFisCTTStarted(bSilent)
