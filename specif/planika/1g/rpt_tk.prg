@@ -101,6 +101,9 @@ nIznRek:=0
 nIznRGot:=0
 nIznRCek:=0
 nIzCkPol:=0
+nIzSk:=0
+nIzGp:=0
+nIzZr:=0
 dTekDate:=CToD("")
 nUkZad:=nUUkZad:=0
 nUkRaz:=nUUkRaz:=0
@@ -172,10 +175,22 @@ do while !eof() .and. idpos==cIdPos
 		nIznRGot:=0
 		nIznRCek:=0
 		nIzCkPol:=0
+		nIzSk:=0
+		nIzGp:=0
+		nIzZr:=0
 		do while !EOF() .and. field->datum=dDatum .and. field->idvd="42"
 			// GOTOVINSKO PLACANJE
 			if field->idvrstep == "01"
 				nIznRGot+=VAL(DokIznos())
+			// SINDIKALNI KREDIT
+			elseif field->idvrstep == "SK"
+				nIzSk+=VAL(DokIznos())	
+			// GARANTNO PISMO
+			elseif field->idvrstep == "GP"
+				nIzGp+=VAL(DokIznos())
+			// ZIRALNO PLACANJE
+			elseif field->idvrstep == "ZR"
+				nIzZr+=VAL(DokIznos())
 			// CEKOVI
 			elseif field->idvrstep $ "CK"
 				private nTmp1:=0
@@ -193,7 +208,17 @@ do while !eof() .and. idpos==cIdPos
 			PrintTkRow(dDatum, "d.p. cekovi", 0, nIznRCek, nPlgCek, dPlg)
 			PrintTkRow(dDatum, "d.p. cekovi na odl.", 0, nIzCkPol, 0)
 		endif
-		nUkRaz+=nIznRGot+nIznRCek+nIzCkPol
+		if (nIzGp > 0)
+			PrintTkRow(dDatum, "d.p. gar.pismo", 0, nIzGp, 0, dPlg)
+		endif
+		if (nIzSk > 0)
+			PrintTkRow(dDatum, "d.p. sind.kred.", 0, nIzSk, 0, dPlg)
+		endif
+		if (nIzZr > 0)
+			PrintTkRow(dDatum, "d.p. ziralno pl.", 0, nIzZr, 0, dPlg)
+		endif
+		
+		nUkRaz+=nIznRGot+nIznRCek+nIzCkPol+nIzSk+nIzGp+nIzZr
 		nUkPol:=nPlgCek+nPlgGot
 		dTekDate:=dDatum
 		
