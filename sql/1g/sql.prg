@@ -342,6 +342,13 @@ if LASTKEY()==K_ESC
 	return .f.
 endif
 
+// da li se radi o tabeli pologa pazara?
+if (cIdVD == "PP")
+	// logiraj tabelu polog pazara
+	LogPPPer(dDatOd, dDatDo)
+	return 1
+endif
+
 private cFilter:=""
 
 // ako se radi o dokumentima 90, 91 i 92
@@ -377,6 +384,34 @@ use
 
 return 1
 *}
+
+
+/*! \fn LogPPPer(dDat1, dDat2)
+ *  \brief Logiranje pologa pazara, tabele PROMVP
+ *  \param dDat1 - datum od
+ *  \param dDat2 - datum do
+ */
+function LogPPPer(dDat1, dDat2)
+*{
+private cFilter:=""
+
+cFilter:="PM=" + Cm2Str(gIdPos) + " .and. Datum>=" + Cm2Str(dDat1) + " .and. Datum<=" + Cm2Str(dDat2)
+
+O_PROMVP
+
+SET FILTER TO &cFilter
+
+cSQL:="delete from PROMVP where PM="+SQLValue(gIdPos)+" and Datum>="+SQLValue(dDat1)+" and Datum<="+SQLValue(dDat2)
+
+Gw(cSQL)
+go top
+Log_Tabela()
+use
+
+return
+*}
+
+
 
 
 /*! \fn AImportLog()
