@@ -21,6 +21,9 @@ TestRWArtikliXml()
 //TestRWMainInOut()
 
 
+// test izdavanja racuna
+//TestFisRn1()
+
 return
 *}
 
@@ -225,5 +228,130 @@ for i:=-10 to 10
 	endif
 next
 
+*}
+
+
+/*! \fn TestFisRn1()
+ *  \brief testira izdavanje racuna: dva artikla - gotovinsko placanje
+ */
+function TestFisRn1()
+*{
+
+? REPLICATE("-", 70)
+? "Test: izdavanje racuna"
+? REPLICATE("-", 70)
+
+cFilePath:="h:\dev\fmk\pos\fissta\1g\"
+
+aArtikli:={}
+AADD(aArtikli, {"100000000010", "EFFEGI 2340", 1000.00, "3", "1", "6"})
+AADD(aArtikli, {"100000000251", "KLOMPE Z.BIJELE", 890.50, "3", "1", "6"})
+AADD(aArtikli, {"100000003120", "ILLUMINATI 22/33", 2780.00, "3", "1", "6"})
+AADD(aArtikli, {"100000006129", "PLACENTE 2350/80", 3020.40, "3", "1", "6"})
+WriteArtikliXml(aArtikli, cFilePath)
+aOutPut:=ReadArtikliXml(cFilePath)
+if LEN(aArtikli) <> LEN(aOutPut)
+	? "ARTIKLI.XML: nije dobro izgenerisan fajl"
+endif
+
+aArtRacun:={}
+AADD(aArtRacun, {"1.00", "100000000010"})
+AADD(aArtRacun, {"2.00", "100000006129"})
+WriteArtRacunXml(aArtRacun, cFilePath)
+aOutPut:=ReadArtRacunXml(cFilePath)
+if LEN(aArtRacun) <> LEN(aOutPut)
+	? "ARTRACUN.XML: nije dobro izgenerisan fajl"
+endif
+
+// izdajem gotovinski racun
+nIznos:=7040.80
+cTipPl:="1"
+WritePlacanjaXml(nIznos, cTipPl, cFilePath)
+aOutPut:=ReadPlacanjaXml(cFilePath)
+if (aOutPut[1, 1] <> nIznos .or. aOutPut[1, 2] <> cTipPl)
+	? "PLACANJA.XML: nije dobro izgenerisan fajl"
+endif
+
+?
+? "Test zadavanja komandi..."
+?
+
+bErr:=.f.
+
+// komanda: ucitaj iz ARTIKLI.XML stavke u memoriju racunara
+cCode:="1"
+WriteMainInCode(cCode, cFilePath)
+cReadCode:=ReadMainInCode(cFilePath)
+
+if (cReadCode <> cCode)
+	? "Nije dobro upisana komanda 1"
+else
+	? "Upisao komandu 1"
+endif
+
+? "Cekam mogucu gresku ..."
+WriteMainOutCode(cFileName)
+cOutCode:=ReadMainOutCode(cFileName)
+if cOutCode <> "999" .or. cOutCode <> "0" 
+	? "Postoji greska : " + cOutCode
+	bErr:=.t.
+else
+	? "Greske nema ..."
+endif
+
+if bErr
+	return
+endif
+
+// komanda: ucitaja iz ARTIKLI.XML stavke u FISSTA memoriju
+cCode:="8"
+WriteMainInCode(cCode, cFilePath)
+cReadCode:=ReadMainInCode(cFilePath)
+
+if (cReadCode <> cCode)
+	? "Nije dobro upisana komanda 8"
+else
+	? "Upisao komandu 8"
+endif
+
+? "Cekam mogucu gresku ..."
+WriteMainOutCode(cFileName)
+cOutCode:=ReadMainOutCode(cFileName)
+if cOutCode <> "999" .or. cOutCode <> "0" 
+	? "Postoji greska : " + cOutCode
+	bErr:=.t.
+else
+	? "Greske nema ..."
+endif
+
+if bErr
+	return
+endif
+
+
+// komanda: ispisi racun i memorisi ga u FISSTA
+cCode:="2"
+WriteMainInCode(cCode, cFilePath)
+cReadCode:=ReadMainInCode(cFilePath)
+
+if (cReadCode <> cCode)
+	? "Nije dobro upisana komanda 2"
+else
+	? "Upisao komandu 2"
+endif
+
+? "Cekam mogucu gresku ..."
+WriteMainOutCode(cFileName)
+cOutCode:=ReadMainOutCode(cFileName)
+if cOutCode <> "999" .or. cOutCode <> "0" 
+	? "Postoji greska : " + cOutCode
+else
+	? "Greske nema ..."
+endif
+
+
+? "Test izdavanja racuna zavrsen ..."
+
+return
 *}
 
