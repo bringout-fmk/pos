@@ -194,37 +194,61 @@ return
  
 function TestRWMainInOut()
 *{
+? REPLICATE("-", 70)
+? "Test RW mainin/out "
+? REPLICATE("-", 70)
+
 cCode:=""
 cReadCode:=""
 cFilePath:="h:\dev\fmk\pos\fissta\1g\testdat\"
 
 // test1: upisivanja i citanja kod-a iz fajla mainin.dat
 // upisi kodove od -10 do 10
+
+?
+? "MAININ.DAT: Test WR kodova od 0 do 9 "
+
+nCnt:=0
+
 for i:=0 to 9
-	cCode:=STR(i)
+	cCode:=ALLTRIM(STR(i))
 	WriteMainInCode(cCode, cFilePath)
 	cReadCode:=ReadMainInCode(cFilePath)
-	? "Test RW MainIN krug: " + STR(i)
-	if alltrim(cReadCode) <> alltrim(cCode)
-		?? " Nepravilno upisan kod u mainin.dat"
-	else
-		?? " - OK"
+	if cReadCode <> cCode
+		nCnt ++
+		? " Nepravilno upisan kod: " + ALLTRIM(STR(i))
 	endif
 next
-? " "
 
-// test2: upisivanja i citanja kod-a iz fajla mainout.dat
-// uvijek upisuje '999'
-WriteMainOutCode(cFilePath)
-cReadCode:=ReadMainOutCode(cFilePath)
-? "Test RW MainOUT: " 
-if alltrim(cReadCode) <> '999'
-	?? " Nepravilno upisan kod u mainout.dat"
-else
-	?? " - OK"
+if (nCnt == 0)
+	?? " [OK]"
 endif
 
-return
+// test2: upisivanja i citanja kod-a iz fajla mainout.dat
+// upisi kodove od -10 do 10
+
+?
+? "MAINOUT.DAT: Test WR kodova od -5 do 5"
+
+nCnt:=0
+
+for i:=-5 to 5 
+	cCode:=ALLTRIM(STR(i))
+	WriteMainOutCode(cFilePath, cCode)
+	cReadCode:=ReadMainOutCode(cFilePath)
+	if cReadCode <> cCode
+		nCnt ++
+		?? " Nepravilno upisan kod: " + ALLTRIM(STR(i))
+	endif
+next
+
+if (nCnt == 0)
+	?? " [OK]"
+endif
+
+? 
+? "Test zavrsen ..."
+
 *}
 
 
