@@ -376,3 +376,55 @@ endif
 return
 *}
 
+
+/*! \fn TestFisNn2()
+ *  \brief Test racuna na FISSTA - bez programskog kreiranja artikla
+ */
+function TestFisRn2()
+*{
+
+Box(,4, 50)
+	
+	cRd:=""
+	
+	WriteMainOutCode(gFisCTTPath)
+	@ 1+m_x, 2+m_y SAY "mainout: Upisao kod 999"
+	
+	WriteMainInCode("1", gFisCTTPath)
+	@ 2+m_x, 2+m_y SAY "mainin: upisao 1"
+	inkey(gFisTimeOut)
+	
+	cRd:=ReadMainOutCode(gFisCTTPath)
+	@ 3+m_x, 2+m_y SAY "greska: " + cRd
+	
+	if cRd <> "0"
+		return
+	endif
+		
+	WriteMainOutCode(gFisCTTPath)
+	
+	WriteMainInCode("8", gFisCTTPath)
+	@ 2+m_x, 2+m_y SAY "mainin: upisao 8"
+	inkey(gFisTimeOut)
+	
+	cRd:=ReadMainOutCode(gFisCTTPath)
+	@ 3+m_x, 2+m_y SAY "greska: " + cRd
+	
+	if cRd <> "0"
+		return
+	endif
+	
+	WriteMainOutCode(gFisCTTPath)
+	
+	WriteMainInCode("2", gFisCTTPath)
+	@ 2+m_x, 2+m_y SAY "mainin: upisao 2"
+	inkey(gFisTimeOut)
+	
+	cRd:=ReadMainOutCode(gFisCTTPath)
+	@ 3+m_x, 2+m_y SAY "greska: " + cRd
+
+BoxC()
+
+return
+
+*}
