@@ -137,7 +137,7 @@ return
 function NarudzbaT()
 *{
 
-if IsPlNS()
+if IsPlNS() .and. gFissta=="D"
 	// provjeri da li postoji formiran dnevni izvjestaj
 	// ako postoji NEMA UNOSA NOVIH RACUNA
 	if ReadLastFisRpt("1", DATE())
@@ -450,16 +450,17 @@ if gRadniRac=="D"
 	ESC_BCR
   	BoxC()
 else
-	if IsPlNS() 
-	  aArtikli:={}
-	  aArtRacun:={}
-	  nUkupno:=0 //ukupan iznos racuna
-	  FillFisMatrice(@aArtikli, @aArtRacun, @nUkupno)
-	  cVrPl:=GetCodeVrstePl(cIdVrsteP)
-	  if !FisRacun(aArtikli, aArtRacun, nUkupno, cVrPl)
-	     MsgBeep("Racun nije azuriran")
-	     CLOSERET 	
-	  endif
+	if IsPlNS() .and. gFissta=="D" 
+		aArtikli:={}
+	  	aArtRacun:={}
+	  	nUkupno:=0 //ukupan iznos racuna
+	  	FillFisMatrice(@aArtikli, @aArtRacun, @nUkupno)
+	  	cVrPl:=GetCodeVrstePl(cIdVrsteP)
+	  	if !FisRacun(aArtikli, aArtRacun, nUkupno, cVrPl)
+	     		// Racun nije formiran, nemoj azurirati u tops
+			MsgBeep("Racun nije azuriran")
+	     		CLOSERET 	
+	  	endif
 	endif
 	
 	// prebaci iz prip u pos
@@ -949,5 +950,6 @@ else
    return valute->kurs1
 endif
 *}
+
 
 
