@@ -304,7 +304,7 @@ close all
 
 if IsPlNS() 
 	if gFissta=="D"
-		CheckFisCTTStarted(.t.)
+		//CheckFisCTTStarted(.t.)
 	endif
 endif
 
