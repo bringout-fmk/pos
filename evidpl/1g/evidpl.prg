@@ -28,7 +28,7 @@ next
 // kreiraj hash string
 cCKData:=CreateHashString(aCK)
 aTemp:={}
-aTemp:=StrToNiz(cCkData, 20)
+aTemp:=StrToArray(cCkData, 20)
 
 O_DOKS
 O_POS
