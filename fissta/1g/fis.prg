@@ -9,20 +9,22 @@
  */
 function WriteArtikliXML(aArtikli, cFilePath)
 *{
-   local nH
 
-   * Kreiraj file
-   if (nH:=fcreate(cFileName))==-1
-      Beep(4)
-      Msg("Fajl "+cFileName+" se vec koristi !",6)
-      return
-   endif
-   fclose(nH)
+local nH
 
-   * Otvori file za upis
-   set printer to (cFileName)
-   set printer on
-   set console off
+// Kreiraj file
+if (nH:=fcreate(cFileName))==-1
+	Beep(4)
+      	Msg("Fajl "+cFileName+" se vec koristi !",6)
+      	return
+endif
+
+fclose(nH)
+
+// Otvori file za upis
+set printer to (cFileName)
+set printer on
+set console off
 
    * Upiši zaglavlje XML file
    XMLWriteHeader()
