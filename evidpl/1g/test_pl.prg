@@ -1,5 +1,11 @@
 #include "\dev\fmk\pos\pos.ch"
 
+// ______TO DO______
+// ova 3 test case-a prebaciti u /sclib/ut/1g/test_str.prg
+// ovo su testovi sa stringovima...
+// u /APPSRV dodati switch /STRUT za test case sa stringovima
+
+
 
 function Test_EvidPl()
 *{
