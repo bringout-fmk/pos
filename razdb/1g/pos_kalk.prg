@@ -443,6 +443,8 @@ return
  */
 function Rek2Kalk()
 *{
+
+MsgBeep("Funkcija u fazi izrade !!!")
 // pozovi real2kalk za reklamacije
 Real2Kalk(nil, nil, VD_REK)
 

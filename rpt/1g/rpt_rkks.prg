@@ -37,6 +37,7 @@ private cVrijDo
 private cIdDio:=gIdDio
 private cIdOdj:=SPACE(2)
 
+
 set cursor on
 
 if (dDOd == nil)  
