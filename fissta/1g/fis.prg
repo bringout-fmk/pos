@@ -647,18 +647,20 @@ O__PRIPR
 select _pripr
 go top
 
+nr:=1
 do while !eof() //.and. field->idvd=="42"
 	cID:=GetArtCodeFromRoba(_pripr->idroba)
-      	cNaziv      := alltrim(_pripr->robanaz) 
-      	nCijena     := _pripr->cijena 
+      	cNaziv      := left(alltrim(_pripr->robanaz),18) 
+      	nCijena1    := val(str(_pripr->Cijena,9,2))
+      	cCijena     := str(_pripr->Cijena,9,2) 
       	cPorez      := GetCodeTarifa(alltrim(_pripr->idtarifa)) 
       	cDepartment := '1'
       	cJedMjere   := GetCodeForArticleUnit(alltrim(_pripr->jmj)) 
-      	nKolicina   := _pripr->kolicina
+      	nKolicina   := val(str(_pripr->kolicina,8,2))
       
-      	AADD(aArtikli, {cID, cNaziv, nCijena, cPorez, cDepartment, cJedMjere})
+      	AADD(aArtikli, {cID, cNaziv, nCijena1, cPorez, cDepartment, cJedMjere})
       	AADD(aArtRacun, {nKolicina, cID})
-      	nUkupno += nCijena * nKolicina
+      	nUkupno += nCijena1 * nKolicina
       	skip
 enddo
 
@@ -676,11 +678,12 @@ function GetArtCodeFromRoba(cIDRoba)
 *{
    cCode:=""
    nWorkArea:= SELECT()
-   if (select('roba')=0)
-      O_ROBA
-   endif
-   HSEEK cIDRoba
-	cCode := STR(roba->_oid_)
+   O_ROBA
+   select roba
+   set order to tag "ID"
+   
+   HSEEK alltrim(cIDRoba)
+	cCode := alltrim(STR(roba->_oid_))
    SELECT (nWorkArea)
 
 return cCode

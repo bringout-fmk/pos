@@ -6,7 +6,7 @@
  */
 function Fis_test_main()
 *{
-/*
+
 // test kreiranja fajla ARTIKLI.XML te provjera njegovog sadrzaja
 TestRWArtikliXml()
 //Sleep(5)
@@ -60,7 +60,6 @@ TestFisRn3()
 ? 'Press any key to continue...'
 inkey(0)
 clear screen
-*/
 
 TestFisRn4()
 //Sleep(5)
@@ -644,25 +643,25 @@ if (select('_pripr')!=0)
    zap
 endif
 append blank
-replace cijena with 3899.000, ;
+replace cijena with 3899, ;
         idroba with '01MCJ00011', ;
         idtarifa with '1', ;
         jmj with 'PAR', ;
-        kolicina with 3.000, ;
+        kolicina with 3, ;
         robanaz with 'THEMA'
 append blank
-replace cijena with 2619.000, ;
+replace cijena with 2619, ;
         idroba with '01MCJ00001', ;
         idtarifa with '1', ;
-        jmj with 'KOM', ;
-        kolicina with 2.000, ;
+        jmj with 'PAR', ;
+        kolicina with 2, ;
         robanaz with 'DRINA'
 
+AADD(aArtikli1, {"100000000062", "DRINA", 2619.00, "3", "1", "6"})
 AADD(aArtikli1, {"100000000064", "THEMA", 3899.00, "3", "1", "6"})
-AADD(aArtikli1, {"100000000062", "DRINA", 2619.00, "3", "1", "1"})
 
-AADD(aArtRacun1, {3.00, "100000000064"})
 AADD(aArtRacun1, {2.00, "100000000062"})
+AADD(aArtRacun1, {3.00, "100000000064"})
 
 nUkupno1:=16935.00
         
@@ -677,11 +676,10 @@ endif
 ? "aArtikli: uporedjujem elemente matrice ..."
 nErr:=0
 for nCnt:=1 to LEN(aArtikli)
-   ?? 'a'
 	for nCnt2:=1 to 6
 		if (aArtikli[nCnt, nCnt2] <> aArtikli1[nCnt, nCnt2])
 			nErr ++
-			? "Razlika u elementu: " + STR(nCnt) + "-" + STR(nCnt2)
+			? "    Razlika u elementu: " + alltrim(STR(nCnt)) + "-" + alltrim(STR(nCnt2))
 		endif
 	next
 next
@@ -700,11 +698,10 @@ endif
 ? "aArtRacun: uporedjujem elemente matrice ..."
 nErr:=0
 for nCnt:=1 to LEN(aArtRacun)
-   ?? 'b'
 	for nCnt2:=1 to 2
 		if (aArtRacun[nCnt, nCnt2] <> aArtRacun1[nCnt, nCnt2])
 			nErr ++
-			? "Razlika u elementu: " + STR(nCnt) + "-" + STR(nCnt2)
+			? "   Razlika u elementu: " + alltrim(STR(nCnt)) + "-" + alltrim(STR(nCnt2))
 		endif
 	next
 next
