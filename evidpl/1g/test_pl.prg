@@ -16,7 +16,10 @@ TestRdHashStr()
 Inkey(0)
 CLEAR SCREEN
 
+TestStr2Niz()
 
+Inkey(0)
+CLEAR SCREEN
 
 
 return
@@ -108,6 +111,40 @@ endif
 
 ?
 ? "TEST CASE zavrsen ..."
+
+return
+*}
+
+
+function TestStr2Niz()
+*{
+
+? REPLICATE("-", 70)
+? "TEST CASE: STR 2 NIZ"
+? REPLICATE("-", 70)
+
+cStr:="12345678901234567890" + REPLICATE("A", 20) + REPLICATE("B", 20) + REPLICATE("C", 10)
+aTmp:={}
+aTmp:=StrToNiz(cStr, 20)
+aRes:={}
+AADD(aRes, "12345678901234567890")
+AADD(aRes, "AAAAAAAAAAAAAAAAAAAA")
+AADD(aRes, "BBBBBBBBBBBBBBBBBBBB")
+AADD(aRes, "CCCCCCCCCC")
+
+if LEN(aRes) <> LEN(aTmp)
+	? "Nije ista duzina matrica"
+endif
+
+for i:=1 to LEN(aRes)
+	if aTmp[i] <> aRes[i]
+		? "Generisano: " + aTmp[i]
+		? "Originalno: " + aRes[i]
+	else
+		? "Elementi OK"
+	endif
+next
+
 
 return
 *}
