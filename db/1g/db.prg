@@ -111,6 +111,29 @@ endif
 *}
 
 
+/*! \fn PostojiDokument(cTipDok, dDate)
+ *  \brief Provjerava da li postoje dokumenti cTipDok na datum dDate
+ *  \param cTipDok - tip dokumenta, npr "42" - racun, "19" - nivelacija
+ *  \param dDate - datum dokumenta
+ *  \return .t. ako postoji, .f. ako ne postoji
+ */
+function PostojiDokument(cTipDok, dDate)
+*{
+O_DOKS
+select doks
+set order to tag "2"
+seek cTipDok + DTOS(dDate)
+
+if Found()
+	return .t.
+else
+	return .f.
+endif
+
+return
+*}
+
+
 /*! \fn StanjeRoba(_IdPos,_IdRoba)
  *  \brief
  *  \param _IdPos
