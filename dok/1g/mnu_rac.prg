@@ -341,6 +341,13 @@ SETKEY (K_PGDN, {|| DummyProc()})
 SETKEY (K_PGUP, {|| DummyProc()})
 SetSpecNar()
 
+if gDisplay=="D"
+	Send2ComPort(CHR(10)+CHR(13))
+	Send2ComPort(CHR(10)+CHR(13))
+	Send2ComPort(CHR(30)+"ARTIKAL: " + ALLTRIM(roba->id) + CHR(22) + CHR(13))
+	Send2ComPort(ALLTRIM(roba->naz))
+endif
+
 return Vrati
 *}
 
