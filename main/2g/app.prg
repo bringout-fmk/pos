@@ -454,6 +454,13 @@ if (mpar37("/IMPMSG",goModul))
 	endif
 endif
 
+if (mpar37("/IMPROBA",goModul))
+	if LEFT(self:cP5,3)=="/L="
+		AzurSifIzFmk(SUBSTR(self:cP5,4))
+		goModul:quit()
+	endif
+endif
+
 // Test cases
 if (mpar37("/TEST", goModul))
 	? "App server: test cases"
