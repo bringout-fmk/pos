@@ -277,6 +277,7 @@ if LASTKEY()<>K_ESC
     	Wpar("Si",@gSifUpravn, .t., "D")
     	Wpar("Bc",@gEntBarCod, .t., "D")
     	Wpar("np",@gUpitNP, .t., "Z")
+    	Wpar("Ep",@gEvidPl, .t., "Z")
     	MsgC()
 endif
 return
