@@ -705,7 +705,7 @@ endif
 SELECT _POS
 // uzmi gDatum za azuriranje
 cDatum:=dtos(gDatum)  
-nUkIznRn:=0
+private nIznRn:=0
 
 do while !eof() .and. _POS->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+"42"+cDatum+cRadRac)
 	Scatter()
@@ -728,9 +728,6 @@ do while !eof() .and. _POS->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+"42"+cDatum+
     		else
       			SKIP 1
     		endif
-  		
-		nUkIznRn+=_POS->Kolicina*_POS->cijena
-		
 	enddo
   	_Prebacen:=OBR_NIJE
   	SELECT ODJ
@@ -759,6 +756,7 @@ do while !eof() .and. _POS->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+"42"+cDatum+
 		if fCRoba
 			ASQLCroba(@nH,"#CONT",_idroba,"M","2",_kolicina)
 		endif
+		nIznRn+=POS->Kolicina * POS->cijena
   	endif
   	select _pos
 enddo
@@ -776,8 +774,9 @@ endif
 
 // ako se koristi varijanta evidentiranja podataka o nacinu placanja
 if gEvidPl=="D"
-	AzurCek(aCKData, nUkIznRN, cStalRac, cVrijeme)
-	//AzurSindKred(aSKData, nUkIznRN, cStalRac, cVrijeme)
+	altd()
+	AzurCek(aCKData, nIznRN, cStalRac, cVrijeme)
+	//AzurSindKred(aSKData, nIznRN, cStalRac, cVrijeme)
 	AzurGarPismo(aGPData, cStalRac, cVrijeme)
 endif
 
