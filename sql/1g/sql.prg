@@ -342,7 +342,14 @@ if LASTKEY()==K_ESC
 	return .f.
 endif
 
-private cFilter:="IdVD="+cm2str(cIdvd)+" .and. Datum>="+cm2str(dDatOd)+" .and. Datum<="+cm2str(dDatDo)
+private cFilter:=""
+
+// ako se radi o dokumentima 90, 91 i 92
+if cIdVD $ "90#91#92"
+	cFilter:="IdVD="+cm2str(cIdvd)+" .and. _DataZ_>="+cm2str(dDatOd)+" .and. _DataZ_<="+cm2str(dDatDo)
+else
+	cFilter:="IdVD="+cm2str(cIdvd)+" .and. Datum>="+cm2str(dDatOd)+" .and. Datum<="+cm2str(dDatDo)
+endif
 
 O_DOKS
 
@@ -357,7 +364,12 @@ use
 
 O_POS
 set FILTER to &cFilter
-cSQL:="delete from POS where IdVD="+SQLValue(cIdVd)+" and Datum>="+SQLValue(dDatOd)+" and Datum<="+SQLValue(dDatDo)
+if cIdVD $ "90#91#92"
+	cSQL:="delete from POS where IdVD="+SQLValue(cIdVd)+" and _DataZ_>="+SQLValue(dDatOd)+" and _DataZ_<="+SQLValue(dDatDo)
+else
+	cSQL:="delete from POS where IdVD="+SQLValue(cIdVd)+" and Datum>="+SQLValue(dDatOd)+" and Datum<="+SQLValue(dDatDo)
+endif
+
 Gw(cSQL)
 go top
 Log_Tabela()
