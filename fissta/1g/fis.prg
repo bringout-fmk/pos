@@ -680,7 +680,7 @@ function GetArtCodeFromRoba(cIDRoba)
       O_ROBA
    endif
    HSEEK cIDRoba
-	cCode := roba->_oid_
+	cCode := STR(roba->_oid_)
    SELECT (nWorkArea)
 
 return cCode
