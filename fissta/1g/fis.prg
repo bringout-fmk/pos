@@ -16,6 +16,35 @@ return
 *}
 
 
+/*! \fn WriteArtRacunXml(aArtRacun, cFileName)
+ *  \brief Kreira fajl ARTRACUN.XML i upisuje sadrzaj iz matrice aArtRacun
+ *  \param aArtRacun  - matrica sa stavkama racuna; struktura:	{"kolicina","id artikal"}
+ *  \param cFileName - putanja i ime izlaznog fajla
+ */
+function WriteArtRacunXML(aArtRacun, cFileName)
+*{
+
+
+
+return
+*}
+
+
+/*! \fn WritePlacanjaXml(nIznos, cTipPlacanja, cFileName)
+ *  \brief Kreira fajl PLACANJA.XML i popunjava ga sa stavkama nIznos i cTipPlacanja
+ *  \param nIznos  - ukupan iznos racuna
+ *  \param cTipPlacanja - tip placanja (1, 2 ili 3)
+ *  \param cFileName - putanja i ime izlaznog fajla
+ */
+function WritePlacanjaXML(nIznos, cTipPlacanja, cFileName)
+*{
+
+
+
+return
+*}
+
+
 /*! \fn ReadXmlError(cInputFile, cOriginalFile)
  *  \brief Vrsi komparaciju dva xml fajla
  *  \return true or false
@@ -26,6 +55,68 @@ function ReadXmlError(cInputFile, cOriginalFile)
 
 return .f.
 *}
+
+
+
+/*! \fn WriteMainInCode(cCode, cFilePath)
+ *  \brief Upisuje u fajl mainin.dat kod - cCode, 
+     Napomena:
+      - ako fajl mainin.dat ne postoji kreira ga i upisuje cCode
+      - ako fajl mainin.dat postoji, brise sve iz njega i upisuje cCode
+ *  \param cCode - kod
+ *  \param cFilePath - lokacija fajla mainin.dat, mora biti lokacija interfejsa FisCTT
+ */
+function WriteMainInCode(cCode, cFilePath)
+*{
+if !File(cFilePath + "mainin.dat")
+	// kreiraj fajl
+endif
+
+return
+*}
+
+
+/*! \fn ReadMainInCode(cFilePath)
+ *  \brief Cita kod iz fajl-a mainin.dat
+ *  \param cFilePath - lokacija fajla "mainin.dat"
+ */
+function ReadMainInCode(cFilePath)
+*{
+cCode:=""
+
+return cCode
+*}
+
+
+/*! \fn WriteMainOutCode(cFilePath)
+ *  \brief Upisuje u mainout.dat uvijek kod "999"
+     Napomena:
+      - ako fajl mainout.dat ne postoji, kreira se i upisuje se kod "999"
+      - ako fajl mainout.dat postoji, brise njegov sadrzaj i upisuje kod "999"
+ *  \param cFilePath - lokacija fajla mainout.dat, mora biti lokacija interfejsa FisCTT
+ */
+function WriteMainOutCode(cFilePath)
+*{
+// uvijek u mainout.dat upisi kod "999"
+if !File(cFilePath + "mainout.dat")
+	// kreiraj cFilePath + "mainout.dat"
+endif
+
+
+return
+*}
+
+/*! \fn ReadMainOutCode(cFilePath)
+ *  \brief Cita iz fajla mainout.dat posljednju gresku - ako postoji, ako je kod "0" onda nema greske.
+ *  \param cFilePath - lokacija fajla mainout.dat
+ */
+function ReadMainOutCode(cFilePath)
+*{
+cCode:=""
+
+return cCode
+*}
+
 
 
 
