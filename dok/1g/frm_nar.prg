@@ -107,29 +107,32 @@ else
 endif
 
 ImeKol:={{"Sifra",{|| IdRoba             }},{ "Naziv",      {|| Left (RobaNaz, 30) }},{ "JMJ",        {|| JMJ                }},{ "Kolicina  ", {|| STR (kolicina,8,2) }},{ "Cijena    ", {|| STR (Cijena,8,2)   }},{ "Iznos     ", {|| STR (Kolicina * Cijena,10,2)}}}
+
 Kol:={1, 2, 3, 4, 5, 6}
+
 AADD(aUnosMsg, "<*> - Ispravka stavke")
 AADD(aUnosMsg, "Storno/povrat - negativna kolicina")
+
 if gModul=="HOPS"
 	if gRadniRac=="D"
     		AADD(aUnosMsg, "</> - Pregled racuna")
   	endif
 endif
-Box(,20,77,,aUnosMsg)
-@ m_x,m_y+23 SAY PADC ("RACUN BR: "+Alltrim (cBrojRn), 40) COLOR Invert
 
+Box(,20,77,,aUnosMsg)
+
+@ m_x,m_y+23 SAY PADC ("RACUN BR: "+Alltrim (cBrojRn), 40) COLOR Invert
 oBrowse:=FormBrowse( m_x+6, m_y+1, m_x+19, m_y+77, ImeKol, Kol,{ "Í", "Ä", "³"}, 0)
 oBrowse:autolite:=.f.
-
 aAutoKeys:=HangKeys ()
 bPrevDn:=SETKEY(K_PGDN, {|| DummyProc()})
 bPrevUp:=SETKEY(K_PGUP, {|| DummyProc()})
+
 // <*> - ispravka tekuce narudzbe
 //       (ukljucujuci brisanje i ispravku vrijednosti)
 // </> - pregled racuna - kod HOPSa
+
 SetSpecNar()
-
-
 
 @ m_x+3,m_y+50 SAY "Ukupno:"
 @ m_x+4,m_y+50 SAY "Popust:"
@@ -194,7 +197,6 @@ if gModul=="HOPS"
 else
 	// gRadniRac == "N";
     	// prije ulaska u pripremu vrati u _PRIPR sve iz _POS sto nije "Z"-zakljuceno
-	altd()
 	SELECT _POS
 	Set order to 3
     	//"3", "IdVd+IdRadnik+GT+IdDio+IdOdj+IdRoba", PRIVPATH+"_POS"
@@ -215,15 +217,15 @@ else
       		endif
     	enddo
 	
-	//Scan_PriprForRabat(aRabat)
-    	
 	set order to 1
 endif
 
 nIznNar:=0
 nPopust:=0
+
 SELECT _PRIPR
 GO TOP
+
 do while !eof()
 	if (idradnik+idpos+idvd+smjena)<>(gIdRadnik+gidpos+VD_RN+gSmjena)
     		// _PRIPR
@@ -237,6 +239,7 @@ enddo
 
 SET ORDER TO
 GO TOP
+
 // iz _PRIPR
 Scatter()  
 _IdPos:=gIdPos
@@ -268,17 +271,13 @@ do while .t.
 
 	cDSFINI:=IzFMKINI('SifRoba','DuzSifra','10')
 	
-	altd()
-	
 	@ m_x+2,m_y+5 SAY " Artikal:" GET _idroba PICT "@!S10" when {|| _idroba:=padr(_idroba,VAL(cDSFINI)),.t.} VALID PostRoba(@_idroba, 2, 27).and. NarProvDuple (_idroba)
 	@ m_x+3,m_y+5 SAY "  Cijena:" GET _Cijena  picture "99999.999" when (roba->tip=="T" .or. gPopZcj=="D")
 	
-	@ m_x+4,m_y+5 SAY "Kolicina:" GET _Kolicina PICTURE "999999.999" when {|| Popust(m_x+3,m_y+28), _kolicina:=iif(gOcitBarcod,1,_kolicina), _kolicina:=iif(_idroba='PLDUG  ',1,_kolicina), iif(_idroba='PLDUG  ',.f.,.t.) } VALID KolicinaOK (_Kolicina) SEND READER:={|g| GetReader2(g)}
+	@ m_x+4,m_y+5 SAY "Kolicina:" GET _Kolicina PICTURE "999999.999" when {|| Popust(m_x+3,m_y+28), _kolicina:=iif(gOcitBarcod, 1, _kolicina), _kolicina:=iif(_idroba='PLDUG  ', 1, _kolicina), iif(_idroba='PLDUG  ', .f., .t.) } VALID KolicinaOK(_Kolicina).and.CheckAmount(_Kolicina) SEND READER:={|g| GetReader2(g)}
 
 	// ako je sifra ocitana po barcodu, onda ponudi kolicinu 1
-	
 	read
-	
 	cParticip:="N"
 	// apoteke !!!
 	select odj
@@ -460,6 +459,26 @@ return
 *}
 
 
+function CheckAmount(nAmount)
+*{
+
+nTotAmount:=VAL(IzFmkIni("POS","MaxKolicina","100",KUMPATH))
+
+if nTotAmount==0
+	return .t.
+endif
+
+if nAmount > nTotAmount 
+	if Pitanje(,"Sigurno zelite racun na kolicinu: " + ALLTRIM(STR(nAmount)),"N")=="D"
+		return .t.
+	else
+		return .f.
+	endif
+else
+	return .t.
+endif
+*}
+
 
 /*! \fn HangKeys()
  *  \brief Nabacuje SETKEYa kako je tastatura programirana   
@@ -601,6 +620,8 @@ else
       		endif
 	endif
 endif
+
+
 return (lFlag)
 *}
 
