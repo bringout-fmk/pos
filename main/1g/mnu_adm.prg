@@ -157,6 +157,9 @@ if IsPlNS()
 	endif
 endif
 
+AADD(opc, "U. Trgovacka knjiga")
+AADD(opcexe, {|| RptTK()})
+
 Menu_SC("adm")
 *}
 
