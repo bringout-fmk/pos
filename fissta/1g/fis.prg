@@ -661,7 +661,9 @@ do while !eof() //.and. field->idvd=="42"
       	nUkupno += nCijena1 * nKolicina
       	skip
 enddo
-nUkupno := val(str(nUkupno,9,2))
+
+nUkupno:=VAL(STR(nUkupno, 9, 2))
+
 SELECT (nArr)
 
 return
