@@ -204,6 +204,7 @@ Rpar("vs",@gVsmjene)
 Rpar("ST",@gSezonaTip)
 Rpar("Si",@gSifUpravn)
 Rpar("Bc",@gEntBarCod)
+Rpar("Ep",@gEvidPl)
 
 UsTipke()
 set cursor on
@@ -248,6 +249,8 @@ else
 endif
 
 AADD (aNiz, {"Pri azuriranju pitati za nacin placanja (D/N)? " , "gUpitNP", "gUpitNP$'DN'", "@!", })
+
+AADD (aNiz, {"Evidentiranje podataka o vrstama placanja (D/N)? " , "gEvidPl", "gEvidPl$'DN'", "@!", })
 
 VarEdit(aNiz,6,2,24,79,"PARAMETRI RADA PROGRAMA - PRINCIPI RADA","B1")
 BosTipke()
