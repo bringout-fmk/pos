@@ -450,17 +450,19 @@ if gRadniRac=="D"
 	ESC_BCR
   	BoxC()
 else
-	if IsPlNS() .and. gFissta=="D" 
-		aArtikli:={}
-	  	aArtRacun:={}
-	  	nUkupno:=0 //ukupan iznos racuna
-	  	FillFisMatrice(@aArtikli, @aArtRacun, @nUkupno)
-	  	cVrPl:=GetCodeVrstePl(cIdVrsteP)
-	  	if !FisRacun(aArtikli, aArtRacun, nUkupno, cVrPl)
-	     		// Racun nije formiran, nemoj azurirati u tops
-			MsgBeep("Racun nije azuriran")
-	     		CLOSERET 	
-	  	endif
+	if IsPlNS() 
+		if gFissta=="D" 
+			aArtikli:={}
+	  		aArtRacun:={}
+	  		nUkupno:=0 //ukupan iznos racuna
+	  		FillFisMatrice(@aArtikli, @aArtRacun, @nUkupno)
+	  		cVrPl:=GetCodeVrstePl(cIdVrsteP)
+	  		if !FisRacun(aArtikli, aArtRacun, nUkupno, cVrPl)
+	     			// Racun nije formiran, nemoj azurirati u tops
+				MsgBeep("Racun nije azuriran")
+	     			CLOSERET 	
+	  		endif
+		endif
 	endif
 	
 	// prebaci iz prip u pos
