@@ -5,7 +5,7 @@ include /sclib/Makefile_clipper
 
 SRCDOSROOT=h:\\dev\\fmk\\pos\\fissta\\1g\\
 
-PRGS=fis.prg fis_test.prg 
+PRGS=fis.prg fis_test.prg fis_mnu.prg 
 
 CS=
 ASMS=
