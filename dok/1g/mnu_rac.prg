@@ -593,6 +593,7 @@ do while .t.
    	@ m_x+1,m_y+2 SAY "Nacin placanja " GET cIdVrsteP pict "@!" valid p_Vrstep(@cIdVrstep)
    	read
    	
+	// ako se koristi varijanta evidentiranja podataka o vp pozovi formu
 	if gEvidPl=="D"
 		FrmVPGetData(cIdVrsteP, aCKData, aSKData, aGPData)
 	endif
