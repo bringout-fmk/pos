@@ -15,10 +15,11 @@ RPar("d1",@cDat0)
 RPar("d2",@cDat1)
 
 set cursor on
-Box(,2,60)
+Box(,3,60)
 	@ m_x+1,m_y+2 SAY "Prod.mjesto (prazno-svi) "  GET  cIdPos  valid empty(cIdPos).or.P_Kase(cIdPos) pict "@!"
 	@ m_x+2,m_y+2 SAY "za period " GET cDat0
 	@ m_x+2,col()+2 SAY "do " GET cDat1
+	@ m_x+3,m_y+2 SAY "Prored po datumima (D/N)?" GET cProred VALID cProred$"DN" PICT "@!"
 	read
 	if LastKey()==K_ESC
 		BoxC()
@@ -44,6 +45,7 @@ function RptTK()
 *{
 private cDat0:=gDatum
 private cDat1:=gDatum
+private cProred:="D"
 private cIdPos
 
 // open TK db
@@ -94,8 +96,11 @@ select doks
 set order to tag "TK" // idpos+DTOS(datum)+idvd
 
 nIznZad:=0
+nIznNi:=0
+nIznRek:=0
 nIznRGot:=0
 nIznRCek:=0
+nIzCkPol:=0
 dTekDate:=CToD("")
 nUkZad:=nUUkZad:=0
 nUkRaz:=nUUkRaz:=0
@@ -118,11 +123,14 @@ do while !eof() .and. idpos==cIdPos
 		loop
 	endif
 	
-	if (field->idvd $ "16#42") .and. (dTekDate <> dDatum)
-		PrintDateRow(dDatum)
+	nUkRaz:=nUkZad:=0
+	altd()	
+	if (field->idvd $ "16#42#NI#98") .and. (dTekDate <> dDatum)
+		if cProred=="D"
+			PrintDateRow(dDatum)
+		endif
 		dTekDate:=dDatum
-		nUkRaz:=nUkZad:=nUkPol:=0
-		
+		nUkPol:=0
 		// daj podatke o pologu
 		private nPlgGot:=0
 		private nPlgCek:=0
@@ -132,6 +140,7 @@ do while !eof() .and. idpos==cIdPos
 	
 	if (field->idvd=="16") // zaduzenja
 		do while !EOF() .and. field->datum=dDatum .and. field->idvd="16"
+			altd()
 			nIznZad:=VAL(DokIznos())
 			cZadNaz:="KALK: 16-" + ALLTRIM(doks->brdok)
 			nUkZad+=nIznZad
@@ -139,25 +148,52 @@ do while !eof() .and. idpos==cIdPos
 			skip
 		enddo
 		dTekDate:=dDatum
-		
+	elseif (field->idvd=="NI") // nivelacija
+		do while !EOF() .and. field->datum=dDatum .and. field->idvd="NI"
+			nIznNi:=VAL(DokIznos())
+			cNiNaz:="KALK: NI-" + ALLTRIM(doks->brdok)
+			nUkZad+=nIznNi
+			PrintTkRow(dDatum, cNiNaz, nIznNi, 0, 0)
+			skip
+		enddo
+		dTekDate:=dDatum
+	elseif (field->idvd==VD_REK) // reklamacija
+		do while !EOF() .and. field->datum=dDatum .and. field->idvd=VD_REK
+			altd()
+			nIznRek:=VAL(DokIznos())
+			cRekNaz:="Rekl. 98-" + ALLTRIM(doks->brdok)
+			nUkRaz+=nIznRek
+			PrintTkRow(dDatum, cRekNaz, 0, nIznRek, 0)
+			skip
+		enddo
+		dTekDate:=dDatum
+
 	elseif (field->idvd=="42") // racuni
 		nIznRGot:=0
 		nIznRCek:=0
+		nIzCkPol:=0
 		do while !EOF() .and. field->datum=dDatum .and. field->idvd="42"
+			// GOTOVINSKO PLACANJE
 			if field->idvrstep == "01"
 				nIznRGot+=VAL(DokIznos())
-			elseif field->idvrstep $ "CK#GP#SK"
-				nIznRCek+=VAL(DokIznos())
+			// CEKOVI
+			elseif field->idvrstep $ "CK"
+				private nTmp1:=0
+				private nTmp2:=0
+				GetCkData(@nTmp1, @nTmp2)
+				nIznRCek+=nTmp1
+				nIzCkPol+=nTmp2
 			endif
 			skip
 		enddo
 		if (nIznRGot > 0)
-			PrintTkRow(dDatum, "Dnev.pazar gotovina", 0, nIznRGot, nPlgGot, dPlg)
+			PrintTkRow(dDatum, "d.p. gotovina", 0, nIznRGot, nPlgGot, dPlg)
 		endif
 		if (nIznRCek > 0)
-			PrintTkRow(dDatum, "Dnev.pazar cekovi", 0, nIznRCek, nPlgCek, dPlg)
+			PrintTkRow(dDatum, "d.p. cekovi", 0, nIznRCek, nPlgCek, dPlg)
+			PrintTkRow(dDatum, "d.p. cekovi na odl.", 0, nIzCkPol, 0)
 		endif
-		nUkRaz+=nIznRGot+nIznRCek
+		nUkRaz+=nIznRGot+nIznRCek+nIzCkPol
 		nUkPol:=nPlgCek+nPlgGot
 		dTekDate:=dDatum
 		

@@ -12,7 +12,7 @@ private Izbor:=1
 
 AADD(opc,"1. unos pologa pazara           ")
 AADD(opcexe,{|| FrmPolPaz() })
-AADD(opc,"2. trgovacka knjiga")
+AADD(opc,"2. stampa trgovacke knjige")
 AADD(opcexe,{|| RptTK() })
 
 Menu_SC("tk")
@@ -33,17 +33,18 @@ local cBrDok //broj dokumenta pologa
 local cValid:="N"
 local cTimeDok //vrijeme dokumenta
 
-Box(, 7, 60)
+Box(, 9, 60)
 SET CURSOR ON
 do while .t.
 	@ 1+m_x, 2+m_y SAY "Unos podataka o pologu pazara:          " COLOR "I"
 	@ 2+m_x, 2+m_y SAY "----------------------------------------"
 	@ 3+m_x, 2+m_y SAY "Datum pologa  :" GET dDatPol VALID !EMPTY(dDatPol)
-	@ 4+m_x, 2+m_y SAY "Polog gotovina:" GET nIznGot VALID !EMPTY(nIznGot) PICT "999999.99"
-	@ 5+m_x, 2+m_y SAY "Polog cekovi  :" GET nIznCek VALID !EMPTY(nIznCek) PICT "999999.99"
+	@ 4+m_x, 2+m_y SAY "Polozi "
+	@ 5+m_x, 2+m_y SAY "      gotovina:" GET nIznGot VALID !EMPTY(nIznGot) PICT "999999.99"
+	@ 6+m_x, 2+m_y SAY "        cekovi:" GET nIznCek VALID !EMPTY(nIznCek) PICT "999999.99"
 	read
-	@ 3+m_x, 30+m_y SAY "Zbir pologa:" + STR(nIznGot+nIznCek, 12, 2)
-	@ 7+m_x, 2+m_y SAY "Ispravno (D/N)?" GET cValid PICT "@!" VALID cValid$"DN"
+	@ 7+m_x, 2+m_y SAY "Zbir pologa:" + STR(nIznGot+nIznCek, 12, 2)
+	@ 9+m_x, 2+m_y SAY "Ispravno (D/N)?" GET cValid PICT "@!" VALID cValid$"DN"
 	read
 	if cValid=="D"
 		exit
@@ -52,9 +53,14 @@ do while .t.
 		BoxC()
 		return
 	endif
+	
 enddo
 BoxC()
 
+if PostojiDokument("88", dDatPol)
+	MsgBeep("Postoji vec dokument na dan " + DToC(dDatPol)) 
+	return	
+endif
 if LastKey()==K_ESC
 	MsgBeep("Polog nece biti evidentiran!")
 	return
@@ -68,6 +74,7 @@ endif
 O_DOKS
 O_POS
 
+MsgO("Azuriram dokument pologa...")
 cBrDok:=NarBrDok(gIdPos, VD_PP)
 cTimeDok:=TIME()
 
@@ -75,7 +82,7 @@ cTimeDok:=TIME()
 AzurDoksDokument(VD_PP, gIdPos, cBrDok, cTimeDok, dDatPol)
 // Azuriraj stavke u POS
 AzurPosDokument(VD_PP, 1, 1, cBrDok, gIdPos, "", nIznGot, nIznCek, 0, dDatPol)
-
+MsgC()
 
 return
 *}
@@ -110,7 +117,7 @@ START PRINT CRET
 ? "GOTOVINA   :", pos->cijena
 ? "CEK        :", pos->ncijena
 ? "---------------------------"
-? "UKUPNO     :", pos->cijena+pos->ncijena
+? "UKUPNO     :", pos->cijena + pos->ncijena + pos->kolicina
 ?
 ?
 FF
@@ -145,6 +152,40 @@ if (pos->idvd==VD_PP)
 	nPlgCek:=pos->ncijena
 	dPlg:=datum
 endif
+
+select doks
+go nTRec
+
+return
+*}
+
+
+
+/*! \fn GetCkData(n1, n2)
+ *  \brief Daje podatke o cekovima
+ *  \param n1
+ *  \param n2
+ */
+function GetCkData(n1, n2)
+*{
+local nTRec
+altd()
+nTRec:=RecNO()
+
+select pos
+set order to tag "7"
+hseek doks->(IdPos+VD_CK+BrDok+" 2")
+
+do while !EOF() .and. pos->idodj=" 2"
+	if pos->iddio == " 2"
+		n1:=pos->ncijena
+	else
+		n2+=pos->ncijena
+	endif
+	skip
+enddo
+// vrati index
+set order to tag "1"
 
 select doks
 go nTRec

@@ -419,14 +419,18 @@ dDatum:=doks->datum
  
 if ((lUI==NIL) .or. lUI)
 	// ovo su ulazi ...
-    	if doks->IdVd $ VD_ZAD+"#"+VD_PCS
+    	if doks->IdVd $ VD_ZAD+"#"+VD_PCS+"#"+VD_REK
       		SELECT pos
       		SEEK cIdPos+cIdVd+DTOS(dDatum)+cBrDok
       		do while !eof().and.pos->(IdPos+IdVd+DTOS(datum)+BrDok)==cIdPos+cIdVd+DTOS(dDatum)+cBrDok
         		nIznos+=pos->kolicina*pos->cijena
         		SKIP
       		enddo
+		if doks->idvd==VD_REK
+			nIznos:=-nIznos
+		endif
     	endif
+	
 endif
 
 if ((lUI==NIL) .or. !lUI)
