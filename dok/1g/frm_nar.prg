@@ -106,6 +106,13 @@ else
 	cBrojRn:=cBrojRn
 endif
 
+if gDisplay=="D"
+	Send2ComPort(CHR(10)+CHR(13))
+	Send2ComPort(CHR(10)+CHR(13))
+	Send2ComPort(CHR(30)+"PRIPREMA RACUNA"+CHR(22)+CHR(13))
+	Send2ComPort("Sigma-com software")
+endif
+
 ImeKol:={{"Sifra",{|| IdRoba             }},{ "Naziv",      {|| Left (RobaNaz, 30) }},{ "JMJ",        {|| JMJ                }},{ "Kolicina  ", {|| STR (kolicina,8,2) }},{ "Cijena    ", {|| STR (Cijena,8,2)   }},{ "Iznos     ", {|| STR (Kolicina * Cijena,10,2)}}}
 
 Kol:={1, 2, 3, 4, 5, 6}
@@ -296,10 +303,25 @@ do while .t.
      		@ m_x+4,m_y+25 SAY space (11)
 	endif
 
+	if gDisplay=="D"
+		Send2ComPort(CHR(10)+CHR(13))
+		Send2ComPort(CHR(10)+CHR(13))
+		//Send2ComPort(CHR(22))
+		Send2ComPort(CHR(30) + "KOL:" + ALLTRIM(STR(_kolicina,10,2)) + " ,CIJ:" + ALLTRIM(STR(_cijena,10,2)))
+		Send2ComPort(CHR(22))
+		Send2ComPort(CHR(13))
+		Send2ComPort("TOTAL: " + ALLTRIM(STR(_kolicina*_cijena,10,2)))
+	endif
+
+
 	if LASTKEY()==K_ESC
   		//if LEN(aRabat) > 0
 		//	ReCalcRabat()
 		//endif
+		if gDisplay=="D"
+			Send2ComPort(CHR(10)+CHR(13))
+			Send2ComPort(CHR(10)+CHR(13))
+		endif
 		EXIT
 	else
  		SELECT ODJ
