@@ -10,13 +10,14 @@
 function WriteArtikliXML(aArtikli, cFilePath)
 *{
 
-local nH
+local nH, cFileName
 
+cFileName := cFilePath+'artikli.xml'
 // Kreiraj file
 if (nH:=fcreate(cFileName))==-1
 	Beep(4)
-      	Msg("Fajl "+cFileName+" se vec koristi !",6)
-      	return
+   Msg("Greška pri kreiranju fajla: "+cFileName+" !",6)
+   return
 endif
 
 fclose(nH)
@@ -26,19 +27,23 @@ set printer to (cFileName)
 set printer on
 set console off
 
-   * Upiši zaglavlje XML file
+   // Upiši zaglavlje XML file
    XMLWriteHeader()
-   
-   * Upiši body
-   XMLWriteArticles(aArtikli)
-   
-   * Upiši footer
+   // Upiši body
+   lResult := XMLWriteArticles(aArtikli)
+   // Upiši footer
    XMLWriteFooter()
    
-   * Zatvori file
-   set printer to
-   set printer off
-   set console on
+// Zatvori file
+set printer to
+set printer off
+set console on
+
+// ako je nastupila greška izbriši artikli.xml
+if !lResult
+   FERASE(cFileName)
+endif
+
 
 return
 *}
@@ -59,26 +64,76 @@ local nRowCount, nRow
    nRowCount = LEN(aArticles)
    FOR nRow = 1 TO nRowCount
       sXMLLine := '<Plu ' 
-      sXMLLine += 'Des="'+aArticles[nRow, 2]+'" '
-      sXMLLine += 'Price="'+alltrim(str(aArticles[nRow, 3]))+'" '
-      sXMLLine += 'Vat="'+aArticles[nRow, 4]+'" '
-      sXMLLine += 'Dep="'+aArticles[nRow, 5]+'" '
-      sXMLLine += 'Mes="'+aArticles[nRow, 6]+'">'
-      sXMLLine += aArticles[nRow, 1]
+      
+      if (CheckLength(aArticles[nRow, 2], 18))
+         sXMLLine += 'Des="'+aArticles[nRow, 2]+'" '
+      else
+         return .f.
+      endif
+      
+      if (CheckLength(alltrim(str(aArticles[nRow, 3])), 9))
+         // provjerava broj decimala
+         if (right(alltrim(str(aArticles[nRow, 3])), 3) = '.')
+            sXMLLine += 'Price="'+alltrim(str(aArticles[nRow, 3]))+'" '
+         else
+            Beep(4)
+            Msg("Neispravan broj decimala "+alltrim(str(aArticles[nRow, 3]))+", potrebno dvije decimale !",6)
+            return .f.
+         endif
+      else
+         return .f.
+      endif
+
+      if (CheckLength(aArticles[nRow, 4], 1))
+         sXMLLine += 'Vat="'+aArticles[nRow, 4]+'" '
+      else
+         return .f.
+      endif
+
+      if (CheckLength(aArticles[nRow, 5], 9))
+         sXMLLine += 'Dep="'+aArticles[nRow, 5]+'" '
+      else
+         return .f.
+      endif
+
+      if (CheckLength(aArticles[nRow, 6], 2))
+         sXMLLine += 'Mes="'+aArticles[nRow, 6]+'">'
+      else
+         return .f.
+      endif
+
+      if (CheckLength(aArticles[nRow, 1], 12))
+         sXMLLine += aArticles[nRow, 1]
+      else
+         return .f.
+      endif
       sXMLLine += '</Plu>'
       ? sXMLLine
    NEXT
    ? '</Artikli>'
 
-return
+return .t.
 *}
+
+function CheckLength(cString, nLength)
+local lResult
+
+   if (len(cString)>nLength)
+      Beep(4)
+      Msg("Neispravna dužina "+cString+", max("+alltrim(str(nLength))+") !",6)
+      lResult := .f.
+   else
+      lResult := .t.
+   endif
+   
+return lResult
+
 
 function XMLWriteFooter()
 *{
 
 return
 *}
-
 
 
 /*! \fn WriteArtRacunXml(aArtRacun, cFileName)
