@@ -571,6 +571,7 @@ public gFmkSif:=""
 // postavljanje globalnih varijabli
 public gLocPort:="LPT1"
 public gIdCijena:="1"
+public gsOsInfo:="win98"
 
 #ifdef CLIP
 	return

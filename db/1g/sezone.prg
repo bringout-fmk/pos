@@ -226,7 +226,11 @@ if (goModul:oDatabase:cRadimUSezona=="RADP")
       		endif
 
       		if Pitanje(,"Izvrsiti pohranjivanje i spajanje podataka prethodnih sezona?","N")=="D"
-        		ZaSvakiSlucaj()
+        		if !SigmaSif("RAZSEZ")
+				return
+			endif
+			
+			ZaSvakiSlucaj()
         		private aFilesP:={}
         		private aFilesS:={}
         		private aFilesK:={}

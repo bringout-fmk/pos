@@ -65,9 +65,12 @@ run &cKom
 
 function DialUpOn()
 *{
-private cKom
+private cKom:=""
 if Pitanje(,"Aktivirati Dial-up Servera D ?","D")=="D"
-	cKom:="serverok /ON"
+	if gOpSist$"W2000WXP"
+		cKom:="start "
+	endif
+	cKom+="serverok /ON"
         run &ckom
 endif
 
@@ -81,10 +84,13 @@ return
 function DialUpOff()
 *{
 
-private cKom
+private cKom:=""
 
 if pitanje(,"DEAKTIVIRATI Dial-up Server D ?","D")=="D"
-	cKom:="serverok /OFF"    
+	if gOpSist$"W2000WXP"
+		cKom:="start "
+	endif
+	cKom+="serverok /OFF"    
 	run &ckom
 endif
 
