@@ -467,7 +467,14 @@ if (mpar37("/TEST", goModul))
 	// TEST CASE EVIDENTIRANJE VRSTA PLACANJA
 	if (self:cP5 == "/EVPL")
 		? "Test cases: evidentiranje vrsta placanja"
-		Test_evidpl()
+		Test_EvidPl()
+		quit	
+		//goModul:quit()
+	endif
+	// TEST CASE STR UT
+	if (self:cP5 == "/STRUT")
+		? "Test cases: string utility"
+		Test_StrUt()
 		quit	
 		//goModul:quit()
 	endif
