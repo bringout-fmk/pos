@@ -214,7 +214,7 @@ for i:=0 to 9
 	cCode:=ALLTRIM(STR(i))
 	WriteMainInCode(cCode, cFilePath)
 	cReadCode:=ReadMainInCode(cFilePath)
-	if cReadCode <> cCode
+	if alltrim(cReadCode) <> alltrim(cCode)
 		nCnt ++
 		? " Nepravilno upisan kod: " + ALLTRIM(STR(i))
 	endif
@@ -236,7 +236,7 @@ for i:=-5 to 5
 	cCode:=ALLTRIM(STR(i))
 	WriteMainOutCode(cFilePath, cCode)
 	cReadCode:=ReadMainOutCode(cFilePath)
-	if cReadCode <> cCode
+	if alltrim(cReadCode) <> alltrim(cCode)
 		nCnt ++
 		?? " Nepravilno upisan kod: " + ALLTRIM(STR(i))
 	endif
@@ -375,56 +375,4 @@ endif
 
 return
 *}
-
-
-
-function TestFisRn2()
-*{
-
-Box(,4, 50)
-	
-	cRd:=""
-	
-	WriteMainOutCode(gFisCTTPath)
-	@ 1+m_x, 2+m_y SAY "mainout: Upisao kod 999"
-	
-	WriteMainInCode("1", gFisCTTPath)
-	@ 2+m_x, 2+m_y SAY "mainin: upisao 1"
-	inkey(gFisTimeOut)
-	
-	cRd:=ReadMainOutCode(gFisCTTPath)
-	@ 3+m_x, 2+m_y SAY "greska: " + cRd
-	
-	if cRd <> "0"
-		return
-	endif
-		
-	WriteMainOutCode(gFisCTTPath)
-	
-	WriteMainInCode("8", gFisCTTPath)
-	@ 2+m_x, 2+m_y SAY "mainin: upisao 8"
-	inkey(gFisTimeOut)
-	
-	cRd:=ReadMainOutCode(gFisCTTPath)
-	@ 3+m_x, 2+m_y SAY "greska: " + cRd
-	
-	if cRd <> "0"
-		return
-	endif
-	
-	WriteMainOutCode(gFisCTTPath)
-	
-	WriteMainInCode("2", gFisCTTPath)
-	@ 2+m_x, 2+m_y SAY "mainin: upisao 2"
-	inkey(gFisTimeOut)
-	
-	cRd:=ReadMainOutCode(gFisCTTPath)
-	@ 3+m_x, 2+m_y SAY "greska: " + cRd
-
-BoxC()
-
-return
-
-*}
-
 
