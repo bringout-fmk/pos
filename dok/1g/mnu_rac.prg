@@ -140,7 +140,7 @@ function NarudzbaT()
 if IsPlNS() .and. gFissta=="D"
 	// provjeri da li postoji formiran dnevni izvjestaj
 	// ako postoji NEMA UNOSA NOVIH RACUNA
-	if ReadLastFisRpt("1", DATE())
+	if gFisRptEvid=="D" .and.  ReadLastFisRpt("1", DATE())
 		MsgBeep("Postoji formiran dnevni izvjestaj! #Unos novih racuna nije moguc! # Prekidam operaciju !")
 		CLOSERET
 	endif
