@@ -453,7 +453,7 @@ else
 	if IsPlNS() 
 		
 		// aArtikli:={}
-		// aArtPlacanja:={}
+		// aArtRacun:={}
 		// nUkupno:=0 //ukupan iznos racuna
 		// NapuniMatriceIUkupnoIzPripreme(@aArtikli, @aArtRacun, @nUkupno)
 		// cVrPl:=GetCodeVrstePl(cIdVrsteP)
