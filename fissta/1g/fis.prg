@@ -315,3 +315,24 @@ return cCode
 
 
 
+/*! \fn StartFisCTTInterface(cPath)
+ *  \brief Starta FisCTT interfejs
+ *  \param cPath - lokacija interfejsa
+ */
+function StartFisCTTInterface(cPath)
+*{
+
+cPath:=ALLTRIM(cPath)
+
+if LEFT(cPath, 1) <> SLASH
+	cPath += SLASH
+endif
+
+cKomLin:="start " + cPath + "fiscal28.jar"
+
+// pokreni komandu
+run &cKomLin
+
+return
+*}
+
