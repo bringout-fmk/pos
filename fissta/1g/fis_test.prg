@@ -39,7 +39,8 @@ function TestRWArtikliXml()
 
 aInput:={}
 aOutPut:={}
-cFilePath:="h:\dev\fmk\pos\fissta\1g\testxml\"
+//cFilePath:="h:\dev\fmk\pos\fissta\1g\testxml\"
+cFilePath:="C:\FisCTT\"
 
 // aInput: id artikla (oid), naziv, cijena, por.stopa, odjeljenje, jmj
 AADD(aInput, {"100000000010", "EFFEGI 2340", 1000.00, "3", "1", "6"})
@@ -99,7 +100,8 @@ function TestRWArtRacunXml()
 
 aInput:={}
 aOutPut:={}
-cFilePath:="h:\dev\fmk\pos\fissta\1g\testxml\"
+//cFilePath:="h:\dev\fmk\pos\fissta\1g\testxml\"
+cFilePath:="C:\FisCTT\"
 
 // aInput: kolicina, id artikla (oid)
 AADD(aInput, {1.00, "100000000010"})
@@ -158,7 +160,8 @@ function TestRWPlacanjaXml()
 
 
 aOutPut:={}
-cFilePath:="h:\dev\fmk\pos\fissta\1g\testxml\"
+//cFilePath:="h:\dev\fmk\pos\fissta\1g\testxml\"
+cFilePath:="C:\FisCTT\"
 
 nIznos:=100.50
 
@@ -218,7 +221,8 @@ function TestRWMainInOut()
 
 cCode:=""
 cReadCode:=""
-cFilePath:="h:\dev\fmk\pos\fissta\1g\testdat\"
+//cFilePath:="h:\dev\fmk\pos\fissta\1g\testdat\"
+cFilePath:="C:\FisCTT\"
 
 // test1: upisivanja i citanja kod-a iz fajla mainin.dat
 // upisi kodove od -10 do 10
@@ -280,7 +284,8 @@ function TestFisRn1()
 ? "Test: izdavanje racuna"
 ? REPLICATE("-", 70)
 
-cFilePath:="h:\dev\fmk\pos\fissta\1g\"
+//cFilePath:="h:\dev\fmk\pos\fissta\1g\"
+cFilePath:="C:\FisCTT\"
 
 aArtikli:={}
 AADD(aArtikli, {"100000000010", "EFFEGI 2340", 1000.00, "3", "1", "6"})
