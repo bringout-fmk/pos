@@ -310,6 +310,7 @@ endif
 
 /*! \fn TestFisRn1()
  *  \brief testira izdavanje racuna: dva artikla - gotovinsko placanje
+ *  \todo Ovaj test ne valja ... ponovo razraditi ... sta mi uopste zelimo
  */
 function TestFisRn1()
 *{
@@ -433,8 +434,9 @@ return
 *}
 
 
-/*! \fn TestFisNn2()
+/*! \fn TestFisRn2()
  *  \brief Test racuna na FISSTA - bez programskog kreiranja artikla
+ *  \todo Ovaj test ne valja...
  */
 function TestFisRn2()
 *{
@@ -492,8 +494,9 @@ return
  
 function TestFisRn3()
 *{
+
 ? REPLICATE("-", 70)
-? "Test izdavanja racuna sa definisanim XML fajlovima"
+? "Test izdavanja racuna sa definisanim matricama"
 ? REPLICATE("-", 70)
 
 
@@ -509,6 +512,7 @@ AADD(aArtRacun, {2.00, "100000006129"})
 
 nIznos:=7040.80
 cTipPl:="1"
+
 ? "Stampaj racun na FISSTA"
 if !FisRacun(aArtikli, aArtRacun, nIznos, cTipPl)
 	? "Greska pri izdavanju racuna"
@@ -518,10 +522,10 @@ return
 *}
 
 
-/*! \fn TestFisDnevni1()
+/*! \fn TestRptDn1()
  *  \brief Test fisklanog dnevnog izvjestaja
  */
-function TestFisDnevni1()
+function TestRptDn1()
 *{
 
 CheckFisCTTStarted(.t.)
@@ -554,10 +558,10 @@ return
 *}
 
 
-/*! \fn TestFisPeriod1()
+/*! \fn TestRptPer1()
  *  \brief Test stampe fisk.izvjestaja za period
  */
-function TestFisPeriod1()
+function TestRptPer1()
 *{
 
 CheckFisCTTStarted(.t.)
@@ -566,3 +570,17 @@ FisRptPeriod()
 
 return
 *}
+
+
+
+function TestFisRn5()
+*{
+
+
+
+
+
+
+return
+*}
+
