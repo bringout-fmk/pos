@@ -863,6 +863,9 @@ public gFissta
 gFissta:=(IzFmkIni("FISSTA", "Fissta", "N", EXEPATH))
 public gFisRptEvid
 gFisRptEvid:=(IzFmkIni("FISSTA", "FisRptEvid", "N", EXEPATH))
+public gFisConStr
+gFisConStr:=(IzFmkIni("FISSTA", "CmdKonekcija", "0_1", EXEPATH))
+
 //
 
 gPosSirovine:="D"

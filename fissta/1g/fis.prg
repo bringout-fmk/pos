@@ -604,7 +604,7 @@ if !DirExists(cPath)
 endif
 
 // Prije pokretanja interfejsa postavi kod za inicijalizaciju
-WrMainInCode("0_1_2", cPath)
+WrMainInCode(gFisConStr, cPath)
 
 MsgO("Pokrecem FisCTT interfejs...")
 
@@ -967,7 +967,7 @@ bRet:=.t.
 // testiraj interfejs
 // upisi u out "999"
 WrMainOutCode(cPath)
-WrMainInCode("0_1_2", cPath)
+WrMainInCode(gFisConStr, cPath)
 Sleep(gFisTimeOut + 2)
 
 cReadCode:=RdMainOutCode(cPath)
