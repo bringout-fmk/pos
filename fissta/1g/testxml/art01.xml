@@ -1,0 +1,8 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE Artikli SYSTEM "Artikli.dtd">
+<Artikli>
+<Plu Des="EFFEGI 2340" Price="1000.00" Vat="3" Dep="1" Mes="6">100000000010</Plu>
+<Plu Des="KLOMPE Z.BIJELE" Price="890.50" Vat="3" Dep="1" Mes="6">100000000251</Plu>
+<Plu Des="ILLUMINATI 22/33" Price="2780.00" Vat="3" Dep="1" Mes="6">100000003120</Plu>
+<Plu Des="PLACENTE 2350/80" Price="3020.40" Vat="3" Dep="1" Mes="6">100000006129</Plu>
+</Artikli>
