@@ -70,3 +70,7 @@ clean:
 
 sfx:
 	/cygdrive/p/bat/SFXMA.BAT tops
+
+gz:
+	/fmk/pos/1g/gztops.sh
+
