@@ -217,6 +217,8 @@ while (nStart>0)
    cXML := substr(cXML, nEnd)
    nStart := at('<Plu', cXML)
 
+end
+
 return aArtikli
 *}
 
@@ -230,7 +232,7 @@ return aArtikli
 function ReadArtRacunXml(cFilePath)
 *{
 // aArtRacun = {"kolicina", "id artikla"}
-
+aArtRacun:={}
 return aArtRacun
 *}
 
