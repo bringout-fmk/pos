@@ -474,3 +474,31 @@ endif
 
 return
 *}
+
+
+/*! \fn TestFisDnevni1()
+ *  \brief Test fisklanog dnevnog izvjestaja
+ */
+function TestFisDnevni1()
+*{
+
+CheckFisCTTStarted(.t.)
+
+FisRptDnevni()
+
+return
+*}
+
+
+/*! \fn TestFisPeriod1()
+ *  \brief Test stampe fisk.izvjestaja za period
+ */
+function TestFisPeriod1()
+*{
+
+CheckFisCTTStarted(.t.)
+
+FisRptPeriod()
+
+return
+*}

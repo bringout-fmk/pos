@@ -54,8 +54,14 @@ private opc:={}
 private opcexe:={}
 private Izbor:=1
 
-AADD(opc, "1. racun         ")
+AADD(opc, "1. racun                          ")
 AADD(opcexe, {|| TestFisRn3() })
+
+AADD(opc, "2. fiskalni dnevni izvjestaj      ")
+AADD(opcexe, {|| TestFisDnevni1() })
+
+AADD(opc, "3. fiskalni izvjestaj za period   ")
+AADD(opcexe, {|| TestFisPeriod1() })
 
 Menu_Sc("fts")
 
