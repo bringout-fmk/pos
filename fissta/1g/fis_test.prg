@@ -584,3 +584,30 @@ function TestFisRn5()
 return
 *}
 
+
+
+/*! \fn FisTest_mnu()
+ *  \brief Menij sa test case-ovima
+ */
+function FisTest_mnu()
+*{
+private opc:={}
+private opcexe:={}
+private Izbor:=1
+
+AADD(opc, "1. racun                          ")
+AADD(opcexe, {|| TestFisRn3() })
+
+AADD(opc, "2. fiskalni dnevni izvjestaj      ")
+AADD(opcexe, {|| TestRptDn1() })
+
+AADD(opc, "3. fiskalni izvjestaj za period   ")
+AADD(opcexe, {|| TestRptPer1() })
+
+
+Menu_Sc("fts")
+
+return
+*}
+
+

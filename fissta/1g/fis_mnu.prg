@@ -16,7 +16,7 @@ AADD(opc, "2. startanje interfejsa FisCTT    ")
 AADD(opcexe, {|| CheckFisCTTStarted() })
 
 if gnDebug==5
-	AADD(opc, "3. testovi    ")
+	AADD(opc, "3. test case    ")
 	AADD(opcexe, {|| FisTests() })
 endif
 
@@ -48,29 +48,4 @@ return
 
 
 
-/*! \fn FisTests()
- *  \brief Menij sa testovima
- */
-function FisTests()
-*{
-private opc:={}
-private opcexe:={}
-private Izbor:=1
-
-AADD(opc, "1. racun                          ")
-AADD(opcexe, {|| TestFisRn3() })
-
-AADD(opc, "2. fiskalni dnevni izvjestaj      ")
-AADD(opcexe, {|| TestRptDn1() })
-
-AADD(opc, "3. fiskalni izvjestaj za period   ")
-AADD(opcexe, {|| TestRptPer1() })
-
-AADD(opc, "4. fiskalni dnevni izvjestaj EVID ")
-AADD(opcexe, {|| TestRptDn2() })
-
-Menu_Sc("fts")
-
-return
-*}
 
