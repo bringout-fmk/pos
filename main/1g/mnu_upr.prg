@@ -109,8 +109,8 @@ AADD(opc, "R. prenos realizacije u KALK")
 AADD(opcexe, {|| Real2Kalk() })
 
 if IsTigra()
-	AADD(opc, "H. prenos tops -> hh partnst")
-	AADD(opcexe, {|| MnuPrenosHH()})
+	//AADD(opc, "H. prenos tops -> hh partnst")
+	//AADD(opcexe, {|| MnuPrenosHH()})
 	
 	AADD(opc, "F. prenos realizacije u FAKT")
 	AADD(opcexe, {|| Real2Fakt()})
