@@ -9,11 +9,74 @@
  */
 function WriteArtikliXML(aArtikli, cFileName)
 *{
+   local nH
 
+   * Kreiraj file
+   if (nH:=fcreate(cFileName))==-1
+      Beep(4)
+      Msg("Fajl "+cFileName+" se vec koristi !",6)
+      return
+   endif
+   fclose(nH)
 
+   * Otvori file za upis
+   set printer to (cFileName)
+   set printer on
+   set console off
+
+   * Upiši zaglavlje XML file
+   XMLWriteHeader()
+   
+   * Upiši body
+   XMLWriteArticles(aArtikli)
+   
+   * Upiši footer
+   XMLWriteFooter()
+   
+   * Zatvori file
+   set printer to
+   set printer off
+   set console on
 
 return
 *}
+
+function XMLWriteHeader()
+*{
+   ?? '<?xml version="1.0" standalone="no"?>'
+   ? '<!DOCTYPE Artikli SYSTEM "Artikli.dtd">'
+
+return
+*}
+
+function XMLWriteArticles(aArticles)
+*{
+local nRowCount, nRow
+
+   ? '<Artikli>'
+   nRowCount = LEN(aArticles)
+   FOR nRow = 1 TO nRowCount
+      sXMLLine := '<Plu ' 
+      sXMLLine += 'Des="'+aArticles[nRow, 2]+'" '
+      sXMLLine += 'Price="'+alltrim(str(aArticles[nRow, 3]))+'" '
+      sXMLLine += 'Vat="'+aArticles[nRow, 4]+'" '
+      sXMLLine += 'Dep="'+aArticles[nRow, 5]+'" '
+      sXMLLine += 'Mes="'+aArticles[nRow, 6]+'">'
+      sXMLLine += aArticles[nRow, 1]
+      sXMLLine += '</Plu>'
+      ? sXMLLine
+   NEXT
+   ? '</Artikli>'
+
+return
+*}
+
+function XMLWriteFooter()
+*{
+
+return
+*}
+
 
 
 /*! \fn WriteArtRacunXml(aArtRacun, cFileName)
