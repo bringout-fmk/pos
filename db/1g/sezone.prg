@@ -315,7 +315,6 @@ SET FILTER TO &cFilt1
 SELECT POS
 SET FILTER TO &cFilt1
 
-
 FillPriprG(dDat, lSpajanjeRazdCijene)
 
 PobrisiStareDok(dDat)
@@ -330,8 +329,7 @@ if goModul:lSqlDirektno
 else
 	cAkcija:="P"
 endif
-
-
+// posalji u doks i pos
 Priprg2Kumulativ()
 
 CLOSERET
@@ -348,7 +346,7 @@ ZAP
 
 // "3": "IdVd+IdPos+IdVrsteP+IdGost+Placen+IdDio+IdOdj+IdRoba+..."
 SET ORDER TO 3
-altd()
+
 Scatter()
 
 SELECT POS
@@ -371,6 +369,10 @@ do while !EOF()
 	SELECT DOKS
 	HSEEK cIdPos+cIdVd+cDatum+cBrDok
 	
+	if POS->idroba == "PLDUG" .and. DOKS->idvrstep=="01" .and. "5AD01" $ doks->idgost
+		altd()
+	endif
+	
 	// inicijaliziraj ono sto nema u POS
 	Scatter()  
 
@@ -385,9 +387,7 @@ do while !EOF()
 			_idvd:="00"
 			_placen:="9" 
 	      		_datum:=CTOD("31.12."+ALLTRIM(STR(YEAR(dDat)-1)))
-	      		//_idVrsteP:=space(len(_idVrsteP))
-	
-	      		_idVrsteP:=doks->idvrstep
+	      		//_idVrsteP:=SPACE(LEN(_idVrsteP))
 		else
 	       		// tekuca godina
 	       		if idvd $ "00#01"
@@ -441,7 +441,6 @@ return
  */
 static function SetSGKolicina(_kolicina)
 *{
-altd()
 do case 
 	case pos->idvd $ "NI"
 		_kolicina:=0
@@ -475,35 +474,28 @@ return
  */
 static function SetTGKolIdVdDatumMui(_kolicina, _kol2, _IdVd, _MU_I, _placen)
 *{
-altd()
 // mislim da polje mu_i nigdje ne koristimo ... ovo se moze izbaciti
 if POS->IdVd $ "42"  
-	
 	// ovdje se radi o dokumentu koji sadrzi kumulativnu realizaciju
 	_IdVd := "01"
 	_MU_I := R_I
 	
 elseif POS->IdVd $ "96"  
-	
 	// ovdje se radi o izlaz, otpis
 	_IdVd := "96"
 	_MU_I := R_I
-
 elseif POS->idVd $ "95#98"  
 	_IdVd := "00"
 	_kolicina:=-_kolicina
 	_MU_I := R_U
-	
 elseif pos->idVd $ "16"
 	_IdVd:="00"
 	_kolicina:=_kolicina
 	_MU_I:=R_U
-
 elseif pos->idVd == "IN"
 	_Kolicina:= - (_Kolicina-_Kol2 )
 	_IdVd:="00"
 	_MU_I:=R_U
-
 else
 	// iako mislim da sam sve obuhvatio ...
 	_IdVd := "00"
@@ -633,8 +625,6 @@ return cBrDok
 
 static function DodajUDok(cAkcija)
 *{
-altd()
-
 AppBlank2(.f., .f.)
 sql_append(0, cAkcija )
 Gather2()
@@ -662,23 +652,22 @@ endif
 return
 *}
 
-static function DodajUPos(cIdVd, cIdPos, cBrDok, cIdVrsteP, cIdGost, cAkcija)
+static function DodajUPos(cIdVd, cIdPos, cBrDok, cIdVrsteP, cIdGost, dDatum, cAkcija)
 *{
-
 //local cPlacenje
-altd()
-SELECT priprg
 
+SELECT priprg
+altd()
 //cPlacen := priprg->placen
 //izbacio sam sumiranje po polju placen ... ne treba mi to, ne znam zasto je to trebalo ? vjerovatno kada se radilo za hotel ...
 
-do while !EOF() .and. priprg->(idVd+idPos+idVrsteP+idGost)==(cIdVd+cIdPos+cIdVrsteP+cIdGost)
+do while !EOF() .and. priprg->(idVd+idPos+idVrsteP+idGost+DTOS(datum))==(cIdVd+cIdPos+cIdVrsteP+cIdGost+DTOS(dDatum))
 
 	if (priprg->kolicina==0)
 		SKIP
 		loop
 	endif
-	
+
 	Scatter()
 	_BrDok:=cBrDok
 	
@@ -725,7 +714,8 @@ static function Priprg2Kumulativ(cAkcija)
 
 MsgO("priprg -> pos, doks")
 SELECT priprg
-SET ORDER TO 3
+// novi index - 4 i po datumu sortiraj
+SET ORDER TO 4
 GO TOP
 
 altd()
@@ -735,11 +725,19 @@ do while !EOF()
 	cIdPos:=priprg->idPos
 	cIdVrsteP:=priprg->idVrsteP
 	cIdGost:=priprg->idGost
-	do while !EOF() .and. priprg->(IdVd+IdPos+IdVrsteP+IdGost)==(cIdVd+cIdPos+cIdVrsteP+cIdGost)
+	// i datum je jako bitan - a neko ga je zaboravio - pa je sumirao dokumente kako mu cejf
+	dDatum:=priprg->datum
+	
+	
+	do while !EOF() .and. priprg->(IdVd+IdPos+IdVrsteP+IdGost+DToS(datum))==(cIdVd+cIdPos+cIdVrsteP+cIdGost+DTOS(dDatum))
 			
 		_BrDok:=_NarBrDok(cIdPos, cIdVd, priprg->datum)
+	
+		if ALLTRIM(_brdok) == "1" .and. ALLTRIM(idgost) == "5AD01" 
+			altd()
+		endif
 		DodajUDok(cAkcija)
-		DodajUPos(cIdVd, cIdPos, _BrDok, cIdVrsteP, cIdGost, cAkcija)
+		DodajUPos(cIdVd, cIdPos, _BrDok, cIdVrsteP, cIdGost, dDatum, cAkcija)
 		    
        enddo
 enddo   
