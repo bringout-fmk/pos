@@ -65,7 +65,7 @@ cFilePath:="h:\dev\fmk\pos\fissta\1g\testdat\"
 // test1: upisivanja i citanja kod-a iz fajla mainin.dat
 // upisi kodove od -10 do 10
 
-for i:=-10 to 10
+for i:=0 to 9
 	cCode:=STR(i)
 	WriteMainInCode(cCode, cFilePath)
 	cReadCode:=ReadMainInCode(cFilePath)
