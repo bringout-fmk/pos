@@ -3,7 +3,7 @@ MODUL=pos_1rd
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\pos\\razdb\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\pos\\razdb\\1g\\
 
 PRGS=pos_kalk.prg pos_fakt.prg
 

@@ -3,7 +3,7 @@ MODUL=pos_1rpt
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\pos\\rpt\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\pos\\rpt\\1g\\
 
 
 PRGS=rpt_dkum.prg rpt_kart.prg rpt_ldok.prg rpt_part.prg rpt_por.prg rpt_pvpl.prg rpt_rkas.prg rpt_rodj.prg rpt_rrad.prg rpt_stan.prg rpt_stpm.prg rpt_top.prg mnu_real.prg mnu_izvj.prg 

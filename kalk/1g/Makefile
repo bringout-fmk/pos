@@ -3,7 +3,7 @@ MODUL=pos_1kal
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\pos\\kalk\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\pos\\kalk\\1g\\
 
 PRGS=kalk_fje.prg
 

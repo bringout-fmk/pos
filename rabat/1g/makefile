@@ -3,7 +3,7 @@ MODUL=pos_1rbt
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\pos\\rabat\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\pos\\rabat\\1g\\
 
 PRGS=rabat.prg
 

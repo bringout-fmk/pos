@@ -3,7 +3,7 @@ MODUL=pos_s1pf
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\pos\\specif\\planika\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\pos\\specif\\planika\\1g\\
 
 
 PRGS=planika.prg promvp.prg

@@ -35,15 +35,15 @@ local cCKBnkZrRn:=SPACE(13)
 local cCKKupac:=SPACE(20)
 local cCKBrLk:=SPACE(11)
 local cCKSup:=SPACE(20)
-local dCkLkDate:=DATE()
+local dCkLkDate:=CTOD("")
 local cCKBr1:=cCKBr2:=cCKBr3:=cCKBr4:=cCKBr5:=SPACE(13)
 local dCKIzd1:=dCKIzd2:=dCKIzd3:=dCKIzd4:=dCKIzd5:=CTOD("")
 local nCKIzn1:=nCKIzn2:=nCKIzn3:=nCKIzn4:=nCKIzn5:=0
-local cCKDN:="N"
+local cCKDN:="D"
 
 Box(,19,60)
 do while .t.
-	set cursor on
+	//set cursor on
 	@ 1+m_x,2+m_y SAY "Podaci kupac:" COLOR "I"
 	@ 2+m_x,2+m_y SAY  REPLICATE("-", 58)
 	@ 3+m_x,2+m_y SAY "        Ime i prezime:" GET cCKKupac VALID !Empty(cCKKupac) 

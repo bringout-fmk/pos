@@ -3,7 +3,7 @@ MODUL=pos_1smj
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\pos\\smjene\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\pos\\smjene\\1g\\
 
 PRGS=smjene.prg
 

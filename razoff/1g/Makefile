@@ -3,9 +3,9 @@ MODUL=pos_1rf
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\pos\\razoff\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\pos\\razoff\\1g\\
 
-PRGS=modem.prg posdisk.prg
+PRGS=modem.prg posdisk.prg testcpt.prg
 
 CS=
 ASMS=

@@ -486,10 +486,14 @@ else
 	  			FillFisMatrice(@aArtikli, @aArtRacun, @nUkupno)
 	  			cVrPl:=GetCodeVrstePl(cIdVrsteP)
 	  			if !FisRacun(aArtikli, aArtRacun, nUkupno, cVrPl)
-	     				// Racun nije formiran, nemoj azurirati u tops
-					MsgBeep("Racun nije azuriran")
-	     				CLOSERET 	
-	  			endif
+	     				// Racun nije formiran
+					// pitaj da li je odstampan na FISSTA
+					// ako nije nemoj azurirati u tops
+					if Pitanje(,"Da li odstampan racun (D/N)?", "N")=="N"
+						MsgBeep("Racun nije azuriran")
+	     					CLOSERET 	
+	  				endif
+				endif
 			endif
 			if (nRnType==-1 .and. gFisStorno=="N")
 				cObrNiNr:=GetFormNiNr()	

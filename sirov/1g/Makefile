@@ -3,7 +3,7 @@ MODUL=pos_1sir
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\pos\\sirov\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\pos\\sirov\\1g\\
 
 PRGS=sirov.prg sif.prg
 

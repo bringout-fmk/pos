@@ -3,7 +3,7 @@ MODUL=pos_s1ex
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\pos\\specif\\excl\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\pos\\specif\\excl\\1g\\
 
 
 PRGS=croba.prg

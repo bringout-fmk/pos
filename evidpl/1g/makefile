@@ -3,7 +3,7 @@ MODUL=pos_1epl
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\pos\\evidpl\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\pos\\evidpl\\1g\\
 
 PRGS=evidpl.prg test_pl.prg frm_epl.prg 
 

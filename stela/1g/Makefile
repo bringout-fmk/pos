@@ -3,7 +3,7 @@ MODUL=pos_1ste
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\pos\\stela\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\pos\\stela\\1g\\
 
 PRGS=stela.prg
 

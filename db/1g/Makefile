@@ -3,7 +3,7 @@ MODUL=pos_1db
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\pos\\db\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\pos\\db\\1g\\
 
 
 PRGS=db.prg db_admin.prg sezone.prg

@@ -3,7 +3,7 @@ MODUL=pos_s1tg
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\pos\\specif\\tigra\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\pos\\specif\\tigra\\1g\\
 
 
 PRGS=tigra.prg mars.prg primpak.prg pren_hh.prg stpart.prg rpt_prpa.prg

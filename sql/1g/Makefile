@@ -3,7 +3,7 @@ MODUL=pos_1sql
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\pos\\sql\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\pos\\sql\\1g\\
 
 PRGS=sql.prg parser.prg
 
