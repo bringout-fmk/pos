@@ -652,11 +652,11 @@ return cCode
 *}
 
 
-/*! \fn GetCodeVrstaPl(cIdVrstaPl)
+/*! \fn GetCodeVrstePl(cIdVrstaPl)
  *  \brief Vraca FISSTA kodove za pojedine tops->vrsta placanja
  *  \param cIdVrstaPl - id vrsta placanja, npr "01"
  */
-function GetCodeVrstaPl(cIdVrstaPl)
+function GetCodeVrstePl(cIdVrstaPl)
 *{
 cCode:=""
 
