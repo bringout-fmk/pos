@@ -202,7 +202,9 @@ do while !eof()
 		? REPL("-",80)
 		++ nBrojacPartnera	
 		if IsTigra() .and. lGenPartnSt
-			AzurTopsOstav(RNGOST->IDN, RNGOST->IDFMK, RNGOST->Naz, nStanje, nSldMinIzn)
+			if (RNGOST->HH == "D" .and. !Empty(RNGOST->IDN))
+				AzurTopsOstav(RNGOST->IDN, RNGOST->IDFMK, RNGOST->Naz, nStanje, nSldMinIzn)
+			endif
 		endif
 	endif
 	nSumaNije+=nPlacNije
