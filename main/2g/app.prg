@@ -302,6 +302,10 @@ endif
 self:oDatabase:scan()
 close all
 
+if IsPlNS()
+	CheckFisCTTStarted(.t.)
+endif
+
 SETKEY(K_SH_F1,{|| Calc()})
 O_DOKS
 select DOKS
@@ -815,11 +819,16 @@ public glRetroakt
 
 glRetroakt:=(IzFmkIni("POS","Retroaktivno","N",KUMPATH)=="D")
 
+// varijable FISSTA
 public gFisCTTPath
 gFisCTTPath:=(IzFmkIni("FISSTA","FisCTTPath","c:\fisctt",EXEPATH))
 
 public gFisTimeOut
 gFisTimeOut:=VAL((IzFmkIni("FISSTA","FisTimeOut","5",EXEPATH)))
+
+public gFisStorno
+gFisStorno:=(IzFmkIni("FISSTA","FisStorno","N",EXEPATH))
+
 
 gPosSirovine:="D"
 gPosKalk:="D"
