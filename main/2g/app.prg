@@ -454,17 +454,25 @@ if (mpar37("/IMPMSG",goModul))
 	endif
 endif
 
-// Test fiskalnog stampaca
+// Test cases
 if (mpar37("/TEST", goModul))
 	? "App server: test cases"
+	// TEST CASE FISKALNA STAMPA
 	if (self:cP5 == "/FIS")
 		? "Test cases: fiskalna stampa"
 		Fis_test_main()
 		quit	
 		//goModul:quit()
 	endif
-endif
+	// TEST CASE EVIDENTIRANJE VRSTA PLACANJA
+	if (self:cP5 == "/EVPL")
+		? "Test cases: evidentiranje vrsta placanja"
+		Test_evidpl()
+		quit	
+		//goModul:quit()
+	endif
 
+endif
 
 return
 *}
@@ -562,6 +570,7 @@ public gDugPlac
 
 public gVrstaRS         // vrsta radne stanice
                         // ( K-kasa S-server A-samostalna kasa)
+public gEvidPl          // evidentiranje podataka za vrste placanja CEK, SIND.KRED. i GARANTNO PISMO
 
 public gLocPort:="LPT1" // lokalni port za stampanje racuna
 
@@ -674,6 +683,7 @@ public gStamPazSmj:="D"
 public gStamStaPun:="D"
 public CRinitDone:=.t.
 public gVrstaRS:="A"
+public gEvidPl:="N"
 
 public gGotPlac:="01"
 public gDugPlac:="DP"
@@ -734,6 +744,8 @@ Rpar("vs",@gVsmjene)
 Rpar("ST",@gSezonaTip)
 Rpar("Si",@gSifUpravn)
 Rpar("Bc",@gEntBarCod)
+Rpar("Ep",@gEvidPl)
+
 // izgled racuna
 gSjecistr:=padr(GETPStr(gSjeciStr),20)
 gOtvorstr:=padr(GETPStr(gOtvorStr),20)
