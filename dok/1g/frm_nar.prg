@@ -274,7 +274,7 @@ do while .t.
 	@ m_x+2,m_y+5 SAY " Artikal:" GET _idroba PICT "@!S10" when {|| _idroba:=padr(_idroba,VAL(cDSFINI)),.t.} VALID PostRoba(@_idroba, 2, 27).and. NarProvDuple (_idroba)
 	@ m_x+3,m_y+5 SAY "  Cijena:" GET _Cijena  picture "99999.999" when (roba->tip=="T" .or. gPopZcj=="D")
 	
-	@ m_x+4,m_y+5 SAY "Kolicina:" GET _Kolicina PICTURE "999999.999" when {|| Popust(m_x+3,m_y+28), _kolicina:=iif(gOcitBarcod, 1, _kolicina), _kolicina:=iif(_idroba='PLDUG  ', 1, _kolicina), iif(_idroba='PLDUG  ', .f., .t.) } VALID KolicinaOK(_Kolicina).and.CheckAmount(_Kolicina) SEND READER:={|g| GetReader2(g)}
+	@ m_x+4,m_y+5 SAY "Kolicina:" GET _Kolicina PICTURE "999999.999" when {|| Popust(m_x+3,m_y+28), _kolicina:=iif(gOcitBarcod, 1, _kolicina), _kolicina:=iif(_idroba='PLDUG  ', 1, _kolicina), iif(_idroba='PLDUG  ', .f., .t.) } VALID KolicinaOK(_Kolicina).and.CheckQtty(_Kolicina) SEND READER:={|g| GetReader2(g)}
 
 	// ako je sifra ocitana po barcodu, onda ponudi kolicinu 1
 	read
@@ -459,7 +459,7 @@ return
 *}
 
 
-function CheckAmount(nAmount)
+function CheckQtty(nAmount)
 *{
 
 nTotAmount:=VAL(IzFmkIni("POS","MaxKolicina","100",KUMPATH))
@@ -469,7 +469,7 @@ if nTotAmount==0
 endif
 
 if nAmount > nTotAmount 
-	if Pitanje(,"Sigurno zelite racun na kolicinu: " + ALLTRIM(STR(nAmount)),"N")=="D"
+	if Pitanje(,"Da li je ovo ispravna kolicina: " + ALLTRIM(STR(nAmount)),"N")=="D"
 		return .t.
 	else
 		return .f.
