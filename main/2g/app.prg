@@ -438,7 +438,7 @@ if (mpar37("/IALLMSG",goModul))
 	InsertIntoAMessage()
 	goModul:quit()
 endif
-altd()
+
 if (mpar37("/IMPMSG",goModul))
 	if LEFT(self:cP5,3)=="/P="
 		if LEFT(self:cP6,3)=="/L="
@@ -447,6 +447,17 @@ if (mpar37("/IMPMSG",goModul))
 		endif
 	endif
 endif
+
+// Test fiskalnog stampaca
+if (mpar37("/TEST", goModul))
+	? "App server: test cases"
+	if (self:cP5 == "/FIS")
+		? "Test cases: fiskalna stampa"
+		Fis_test_main()
+		goModul:quit()
+	endif
+endif
+
 
 return
 *}
