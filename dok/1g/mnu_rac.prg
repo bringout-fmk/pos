@@ -454,6 +454,8 @@ else
 		if gFissta=="D" 
 			// provjeri o kakvom se racunu radi
 			nRnType:=ChkRnType()
+			// broj obrasca NI
+			private cObrNiNr:=""
 		
 			if gnDebug == 5
 				MsgBeep(STR(nRnType))
@@ -476,6 +478,9 @@ else
 					MsgBeep("Racun nije azuriran")
 	     				CLOSERET 	
 	  			endif
+			endif
+			if (nRnType==-1 .and. gFisStorno=="N")
+				cObrNiNr:=GetFormNiNr()	
 			endif
 		endif
 	endif
@@ -504,18 +509,6 @@ function StampAzur(cIdPos, cRadRac)
 *{
 
 local cTime
-//local cIdVrsteP
-//local cIdGost
-
-//if gClanPopust
-	// ako je rijec o clanovima pusti da izaberem vrstu placanja
-//	cIdVrsteP:=SPACE(2)
-//else
-//	cIdVrsteP:=gGotPlac
-//endif
-
-//cIdGost:=space(8)
-
 private cPartner
 
 SELECT DOKS
@@ -530,12 +523,12 @@ sql_azur(.t.)
 sql_append()
 replsql idpos with gidpos, idvd with VD_RN, Brdok with cStalRac,idradnik with "////", datum with gdatum
 
-//if (gUpitNp=="D")
-	// upit o nacinu placanja !!!
-	//UpitNP(cIdPos, @cIdVrsteP, cRadRac, @cIdGost)
-//endif
-
 cPartner:=cIdGost
+
+if IsPlNs() .and. gFissta=="D"
+	cIdGost:=cObrNiNr
+endif
+
 cTime:=StampaRac(cIdPos,cRadRac,.f.,cIdVrsteP)
 altd()
 if (!EMPTY(cTime))
