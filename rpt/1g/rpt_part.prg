@@ -57,13 +57,14 @@ private cNula:="D"
 private dDat:=gDatum
 private dDatOd:=gDatum-30
 private cSpec:="D"
-
-O_POS
-O_DOKS
-O_RNGOST
+altd()
+// generisanje stanja partnera
+if IsTigra()
+	private nSldMinIzn
+	private lGenPartnSt
+endif
 
 do while .t.
-
 	if !VarEdit({ ;
 	  {"Sifra partnera (prazno-svi)","cGost","IF(!EMPTY(cGost),P_Gosti(@cGost),.t.)","@!",}, ;
 	  {"Prikaz partnera sa stanjem 0 (D/N)", "cNula","cNula$'DN'","@!",}, ;
@@ -75,6 +76,14 @@ do while .t.
 		exit
 	endif
 enddo
+
+if IsTigra()
+	GenPartnSt(@lGenPartnSt, @nSldMinIzn)
+endif
+
+O_POS
+O_DOKS
+O_RNGOST
 
 START PRINT CRET
 ?? gP12cpi
@@ -178,6 +187,9 @@ do while !eof()
 		fPisi:=.t.
 		? REPL("-",75)
 		++ nBrojacPartnera	
+		if IsTigra() .and. lGenPartnSt
+			AzurTopsOstav(RNGOST->IDN, RNGOST->IDFMK, RNGOST->Naz, nStanje, nSldMinIzn)
+		endif
 	endif
 	nSumaNije+=nPlacNije
 	nSumaJest+=nPlacJest
@@ -246,6 +258,12 @@ endif
 if gVrstaRS<>"S"
 	PaperFeed()
 endif
+
+if IsTigra() .and. lGenPartnSt
+	AddPAzToParams(dDat)
+	AddSCnToParams()
+endif
+
 END PRINT
 
 CLOSERET
