@@ -1377,3 +1377,23 @@ endif
 return bRet
 *}
 
+
+/*! \fn GetFormNiNr()
+ *  \brief Postavlja upit za broj obrasca NI te vraca taj broj
+ *  \return nNiNr - broj obrasca NI
+ */
+function GetFormNiNr()
+*{
+local GetList:={}
+local cNiNr:=SPACE(8)
+
+Box(,1,40)
+	@ m_x+1, m_y+2 SAY "Unesite broj obrasca NI: " GET cNiNr VALID !Empty(cNiNr)
+	read
+BoxC()
+
+return cNiNr
+*}
+
+
+
