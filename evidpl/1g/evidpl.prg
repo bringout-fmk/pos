@@ -294,6 +294,10 @@ do while !EOF() .and. pos->brdok==cBrDok .and. pos->idpos==cIdPos
 enddo
 
 // dodaj matricu o podacima kupca
+if Empty(cKpData)
+	cKpData:="No data#No data#No data#No data"
+endif
+
 aKpData:=ReadHashString(ALLTRIM(cKpData))
 
 START PRINT CRET
