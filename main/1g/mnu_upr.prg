@@ -108,6 +108,11 @@ AADD(opcexe, {|| FrmPromVp()})
 AADD(opc, "R. prenos realizacije u KALK")
 AADD(opcexe, {|| Real2Kalk() })
 
+if IsPlanika()
+	AADD(opc, "O. prenos reklamacija u KALK")
+	AADD(opcexe, {|| Rek2Kalk() })
+endif
+
 if IsTigra()
 	AADD(opc, "H. prepakivanje ")
 	AADD(opcexe, {|| SvediNaPrP()})

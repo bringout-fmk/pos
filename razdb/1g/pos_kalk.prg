@@ -438,14 +438,32 @@ return
 *}
 
 
+/*! \fn Rek2Kalk()
+ *  \brief Prenos reklamacija u modul kalk
+ */
+function Rek2Kalk()
+*{
+// pozovi real2kalk za reklamacije
+Real2Kalk(nil, nil, VD_REK)
+
+return
+*}
+
+
+
 /*! \fn Real2Kalk(dDatOd, dDatDo)
  *  \brief Generisanje datoteke prenosa realizacije u modul KALK
  *  \param dDatOd - datum od
  *  \param dDatDo - datum do
  */
  
-function Real2Kalk(dDateOd, dDateDo)
+function Real2Kalk(dDateOd, dDateDo, cIdVd)
 *{
+
+// ako je nil onda se radi o realizaciji
+if (cIdVd == nil)
+	cIdVd := "42"
+endif
 
 // prenos realizacija POS - KALK
 O_ROBA
@@ -492,25 +510,27 @@ SEEK VD_RN+DTOS(dDatOd)
 EOF CRET
 
 aDbf:={}
-AADD(aDBF,{"IdPos","C",2,0})
-AADD(aDBF,{"IDROBA","C",10,0})
-AADD(aDBF,{"kolicina","N",13,4})
-AADD(aDBF,{"MPC","N",13,4})
-AADD(aDBF,{"STMPC","N",13,4})
+AADD(aDBF,{"IdPos",    "C",  2, 0})
+AADD(aDBF,{"IDROBA",   "C", 10, 0})
+AADD(aDBF,{"kolicina", "N", 13, 4})
+AADD(aDBF,{"MPC",      "N", 13, 4})
+AADD(aDBF,{"STMPC",    "N", 13, 4})
 // stmpc - kod dokumenta tipa 42 koristi se za iznos popusta !!
-AADD(aDBF,{"IDTARIFA","C",6,0})
-AADD(aDBF,{"IDCIJENA","C",1,0})
-AADD(aDBF,{"IDPARTNER","C",10,0})
-AADD(aDBF,{"DATUM","D",8,0})
-AADD(aDBF,{"IdVd","C",2,0})
-AADD(aDBF,{"M1","C",1,0})
+AADD(aDBF,{"IDTARIFA", "C",  6, 0})
+AADD(aDBF,{"IDCIJENA", "C",  1, 0})
+AADD(aDBF,{"IDPARTNER","C", 10, 0})
+AADD(aDBF,{"DATUM",    "D",  8, 0})
+AADD(aDBF,{"IdVd",     "C",  2, 0})
+AADD(aDBF,{"M1",       "C",  1, 0})
+
 select roba
 if roba->(FieldPos("barkod"))<>0
 	AADD(aDBF,{"BARKOD","C",13,0})
 endif
+
 select doks
 NaprPom(aDbf)
-altd()
+
 USEX (PRIVPATH+"POM") NEW
 INDEX ON IdPos+IdRoba+STR(mpc,13,4)+STR(stmpc,13,4) TAG ("1") TO (PRIVPATH+"POM")
 INDEX ON brisano+"10" TAG "BRISAN"    //TO (PRIVPATH+"ZAKSM")
@@ -528,28 +548,41 @@ USEX (cKALKDBF) NEW
 ZAPP()
 __dbPack()
 
-altd()
 select DOKS
 nRbr:=0
-do while !eof() .and. doks->IdVd=="42" .and. doks->Datum<=dDatDo
+
+do while !eof() .and. doks->IdVd==cIdVd .and. doks->Datum<=dDatDo
+	
 	if !EMPTY(cIdPos) .and. doks->IdPos<>cIdPos
     		SKIP
 		LOOP
   	endif
-  	SELECT pos
+	
+	// ako su reklamacije prekoci sve sto je sto="P"
+	if IsPlanika() .and. cIdVd==VD_REK
+		if PADR(field->sto, 1) == "P"
+			skip
+			loop
+		endif
+	endif
+  	
+	SELECT pos
   	SEEK doks->(IdPos+IdVd+DTOS(datum)+BrDok)
-  	do while !eof().and.pos->(IdPos+IdVd+DTOS(datum)+BrDok)==doks->(IdPos+IdVd+DTOS(datum)+BrDok)
+  	
+	do while !eof().and.pos->(IdPos+IdVd+DTOS(datum)+BrDok)==doks->(IdPos+IdVd+DTOS(datum)+BrDok)
     			
 		Scatter()
-    		if roba->(fieldpos("barkod"))<>0
+    		// uzmi i barkod
+		if roba->(fieldpos("barkod"))<>0
 			select roba
 			set order to tag "ID"
 			hseek pos->idroba
 		endif
+		
 		select POM
     		HSEEK POS->(IdPos+IdRoba+STR(cijena,13,4)+STR(nCijena,13,4))
     			// seekuj i cijenu i popust (koji je pohranjen u ncijena)
-    		if !FOUND().or.IdTarifa<>POS->IdTarifa.OR.MPC<>POS->Cijena
+    		if !FOUND() .or. IdTarifa<>POS->IdTarifa .or. MPC<>POS->Cijena
      			append blank
       			
 			replace IdPos WITH POS->IdPos
@@ -564,10 +597,12 @@ do while !eof() .and. doks->IdVd=="42" .and. doks->Datum<=dDatDo
 				replace IdVd With "47"
 			else
 				if IsTehnoprom() .and. doks->idvrstep$"03"
-			
-					replace IdVd With "41"
-				else
-					replace IdVd With POS->IdVd
+					replace idvd with "41"
+				elseif (IsPlanika() .and. doks->idvd == VD_REK)
+					// reklamacija je "12"
+					replace idvd with "12"
+				else	
+					replace idvd with POS->IdVd
 				endif
 			endif
 					
@@ -619,10 +654,12 @@ if gModemVeza=="D"
 		cPrefix:=""
 	endif
            	
-	// radi app servera ne mogu ovo formirati	
-  	//if !gAppSrv
+	if (cIdVd <> VD_REK)
 		RealKase(.f.,dDatOd,dDatDo,"1")  // formirace outf.txt
-  	//endif
+	else
+		ReklKase(dDatOd, dDatDo) // pregled reklamacija
+	endif
+	
 	cDestMod:=StrTran(cKalkDbf,"TOPSKA.",cPrefix+cDestMod)
   	FileCopy(cKalkDBF,cDestMod)
   	cDestMod:=StrTran(cDestMod,".DBF",".TXT")
