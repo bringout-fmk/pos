@@ -446,6 +446,19 @@ do while !eof()
 			Gather()
 		endif
 		skip
+	elseif gClanPopust 
+		if cIdVrsteP <> "02"
+			if LEN(aRabat)>0
+				nNIznos:=CalcRabatForArticle(aRabat, idroba, .t., .t., .t., .t., .f., .t.)
+			else
+				nNIznos:=0
+			endif
+			Scatter()
+			_ncijena:=nNIznos
+			Gather()
+			
+		endif
+		skip
 	else
 		skip
 		loop
