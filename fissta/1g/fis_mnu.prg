@@ -10,10 +10,13 @@ private opc:={}
 private opcexe:={}
 private Izbor:=1
 
-AADD(opc, "1. fiskalni izvjestaji               ")
-AADD(opcexe, {|| FisRpt_Mnu() })
-AADD(opc, "2. startanje interfejsa FisCTT    ")
+AADD(opc, "1. startanje interfejsa FisCTT    ")
 AADD(opcexe, {|| CheckFisCTTStarted() })
+
+if kLevel<>L_PRODAVAC
+	AADD(opc, "2. fiskalni izvjestaji               ")
+	AADD(opcexe, {|| FisRpt_Mnu() })
+endif
 
 if gnDebug==5
 	AADD(opc, "3. test case    ")
