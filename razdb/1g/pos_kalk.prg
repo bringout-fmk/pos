@@ -406,9 +406,23 @@ function AutoReal2Kalk(cDate1, cDate2)
 *{
 local dD1
 local dD2
-private gPPort:="8"
+local nD1
+local nD2
 
+// inicijalizuj port za stampu i sekvence stampaca (EPSON)
+// radi globalnih varijabli
+private gPPort:="8"
 InigEpson()
+
+nD1 := LEN(cDate1)
+nD2 := LEN(cDate2)
+
+if ((nD1 < 10) .or. (nD2 < 10))
+	? "FORMAT DATUMA NEISPRAVAN...."
+	? "ISPRAVAN FORMAT, PRIMJER: 01.01.2005"
+	Sleep(5)
+	return
+endif
 
 if (!Empty(cDate1) .and. !Empty(cDate2))
 	dD1 := CToD(cDate1)
@@ -422,7 +436,6 @@ endif
 
 return
 *}
-
 
 
 /*! \fn Real2Kalk(dDatOd, dDatDo)
