@@ -373,47 +373,74 @@ CLOSERET
 *}
 
 
-/*! \fn AzurSifIzFmk()
- *  \brief
+
+/*! \fn AzurSifIzFmk(cLocation, lAddNewCode)
+ *  \brief Importuje sifranik FMK
+ *  \param cLocation - lokacija sifrarnika
+ *  \param lAddNewCode - dodaj novu sifru ako je nema
  */
-function AzurSifIzFmk()
+function AzurSifIzFmk(cLocation, lAddNewCode)
 *{
 local cDir
 
-MsgO("Sifranik FMK -> POS")
+if (lAddNewCode == NIL)
+	lAddNewCode:=.t.
+endif
 
-cDir:=trim(gFmkSif)
-AddBs(@cDir)
-use (cDir+"ROBA") alias ROBAFMK new
+if !gAppSrv
+	MsgO("Sifranik FMK -> POS")
+else
+	? "Sifranik FMK -> POS"
+endif
+
+if (cLocation == NIL) 
+	cDir:=TRIM(gFmkSif)
+else
+	cDir:=cLocation
+endif
+
+AddBS(@cDir)
+
+use (cDir + "ROBA") alias ROBAFMK new
+
 O_ROBA
 select ROBAFMK
 go top
+
 do while !eof()
 	select roba
   	seek robafmk->id
-  	if !found()
-   		append blank
-   		replace id with robafmk->id
+  	if !Found()
+   		if lAddNewCode
+			append blank
+   			Sql_Append()
+			SmReplace("id", robafmk->id)
+		else
+			select robafmk
+			skip
+			loop
+		endif
   	endif
-
-  	replace naz with robafmk->naz, idtarifa with robafmk->idtarifa, cijena1 with robafmk->mpc,jmj with robafmk->jmj
-
+	SmReplace("naz", robafmk->naz)
+	SmReplace("idtarifa", robafmk->idtarifa)
+	SmReplace("cijena1", robafmk->mpc)
+	SmReplace("jmj", robafmk->jmj)
         if roba->(fieldpos("K1"))<>0  .and. robafmk->(fieldpos("K1"))<>0
-        	replace K1 with robafmk->k1, K2 with robafmk->k2
+        	SmReplace("K1", robafmk->k1)
+		SmReplace("K2", robafmk->k2)
         endif
-
         if roba->(fieldpos("K7"))<>0  .and. robafmk->(fieldpos("K7"))<>0
-        	replace K7 with robafmk->k7, K8 with robafmk->k8, k9 with robafmk->k9
+        	SmReplace("K7", robafmk->k7)
+		SmReplace("K8", robafmk->k8)
+		SmReplace("K9", robafmk->k9)
         endif
-
         if roba->(fieldpos("BARKOD"))<>0 .and. robafmk->(fieldpos("BARKOD"))<>0
-        	replace BARKOD with robafmk->BARKOD
+        	SmReplace("BARKOD", robafmk->BARKOD)
         endif
-
         if roba->(fieldpos("N1"))<>0 .and. robafmk->(fieldpos("N1"))<>0
-        	replace N1 with robafmk->N1, N2 with robafmk->N2
+        	SmReplace("N1", robafmk->N1)
+		SmReplace("N2", robafmk->N2)
         endif
-
   	select robafmk
   	skip
 enddo
@@ -423,6 +450,10 @@ use
 select roba
 use
 
-MsgC()
+if !gAppSrv
+	MsgC()
+endif
+
 return
 *}
+
