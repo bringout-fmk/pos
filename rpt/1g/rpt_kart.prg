@@ -587,22 +587,3 @@ CLOSERET
 *}
 
 
-function ZagFirma()
-*{
-local cStr, nLines, cFajl, i, nOfset:=0
-
-if (!EMPTY(gZagIz))
-	cFajl:=PRIVPATH+AllTrim(gRnHeder)
-	nLines:=BrLinFajla(cFajl)
-	for i:=1 to nLines
-		aPom:=SljedLin(cFajl,nOfset)
-		cRed:=aPom[1]
-		nOfset:=aPom[2]
-		if (ALLTRIM(STR(i))$gZagIz)
-			? cRed
-		endif
-	next
-endif
-
-return
-*}
