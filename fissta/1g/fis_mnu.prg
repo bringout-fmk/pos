@@ -17,7 +17,7 @@ AADD(opcexe, {|| CheckFisCTTStarted() })
 
 if gnDebug==5
 	AADD(opc, "3. test case    ")
-	AADD(opcexe, {|| FisTests() })
+	AADD(opcexe, {|| FisTest_mnu() })
 endif
 
 Menu_Sc("fst")
