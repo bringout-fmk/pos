@@ -582,7 +582,7 @@ do while !eof() .and. doks->IdVd==VD_RN .and. doks->Datum<=dDatDo
  
 function SifKalkTops()
 *{
-private cDirZip:=ToUnix("C:"+SLASH+"TOPS"+SLASH)
+private cDirZip:=ToUnix("C:" + SLASH + "TOPS" + SLASH)
 
 if !SigmaSif("SIGMAXXX")
 	return
@@ -591,27 +591,22 @@ endif
 cIdPos:=gIdPos
 
 gFmkSif:=Trim(gFmkSif)
-ADDBS(gFmkSif)
+AddBS(@gFmkSif)
 
-if !empty(gFMKSif) 
-	if !FILE(gFmkSif+"ROBA.DBF")
-      		MsgBeep("Na lokaciji "+trim(gFmkSif)+"ROBA.DBF nema tabele")
+if !EMPTY(gFMKSif) 
+	if !FILE(gFmkSif + "ROBA.DBF")
+      		MsgBeep("Na lokaciji " + TRIM(gFmkSif) + "ROBA.DBF nema tabele")
       		return
   	endif
   	AzurSifIzFmk()
   	return
 endif
 
-// stara varijanta preuzimanja iz ZIP-a
-//if gSQL=="D"
-//	MsgBeep("Ne koristiti ovu opciju za SQL=D")
-//  	return
-//endif
-
 O_PARAMS
 Private cSection:="T"
 private cHistory:=" "
 private aHistory:={}
+
 RPar("Dz",@cDirZip)
 Params1()
 
@@ -623,7 +618,8 @@ Box(,5,70)
    	read
 BoxC()
 
-cDirzip:=trim(cDirZip)
+cDirZip:=TRIM(cDirZip)
+AddBS(@cDirZip) 
  
 if Params2()
 	WPar("Dz",cDirZip)
@@ -637,7 +633,7 @@ use
 save screen to cScr
 cls
 
-cKomlin:="dir /p "+cDirzip+"robknj.zip"
+cKomlin:="dir /p " + cDirZip + "robknj.zip"
 run &cKomLin
 
 private cKomLin:="unzip -o " + cDirZip + "ROBKNJ.ZIP " + cDirZip
@@ -647,20 +643,24 @@ private cKomLin:="pause"
 run &cKomLin
 
 restore screen from cScr
+
 if gSifK=="D"
 	O_SIFK
   	O_SIFV
 endif
 
-if pitanje(,"Osvjeziti sifrarnik iz arhive " + cDirZip + "ROBKNJ.ZIP"," ")=="D"
-	fDodaj:=(Pitanje(,"Dodati nepostojece sifre D/N ?"," ")=="D" )
-	AzurSifIzFmk(cDirZip, fDodaj)	
+if Pitanje(,"Osvjeziti sifrarnik iz arhive " + cDirZip + "ROBKNJ.ZIP"," ")=="D"
+	lAddNew:=(Pitanje(,"Dodati nepostojece sifre D/N ?"," ")=="D")
+	AzurSifIzFmk(cDirZip, lAddNew)	
      	O_ROBA
      	P_RobaPos()
 endif
 
 closeret
+return
 *}
+	
+	
 	
 static function AzurRow(cIdVd, cBrDok, cRsDbf)
 *{

@@ -379,17 +379,22 @@ CLOSERET
  *  \param cLocation - lokacija sifrarnika
  *  \param lAddNewCode - dodaj novu sifru ako je nema
  */
-function AzurSifIzFmk(cLocation, lAddNewCode)
+function AzurSifIzFmk(cLocation, lAddNewCode, cSite)
 *{
 local cDir
 
 if (lAddNewCode == NIL)
 	lAddNewCode:=.t.
 endif
+if (cSite == NIL)
+	cSite:=""
+endif
 
 if !gAppSrv
 	MsgO("Sifranik FMK -> POS")
 else
+	gSqlSite:=VAL(cSite)
+	gSqlUser:=1
 	? "Sifranik FMK -> POS"
 endif
 
@@ -408,6 +413,9 @@ select ROBAFMK
 go top
 
 do while !eof()
+	if gAppSrv
+		MsgO("Scan ROBAFMK: " + ALLTRIM(STR(RecCount())) + " - " + ALLTRIM(STR(RecNo())) )
+	endif
 	select roba
   	seek robafmk->id
   	if !Found()
@@ -444,6 +452,10 @@ do while !eof()
   	select robafmk
   	skip
 enddo
+
+if gAppSrv
+	MsgC()
+endif
 
 select robafmk
 use

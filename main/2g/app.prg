@@ -455,8 +455,8 @@ if (mpar37("/IMPMSG",goModul))
 endif
 
 if (mpar37("/IMPROBA",goModul))
-	if LEFT(self:cP5,3)=="/L="
-		AzurSifIzFmk(SUBSTR(self:cP5,4))
+	if LEFT(self:cP5,3)=="/S="
+		AzurSifIzFmk(nil, .t., SUBSTR(self:cP5,4))
 		goModul:quit()
 	endif
 endif
