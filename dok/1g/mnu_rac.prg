@@ -137,6 +137,15 @@ return
 function NarudzbaT()
 *{
 
+if IsPlNS()
+	// provjeri da li postoji formiran dnevni izvjestaj
+	// ako postoji NEMA UNOSA NOVIH RACUNA
+	if ReadLastFisRpt("1", DATE())
+		MsgBeep("Postoji formiran dnevni izvjestaj! #Unos novih racuna nije moguc! # Prekidam operaciju !")
+		CLOSERET
+	endif
+endif
+
 O_Nar()
 
 SELECT _PRIPR
