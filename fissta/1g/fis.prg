@@ -1127,3 +1127,61 @@ return bErr
 
 
 
+/*! \fn WriteLastFisRpt(cRptId, dDate, cTime)
+ *  \brief Evidentira formiranje fisk.izvjestaja
+ *  \param cRptId - id izvjestaja 
+ *  \param dDate - datum formiranja
+ *  \param cTime - vrijeme formiranja
+ */
+ 
+function WriteLastFisRpt(cRptId, dDate, cTime)
+*{
+// prvo zapamti zadnje podrucje
+local nArr
+nArr:=SELECT()
+
+O_DOKS
+select doks
+
+bRptExists:=ReadLastFisRpt(cRptId, dDate)
+
+if !bRptExists
+	MsgO("Evidentiram dnevni izvjestaj")
+	append blank
+	replace field->idvd with "77" 
+	replace field->datum with dDate
+	replace field->vrijeme with cTime
+	replace field->sto with cRptId
+	MsgC()
+endif
+
+// vrati se na prethodno podrucje
+select (nArr)
+
+return
+*}
+
+
+/*! \fn ReadLastFisRpt(cRptId, dDate)
+ *  \brief Procitaj 
+ *  \param cRptId - id izvjestaja
+ *  \param dDate - datum koji pretrazujemo
+ */
+function ReadLastFisRpt(cRptId, dDate)
+*{
+
+O_DOKS
+select doks
+set order to tag "2" // idvd + DTOS(datum) + smjena
+seek "77" + DToS(dDate)
+
+bRet:=.f.
+
+if Found()
+	if ALLTRIM(field->sto) == cRptId
+		bRet:=.t.
+	endif
+endif
+
+return bRet
+*}
