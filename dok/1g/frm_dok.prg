@@ -270,6 +270,8 @@ do case
 				StDokSK()
 			case DOKS->IdVd==VD_GP
 				StDokGP()
+			case DOKS->IdVd==VD_PP
+				StDokPP()
       		endcase
     	Case Ch==Asc("T").or.Ch==Asc("t")
       		select doks

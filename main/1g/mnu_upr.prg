@@ -151,6 +151,8 @@ if IsPlNS()
 		AADD(opc, "F. fiskalni stampac")
 		AADD(opcexe, {|| Fissta_mnu()})
 	endif
+	AADD(opc, "U. trgovacka knjiga")
+	AADD(opcexe, {|| mnu_tk()})
 endif
 
 Menu_SC("upra")

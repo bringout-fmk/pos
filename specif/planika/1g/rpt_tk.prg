@@ -144,9 +144,9 @@ do while !eof() .and. idpos==cIdPos
 		nIznRGot:=0
 		nIznRCek:=0
 		do while !EOF() .and. field->datum=dDatum .and. field->idvd="42"
-			if field->idvrstep=="01"
+			if field->idvrstep == "01"
 				nIznRGot+=VAL(DokIznos())
-			elseif field->idvrstep=="CK"
+			elseif field->idvrstep $ "CK#GP#SK"
 				nIznRCek+=VAL(DokIznos())
 			endif
 			skip
