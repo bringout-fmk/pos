@@ -298,20 +298,27 @@ return cCode
 *}
 
 
-/*! \fn WriteMainOutCode(cFilePath)
+/*! \fn WriteMainOutCode(cFilePath, cTestCode)
  *  \brief Upisuje u mainout.dat uvijek kod "999"
      Napomena:
       - ako fajl mainout.dat ne postoji, kreira se i upisuje se kod "999"
       - ako fajl mainout.dat postoji, brise njegov sadrzaj i upisuje kod "999"
  *  \param cFilePath - lokacija fajla mainout.dat, mora biti lokacija interfejsa FisCTT
+ *  \param cTestCode - koristi se kao testni kod, po def.ovog parametra nema
  */
-function WriteMainOutCode(cFilePath)
+function WriteMainOutCode(cFilePath, cTestCode)
 *{
    // uvijek u mainout.dat upisi kod "999"
    local nH, cFileName
    cFileName := cFilePath + 'mainout.dat'
+
+   cCode:="999"
    
-   WriteMainFileCode('999', cFileName)
+   if cTestCode <> nil
+   	cCode:=cTestCode
+   endif
+   
+   WriteMainFileCode(cCode, cFileName)
 
 return
 *}
