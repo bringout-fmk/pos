@@ -15,7 +15,7 @@ AADD(opcexe, {|| StartFisCTTInterfejs(gFisCTTPath, .f.)})
 AADD(opc, "2. inicijaliziraj FisCTT    ")
 AADD(opcexe, {|| IsFisCTTStarted() })
 AADD(opc, "2. racun    ")
-AADD(opcexe, {|| FisRacun() })
+AADD(opcexe, {|| TestFisRn2() })
 
 Menu_Sc("fst")
 
