@@ -1105,7 +1105,7 @@ endif
 if IsFisError()
 	bFisRnOk:=.f.
 	MsgC()
-	return bFirRnOk
+	return bFisRnOk
 endif
 
 // pokreni komandu 2: izdaj racun
@@ -1354,6 +1354,9 @@ return
  */
 function ReadLastFisRpt(cRptId, dDate)
 *{
+local nArr
+nArr:=SELECT()
+
 // ako se radi o cRptId=1
 cTipDok:="77"
 // ako se radi o cRptId=2
@@ -1373,6 +1376,10 @@ if Found()
 	bRet:=.t.
 	//endif
 endif
+
+set order to tag "1"
+
+select (nArr)
 
 return bRet
 *}
