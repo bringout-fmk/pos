@@ -604,7 +604,7 @@ if !DirExists(cPath)
 endif
 
 // Prije pokretanja interfejsa postavi kod za inicijalizaciju
-WrMainInCode("0", cPath)
+WrMainInCode("0_1_2", cPath)
 
 MsgO("Pokrecem FisCTT interfejs...")
 
@@ -827,6 +827,12 @@ function GetErrFromCode(cCode)
 cErr:=""
 
 do case
+	case cCode == "-42"
+		cErr:="-42: Pocetni datum je veci od krajnjeg"	
+	case cCode == "-41"
+		cErr:="-41: Nepravilno unjet datum za komandu d_"	
+	case cCode == "-38"
+		cErr:="-38: Nepravilno setovana brzina prenosa"	
 	case cCode == "-37"
 		cErr:="-37: U stampacu nema racuna"	
 	case cCode == "-36"
@@ -954,13 +960,14 @@ function IsFisCTTStarted()
 *{
 
 MsgO("Provjeravam FisCTT...")
+altd()
 
 cPath:=gFisCTTPath
 bRet:=.t.
 // testiraj interfejs
 // upisi u out "999"
 WrMainOutCode(cPath)
-WrMainInCode("0_1", cPath)
+WrMainInCode("0_1_2", cPath)
 Sleep(gFisTimeOut + 2)
 
 cReadCode:=RdMainOutCode(cPath)
@@ -1004,20 +1011,8 @@ if (cLastErr <> "0")
 	// ako postoji greska, obradi gresku
 	cErrDescr:=GetErrFromCode(cLastErr)
 	MsgBeep(cErrDescr)
-	
-	if cLastErr == "2"
-		bRet:=.t.
-		// put some code here
-		// CorrectErr2()
-	elseif cLastErr == "3"
-		bRet:=.t.
-		// put some code here
-		// CorrectErr3()
-	else
-		// zavrsi funkciju
-		bErr:=.t.
-		return bErr
-	endif
+	bErr:=.t.
+	return bErr
 endif
 
 return bRet
@@ -1034,13 +1029,6 @@ function RunFisCommand(cCode)
 *{
 
 cCode:=ALLTRIM(cCode)
-
-// upisuju se kodovi od "0" do "9"
-
-if (LEN(cCode) > 2)
-	MsgBeep("Greska: neispravna duzina kod-a!")
-	return
-endif
 
 // setuj uvijek OUT na "999"
 WrMainOutCode(gFisCTTPath)
@@ -1175,6 +1163,74 @@ return bErr
 *}
 
 
+/*! \fn RnErase1()
+ *  \brief Ponistavanje racuna - nestalo papira
+ */
+function RnErase1()
+*{
+
+MsgO("Ponistavam racun...")
+
+bRnErOk:=.t.
+
+// pokreni komandu 3: dnevni izvjestaj 
+RunFisCommand("5")
+
+if IsFisError()
+	bRnErOk:=.f.
+endif
+
+MsgC()
+
+return bRnErOk
+*}
+
+
+/*! \fn RnErase2()
+ *  \brief Ponistavanje racuna - 
+ */
+function RnErase2()
+*{
+
+MsgO("Ponistavam racun...")
+
+bRnErOk:=.t.
+
+// pokreni komandu 3: dnevni izvjestaj 
+RunFisCommand("6")
+
+if IsFisError()
+	bRnErOk:=.f.
+endif
+
+MsgC()
+
+return bRnErOk
+*}
+
+
+/*! \fn FormRnErase()
+ *  \brief Forma za ponistavanje zapocetog racuna 
+ */
+ 
+function FormRnErase()
+*{
+if Pitanje(,"Ponistiti posljednji racun (D/N)?", "D") == "N"
+	return
+endif
+
+// stampaj izvjestaj
+if !RnErase1()
+	return
+endif
+
+
+return
+*}
+
+
+
+
 
 /*! \fn FisRptDnevni()
  *  \brief Fiskalni dnevni izvjestaj
@@ -1205,11 +1261,37 @@ return bRptOk
 
 
 
-/*! \fn FisRptPeriod()
+/*! \fn FisRptPeriod(cDatOd, cDatDo)
+ *  \brief Fiskalni izvjestaj za period
+ */
+
+function FisRptPeriod(cDatOd, cDatDo)
+*{
+
+MsgO("Formiranje izvjestaja za period u toku ...")
+
+bRptOk:=.t.
+cRptCmd:="d_" + cDatOd + "_" + cDatDo
+// pokreni komandu d_DDMMYY_DDMMYY: izvjestaj za period 
+RunFisCommand(cRptCmd)
+
+if IsFisError()
+	bRptOk:=.f.
+endif
+
+MsgC()
+
+return bRptOk
+*}
+
+
+
+
+/*! \fn FisRptPresjek()
  *  \brief Fiskalni izvjestaj za period - presjek stanja
  */
 
-function FisRptPeriod()
+function FisRptPresjek()
 *{
 
 MsgO("Formiranje izvjestaja za period u toku ...")
@@ -1272,12 +1354,70 @@ endif
 return
 *}
 
-
 /*! \fn FormRptPeriod()
  *  \brief Formiranje izvjestaja za period 
  */
  
 function FormRptPeriod()
+*{
+
+// postavi konacan upit
+if Pitanje(,"Formirati izvjestaj za period (D/N)?", "D") == "N"
+	return
+endif
+
+dDatOd:=CToD("")
+dDatDo:=CToD("")
+
+Box(, 2, 50)
+	@ 1+m_x, 2+m_y SAY "Izvjestaj se formira za period:"
+	@ 2+m_x, 2+m_y SAY "od" GET dDatOd VALID !Empty(dDatOd)
+	@ 2+m_x, 16+m_y SAY "do:" GET dDatDo VALID !Empty(dDatDo)
+	read
+BoxC()
+
+if (dDatOd > dDatDo)
+	MsgBeep("Greska: datum od veci od datum do")
+	return
+endif
+
+cDatOd:=FisDateFormat(dDatOd)
+cDatDo:=FisDateFormat(dDatDo)
+
+// stampaj izvjestaj
+if !FisRptPeriod(cDatOd, cDatDo)
+	MsgBeep("Greska pri formiranju izvjestaja")
+	return
+endif
+
+return
+*}
+
+
+
+/*! \fn FisDateFormat(dDate)
+ *  \brief Vraca string format datuma neophodan za fis.izvjestaj
+ */
+function FisDateFormat(dDate)
+*{
+if EMPTY(dDate)
+	return ""
+endif
+
+cTmp:=DToC(dDate)
+cTmp:=STRTRAN(cTmp, ".", "")
+cRet:=cTmp
+
+return cRet
+*}
+
+
+
+/*! \fn FormRptPresjek()
+ *  \brief Formiranje izvjestaja presjek stanja 
+ */
+ 
+function FormRptPresjek()
 *{
 
 // provjeri prvo da li uopste postoji promet na dan DATE()
@@ -1293,13 +1433,13 @@ if gFisRptEvid=="D" .and. ReadLastFisRpt("2", DATE())
 endif
 
 // postavi konacan upit
-if Pitanje(,"Formirati izvjestaj za period (D/N)?", "D") == "N"
+if Pitanje(,"Formirati izvjestaj presjek stanja (D/N)?", "D") == "N"
 	return
 endif
 
 // stampaj izvjestaj
-if !FisRptPeriod()
-	MsgBeep("Greska pri formiranju izvjestaja za period")
+if !FisRptPresjek()
+	MsgBeep("Greska pri formiranju izvjestaja")
 	return
 endif
 

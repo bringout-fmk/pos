@@ -854,17 +854,13 @@ glRetroakt:=(IzFmkIni("POS","Retroaktivno","N",KUMPATH)=="D")
 
 // varijable FISSTA
 public gFisCTTPath
-gFisCTTPath:=(IzFmkIni("FISSTA","FisCTTPath","c:\fisctt",EXEPATH))
-
+gFisCTTPath:=(IzFmkIni("FISSTA","FisCTTPath","c:\tops",EXEPATH))
 public gFisTimeOut
 gFisTimeOut:=VAL((IzFmkIni("FISSTA","FisTimeOut","5",EXEPATH)))
-
 public gFisStorno
 gFisStorno:=(IzFmkIni("FISSTA","FisStorno","N",EXEPATH))
-
 public gFissta
 gFissta:=(IzFmkIni("FISSTA", "Fissta", "N", EXEPATH))
-
 public gFisRptEvid
 gFisRptEvid:=(IzFmkIni("FISSTA", "FisRptEvid", "N", EXEPATH))
 //
