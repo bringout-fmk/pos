@@ -471,6 +471,7 @@
 #define VD_CK        "90"       // dokument cek
 #define VD_SK        "91"       // dokument sindikalni kredit
 #define VD_GP        "92"       // dokument garatno pismo
+#define VD_PP        "88"       // dokument polog pazara
 
 #define DOK_ULAZA "00#16"
 #define DOK_IZLAZA "42#01#96#98"
