@@ -470,7 +470,7 @@ if (nArea==-1 .or. nArea==(F_POS))
 	CREATE_INDEX ("4", "dtos(datum)", KUMPATH+"POS")
 	CREATE_INDEX ("5", "IdPos+idroba+DTOS(Datum)", KUMPATH+"POS")
 	CREATE_INDEX ("6", "IdRoba", KUMPATH+"POS")
-
+	CREATE_INDEX ("7", "IdPos+IdVd+BrDok+IdDio+IdOdj", KUMPATH+"POS")
 endif
 
 
