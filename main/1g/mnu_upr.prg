@@ -149,7 +149,7 @@ endif
 if IsPlNS()
 	if gFissta=="D"
 		AADD(opc, "F. fiskalni stampac")
-		AADD(opcexe, {|| Mnu_Poruke()})
+		AADD(opcexe, {|| Fissta_mnu()})
 	endif
 endif
 
