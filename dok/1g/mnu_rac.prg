@@ -454,7 +454,7 @@ else
 	  aArtikli:={}
 	  aArtRacun:={}
 	  nUkupno:=0 //ukupan iznos racuna
-	  FillFisMartice(@aArtikli, @aArtRacun, @nUkupno)
+	  FillFisMatrice(@aArtikli, @aArtRacun, @nUkupno)
 	  cVrPl:=GetCodeVrstePl(cIdVrsteP)
 	  if !FisRacun(aArtikli, aArtRacun, nUkupno, cVrPl)
 	     MsgBeep("Racun nije azuriran")
