@@ -632,17 +632,19 @@ endif
 return
 *}
 
-/*! \fn FillFisMartice(aArtikli, aArtRacun, nUkupno)
+/*! \fn FillFisMatrice(aArtikli, aArtRacun, nUkupno)
  *  \brief Puni matrice ARTIKLI.XML i ARTRACUN.XML podacima iz pripreme
  *  \param @aArtikli matrica artikala 
  *  \param @aArtRacun matrica racuna
  *  \param @nUkupno ukupan iznos racuna
 */
-function FillFisMartice(aArtikli, aArtRacun, nUkupno)
+function FillFisMatrice(aArtikli, aArtRacun, nUkupno)
 *{
-   
-nWorkArea:= SELECT()
-select (_pripr)
+local nArr:= SELECT()
+
+O__PRIPR
+
+select _pripr
 go top
 
 do while !eof() .and. field->idvd=="42"
@@ -660,7 +662,7 @@ do while !eof() .and. field->idvd=="42"
       	skip
 enddo
 
-SELECT (nWorkArea)
+SELECT (nArr)
 
 return
 *}
