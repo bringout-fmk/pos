@@ -68,6 +68,12 @@ TestFisRn4()
 inkey(0)
 clear screen
 
+TestFisSviNaJedan()
+?
+? 'Press any key to continue...'
+inkey(0)
+clear screen
+
 return
 *}
 
@@ -721,5 +727,61 @@ endif
 ? 'Test zavrsen'
 
 return
+*}
+
+/*! \fn TestFisSviNaJedan()
+ *  \brief Test-case procedure izdavanja racuna na FISSTA kao da ju je pozvao korisnik regularnim putem
+ */
+ 
+function TestFisSviNaJedan()
+*{
+
+aArtikli:={}
+aArtRacun:={}
+nUkupno:=0 
+
+
+gClanPopust:=.f.
+gUpitNP:="N"
+
+? REPLICATE("-", 70)
+? "Test procedure izdavanja racuna na FISSTA kao da ju je pozvao korisnik"
+? REPLICATE("-", 70)
+
+if gFissta == "D"
+	if (select('_pripr')=0)
+		O__PRIPR
+	endif
+
+	if (select('_pripr')!=0)
+		zap
+	endif
+	append blank
+	replace cijena with 3899, ;
+		idroba with '01MCJ00011', ;
+		idtarifa with '1', ;
+		jmj with 'PAR', ;
+		kolicina with 3, ;
+		robanaz with 'THEMA'
+	append blank
+	replace cijena with 2619, ;
+		idroba with '01MCJ00001', ;
+		idtarifa with '1', ;
+		jmj with 'PAR', ;
+		kolicina with 2, ;
+		robanaz with 'DRINA'
+
+	SveNaJedan()
+	FillFisMatrice(@aArtikli, @aArtRacun, @nUkupno)
+	if LEN(aArtikli) != 0 .or. LEN(aArtRacun) != 0
+		? "Test - [ FAILED ]"
+	else
+		? "Test - [ OK ]"
+	endif
+else
+? "Opcija FMK.INI/EXEPATH/FISSTA Fissta ne postoji ili je = N"
+? "Postavite Fissta=D"
+endif
+
 *}
 
