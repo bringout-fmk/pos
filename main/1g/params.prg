@@ -203,6 +203,7 @@ Rpar("nk",@gStamStaPun)
 Rpar("vs",@gVsmjene)
 Rpar("ST",@gSezonaTip)
 Rpar("Si",@gSifUpravn)
+Rpar("Sx",@gDisplay)
 Rpar("Bc",@gEntBarCod)
 Rpar("Ep",@gEvidPl)
 
@@ -250,6 +251,8 @@ endif
 
 AADD (aNiz, {"Pri azuriranju pitati za nacin placanja (D/N)? " , "gUpitNP", "gUpitNP$'DN'", "@!", })
 
+AADD (aNiz, {"Stampa na POS displej (D/N)? " , "gDisplay", "gDisplay$'DN'", "@!", })
+
 AADD (aNiz, {"Evidentiranje podataka o vrstama placanja (D/N)? " , "gEvidPl", "gEvidPl$'DN'", "@!", })
 
 VarEdit(aNiz,6,2,24,79,"PARAMETRI RADA PROGRAMA - PRINCIPI RADA","B1")
@@ -275,6 +278,7 @@ if LASTKEY()<>K_ESC
     	Wpar("vs",@gVsmjene, .t., "D")
     	Wpar("ST",@gSezonaTip, .t., "D")
     	Wpar("Si",@gSifUpravn, .t., "D")
+    	Wpar("Sx",@gDisplay, .t., "D")
     	Wpar("Bc",@gEntBarCod, .t., "D")
     	Wpar("np",@gUpitNP, .t., "Z")
     	Wpar("Ep",@gEvidPl, .t., "Z")
