@@ -757,19 +757,45 @@ if gFissta == "D"
 		zap
 	endif
 	append blank
-	replace cijena with 3899, ;
-		idroba with '01MCJ00011', ;
+	replace cijena with 3992, ;
+		idroba with '01MCJ02321', ;
 		idtarifa with '1', ;
 		jmj with 'PAR', ;
 		kolicina with 3, ;
-		robanaz with 'THEMA'
+		robanaz with 'EFFEGI 243620304'
 	append blank
-	replace cijena with 2619, ;
-		idroba with '01MCJ00001', ;
+	replace cijena with 1269, ;
+		idroba with '01MTR02553', ;
+		idtarifa with '1', ;
+		jmj with 'PAR', ;
+		kolicina with 1, ;
+		robanaz with 'INTERALP WT998'
+	append blank
+	replace cijena with 1000, ;
+		idroba with '01MTR01443', ;
 		idtarifa with '1', ;
 		jmj with 'PAR', ;
 		kolicina with 2, ;
-		robanaz with 'DRINA'
+		robanaz with 'KOPITARNA 593'
+	append blank
+	replace cijena with 1990, ;
+		idroba with '01ZCJ01012', ;
+		idtarifa with '1', ;
+		jmj with 'PAR', ;
+		kolicina with 2, ;
+		robanaz with 'SIBILA'
+	replace cijena with 1190, ;
+		idroba with '01ZCJ02331', ;
+		idtarifa with '1', ;
+		jmj with 'PAR', ;
+		kolicina with 5, ;
+		robanaz with 'ELEGANT Z.PAPUCA'
+	replace cijena with 1070, ;
+		idroba with '02MSP01231', ;
+		idtarifa with '1', ;
+		jmj with 'PAR', ;
+		kolicina with 4, ;
+		robanaz with 'FILANTO'
 
 	SveNaJedan()
 	FillFisMatrice(@aArtikli, @aArtRacun, @nUkupno)
