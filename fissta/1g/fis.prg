@@ -632,9 +632,39 @@ endif
 return
 *}
 
+/*! \fn FillFisMartice(@aArtikli, @aArtRacun, @nUkupno)
+ *  \brief Puni matrice ARTIKLI.XML i ARTRACUN.XML podacima iz pripreme
+ *  \param @aArtikli matrica artikala 
+ *  \param @aArtRacun matrica racuna
+ *  \param @nUkupno ukupan iznos racuna
+*/
+function FillFisMartice(aArtikli, aArtRacun, nUkupno)
+*{
+   nWorkArea:= SELECT()
+   select ('_pripr)
+   go top
+   do while !eof()
+      cID         := GetArtCodeFromRoba(_pripr->idroba)
+      cNaziv      := alltrim(_pripr->robanaz) 
+      nCijena     := _pripr->cijena 
+      cPorez      := GetCodeTarifa(_pripr->idtarifa) 
+      cDepartment := '1'
+      cJedMjere   := GetCodeForArticleUnit(_pripr->jmj) 
+      nKolicina   := _pripr->kolicina
+      
+      aadd(aArtikli, {cID, cNaziv, nCijena, cPorez, cDepartment, cJedMjere})
+      aadd(aArtRacun, {nKolicina, cID})
+      nUkupno += nCijena * nKolicina
+      skip
+   enddo
+   SELECT (nWorkArea)
+
+return
+*}
+
 /*! \fn GetArtCodeFromRoba(cIDRoba)
- *  \brief Vraca FISSTA "kod" VAT na osnovu opisa roba->idtarifa
- *  \param cUnit - id tarife (roba->idtarifa), npr "1"
+ *  \brief Vraca roba._oid_ za roba.idroba
+ *  \param cIDRoba - id robe (roba->idroba)
  */
 function GetArtCodeFromRoba(cIDRoba)
 *{
