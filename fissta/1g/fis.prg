@@ -909,7 +909,7 @@ return
 function IsFisCTTStarted()
 *{
 
-MsgO("Da li je pokrenut FisCTT...")
+MsgO("Provjeravam FisCTT...")
 
 cPath:=gFisCTTPath
 bRet:=.t.
@@ -1192,7 +1192,7 @@ function FormRptDnevni()
 
 // provjeri prvo da li uopste postoji promet na dan DATE()
 if !PostojiDokument("42", DATE())
-	MsgBeep("Za dan " + DToS(DATE()) + " nema racuna#Izvjestaj nije moguc.")
+	MsgBeep("Za dan " + DToC(DATE()) + " nema racuna#Izvjestaj nije moguc.")
 	return
 endif
 
@@ -1229,7 +1229,7 @@ function FormRptPeriod()
 
 // provjeri prvo da li uopste postoji promet na dan DATE()
 if !PostojiDokument("42", DATE())
-	MsgBeep("Za dan " + DToS(DATE()) + " nema racuna#Izvjestaj nije moguc.")
+	MsgBeep("Za dan " + DToC(DATE()) + " nema racuna#Izvjestaj nije moguc.")
 	return
 endif
 
