@@ -451,16 +451,15 @@ if gRadniRac=="D"
   	BoxC()
 else
 	if IsPlNS() 
-		
-		// aArtikli:={}
-		// aArtRacun:={}
-		// nUkupno:=0 //ukupan iznos racuna
-		// NapuniMatriceIUkupnoIzPripreme(@aArtikli, @aArtRacun, @nUkupno)
-		// cVrPl:=GetCodeVrstePl(cIdVrsteP)
-		// if !FisRacun(aArtikli, aArtRacun, nUkupno, cVrPl)
-		// 	MsgBeep("Racun nije azuriran")
-		//	CLOSERET 	
-		// endif
+	  aArtikli:={}
+	  aArtRacun:={}
+	  nUkupno:=0 //ukupan iznos racuna
+	  NapuniMatrice(@aArtikli, @aArtRacun, @nUkupno)
+	  cVrPl:=GetCodeVrstePl(cIdVrsteP)
+	  if !FisRacun(aArtikli, aArtRacun, nUkupno, cVrPl)
+	     MsgBeep("Racun nije azuriran")
+	     CLOSERET 	
+	  endif
 	endif
 	
 	// prebaci iz prip u pos
@@ -473,6 +472,36 @@ endif
 StampAzur(gIdPos, cRacBroj)
 // odstampaj i azuriraj
 CLOSERET
+
+//return
+*}
+
+/*! \fn NapuniMatrice(@aArtikli, @aArtRacun, @nUkupno)
+ *  \brief Puni matrice ARTIKLI.XML i ARTRACUN.XML podacima iz pripreme
+ *  \param @aArtikli matrica artikala 
+ *  \param @aArtRacun matrica racuna
+ *  \param @nUkupno ukupan iznos racuna
+*/
+function NapuniMatrice(aArtikli, aArtRacun, nUkupno)
+*{
+   select _pripr
+   go top
+   do while !eof()
+      cID         := GetArtCodeFromRoba(_pripr->idroba)
+      cNaziv      := alltrim(_pripr->robanaz) 
+      nCijena     := _pripr->cijena 
+      cPorez      := GetCodeTarifa(_pripr->idtarifa) 
+      cDepartment := '1'
+      cJedMjere   := GetCodeForArticleUnit(_pripr->jmj) 
+      nKolicina   := _pripr->kolicina
+      
+      aadd(aArtikli, {cID, cNaziv, nCijena, cPorez, cDepartment, cJedMjere})
+      aadd(aArtRacun, {nKolicina, cID})
+      nUkupno += nCijena * nKolicina
+      skip
+   enddo
+
+return
 *}
 
 

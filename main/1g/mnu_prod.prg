@@ -105,7 +105,11 @@ CLOSERET
 return
 *}
 
+function ProdTestCP
+*{
 
+return
+*}
 
 function MnuZakljRacuna()
 *{

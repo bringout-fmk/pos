@@ -632,7 +632,23 @@ endif
 return
 *}
 
+/*! \fn GetArtCodeFromRoba(cIDRoba)
+ *  \brief Vraca FISSTA "kod" VAT na osnovu opisa roba->idtarifa
+ *  \param cUnit - id tarife (roba->idtarifa), npr "1"
+ */
+function GetArtCodeFromRoba(cIDRoba)
+*{
+   cCode:=""
+   nWorkArea:= SELECT()
+   if (select('roba')=0)
+      O_ROBA
+   endif
+   HSEEK cIDRoba
+	cCode := roba->_oid_
+   SELECT (nWorkArea)
 
+return cCode
+*}
 
 /*! \fn GetCodeForArticleUnit(cUnit)
  *  \brief Vraca FISSTA "kod" JMJ na osnovu opisa roba->jmj
