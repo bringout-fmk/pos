@@ -578,7 +578,7 @@ if LASTKEY()==K_UP
 	return .t.
 endif
 
-if (IsPlNS() .and. gFisStorno=="N")
+if (IsPlNS() .and. gFissta=="D" .and. gFisStorno=="N")
 	if (nKol < 0)
 		MsgBeep("Storno nije dozvoljen. Ponovite unos!")
 		return .f.
