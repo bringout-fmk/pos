@@ -834,6 +834,10 @@ gFisStorno:=(IzFmkIni("FISSTA","FisStorno","N",EXEPATH))
 public gFissta
 gFissta:=(IzFmkIni("FISSTA", "Fissta", "N", EXEPATH))
 
+public gFisRptEvid
+gFisRptEvid:=(IzFmkIni("FISSTA", "FisRptEvid", "N", EXEPATH))
+//
+
 gPosSirovine:="D"
 gPosKalk:="D"
 gPosPrimPak="D"
