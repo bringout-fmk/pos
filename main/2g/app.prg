@@ -302,8 +302,10 @@ endif
 self:oDatabase:scan()
 close all
 
-if IsPlNS() .and. gFissta=="D"
-	CheckFisCTTStarted(.t.)
+if IsPlNS() 
+	if gFissta=="D"
+		CheckFisCTTStarted(.t.)
+	endif
 endif
 
 SETKEY(K_SH_F1,{|| Calc()})
