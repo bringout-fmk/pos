@@ -103,12 +103,12 @@ cKupac:=PADR(aSKData[1], 20)
 // napuni matricu aKupData sa podacima kupca
 // aSKData: od [2] do [4]
 aKupData:={}
-for i:=2 to 4
+for i:=2 to 5
 	AADD(aKupData, aSKData[i])
 next
 
-nSKIznos:=aSKData[5] // odobreni iznos kredita
-nSKBrRata:=aSKData[6] // broj rata kredita
+nSKIznos:=aSKData[6] // odobreni iznos kredita
+nSKBrRata:=aSKData[7] // broj rata kredita
 
 // kreiraj hash string sa podacima kupca
 cKpData:=CreateHashString(aKupData)
@@ -492,6 +492,7 @@ START PRINT CRET
 ? "   Broj licne karte: " + aKpData[1]
 ? "               JMBG: " + aKpData[2]
 ? "              Firma: " + aKpData[3]
+? "    ID broj (firma): " + aKpData[4]
 ?
 
 FF

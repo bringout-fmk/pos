@@ -145,6 +145,7 @@ function FormSindKredData(aSKData)
 *{
 local GetList:={}
 local cSKFirma:=SPACE(20) // firma
+local cSKFIdBr:=SPACE(20) // id broj kupca u firmi
 local cSKBrLK:=SPACE(11)  // kupac, br LK
 local cSKKupac:=SPACE(20) // ime i prezime kupca
 local cSKJMBG:=SPACE(13)  // kupac JMBG
@@ -161,6 +162,7 @@ do while .t.
 	@ 4+m_x,2+m_y SAY "                Broj LK:" GET cSKBrLk VALID !Empty(cSKBrLK) 
 	@ 5+m_x,2+m_y SAY "                   JMBG:" GET cSkJMBG VALID !Empty(cSKJMBG) 
 	@ 6+m_x,2+m_y SAY "                  Firma:" GET cSkFirma VALID !Empty(cSKFirma) 
+	@ 7+m_x,2+m_y SAY "         Id broj(firma):" GET cSkFIdBr VALID !Empty(cSKFIdBr) 
 	@ 8+m_x,2+m_y SAY "Podaci kredit:" COLOR "I"
 	@ 9+m_x,2+m_y SAY  REPLICATE("-", 58)
 
@@ -182,12 +184,14 @@ BoxC()
 // [2] broj lk
 // [3] jmbg
 // [4] firma
-// [5] odobren iznos kredita
-// [6] broj rata kredita
+// [5] firma id broj
+// [6] odobren iznos kredita
+// [7] broj rata kredita
 AADD(aSKData, ALLTRIM(cSKKupac))
 AADD(aSKData, ALLTRIM(cSKBrLK))
 AADD(aSKData, ALLTRIM(cSKJMBG))
 AADD(aSKData, ALLTRIM(cSKFirma))
+AADD(aSKData, ALLTRIM(cSKFIdBr))
 AADD(aSKData, nSkOdIzn)
 AADD(aSKData, nSkBrRata)
 
