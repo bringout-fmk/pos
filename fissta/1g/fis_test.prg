@@ -18,7 +18,7 @@ TestRWArtikliXml()
 //TestRWPlacanjaXml()
 
 // test upisivanja i citanja kodova iz fajlova mainin.dat i mainout.dat
-//TestRWMainInOut()
+TestRWMainInOut()
 
 
 // test izdavanja racuna
@@ -200,34 +200,31 @@ cFilePath:="h:\dev\fmk\pos\fissta\1g\testdat\"
 
 // test1: upisivanja i citanja kod-a iz fajla mainin.dat
 // upisi kodove od -10 do 10
-
 for i:=0 to 9
 	cCode:=STR(i)
 	WriteMainInCode(cCode, cFilePath)
 	cReadCode:=ReadMainInCode(cFilePath)
-	? "Test RW mainin/out krug: " + STR(i)
-	if cReadCode <> cCode
+	? "Test RW MainIN krug: " + STR(i)
+	if alltrim(cReadCode) <> alltrim(cCode)
 		?? " Nepravilno upisan kod u mainin.dat"
 	else
 		?? " - OK"
 	endif
 next
+? " "
 
 // test2: upisivanja i citanja kod-a iz fajla mainout.dat
-// upisi kodove od -10 do 10
+// uvijek upisuje '999'
+WriteMainOutCode(cFilePath)
+cReadCode:=ReadMainOutCode(cFilePath)
+? "Test RW MainOUT: " 
+if alltrim(cReadCode) <> '999'
+	?? " Nepravilno upisan kod u mainout.dat"
+else
+	?? " - OK"
+endif
 
-for i:=-10 to 10 
-	cCode:=STR(i)
-	WriteMainOutCode(cCode, cFilePath)
-	cReadCode:=ReadMainOutCode(cFilePath)
-	? "Test RW mainin/out krug: " + STR(i)
-	if cReadCode <> cCode
-		?? " Nepravilno upisan kod u mainout.dat"
-	else
-		?? " - OK"
-	endif
-next
-
+return
 *}
 
 

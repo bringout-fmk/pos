@@ -266,7 +266,6 @@ return aPlacanja
 
 
 
-
 /*! \fn WriteMainInCode(cCode, cFilePath)
  *  \brief Upisuje u fajl mainin.dat kod - cCode, 
      Napomena:
@@ -277,9 +276,10 @@ return aPlacanja
  */
 function WriteMainInCode(cCode, cFilePath)
 *{
-if !File(cFilePath + "mainin.dat")
-	// kreiraj fajl
-endif
+   local nH, cFileName
+   cFileName := cFilePath + 'mainin.dat'
+   
+   WriteMainFileCode(cCode, cFileName)
 
 return
 *}
@@ -291,7 +291,10 @@ return
  */
 function ReadMainInCode(cFilePath)
 *{
-cCode:=""
+   local cFileName, cCode
+   cFileName := cFilePath + 'mainin.dat'
+
+   cCode:= ReadMainFileCode(cFileName)
 
 return cCode
 *}
@@ -306,11 +309,11 @@ return cCode
  */
 function WriteMainOutCode(cFilePath)
 *{
-// uvijek u mainout.dat upisi kod "999"
-if !File(cFilePath + "mainout.dat")
-	// kreiraj cFilePath + "mainout.dat"
-endif
-
+   // uvijek u mainout.dat upisi kod "999"
+   local nH, cFileName
+   cFileName := cFilePath + 'mainout.dat'
+   
+   WriteMainFileCode('999', cFileName)
 
 return
 *}
@@ -321,11 +324,69 @@ return
  */
 function ReadMainOutCode(cFilePath)
 *{
-cCode:=""
+   local cFileName, cCode
+   cFileName := cFilePath + 'mainout.dat'
+
+   cCode:= ReadMainFileCode(cFileName)
 
 return cCode
 *}
 
+/*! \fn WriteMainFileCode(cCode, cFileName)
+ *  \brief Upisuje u fajl cFileName - cCode, 
+     Napomena:
+      - ako fajl cFileName ne postoji kreira ga i upisuje cCode
+ *  \param cCode - kod
+ *  \param cFileName - naziv fajla sa kompletnim path-om
+ */
+function WriteMainFileCode(cCode, cFileName)
+*{
+   local nH
+   
+	// kreiraj fajl ponovo, tako da smo sigurni da je prazan
+	if file(cFileName)
+	  ferase(cFileName)
+	end if
+   if (nH:=fcreate(cFileName))==-1
+      Beep(4)
+      Msg("Greska pri kreiranju fajla: "+cFileName+" !",6)
+      return
+   endif
+   fclose(nH)
+   
+   // Otvori file za upis
+   set printer to (cFileName)
+   set printer on
+   set console off
+
+   // Upisi cCode
+   // kada probam upisati sa ? - doda jednu praznu liniju viska
+   ?? alltrim(cCode)
+      
+   // Zatvori file
+   set printer to
+   set printer off
+   set console on
+
+return
+*}
+
+
+/*! \fn ReadMainFileCode(cFileName)
+ *  \brief Cita kod iz fajl-a cFileName
+ *  \param cFileName - naziv fajla sa kompletnim path-om
+ *  \return - sadržaj iz cFileName
+ */
+function ReadMainFileCode(cFileName)
+*{
+   local cCode
+   cCode:=''
+
+   //cCode := alltrim(MEMOREAD(cFileName))
+   cCode := FILESTR(cFileName)
+
+return cCode
+*}
 
 
 
