@@ -285,6 +285,7 @@ endif
 if IsTigra() .and. lGenPartnSt
 	AddPAzToParams(dDat)
 	AddSCnToParams()
+	AddPCnToParams()
 endif
 
 END PRINT
