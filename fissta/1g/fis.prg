@@ -575,13 +575,14 @@ return cCode
 
 
 
-/*! \fn StartFisCTTInterface(cPath, bSilent)
+/*! \fn StartFisCTTInterface(bSilent)
  *  \brief Starta FisCTT interfejs
- *  \param cPath - lokacija interfejsa
  *  \param bSilent - .t. - startaj FisCTT bez pitanja, .f. - postavi pitanje
  */
-function StartFisCTTInterface(cPath, bSilent)
+function StartFisCTTInterface(bSilent)
 *{
+
+cPath:=gFisCTTPath
 
 if bSilent == nil
 	bSilent:=.t.
@@ -610,6 +611,14 @@ cKomLin:="start " + cPath + "fiscal28.jar"
 // pokreni komandu
 run &cKomLin
 
+// sacekaj da se interfejs pokrene
+sleep(gFisTimeOut + 5)
+
+if ReadMainInCode(cPath)=="9"
+	if !bSilent
+		MsgBeep("Interfejs pokrenut ...")
+	endif
+endif
 
 return
 *}
@@ -684,5 +693,385 @@ BoxC()
 return
 
 *}
+
+
+
+/*! \fn GetCodeForArticleUnit(cUnit)
+ *  \brief Vraca FISSTA "kod" JMJ na osnovu opisa roba->jmj
+ *  \param cUnit - jedinica mjere (roba->jmj), npr "PAR"
+ */
+function GetCodeForArticleUnit(cUnit)
+*{
+cCode:=""
+
+do case
+	case cUnit=="KOM"
+		cCode:="1"
+	case cUnit=="KG"
+		cCode:="2"
+	case cUnit=="M"
+		cCode:="3"
+	case cUnit=="L"
+		cCode:="4"
+	case cUnit=="G"
+		cCode:="5"
+	case cUnit=="PAR"
+		cCode:="6"
+endcase
+
+return cCode
+*}
+
+
+/*! \fn GetErrFromCode(cCode)
+ *  \brief Vraca opis greske na osnovu koda cCode
+ *  \param cCode - "kod" greske
+ */
+function GetErrFromCode(cCode)
+*{
+
+cErr:=""
+
+do case
+	case cCode == "-37"
+		cErr:="U stampacu nema racuna"	
+	case cCode == "-36"
+		cErr:="Nedostaje baza artikala - komanda 1"
+	case cCode == "-35"
+		cErr:="Nepravilna vrijednost COM porta"
+	case cCode == "-34"
+		cErr:="Nepravilan format vrijednosti placanja"
+	case cCode == "-33"
+		cErr:="Nepravilan format vrste placanja"
+	case cCode == "-32"
+		cErr:="Niste definisali ni jedno placanje"
+	case cCode == "-31"
+		cErr:="Prevelik broj stavki placanja za jedan artikal"
+	case cCode == "-30"
+		cErr:="Prevelik broj artikala za jedan racun"
+	case cCode == "-29"
+		cErr:="Nepravilno formiran racun"
+	case cCode == "-28"
+		cErr:="Ne postoji definicija artikla"
+	case cCode == "-27"
+		cErr:="Nepravilan format XML fajla"
+	case cCode == "-26"
+		cErr:="Ne postoji fajl, izbrisan ili koruptovan"
+	case cCode == "-25"
+		cErr:="Nepravilno formirani podaci"
+	case cCode == "-23"
+		cErr:="Ne moze se stornirati racun, mora se ponistiti"
+	case cCode == "-22"
+		cErr:="Postoji zapocet racun, operacija odbijena"
+	case cCode == "-21"
+		cErr:="Greska u uredjaju"
+	case cCode == "-6"
+		cErr:="Ne podrzavanje javax.comm paketa"
+	case cCode == "-5"
+		cErr:="Nemogucnost komunikacije sa portom"
+	case cCode == "-4"
+		cErr:="Zauzet port"
+	case cCode == "-3"
+		cErr:="Ne postoji port"
+	case cCode == "-2"
+		cErr:="Ne inicijalizovan port"
+	case cCode == "-1"
+		cErr:="No connection"
+	case cCode == "1"
+		cErr:="Nemogucnost izvrsenja operacije"
+	case cCode == "2"
+		cErr:="Nije definisan artikal"
+	case cCode == "3"
+		cErr:="Vrijednost KOLICINA * CIJENA je prevelika za racun"
+	case cCode == "8"
+		cErr:="Nepravilno unjeta vrijednost"
+	case cCode == "20"
+		cErr:="Podignuta glava stampaca"
+	case cCode == "22"
+		cErr:="Nema papira"
+	case cCode == "47"
+		cErr:="Nedostaje poreska stopa"
+	case cCode == "50"
+		cErr:="Nedovoljno na lageru"
+	case cCode == "99"
+		cErr:="Neobradjena greska: pozovite nas"
+	case cCode == "100"
+		cErr:="Nepravilan BARKOD"
+	case cCode == "101"
+		cErr:="Nepravilno formiran naziv artikla"
+	case cCode == "102"
+		cErr:="Nepravilno formirana cijena"
+	case cCode == "103"
+		cErr:="Nepravilno formirana poreska stopa"
+	case cCode == "104"
+		cErr:="Nepravilno formirano odjeljenje"
+	case cCode == "105"
+		cErr:="Nepravilno formirana jedinica mjere"
+	case cCode == "106"
+		cErr:="Nepravilan format kolicine"
+	case cCode == "108"
+		cErr:="Dosegnut max.broj programiranih artikala"
+	case cCode == "109"
+		cErr:="Greska pri brisanju"
+	case cCode == "110"
+		cErr:="Za izvrsenje operacije mora se uraditi dnevni izvjestaj"
+	case cCode == "112"
+		cErr:="Greska na stampacu, podignuta glava, nema papira..."
+endcase
+
+
+return cErr
+*}
+
+
+
+/*! \fn CheckFisCTTStarted()
+ *  \brief Centralna funkcija za provjeru FisCTT, da li je vec pokrenut
+ */
+
+function CheckFisCTTStarted()
+*{
+
+bFisStarted:=.t.
+
+bFisStarted:=IsFisCTTStarted()
+if !bFisStarted
+	StartFisCTTInterface(gFisCTTPath)
+endif
+
+return
+*}
+
+
+
+/*! \fn IsFisCTTStarted()
+ *  \brief Provjerava da li je FisCTT startovan
+ */
+function IsFisCTTStarted()
+*{
+
+cPath:=gFisCTTPath
+bRet:=.t.
+
+WriteMainInCode("0", cPath)
+Sleep(gFisTimeOut)
+
+cReadCode:=ReadMainInCode(cPath)
+
+if cReadCode != "9"
+	bRet:=.f.
+endif
+
+return bRet
+*}
+
+
+/*! \fn IsFisError()
+ *  \brief Provjerava da li postoji greska poslije zadavanja komande i obradjuje je 
+ */
+function IsFisError()
+*{
+bRet:=.f.
+cLastErr:=ReadMainOutCode(gFisCTTPath)
+
+if (cLastErr <> "0")
+	
+	// ako postoji greska, obradi gresku
+	cErrDescr:=GetErrFromCode(cLastErr)
+	MsgBeep(cErrDescr)
+	
+	if cLastErr == "2"
+		// put some code here
+		// CorrectErr2()
+	elseif cLastErr == "3"
+		// put some code here
+		// CorrectErr3()
+	else
+		// zavrsi funkciju
+		bErr:=.t.
+		return bErr
+	endif
+endif
+
+return bRet
+*}
+
+
+
+/*! \fn RunFisCommand(cCode)
+ *  \brief Zadaje komandu interfejsu
+ *  \cCode - "kod" komande
+ */
+
+function RunFisCommand(cCode)
+*{
+
+cCode:=ALLTRIM(cCode)
+
+// upisuju se kodovi od "0" do "9"
+
+if (LEN(cCode) > 1)
+	MsgBeep("Greska: neispravna duzina kod-a!")
+	return
+endif
+
+// setuj uvijek OUT na "999"
+WriteMainOutCode(gFisCTTPath)
+
+// upisi u IN kod cCode 
+WriteMainInCode(cCode, gFisCTTPath)
+
+// zaustavi izvrsenje aplikacije.
+// interfejsu treba par sec. da sazvace komandu
+sleep(gFisTimeOut)
+
+return
+*}
+
+
+
+/*! \fn FisRacun(aArtikli, aArtRacun, nIznos, cTipPlacanja)
+ *  \brief Glavna funkcija za stampu FISSTA racuna
+ *  \param aArtikli - matrica sa artiklima
+ *  \param aArtRacun - matrica sa stavkama racuna
+ *  \param nIznos - ukupan iznos racuna
+ *  \param cTipPlacanja - tip placanja (1, 2 ili 3)
+ */
+
+function FisRacun(aArtikli, aArtRacun, nIznos, cTipPlacanja)
+*{
+
+bErr:=.f.
+
+// provjeri prvo da li je interfejs startan
+CheckFisCTTStarted()
+
+// upisi stavke u ARTIKLI.XML
+WriteArtikliXml(aArtikli, gFisCTTPath)
+
+// upisi stavke u ARTRACUN.XML
+WriteArtRacunXml(aArtRacun, gFisCTTPath)
+
+// upisi stavke u PLACANJA.XML
+WritePlacanjaXml(nIznos, cTipPlacanja, gFisCTTPath)
+
+// sada smo spremni za izdavanje racuna
+
+// pokreni komandu 1: artikli.xml => CPU
+RunFisCommand("1")
+
+if IsFisError()
+	bErr:=.t.
+	return bErr
+endif
+
+// pokreni komandu 8: artikli.xml => FISSTA
+RunFisCommand("8")
+
+if IsFisError()
+	bErr:=.t.
+	return bErr
+endif
+
+// pokreni komandu 2: izdaj racun
+RunFisCommand("2")
+
+if IsFisError()
+	bErr:=.t.
+	return bErr
+endif
+
+return bErr
+*}
+
+
+
+/*! \fn FisNivelacija(aArtikli)
+ *  \brief Glavna funkcija za nivelaciju cijena
+ *  \param aArtikli - matrica sa artiklima
+ */
+
+function FisNivelacija(aArtikli)
+*{
+
+bErr:=.f.
+
+// provjeri prvo da li je interfejs startan
+CheckFisCTTStarted()
+
+// upisi stavke u ARTIKLI.XML
+WriteArtikliXml(aArtikli, gFisCTTPath)
+
+// sada smo spremni za nivelaciju
+
+// pokreni komandu 1: artikli.xml => CPU
+RunFisCommand("1")
+
+if IsFisError()
+	bErr:=.t.
+	return bErr
+endif
+
+// pokreni komandu 8: artikli.xml => FISSTA
+RunFisCommand("8")
+
+if IsFisError()
+	bErr:=.t.
+	return bErr
+endif
+
+return bErr
+*}
+
+
+
+/*! \fn FisRptDnevni()
+ *  \brief Fiskalni dnevni izvjestaj
+ */
+
+function FisRptDnevni()
+*{
+
+bErr:=.f.
+
+// provjeri prvo da li je interfejs startan
+CheckFisCTTStarted()
+
+// pokreni komandu 3: dnevni izvjestaj 
+RunFisCommand("3")
+
+if IsFisError()
+	bErr:=.t.
+	return bErr
+endif
+
+return bErr
+*}
+
+
+
+/*! \fn FisRptPeriod()
+ *  \brief Fiskalni izvjestaj za period - presjek stanja
+ */
+
+function FisRptPeriod()
+*{
+
+bErr:=.f.
+
+// provjeri prvo da li je interfejs startan
+CheckFisCTTStarted()
+
+// pokreni komandu 4: izvjestaj za period 
+RunFisCommand("4")
+
+if IsFisError()
+	bErr:=.t.
+	return bErr
+endif
+
+return bErr
+*}
+
 
 
