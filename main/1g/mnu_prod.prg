@@ -83,6 +83,11 @@ if IsPlanika()
 	AADD(opc,"M. poruke")
 	AADD(opcexe,{|| Mnu_Poruke() })
 endif
+if IsPlNS()
+	AADD(opc,"S. fiskalni stampac ")
+	AADD(opcexe,{|| Fissta_mnu() })
+endif
+
 if gnDebug==5
 	AADD(opc,"X. TEST COM PORT")
 	AADD(opcexe,{|| ProdTestCP() })
