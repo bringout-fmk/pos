@@ -606,6 +606,8 @@ endif
 // Prije pokretanja interfejsa postavi kod za inicijalizaciju
 WriteMainInCode("0", cPath)
 
+MsgO("Pokrecem FisCTT interfejs...")
+
 cKomLin:="start " + cPath + "fiscal28.jar"
 
 // pokreni komandu
@@ -614,11 +616,18 @@ run &cKomLin
 // sacekaj da se interfejs pokrene
 sleep(gFisTimeOut + 5)
 
+MsgC()
+
 if ReadMainInCode(cPath)=="9"
 	if !bSilent
 		MsgBeep("Interfejs pokrenut ...")
 	endif
+else
+	if !bSilent
+		MsgBeep("Problem sa pokretanjem FisCTT")
+	endif
 endif
+
 
 return
 *}
@@ -848,6 +857,8 @@ return
 function IsFisCTTStarted()
 *{
 
+MsgO("Da li je pokrenut FisCTT...")
+
 cPath:=gFisCTTPath
 bRet:=.t.
 // testiraj interfejs
@@ -859,6 +870,8 @@ cReadCode:=ReadMainOutCode(cPath)
 if cReadCode != "0"
 	bRet:=.f.
 endif
+
+MsgC()
 
 return bRet
 *}
@@ -1021,6 +1034,8 @@ return bFisRnOk
 function FisNivelacija(aArtikli)
 *{
 
+MsgO("Vrsim nivelaciju cijena u FISSTA ...")
+
 bErr:=.f.
 
 // provjeri prvo da li je interfejs startan
@@ -1047,6 +1062,8 @@ if IsFisError()
 	return bErr
 endif
 
+MsgC()
+
 return bErr
 *}
 
@@ -1058,6 +1075,8 @@ return bErr
 
 function FisRptDnevni()
 *{
+
+MsgO("Formiranje dnevnog izvjestaja u toku...")
 
 bErr:=.f.
 
@@ -1072,6 +1091,8 @@ if IsFisError()
 	return bErr
 endif
 
+MsgC()
+
 return bErr
 *}
 
@@ -1083,6 +1104,8 @@ return bErr
 
 function FisRptPeriod()
 *{
+
+MsgO("Formiranje izvjestaja za period u toku ...")
 
 bErr:=.f.
 
@@ -1096,6 +1119,8 @@ if IsFisError()
 	bErr:=.t.
 	return bErr
 endif
+
+MsgC()
 
 return bErr
 *}
