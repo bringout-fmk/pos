@@ -452,16 +452,31 @@ if gRadniRac=="D"
 else
 	if IsPlNS() 
 		if gFissta=="D" 
-			aArtikli:={}
-	  		aArtRacun:={}
-	  		nUkupno:=0 //ukupan iznos racuna
-	  		FillFisMatrice(@aArtikli, @aArtRacun, @nUkupno)
-	  		cVrPl:=GetCodeVrstePl(cIdVrsteP)
-	  		if !FisRacun(aArtikli, aArtRacun, nUkupno, cVrPl)
-	     			// Racun nije formiran, nemoj azurirati u tops
-				MsgBeep("Racun nije azuriran")
-	     			CLOSERET 	
-	  		endif
+			// provjeri o kakvom se racunu radi
+			nRnType:=ChkRnType()
+		
+			if gnDebug == 5
+				MsgBeep(STR(nRnType))
+			endif
+			
+			if (nRnType == 0)
+				MsgBeep("Na racunu se pojavljuju +/- kolicine#Racun nije azuriran!")
+				CLOSERET
+			endif
+			
+			// ako se radi o cistom racunu onda izdaj rn->FISSTA
+			if (nRnType==1 .or. (nRnType==-1 .and. gFisStorno=="D"))
+				aArtikli:={}
+	  			aArtRacun:={}
+	  			nUkupno:=0 //ukupan iznos racuna
+	  			FillFisMatrice(@aArtikli, @aArtRacun, @nUkupno)
+	  			cVrPl:=GetCodeVrstePl(cIdVrsteP)
+	  			if !FisRacun(aArtikli, aArtRacun, nUkupno, cVrPl)
+	     				// Racun nije formiran, nemoj azurirati u tops
+					MsgBeep("Racun nije azuriran")
+	     				CLOSERET 	
+	  			endif
+			endif
 		endif
 	endif
 	

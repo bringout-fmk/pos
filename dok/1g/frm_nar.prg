@@ -580,10 +580,11 @@ endif
 
 if IsPlNS() 
 	if gFissta=="D" .and. gFisStorno=="N"
-		if (nKol < 0)
-			MsgBeep("Storno nije dozvoljen. Ponovite unos!")
-			return .f.
-		endif
+		// sasa: ovo ne treba ovdje
+		//if (nKol < 0)
+		//	MsgBeep("Storno nije dozvoljen. Ponovite unos!")
+		//	return .f.
+		//endif
 	endif
 endif
 
