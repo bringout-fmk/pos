@@ -624,77 +624,6 @@ return
 *}
 
 
-/*! \fn IsFisCTTStarted(cPath)
- *  \brief Provjerava da li je FisCTT started
- *  \param cPath - lokacija interfejsa
- */
-function IsFisCTTStarted()
-*{
-
-cCode:=ReadMainInCode(gFisCTTPath)
-
-if cCode=="9"
-	MsgBeep("OK")
-else
-	MsgBeep("NOT OK")
-endif
-
-return
-*}
-
-
-
-
-function FisRacun()
-*{
-
-Box(,4, 50)
-	
-	cRd:=""
-	
-	WriteMainOutCode(gFisCTTPath)
-	@ 1+m_x, 2+m_y SAY "mainout: Upisao kod 999"
-	
-	WriteMainInCode("1", gFisCTTPath)
-	@ 2+m_x, 2+m_y SAY "mainin: upisao 1"
-	inkey(gFisTimeOut)
-	
-	cRd:=ReadMainOutCode(gFisCTTPath)
-	@ 3+m_x, 2+m_y SAY "greska: " + cRd
-	
-	if cRd <> "0"
-		return
-	endif
-		
-	WriteMainOutCode(gFisCTTPath)
-	
-	WriteMainInCode("8", gFisCTTPath)
-	@ 2+m_x, 2+m_y SAY "mainin: upisao 8"
-	inkey(gFisTimeOut)
-	
-	cRd:=ReadMainOutCode(gFisCTTPath)
-	@ 3+m_x, 2+m_y SAY "greska: " + cRd
-	
-	if cRd <> "0"
-		return
-	endif
-	
-	WriteMainOutCode(gFisCTTPath)
-	
-	WriteMainInCode("2", gFisCTTPath)
-	@ 2+m_x, 2+m_y SAY "mainin: upisao 2"
-	inkey(gFisTimeOut)
-	
-	cRd:=ReadMainOutCode(gFisCTTPath)
-	@ 3+m_x, 2+m_y SAY "greska: " + cRd
-
-BoxC()
-
-return
-
-*}
-
-
 
 /*! \fn GetCodeForArticleUnit(cUnit)
  *  \brief Vraca FISSTA "kod" JMJ na osnovu opisa roba->jmj
@@ -829,14 +758,22 @@ return cErr
  *  \brief Centralna funkcija za provjeru FisCTT, da li je vec pokrenut
  */
 
-function CheckFisCTTStarted()
+function CheckFisCTTStarted(bSilent)
 *{
+
+if bSilent == nil
+	bSilent:=.f.
+endif
 
 bFisStarted:=.t.
 
 bFisStarted:=IsFisCTTStarted()
 if !bFisStarted
-	StartFisCTTInterface(gFisCTTPath)
+	StartFisCTTInterface(bSilent)
+else
+	if !bSilent
+		MsgBeep("FisCTT vec pokrenut !")
+	endif
 endif
 
 return
