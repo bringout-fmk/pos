@@ -124,6 +124,35 @@ return aArtikli
 *}
 
 
+/*! \fn ReadArtRacunXml(cFilePath)
+ *  \brief Vrsi iscitavanje podataka cFilePath + "ARTRACUN.XML" u matricu
+ *  \param cFilePath - lokacija fajla ARTRACUN.XML
+ *  \return aArtikli - matrica napunjena podacima iz ARTRACUN.XML 
+ */
+ 
+function ReadArtRacunXml(cFilePath)
+*{
+// aArtRacun = {"kolicina", "id artikla"}
+
+return aArtRacun
+*}
+
+
+/*! \fn ReadPlacanjaXml(cFilePath)
+ *  \brief Vrsi iscitavanje podataka cFilePath + "PLACANJA.XML" u matricu
+ *  \param cFilePath - lokacija fajla PLACANJA.XML
+ *  \return aArtikli - matrica napunjena podacima iz PLACANJA.XML 
+ */
+ 
+function ReadPlacanjaXml(cFilePath)
+*{
+// aPlacanja = {"iznos", "tip placanja"}
+
+return aPlacanja
+*}
+
+
+
 
 /*! \fn WriteMainInCode(cCode, cFilePath)
  *  \brief Upisuje u fajl mainin.dat kod - cCode, 
