@@ -192,7 +192,7 @@ return
 function PPrenosPOS()
 *{
 gSezona:="    "
-
+altd()
 goModul:oDatabase:loadSezonaRadimUSezona()
 
 if gSezonaTip=="M"
@@ -218,7 +218,10 @@ endif
 
 if (goModul:oDatabase:cRadimUSezona=="RADP")
     	ArhSigma()
-    	if (goModul:oDatabase:cSezona<>cNewSeason .and.  Postojipromet() .and. DAY(date())>10  .and. gSamoProdaja=="N")
+	cOldSez:=goModul:oDataBase:cSezona
+    	bPrometExist:=PostojiPromet()
+	nDayOfDate:=DAY(date())
+	if (cOldSez <> cNewSeason .and.  bPrometExist .and. nDayOfDate > 4  .and. gSamoProdaja=="N")
     
       		// ne prelazi u novu sezonu sve dok ne prodje 10 - ti u mjesecu
       		if gVrstaRS<>"K"  // neka K tip kase suti

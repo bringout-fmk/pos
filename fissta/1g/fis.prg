@@ -809,7 +809,7 @@ do case
 		cCode:="0"
 	// 1 - por 20%
 	case cIdTarifa=="1"
-		cCode:="2"
+		cCode:="3"
 endcase
 
 return cCode

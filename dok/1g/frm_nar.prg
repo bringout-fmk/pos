@@ -196,7 +196,7 @@ if gModul=="HOPS"
         			SELECT _POS
         			Del_Skip()
       			else
-        			SKIP
+        			Del_Skip()
       			endif
     		enddo
     		set order to 1
