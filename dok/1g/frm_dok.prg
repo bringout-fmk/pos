@@ -264,6 +264,12 @@ do case
           			PrepisKumPr()
         		case DOKS->IdVd==VD_PCS
           			PrepisPCS()
+			case DOKS->IdVd==VD_CK
+				StDokCK()
+			case DOKS->IdVd==VD_SK
+				StDokSK()
+			case DOKS->IdVd==VD_GP
+				StDokGP()
       		endcase
     	Case Ch==Asc("T").or.Ch==Asc("t")
       		select doks
