@@ -954,24 +954,12 @@ return
 function FisRacun(aArtikli, aArtRacun, nIznos, cTipPlacanja)
 *{
 
-Box(,5, 60)
+MsgO("Izdavanje racuna na FISSTA u toku...")
 
 bFisRnOk:=.t.
 
-@ 1+m_x, 2+m_y SAY "Izdavanje racuna na FISSTA u toku..."
-
-@ 2+m_x, 2+m_y SAY REPLICATE("-", 58)
-
-@ 3+m_x, 2+m_y SAY "Zadaje se komanda: "
-
-@ 4+m_x, 2+m_y SAY "Zadna greska: "
-
-@ 5+m_x, 2+m_y SAY "Status:"
-
 // provjeri prvo da li je interfejs startan
 CheckFisCTTStarted(.t.)
-
-@ 5+m_x, 9+m_y SAY "FisCTT pokrenut ...  "
 
 // upisi stavke u ARTIKLI.XML
 WriteArtikliXml(aArtikli, gFisCTTPath)
@@ -979,15 +967,11 @@ WriteArtikliXml(aArtikli, gFisCTTPath)
 WriteArtRacunXml(aArtRacun, gFisCTTPath)
 // upisi stavke u PLACANJA.XML
 WritePlacanjaXml(nIznos, cTipPlacanja, gFisCTTPath)
-@ 5+m_x, 9+m_y SAY "kreirani xml fajlovi "
-
 
 // sada smo spremni za izdavanje racuna
 
 // pokreni komandu 1: artikli.xml => CPU
 RunFisCommand("1")
-
-@ 3+m_x, 22+m_y SAY " komanda 1"
 
 if gnDebug == 5
 	MsgBeep("proslijedio komandu 1")
@@ -998,12 +982,8 @@ if IsFisError()
 	return bFisRnOk
 endif
 
-
-
 // pokreni komandu 8: artikli.xml => FISSTA
 RunFisCommand("8")
-
-@ 3+m_x, 22+m_y SAY " komanda 8"
 
 if gnDebug == 5
 	MsgBeep("proslijedio komandu 8")
@@ -1017,8 +997,6 @@ endif
 // pokreni komandu 2: izdaj racun
 RunFisCommand("2")
 
-@ 3+m_x, 22+m_y SAY " komanda 2"
-
 if gnDebug == 5
 	MsgBeep("proslijedio komandu 2")
 endif
@@ -1028,7 +1006,7 @@ if IsFisError()
 	return bFisRnOk
 endif
 
-BoxC()
+MsgC()
 
 return bFisRnOk
 *}
