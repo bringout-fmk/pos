@@ -4,7 +4,7 @@
 
 /*! \fn WriteArtikliXml(aArtikli, cFilePath)
  *  \brief Kreira fajl ARTIKLI.XML i upisuje sadrzaj iz matrice aArtikli
- *  \param aArtikli  - matrica sa podacima o artiklima; struktura: 			{"idartikal","naziv","cijena","poreska stopa", "odjeljenje", "jmj"}
+ *  \param aArtikli  - matrica sa podacima o artiklima; struktura: {"idartikal","naziv","cijena","poreska stopa", "odjeljenje", "jmj"}
  *  \param cFilePath - lokacija fajla ARTIKLI.XML, mora biti lokacija interfejsa FisCTT
  */
 function WriteArtikliXML(aArtikli, cFilePath)
@@ -16,7 +16,7 @@ cFileName := cFilePath+'artikli.xml'
 // Kreiraj file
 if (nH:=fcreate(cFileName))==-1
    Beep(4)
-   Msg("Greška pri kreiranju fajla: "+cFileName+" !",6)
+   Msg("Greska pri kreiranju fajla: "+cFileName+" !",6)
    return
 endif
 
@@ -39,15 +39,17 @@ set printer to
 set printer off
 set console on
 
-// ako je nastupila greška izbriši artikli.xml
+// ako je nastupila greska izbrisi artikli.xml
 if !lResult
    FERASE(cFileName)
 endif
 
-
 return
 *}
 
+/*! \fn XMLWriteHeader()
+ *  \brief Ispisuje Header XML fajla ARTIKLI.XML, prereqiust set printer to (cFileName)
+ */
 function XMLWriteHeader()
 *{
    ?? '<?xml version="1.0" standalone="no"?>'
@@ -56,9 +58,15 @@ function XMLWriteHeader()
 return
 *}
 
+
+/*! \fn XMLWriteArticles(aArticles)
+ *  \brief upisuje body ARTIKLI.XML 
+ *  \param aArtikli - matrica napunjena podacima o artiklima iz ARTIKLI.XML
+ *  \return .t. ako nema greske, inace .f.
+ */
 function XMLWriteArticles(aArticles)
 *{
-local nRowCount, nRow
+local nRowCount, nRow, sXMLLine
 
    ? '<Artikli>'
    nRowCount = LEN(aArticles)
@@ -115,12 +123,18 @@ local nRowCount, nRow
 return .t.
 *}
 
+/*! \fn CheckLength(cString, nLength)
+ *  \brief ispituje duzinu stringa cString 
+ *  \param cString - string koji se ispituje
+ *  \param nLength - maksimalna dužina stringa
+ *  \return .t. ako je string manji ili jednak nLength, inace .f.
+ */
 function CheckLength(cString, nLength)
 local lResult
 
    if (len(cString)>nLength)
       Beep(4)
-      Msg("Neispravna dužina "+cString+", max("+alltrim(str(nLength))+") !",6)
+      Msg("Neispravna duzina "+cString+", max("+alltrim(str(nLength))+") !",6)
       lResult := .f.
    else
       lResult := .t.
@@ -129,6 +143,9 @@ local lResult
 return lResult
 
 
+/*! \fn XMLWriteFooter()
+ *  \brief Ispisuje Footer XML fajla ARTIKLI.XML, fajl ARTIKLI.XML nema footera pa je zato prazno
+ */
 function XMLWriteFooter()
 *{
 
@@ -170,7 +187,6 @@ return
  *  \param cFilePath - lokacija fajla ARTIKLI.XML
  *  \return aArtikli - matrica napunjena podacima o artiklima iz ARTIKLI.XML 
  */
- 
 function ReadArtikliXml(cFilePath)
 *{
 // aArtikli = {"id artikla", "naziv", "cijena", "poreska stopa", "odjeljenje", "jmj"}
@@ -185,36 +201,36 @@ cXML := FILESTR(cFileName)
 
 nStart := at('<Plu', cXML)
 while (nStart>0)
-   nEnd := at('</Plu>', cXML)+6
-   cTemp := substr(cXML, nStart, (nEnd-nStart))
+   nEnd     := at('</Plu>', cXML)+6
+   cXMLLine := substr(cXML, nStart, (nEnd-nStart))
 
-   nS     := at('">', cTemp)+2
-   nE     := at('</Plu>', cTemp)
-   cID    := substr(cTemp, nS, nE-nS)
+   nStartField := at('">', cXMLLine)+2
+   nEndField   := at('</Plu>', cXMLLine)
+   cID         := substr(cXMLLine, nStartField, nEndField-nStartField)
    
-   nS     := at('Des="', cTemp)+5
-   nE     := at('" Price="', cTemp)
-   cName  := substr(cTemp, nS, nE-nS)
+   nStartField := at('Des="', cXMLLine)+5
+   nEndField   := at('" Price="', cXMLLine)
+   cName       := substr(cXMLLine, nStartField, nEndField-nStartField)
 
-   nS     := at('Price="', cTemp)+7
-   nE     := at('" Vat="', cTemp)
-   cPrice := substr(cTemp, nS, nE-nS)
+   nStartField := at('Price="', cXMLLine)+7
+   nEndField   := at('" Vat="', cXMLLine)
+   cPrice      := substr(cXMLLine, nStartField, nEndField-nStartField)
 
-   nS     := at('Vat="', cTemp)+5
-   nE     := at('" Dep="', cTemp)
-   cVat   := substr(cTemp, nS, nE-nS)
+   nStartField := at('Vat="', cXMLLine)+5
+   nEndField   := at('" Dep="', cXMLLine)
+   cVat        := substr(cXMLLine, nStartField, nEndField-nStartField)
 
-   nS     := at('Dep="', cTemp)+5
-   nE     := at('" Mes="', cTemp)
-   cDep   := substr(cTemp, nS, nE-nS)
+   nStartField := at('Dep="', cXMLLine)+5
+   nEndField   := at('" Mes="', cXMLLine)
+   cDep        := substr(cXMLLine, nStartField, nEndField-nStartField)
 
-   nS     := at('Mes="', cTemp)+5
-   nE     := at('">', cTemp)
-   cMes   := substr(cTemp, nS, nE-nS)
+   nStartField := at('Mes="', cXMLLine)+5
+   nEndField   := at('">', cXMLLine)
+   cMes        := substr(cXMLLine, nStartField, nEndField-nStartField)
 
    AADD(aArtikli, {cID, cName, val(cPrice), cVat, cDep, cMes})
 
-   cXML := substr(cXML, nEnd)
+   cXML   := substr(cXML, nEnd)
    nStart := at('<Plu', cXML)
 
 end
@@ -228,7 +244,6 @@ return aArtikli
  *  \param cFilePath - lokacija fajla ARTRACUN.XML
  *  \return aArtikli - matrica napunjena podacima iz ARTRACUN.XML 
  */
- 
 function ReadArtRacunXml(cFilePath)
 *{
 // aArtRacun = {"kolicina", "id artikla"}
@@ -241,8 +256,7 @@ return aArtRacun
  *  \brief Vrsi iscitavanje podataka cFilePath + "PLACANJA.XML" u matricu
  *  \param cFilePath - lokacija fajla PLACANJA.XML
  *  \return aArtikli - matrica napunjena podacima iz PLACANJA.XML 
- */
- 
+ */ 
 function ReadPlacanjaXml(cFilePath)
 *{
 // aPlacanja = {"iznos", "tip placanja"}
