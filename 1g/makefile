@@ -7,7 +7,7 @@ ASMS=
 
 include /sclib/Makefile_clipper
 
-FMKLIBS=fmk_roba$(LIBEXT) fmk_svi$(LIBEXT) sc1g_arh$(LIBEXT) sc1g_ba$(LIBEXT) sc1g_cui$(LIBEXT) sc1g_db$(LIBEXT) sc1g_os$(LIBEXT) sc1g_ost$(LIBEXT) sc1g_par$(LIBEXT) sc1g_pr$(LIBEXT) sc1g_sif$(LIBEXT) sc1g_sql$(LIBEXT) sc1g_ut$(LIBEXT) sc2g_app$(LIBEXT) sc2g_db$(LIBEXT) sc2g_cui$(LIBEXT) sc1g_key$(LIBEXT) fmk_sec$(LIBEXT) fmk_evn$(LIBEXT) fmk_mes$(LIBEXT) ka_s1pf$(LIBEXT)
+FMKLIBS=fmk_roba$(LIBEXT) fmk_svi$(LIBEXT) sc1g_arh$(LIBEXT) sc1g_ba$(LIBEXT) sc1g_cui$(LIBEXT) sc1g_db$(LIBEXT) sc1g_os$(LIBEXT) sc1g_ost$(LIBEXT) sc1g_par$(LIBEXT) sc1g_pr$(LIBEXT) sc1g_sif$(LIBEXT) sc1g_sql$(LIBEXT) sc1g_ut$(LIBEXT) sc2g_app$(LIBEXT) sc2g_db$(LIBEXT) sc2g_cui$(LIBEXT) sc1g_key$(LIBEXT) fmk_sec$(LIBEXT) fmk_evn$(LIBEXT) fmk_mes$(LIBEXT) ka_s1pf$(LIBEXT) partnst$(LIBEXT)
 
 MODLIBS=pos_1m$(LIBEXT) pos_2m$(LIBEXT) pos_1db$(LIBEXT) pos_1dok$(LIBEXT) pos_1kal$(LIBEXT) pos_1prn$(LIBEXT) pos_1rd$(LIBEXT) pos_1rf$(LIBEXT) pos_1rpt$(LIBEXT) pos_1sif$(LIBEXT) pos_1sir$(LIBEXT) pos_1smj$(LIBEXT) pos_1sql$(LIBEXT) pos_1srv$(LIBEXT) pos_1ste$(LIBEXT) pos_s1ex$(LIBEXT) pos_s1pf$(LIBEXT) pos_s1tg$(LIBEXT) pos_2db$(LIBEXT) pos_1rbt$(LIBEXT) pos_1fis$(LIBEXT) pos_1epl$(LIBEXT)
 
