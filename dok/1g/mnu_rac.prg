@@ -136,7 +136,8 @@ return
  */
 function NarudzbaT()
 *{
-
+// Ovo ogranicenje prebaceno u samo izdavanje racuna
+/*
 if IsPlNS() .and. gFissta=="D"
 	// provjeri da li postoji formiran dnevni izvjestaj
 	// ako postoji NEMA UNOSA NOVIH RACUNA
@@ -145,6 +146,7 @@ if IsPlNS() .and. gFissta=="D"
 		CLOSERET
 	endif
 endif
+*/
 
 O_Nar()
 
@@ -465,7 +467,11 @@ else
 				MsgBeep("Na racunu se pojavljuju +/- kolicine#Racun nije azuriran!")
 				CLOSERET
 			endif
-			
+			// ako se radi o cistom racunu a postoji formiran dn.izvjestaj ne moze se izdavati FISSTA racun
+			if (nRnType==1 .and. ReadLastFisRpt("1", Date()) .and. gFisRptEvid=="D")
+				MsgBeep("Postoji formiran dnevni izvjestaj!#Izdavanje racuna nije moguce!")
+				CLOSERET
+			endif
 			// ako se radi o cistom racunu onda izdaj rn->FISSTA
 			if (nRnType==1 .or. (nRnType==-1 .and. gFisStorno=="D"))
 				aArtikli:={}
