@@ -9,6 +9,7 @@ function Fis_test_main()
 *{
 
 aInput:={}
+// aInput: id artikla (oid), naziv, cijena, por.stopa, odjeljenje, jmj
 AADD(aInput, {"100000000010", "EFFEGI 2340", 1000.00, "3", "1", "6"})
 AADD(aInput, {"100000000251", "KLOMPE Z.BIJELE", 890.50, "3", "1", "6"})
 AADD(aInput, {"100000003120", "ILLUMINATI 22/33", 2780.00, "3", "1", "6"})
