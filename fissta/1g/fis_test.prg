@@ -23,6 +23,13 @@ Sleep(5)
 // test izdavanja racuna
 //TestFisRn1()
 
+TestFisRn2()
+Sleep(5)
+
+TestFisRn3()
+Sleep(5)
+
+
 return
 *}
 
@@ -405,48 +412,48 @@ return
  */
 function TestFisRn2()
 *{
-
-Box(,4, 50)
+? REPLICATE("-", 70)
+? "Test izdavanja racuna sa unaprijed definisanim XML fajlovima"
+? REPLICATE("-", 70)
 	
-	cRd:=""
+cRd:=""
 	
-	WriteMainOutCode(gFisCTTPath)
-	@ 1+m_x, 2+m_y SAY "mainout: Upisao kod 999"
+WriteMainOutCode(gFisCTTPath)
+? "mainout: Upisao kod 999"
 	
-	WriteMainInCode("1", gFisCTTPath)
-	@ 2+m_x, 2+m_y SAY "mainin: upisao 1"
-	inkey(gFisTimeOut)
+WriteMainInCode("1", gFisCTTPath)
+? "mainin: upisao 1"
+Sleep(gFisTimeOut)
 	
-	cRd:=ReadMainOutCode(gFisCTTPath)
-	@ 3+m_x, 2+m_y SAY "greska: " + cRd
+cRd:=ReadMainOutCode(gFisCTTPath)
+? "citam mainout: " + cRd
 	
-	if cRd <> "0"
-		return
-	endif
+if cRd <> "0"
+	return
+endif
 		
-	WriteMainOutCode(gFisCTTPath)
+WriteMainOutCode(gFisCTTPath)
 	
-	WriteMainInCode("8", gFisCTTPath)
-	@ 2+m_x, 2+m_y SAY "mainin: upisao 8"
-	inkey(gFisTimeOut)
+WriteMainInCode("8", gFisCTTPath)
+? "mainin: upisao 8"
+Sleep(gFisTimeOut)
 	
-	cRd:=ReadMainOutCode(gFisCTTPath)
-	@ 3+m_x, 2+m_y SAY "greska: " + cRd
+cRd:=ReadMainOutCode(gFisCTTPath)
+? "citam mainout: " + cRd
 	
-	if cRd <> "0"
-		return
-	endif
+if cRd <> "0"
+	return
+endif
 	
-	WriteMainOutCode(gFisCTTPath)
+WriteMainOutCode(gFisCTTPath)
 	
-	WriteMainInCode("2", gFisCTTPath)
-	@ 2+m_x, 2+m_y SAY "mainin: upisao 2"
-	inkey(gFisTimeOut)
+WriteMainInCode("2", gFisCTTPath)
+? "mainin: upisao 2"
+Sleep(gFisTimeOut)
 	
-	cRd:=ReadMainOutCode(gFisCTTPath)
-	@ 3+m_x, 2+m_y SAY "greska: " + cRd
+cRd:=ReadMainOutCode(gFisCTTPath)
+? "citam mainout: " + cRd
 
-BoxC()
 
 return
 
@@ -459,6 +466,10 @@ return
  
 function TestFisRn3()
 *{
+? REPLICATE("-", 70)
+? "Test izdavanja racuna sa definisanim XML fajlovima"
+? REPLICATE("-", 70)
+
 
 aArtikli:={}
 AADD(aArtikli, {"100000000010", "EFFEGI 2340", 1000.00, "3", "1", "6"})
@@ -472,9 +483,9 @@ AADD(aArtRacun, {2.00, "100000006129"})
 
 nIznos:=7040.80
 cTipPl:="1"
-
+? "Stampaj racun na FISSTA"
 if !FisRacun(aArtikli, aArtRacun, nIznos, cTipPl)
-	MsgBeep("Greska pri izdavanju racuna")
+	? "Greska pri izdavanju racuna"
 endif
 
 return
