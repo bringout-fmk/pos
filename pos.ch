@@ -428,8 +428,8 @@
 #endif
 
 
-#define D_PO_VERZIJA '1.w.1.2.25'
-#define D_PO_PERIOD  '09.97-30.11.04'
+#define D_PO_VERZIJA '1.w.1.2.26'
+#define D_PO_PERIOD  '09.97-02.12.04'
 
 #define SC_HEADER
 
