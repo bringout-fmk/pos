@@ -122,6 +122,10 @@ endif
 AADD(ImeKol, { "Tip",{|| " "+Tip+" "}, "Tip", {|| .t.}, {|| .t.} })
 AADD(ImeKol, { "Djeljiv",{|| " "+Djeljiv+" "}, "Djeljiv", {|| .t.}, {|| EMPTY (wDjeljiv) .or. wDjeljiv $ "DN"} })
 
+if roba->(fieldpos("SIFDOB"))<>0
+	AADD (ImeKol,{ padc("SIFDOB",8 ), {|| sifdob }, "SIFDOB"   })
+endif
+
 if roba->(fieldpos("BARKOD"))<>0
 	AADD(ImeKol, { padr("BARKOD",13),  {|| barkod },     "barkod"    , {|| .t.},  {|| P_BarKod(wBarKod)}  })
 endif
@@ -473,6 +477,11 @@ if gModul=="TOPS"
 		AADD(ImeKol,{"IDFMK",{|| idfmk},"idfmk"})
 		AADD(ImeKol,{"OZNAKA",{|| oznaka},"oznaka"})
 		AADD(ImeKol,{"HH",{|| hh},"hh"})
+		if rngost->(fieldpos("IZLOZENOST"))<>0
+			AADD(ImeKol,{"IZLOZENOST",{|| izlozenost},"izlozenost"})
+			AADD(ImeKol,{"POPTDR",{|| poptdr},"poptdr"})
+			AADD(ImeKol,{"POPKON",{|| popkon},"popkon"})
+		endif
 	endif
 else
 	ImeKol:={{"ID ",{|| id },"id",{|| .t.},{|| vpsifra(wId)}},{ PADC("Naziv",30),{|| naz},LEFT("naz",30)},{"Tip",{|| tip},"tip",{|| wTip:=iif(empty(wTip),"P",wTip),.T.},{|| wTip$"SP"}},{"Vrsta placanja",{|| IdVrsteP},"IdVrsteP",{|| .T.},{|| P_VRSTEP(@wIdVrsteP)}},{"Aktivan",{|| PADC(IIF(Status=="D","DA","NE"),7)},"Status",{|| wStatus:=iif(empty(wStatus),"D",wStatus), .T.},{|| wStatus $ "DN"}}}
