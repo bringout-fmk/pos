@@ -14,8 +14,11 @@ AADD(opc, "1. fiskalni izvjestaji               ")
 AADD(opcexe, {|| FisRpt_Mnu() })
 AADD(opc, "2. startanje interfejsa FisCTT    ")
 AADD(opcexe, {|| CheckFisCTTStarted() })
-AADD(opc, "3. testovi    ")
-AADD(opcexe, {|| FisTests() })
+
+if gnDebug==5
+	AADD(opc, "3. testovi    ")
+	AADD(opcexe, {|| FisTests() })
+endif
 
 Menu_Sc("fst")
 
@@ -34,9 +37,9 @@ private opcexe:={}
 private Izbor:=1
 
 AADD(opc, "1. fiskalni dnevni izvjestaj         ")
-AADD(opcexe, {|| FisRptDnevni() })
+AADD(opcexe, {|| FormRptDnevni() })
 AADD(opc, "2. fiskalni izvjestaj za period      ")
-AADD(opcexe, {|| FisRptPeriod() })
+AADD(opcexe, {|| FormRptPeriod() })
 
 Menu_Sc("frt")
 
@@ -58,10 +61,10 @@ AADD(opc, "1. racun                          ")
 AADD(opcexe, {|| TestFisRn3() })
 
 AADD(opc, "2. fiskalni dnevni izvjestaj      ")
-AADD(opcexe, {|| TestFisDnevni1() })
+AADD(opcexe, {|| TestRptDn1() })
 
 AADD(opc, "3. fiskalni izvjestaj za period   ")
-AADD(opcexe, {|| TestFisPeriod1() })
+AADD(opcexe, {|| TestRptPer1() })
 
 AADD(opc, "4. fiskalni dnevni izvjestaj EVID ")
 AADD(opcexe, {|| TestRptDn2() })
