@@ -472,6 +472,17 @@ if (mpar37("/REAL2KALK", goModul))
 	endif
 endif
 
+if (mpar37("/REK2KALK", goModul))
+	altd()
+
+	if (LEFT(self:cP5,4)=="/D1=" .and. LEFT(self:cP6,4)=="/D2=")
+		// automatski prenos rekl.u KALK
+		// (D1, D2)
+		AutoRek2Kalk(SUBSTR(self:cP5,5), SUBSTR(self:cP6,5))
+		goModul:quit()
+	endif
+endif
+
 // Test cases
 if (mpar37("/TEST", goModul))
 	? "App server: test cases"

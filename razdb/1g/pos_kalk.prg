@@ -397,6 +397,48 @@ return nil
 *}
 
 
+/*! \fn AutoRek2Kalk(cDate1, cDate2)
+ *  \brief APPSRV prenos rek2kalk 
+ *  \param cDate1 - datum od
+ *  \param cDate2 - datum do
+ */
+function AutoRek2Kalk(cDate1, cDate2)
+*{
+local dD1
+local dD2
+local nD1
+local nD2
+
+// inicijalizuj port za stampu i sekvence stampaca (EPSON)
+// radi globalnih varijabli
+private gPPort:="8"
+InigEpson()
+
+nD1 := LEN(cDate1)
+nD2 := LEN(cDate2)
+
+if ((nD1 < 10) .or. (nD2 < 10))
+	? "FORMAT DATUMA NEISPRAVAN...."
+	? "ISPRAVAN FORMAT, PRIMJER: 01.01.2005"
+	Sleep(5)
+	return
+endif
+
+if (!Empty(cDate1) .and. !Empty(cDate2))
+	dD1 := CToD(cDate1)
+	dD2 := CToD(cDate2)
+	? "Vrsim prenos reklamacija za datum od: " + DToC(dD1) + " do " + DToC(dD2)
+	// pozovi f-ju Real2Kalk() sa argumentima
+	Rek2Kalk(dD1, dD2)
+	? "Izvrsen prenos ..."
+	Sleep(1)
+endif
+
+return
+*}
+
+
+
 /*! \fn AutoReal2Kalk(cDate1, cDate2)
  *  \brief APPSRV prenos real2kalk 
  *  \param cDate1 - datum od
@@ -441,12 +483,10 @@ return
 /*! \fn Rek2Kalk()
  *  \brief Prenos reklamacija u modul kalk
  */
-function Rek2Kalk()
+function Rek2Kalk(dD1, dD2)
 *{
-
-MsgBeep("Funkcija u fazi izrade !!!")
-// pozovi real2kalk za reklamacije
-Real2Kalk(nil, nil, VD_REK)
+// pozovi prenos reklamacija
+Real2Kalk(dD1, dD2, VD_REK)
 
 return
 *}
@@ -506,9 +546,11 @@ else
 	gIdPos:=cIdPos
 endif
 
+altd()
 SELECT doks
 SET ORDER TO 2  // IdVd+DTOS (Datum)+Smjena
-SEEK VD_RN+DTOS(dDatOd)
+go top
+SEEK cIdVd + DTOS(dDatOd)
 EOF CRET
 
 aDbf:={}
@@ -534,7 +576,7 @@ select doks
 NaprPom(aDbf)
 
 USEX (PRIVPATH+"POM") NEW
-INDEX ON IdPos+IdRoba+STR(mpc,13,4)+STR(stmpc,13,4) TAG ("1") TO (PRIVPATH+"POM")
+INDEX ON IdPos + IdRoba + STR(mpc,13,4) + STR(stmpc,13,4) TAG ("1") TO (PRIVPATH+"POM")
 INDEX ON brisano+"10" TAG "BRISAN"    //TO (PRIVPATH+"ZAKSM")
 SET ORDER TO 1
 
