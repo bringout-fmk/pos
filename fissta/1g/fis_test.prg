@@ -98,9 +98,9 @@ AADD(aInput, {"100000000251", "KLOMPE Z.BIJELE", 890.50, "3", "1", "6"})
 AADD(aInput, {"100000003120", "ILLUMINATI 22/33", 2780.00, "3", "1", "6"})
 AADD(aInput, {"100000006129", "PLACENTE 2350/80", 3020.40, "3", "1", "6"})
 
-WriteArtikliXML(aInput, cFilePath)
+WrArtikliXML(aInput, cFilePath)
 // iscitaj iz kreiranog artikli.xml podatke u aOutPut
-aOutPut:=ReadArtikliXml(cFilePath)
+aOutPut:=RdArtikliXml(cFilePath)
 
 ?
 ? "ARTIKLI.XML: uporedjujem duzinu matrice "
@@ -158,9 +158,9 @@ AADD(aInput, {2.00, "100000000251"})
 AADD(aInput, {10.00, "100000003120"})
 AADD(aInput, {1.00, "100000006129"})
 
-WriteArtRacunXML(aInput, cFilePath)
+WrArtRacunXML(aInput, cFilePath)
 // iscitaj iz kreiranog artracun.xml podatke u aOutPut
-aOutPut:=ReadArtRacunXml(cFilePath)
+aOutPut:=RdArtRacunXml(cFilePath)
 
 ?
 ? "ARTRACUN.XML: uporedjujem duzine matrice "
@@ -220,9 +220,9 @@ nIznos:=100.50
 
 nErr:=0
 for i:=1 to 3
-	WritePlacanjaXML(nIznos * i, STR(i), cFilePath)
+	WrPlacanjaXML(nIznos * i, STR(i), cFilePath)
 	// iscitaj iz kreiranog placanja.xml podatke u aOutPut
-	aOutPut:=ReadPlacanjaXml(cFilePath)
+	aOutPut:=RdPlacanjaXml(cFilePath)
 
 	// provjeri ima li podataka u PLACANJA.XML
 	if LEN(aOutPut) == 0
@@ -281,8 +281,8 @@ nCnt:=0
 
 for i:=0 to 9
 	cCode:=ALLTRIM(STR(i))
-	WriteMainInCode(cCode, cFilePath)
-	cReadCode:=ReadMainInCode(cFilePath)
+	WrMainInCode(cCode, cFilePath)
+	cReadCode:=RdMainInCode(cFilePath)
 	if alltrim(cReadCode) <> alltrim(cCode)
 		nCnt ++
 		? " Nepravilno upisan kod: " + ALLTRIM(STR(i))
@@ -303,8 +303,8 @@ nCnt:=0
 
 for i:=-5 to 5 
 	cCode:=ALLTRIM(STR(i))
-	WriteMainOutCode(cFilePath, cCode)
-	cReadCode:=ReadMainOutCode(cFilePath)
+	WrMainOutCode(cFilePath, cCode)
+	cReadCode:=RdMainOutCode(cFilePath)
 	if alltrim(cReadCode) <> alltrim(cCode)
 		nCnt ++
 		?? " Nepravilno upisan kod: " + ALLTRIM(STR(i))
@@ -339,8 +339,8 @@ AADD(aArtikli, {"100000000010", "EFFEGI 2340", 1000.00, "3", "1", "6"})
 AADD(aArtikli, {"100000000251", "KLOMPE Z.BIJELE", 890.50, "3", "1", "6"})
 AADD(aArtikli, {"100000003120", "ILLUMINATI 22/33", 2780.00, "3", "1", "6"})
 AADD(aArtikli, {"100000006129", "PLACENTE 2350/80", 3020.40, "3", "1", "6"})
-WriteArtikliXml(aArtikli, cFilePath)
-aOutPut:=ReadArtikliXml(cFilePath)
+WrArtikliXml(aArtikli, cFilePath)
+aOutPut:=RdArtikliXml(cFilePath)
 if LEN(aArtikli) <> LEN(aOutPut)
 	? "ARTIKLI.XML: nije dobro izgenerisan fajl"
 endif
@@ -348,8 +348,8 @@ endif
 aArtRacun:={}
 AADD(aArtRacun, {1.00, "100000000010"})
 AADD(aArtRacun, {2.00, "100000006129"})
-WriteArtRacunXml(aArtRacun, cFilePath)
-aOutPut:=ReadArtRacunXml(cFilePath)
+WrArtRacunXml(aArtRacun, cFilePath)
+aOutPut:=RdArtRacunXml(cFilePath)
 if LEN(aArtRacun) <> LEN(aOutPut)
 	? "ARTRACUN.XML: nije dobro izgenerisan fajl"
 endif
@@ -357,8 +357,8 @@ endif
 // izdajem gotovinski racun
 nIznos:=7040.80
 cTipPl:="1"
-WritePlacanjaXml(nIznos, cTipPl, cFilePath)
-aOutPut:=ReadPlacanjaXml(cFilePath)
+WrPlacanjaXml(nIznos, cTipPl, cFilePath)
+aOutPut:=RdPlacanjaXml(cFilePath)
 if (aOutPut[1, 1] <> nIznos .or. aOutPut[1, 2] <> cTipPl)
 	? "PLACANJA.XML: nije dobro izgenerisan fajl"
 endif
@@ -371,8 +371,8 @@ bErr:=.f.
 
 // komanda: ucitaj iz ARTIKLI.XML stavke u memoriju racunara
 cCode:="1"
-WriteMainInCode(cCode, cFilePath)
-cReadCode:=ReadMainInCode(cFilePath)
+WrMainInCode(cCode, cFilePath)
+cReadCode:=RdMainInCode(cFilePath)
 
 if (cReadCode <> cCode)
 	? "Nije dobro upisana komanda 1"
@@ -381,8 +381,8 @@ else
 endif
 
 ? "Cekam mogucu gresku ..."
-WriteMainOutCode(cFilePath)
-cOutCode:=ReadMainOutCode(cFilePath)
+WrMainOutCode(cFilePath)
+cOutCode:=RdMainOutCode(cFilePath)
 if cOutCode <> "999" .or. cOutCode <> "0" 
 	? "Postoji greska : " + cOutCode
 	bErr:=.t.
@@ -396,8 +396,8 @@ endif
 
 // komanda: ucitaja iz ARTIKLI.XML stavke u FISSTA memoriju
 cCode:="8"
-WriteMainInCode(cCode, cFilePath)
-cReadCode:=ReadMainInCode(cFilePath)
+WrMainInCode(cCode, cFilePath)
+cReadCode:=RdMainInCode(cFilePath)
 
 if (cReadCode <> cCode)
 	? "Nije dobro upisana komanda 8"
@@ -406,8 +406,8 @@ else
 endif
 
 ? "Cekam mogucu gresku ..."
-WriteMainOutCode(cFilePath)
-cOutCode:=ReadMainOutCode(cFilePath)
+WrMainOutCode(cFilePath)
+cOutCode:=RdMainOutCode(cFilePath)
 if cOutCode <> "999" .or. cOutCode <> "0" 
 	? "Postoji greska : " + cOutCode
 	bErr:=.t.
@@ -422,8 +422,8 @@ endif
 
 // komanda: ispisi racun i memorisi ga u FISSTA
 cCode:="2"
-WriteMainInCode(cCode, cFilePath)
-cReadCode:=ReadMainInCode(cFilePath)
+WrMainInCode(cCode, cFilePath)
+cReadCode:=RdMainInCode(cFilePath)
 
 if (cReadCode <> cCode)
 	? "Nije dobro upisana komanda 2"
@@ -432,8 +432,8 @@ else
 endif
 
 ? "Cekam mogucu gresku ..."
-WriteMainOutCode(cFilePath)
-cOutCode:=ReadMainOutCode(cFilePath)
+WrMainOutCode(cFilePath)
+cOutCode:=RdMainOutCode(cFilePath)
 if cOutCode <> "999" .or. cOutCode <> "0" 
 	? "Postoji greska : " + cOutCode
 else
@@ -459,40 +459,40 @@ function TestFisRn2()
 	
 cRd:=""
 	
-WriteMainOutCode(gFisCTTPath)
+WrMainOutCode(gFisCTTPath)
 ? "mainout: Upisao kod 999"
 	
-WriteMainInCode("1", gFisCTTPath)
+WrMainInCode("1", gFisCTTPath)
 ? "mainin: upisao 1"
 Sleep(gFisTimeOut)
 	
-cRd:=ReadMainOutCode(gFisCTTPath)
+cRd:=RdMainOutCode(gFisCTTPath)
 ? "citam mainout: " + cRd
 	
 if cRd <> "0"
 	return
 endif
 		
-WriteMainOutCode(gFisCTTPath)
+WrMainOutCode(gFisCTTPath)
 	
-WriteMainInCode("8", gFisCTTPath)
+WrMainInCode("8", gFisCTTPath)
 ? "mainin: upisao 8"
 Sleep(gFisTimeOut)
 	
-cRd:=ReadMainOutCode(gFisCTTPath)
+cRd:=RdMainOutCode(gFisCTTPath)
 ? "citam mainout: " + cRd
 	
 if cRd <> "0"
 	return
 endif
 	
-WriteMainOutCode(gFisCTTPath)
+WrMainOutCode(gFisCTTPath)
 	
-WriteMainInCode("2", gFisCTTPath)
+WrMainInCode("2", gFisCTTPath)
 ? "mainin: upisao 2"
 Sleep(gFisTimeOut)
 	
-cRd:=ReadMainOutCode(gFisCTTPath)
+cRd:=RdMainOutCode(gFisCTTPath)
 ? "citam mainout: " + cRd
 
 

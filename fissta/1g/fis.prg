@@ -2,12 +2,12 @@
 
 
 
-/*! \fn WriteArtikliXml(aArtikli, cFilePath)
+/*! \fn WrArtikliXml(aArtikli, cFilePath)
  *  \brief Kreira fajl ARTIKLI.XML i upisuje sadrzaj iz matrice aArtikli
  *  \param aArtikli  - matrica sa podacima o artiklima; struktura: {"idartikal","naziv","cijena","poreska stopa", "odjeljenje", "jmj"}
  *  \param cFilePath - lokacija fajla ARTIKLI.XML, mora biti lokacija interfejsa FisCTT
  */
-function WriteArtikliXML(aArtikli, cFilePath)
+function WrArtikliXML(aArtikli, cFilePath)
 *{
 local nH, cFileName
 
@@ -154,12 +154,12 @@ return
 *}
 
 
-/*! \fn WriteArtRacunXml(aArtRacun, cFileName)
+/*! \fn WrArtRacunXml(aArtRacun, cFileName)
  *  \brief Kreira fajl ARTRACUN.XML i upisuje sadrzaj iz matrice aArtRacun
  *  \param aArtRacun  - matrica sa stavkama racuna; struktura:	{"kolicina","id artikal"}
  *  \param cFilePath - lokacija fajla ARTRACUN.XML, mora biti lokacija interfejsa FisCTT
  */
-function WriteArtRacunXML(aArtRacun, cFilePath)
+function WrArtRacunXML(aArtRacun, cFilePath)
 *{
 local nH, cFileName
 
@@ -238,13 +238,13 @@ local nRowCount, nRow, sXMLLine
 return .t.
 *}
 
-/*! \fn WritePlacanjaXml(nIznos, cTipPlacanja, cFileName)
+/*! \fn WrPlacanjaXml(nIznos, cTipPlacanja, cFileName)
  *  \brief Kreira fajl PLACANJA.XML i popunjava ga sa stavkama nIznos i cTipPlacanja
  *  \param nIznos  - ukupan iznos racuna
  *  \param cTipPlacanja - tip placanja (1, 2 ili 3)
  *  \param cFilePath - lokacija fajla PLACANJA.XML, mora biti lokacija interfejsa FisCTT
  */
-function WritePlacanjaXML(nIznos, cTipPlacanja, cFilePath)
+function WrPlacanjaXML(nIznos, cTipPlacanja, cFilePath)
 *{
 local nH, cFileName, lResult
 
@@ -310,12 +310,12 @@ return
 *}
 
 
-/*! \fn ReadArtikliXml(cFilePath)
+/*! \fn RdArtikliXml(cFilePath)
  *  \brief Vrsi iscitavanje podataka cFilePath + "ARTIKLI.XML" u matricu
  *  \param cFilePath - lokacija fajla ARTIKLI.XML
  *  \return aArtikli - matrica napunjena podacima o artiklima iz ARTIKLI.XML 
  */
-function ReadArtikliXml(cFilePath)
+function RdArtikliXml(cFilePath)
 *{
 // aArtikli = {"id artikla", "naziv", "cijena", "poreska stopa", "odjeljenje", "jmj"}
 
@@ -365,12 +365,12 @@ return aArtikli
 *}
 
 
-/*! \fn ReadArtRacunXml(cFilePath)
+/*! \fn RdArtRacunXml(cFilePath)
  *  \brief Vrsi iscitavanje podataka cFilePath + "ARTRACUN.XML" u matricu
  *  \param cFilePath - lokacija fajla ARTRACUN.XML
  *  \return aArtikli - matrica napunjena podacima iz ARTRACUN.XML 
  */
-function ReadArtRacunXml(cFilePath)
+function RdArtRacunXml(cFilePath)
 *{
 // aArtRacun = {"kolicina", "id artikla"}
 local cFileName, cXML
@@ -403,12 +403,12 @@ return aArtRacun
 *}
 
 
-/*! \fn ReadPlacanjaXml(cFilePath)
+/*! \fn RdPlacanjaXml(cFilePath)
  *  \brief Vrsi iscitavanje podataka cFilePath + "PLACANJA.XML" u matricu
  *  \param cFilePath - lokacija fajla PLACANJA.XML
  *  \return aArtikli - matrica napunjena podacima iz PLACANJA.XML 
  */ 
-function ReadPlacanjaXml(cFilePath)
+function RdPlacanjaXml(cFilePath)
 *{
 // aPlacanja = {"iznos", "tip placanja"}
 local cFileName, cXML
@@ -441,7 +441,7 @@ return aPlacanja
 *}
 
 
-/*! \fn WriteMainInCode(cCode, cFilePath)
+/*! \fn WrMainInCode(cCode, cFilePath)
  *  \brief Upisuje u fajl mainin.dat kod - cCode, 
      Napomena:
       - ako fajl mainin.dat ne postoji kreira ga i upisuje cCode
@@ -449,34 +449,34 @@ return aPlacanja
  *  \param cCode - kod
  *  \param cFilePath - lokacija fajla mainin.dat, mora biti lokacija interfejsa FisCTT
  */
-function WriteMainInCode(cCode, cFilePath)
+function WrMainInCode(cCode, cFilePath)
 *{
    local nH, cFileName
    cFileName := cFilePath + 'mainin.dat'
    
-   WriteMainFileCode(cCode, cFileName)
+   WrFileCode(cCode, cFileName)
 
 return
 *}
 
 
-/*! \fn ReadMainInCode(cFilePath)
+/*! \fn RdMainInCode(cFilePath)
  *  \brief Cita kod iz fajl-a mainin.dat
  *  \param cFilePath - lokacija fajla "mainin.dat"
  *  \return cCode - proèitani kod
 */
-function ReadMainInCode(cFilePath)
+function RdMainInCode(cFilePath)
 *{
    local cFileName, cCode
    cFileName := cFilePath + 'mainin.dat'
 
-   cCode:= ReadMainFileCode(cFileName)
+   cCode:= RdFileCode(cFileName)
 
 return cCode
 *}
 
 
-/*! \fn WriteMainOutCode(cFilePath, cTestCode)
+/*! \fn WrMainOutCode(cFilePath, cTestCode)
  *  \brief Upisuje u mainout.dat uvijek kod "999"
      Napomena:
       - ako fajl mainout.dat ne postoji, kreira se i upisuje se kod "999"
@@ -484,7 +484,7 @@ return cCode
  *  \param cFilePath - lokacija fajla mainout.dat, mora biti lokacija interfejsa FisCTT
  *  \param cTestCode - koristi se kao testni kod, po def.ovog parametra nema
  */
-function WriteMainOutCode(cFilePath, cTestCode)
+function WrMainOutCode(cFilePath, cTestCode)
 *{
    // uvijek u mainout.dat upisi kod "999"
    local nH, cFileName
@@ -496,33 +496,33 @@ function WriteMainOutCode(cFilePath, cTestCode)
    	cCode:=cTestCode
    endif
    
-   WriteMainFileCode(cCode, cFileName)
+   WrFileCode(cCode, cFileName)
 
 return
 *}
 
-/*! \fn ReadMainOutCode(cFilePath)
+/*! \fn RdMainOutCode(cFilePath)
  *  \brief Cita iz fajla mainout.dat posljednju gresku - ako postoji, ako je kod "0" onda nema greske.
  *  \param cFilePath - lokacija fajla mainout.dat
  */
-function ReadMainOutCode(cFilePath)
+function RdMainOutCode(cFilePath)
 *{
    local cFileName, cCode
    cFileName := cFilePath + 'mainout.dat'
 
-   cCode:= ReadMainFileCode(cFileName)
+   cCode:= RdFileCode(cFileName)
 
 return cCode
 *}
 
-/*! \fn WriteMainFileCode(cCode, cFileName)
+/*! \fn WrFileCode(cCode, cFileName)
  *  \brief Upisuje u fajl cFileName - cCode, 
      Napomena:
       - ako fajl cFileName ne postoji kreira ga i upisuje cCode
  *  \param cCode - kod
  *  \param cFileName - naziv fajla sa kompletnim path-om
  */
-function WriteMainFileCode(cCode, cFileName)
+function WrFileCode(cCode, cFileName)
 *{
 local nH
    
@@ -558,12 +558,12 @@ return
 *}
 
 
-/*! \fn ReadMainFileCode(cFileName)
+/*! \fn RdFileCode(cFileName)
  *  \brief Cita kod iz fajl-a cFileName
  *  \param cFileName - naziv fajla sa kompletnim path-om
  *  \return - sadržaj iz cFileName
  */
-function ReadMainFileCode(cFileName)
+function RdFileCode(cFileName)
 *{
    local cCode
    cCode:=''
@@ -604,7 +604,7 @@ if !DirExists(cPath)
 endif
 
 // Prije pokretanja interfejsa postavi kod za inicijalizaciju
-WriteMainInCode("0", cPath)
+WrMainInCode("0", cPath)
 
 MsgO("Pokrecem FisCTT interfejs...")
 
@@ -618,7 +618,7 @@ sleep(gFisTimeOut + 5)
 
 MsgC()
 
-if ReadMainInCode(cPath)=="9"
+if RdMainInCode(cPath)=="9"
 	if !bSilent
 		MsgBeep("Interfejs pokrenut ...")
 	endif
@@ -828,89 +828,89 @@ cErr:=""
 
 do case
 	case cCode == "-37"
-		cErr:="U stampacu nema racuna"	
+		cErr:="-37: U stampacu nema racuna"	
 	case cCode == "-36"
-		cErr:="Nedostaje baza artikala - komanda 1"
+		cErr:="-36: Nedostaje baza artikala - komanda 1"
 	case cCode == "-35"
-		cErr:="Nepravilna vrijednost COM porta"
+		cErr:="-35: Nepravilna vrijednost COM porta"
 	case cCode == "-34"
-		cErr:="Nepravilan format vrijednosti placanja"
+		cErr:="-34: Nepravilan format vrijednosti placanja"
 	case cCode == "-33"
-		cErr:="Nepravilan format vrste placanja"
+		cErr:="-33: Nepravilan format vrste placanja"
 	case cCode == "-32"
-		cErr:="Niste definisali ni jedno placanje"
+		cErr:="-32: Niste definisali ni jedno placanje"
 	case cCode == "-31"
-		cErr:="Prevelik broj stavki placanja za jedan artikal"
+		cErr:="-31: Prevelik broj stavki placanja#za jedan artikal"
 	case cCode == "-30"
-		cErr:="Prevelik broj artikala za jedan racun"
+		cErr:="-30: Prevelik broj artikala za jedan racun"
 	case cCode == "-29"
-		cErr:="Nepravilno formiran racun"
+		cErr:="-29: Nepravilno formiran racun"
 	case cCode == "-28"
-		cErr:="Ne postoji definicija artikla"
+		cErr:="-28: Ne postoji definicija artikla"
 	case cCode == "-27"
-		cErr:="Nepravilan format XML fajla"
+		cErr:="-27: Nepravilan format XML fajla"
 	case cCode == "-26"
-		cErr:="Ne postoji fajl, izbrisan ili koruptovan"
+		cErr:="-26: Ne postoji fajl#izbrisan ili koruptovan"
 	case cCode == "-25"
-		cErr:="Nepravilno formirani podaci"
+		cErr:="-25: Nepravilno formirani podaci"
 	case cCode == "-23"
-		cErr:="Ne moze se stornirati racun, mora se ponistiti"
+		cErr:="-23: Ne moze se stornirati racun, mora se ponistiti"
 	case cCode == "-22"
-		cErr:="Postoji zapocet racun, operacija odbijena"
+		cErr:="-22: Postoji zapocet racun, operacija odbijena"
 	case cCode == "-21"
-		cErr:="Greska u uredjaju"
+		cErr:="-21: Greska u uredjaju"
 	case cCode == "-6"
-		cErr:="Ne podrzavanje javax.comm paketa"
+		cErr:="-6: Ne podrzavanje javax.comm paketa"
 	case cCode == "-5"
-		cErr:="Nemogucnost komunikacije sa portom"
+		cErr:="-5: Nemogucnost komunikacije sa portom"
 	case cCode == "-4"
-		cErr:="Zauzet port"
+		cErr:="-4: Zauzet port"
 	case cCode == "-3"
-		cErr:="Ne postoji port"
+		cErr:="-3: Ne postoji port"
 	case cCode == "-2"
-		cErr:="Ne inicijalizovan port"
+		cErr:="-2: Ne inicijalizovan port"
 	case cCode == "-1"
-		cErr:="No connection"
+		cErr:="-1: No connection"
 	case cCode == "1"
-		cErr:="Nemogucnost izvrsenja operacije"
+		cErr:="1: Nemogucnost izvrsenja operacije"
 	case cCode == "2"
-		cErr:="Nije definisan artikal"
+		cErr:="2: Nije definisan artikal"
 	case cCode == "3"
-		cErr:="Vrijednost KOLICINA * CIJENA je prevelika za racun"
+		cErr:="3: Vrijednost KOLICINA * CIJENA#je prevelika za racun"
 	case cCode == "8"
-		cErr:="Nepravilno unjeta vrijednost"
+		cErr:="8: Nepravilno unjeta vrijednost"
 	case cCode == "20"
-		cErr:="Podignuta glava stampaca"
+		cErr:="20: Podignuta glava stampaca"
 	case cCode == "22"
-		cErr:="Nema papira"
+		cErr:="22: Nema papira"
 	case cCode == "47"
-		cErr:="Nedostaje poreska stopa"
+		cErr:="47: Nedostaje poreska stopa"
 	case cCode == "50"
-		cErr:="Nedovoljno na lageru"
+		cErr:="50: Nedovoljno na lageru"
 	case cCode == "99"
-		cErr:="Neobradjena greska: pozovite nas"
+		cErr:="99: Neobradjena greska: pozovite nas"
 	case cCode == "100"
-		cErr:="Nepravilan BARKOD"
+		cErr:="100: Nepravilan BARKOD"
 	case cCode == "101"
-		cErr:="Nepravilno formiran naziv artikla"
+		cErr:="101: Nepravilno formiran naziv artikla"
 	case cCode == "102"
-		cErr:="Nepravilno formirana cijena"
+		cErr:="102: Nepravilno formirana cijena"
 	case cCode == "103"
-		cErr:="Nepravilno formirana poreska stopa"
+		cErr:="103: Nepravilno formirana poreska stopa"
 	case cCode == "104"
-		cErr:="Nepravilno formirano odjeljenje"
+		cErr:="104: Nepravilno formirano odjeljenje"
 	case cCode == "105"
-		cErr:="Nepravilno formirana jedinica mjere"
+		cErr:="105: Nepravilno formirana jedinica mjere"
 	case cCode == "106"
-		cErr:="Nepravilan format kolicine"
+		cErr:="106: Nepravilan format kolicine"
 	case cCode == "108"
-		cErr:="Dosegnut max.broj programiranih artikala"
+		cErr:="108: Dosegnut max.broj programiranih artikala"
 	case cCode == "109"
-		cErr:="Greska pri brisanju"
+		cErr:="109: Greska pri brisanju"
 	case cCode == "110"
-		cErr:="Za izvrsenje operacije mora se uraditi dnevni izvjestaj"
+		cErr:="110: Za izvrsenje operacije mora se uraditi#dnevni izvjestaj"
 	case cCode == "112"
-		cErr:="Greska na stampacu, podignuta glava, nema papira..."
+		cErr:="112: Greska na stampacu, podignuta glava#nema papira..."
 endcase
 
 
@@ -959,11 +959,11 @@ cPath:=gFisCTTPath
 bRet:=.t.
 // testiraj interfejs
 // upisi u out "999"
-WriteMainOutCode(cPath)
-WriteMainInCode("0_1", cPath)
+WrMainOutCode(cPath)
+WrMainInCode("0_1", cPath)
 Sleep(gFisTimeOut + 2)
 
-cReadCode:=ReadMainOutCode(cPath)
+cReadCode:=RdMainOutCode(cPath)
 
 if cReadCode != "0"
 	bRet:=.f.
@@ -987,16 +987,13 @@ bRet:=.f.
 
 do while !bRead
 	Sleep(gFisTimeOut)
-	cLastErr:=ReadMainOutCode(gFisCTTPath)
+	cLastErr:=RdMainOutCode(gFisCTTPath)
 	if gnDebug==5
 		MsgBeep("Zadnja greska: " + cLastErr)
 	endif
 	
 	if cLastErr<>"999"
 		bRead:=.t.
-		if gnDebug==5
-			MsgBeep("Set bRead = .t.")
-		endif
 	endif
 enddo
 
@@ -1009,9 +1006,11 @@ if (cLastErr <> "0")
 	MsgBeep(cErrDescr)
 	
 	if cLastErr == "2"
+		bRet:=.t.
 		// put some code here
 		// CorrectErr2()
 	elseif cLastErr == "3"
+		bRet:=.t.
 		// put some code here
 		// CorrectErr3()
 	else
@@ -1044,10 +1043,14 @@ if (LEN(cCode) > 2)
 endif
 
 // setuj uvijek OUT na "999"
-WriteMainOutCode(gFisCTTPath)
+WrMainOutCode(gFisCTTPath)
 
 // upisi u IN kod cCode 
-WriteMainInCode(cCode, gFisCTTPath)
+WrMainInCode(cCode, gFisCTTPath)
+
+if gnDebug==5
+	MsgBeep("Upisana komanda: " + cCode)
+endif
 
 return
 *}
@@ -1073,11 +1076,11 @@ bFisRnOk:=.t.
 CheckFisCTTStarted(.t.)
 
 // upisi stavke u ARTIKLI.XML
-WriteArtikliXml(aArtikli, gFisCTTPath)
+WrArtikliXml(aArtikli, gFisCTTPath)
 // upisi stavke u ARTRACUN.XML
-WriteArtRacunXml(aArtRacun, gFisCTTPath)
+WrArtRacunXml(aArtRacun, gFisCTTPath)
 // upisi stavke u PLACANJA.XML
-WritePlacanjaXml(nIznos, cTipPlacanja, gFisCTTPath)
+WrPlacanjaXml(nIznos, cTipPlacanja, gFisCTTPath)
 
 // sada smo spremni za izdavanje racuna
 
@@ -1144,7 +1147,7 @@ bErr:=.f.
 CheckFisCTTStarted()
 
 // upisi stavke u ARTIKLI.XML
-WriteArtikliXml(aArtikli, gFisCTTPath)
+WrArtikliXml(aArtikli, gFisCTTPath)
 
 // sada smo spremni za nivelaciju
 
@@ -1184,8 +1187,9 @@ MsgO("Formiranje dnevnog izvjestaja u toku...")
 
 bRptOk:=.t.
 
+// sasa, ovo iskljucujemo
 // provjeri prvo da li je interfejs startan
-CheckFisCTTStarted(.t.)
+//CheckFisCTTStarted(.t.)
 
 // pokreni komandu 3: dnevni izvjestaj 
 RunFisCommand("3")
@@ -1212,8 +1216,9 @@ MsgO("Formiranje izvjestaja za period u toku ...")
 
 bRptOk:=.t.
 
+// sasa, ovo iskljucujemo
 // provjeri prvo da li je interfejs startan
-CheckFisCTTStarted(.t.)
+//CheckFisCTTStarted(.t.)
 
 // pokreni komandu 4: izvjestaj za period 
 RunFisCommand("4")
