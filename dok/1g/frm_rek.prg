@@ -40,14 +40,18 @@ return
 *}
 
 
-/*! \fn AzurRekOpis()
+/*! \fn AzurRekOpis(cBrDok, cIdVd)
  *  \brief Azuriranje opisa reklamacije
+ *  \param cBrDok - broj dokumenta
+ *  \param cIdVd - id vrsta dokumenta
  */
 function AzurRekOpis(cBrDok, cIdVd)
 *{
+// pri uslov za ispitivanje
 if !IsPlanika() .and. cIdVd<>VD_REK
 	return
 endif
+// drugi uslov za ispitivanje
 if (cRekOp1 == nil .or. cRekOp2 == nil .or. cRekOp3 == nil)
 	return
 endif
@@ -73,7 +77,7 @@ return
 
 /*! \fn StDokROP(lPregled)
  *  \brief Stampa dokumenta "99" Reklamacija Ostali Podaci
- *  \param lPregled - .t. stampa iz pregleda
+ *  \param lPregled - .t. stampa iz pregleda (pojavljuje se header)
  */
 function StDokROP(lPregled)
 *{
@@ -128,7 +132,11 @@ endif
 return
 *}
 
-
+/*! \fn ROP_Header(cIdPos, cBrDok)
+ *  \brief Ispis headera izvjestaja
+ *  \param cIdPos - id pos
+ *  \param cBrDok - broj dokumenta
+ */
 static function ROP_Header(cIdPos, cBrDok)
 *{
 ? "---------------------------"
@@ -140,6 +148,11 @@ return
 *}
 
 
+/*! \fn ROP_Row(cOpis, cVrijednost)
+ *  \brief Ispis stavke izvjestaja
+ *  \param cOpis - opis stavke
+ *  \param cVrijednost - vrijednost stavke
+ */
 static function ROP_Row(cOpis, cVrijednost)
 *{
 ? cOpis
