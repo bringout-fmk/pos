@@ -1,4 +1,5 @@
 #include "\dev\fmk\pos\pos.ch"
+#include "\dev\fmk\AF\cl-AF\message\msg.ch"
 
 /*
  * ----------------------------------------------------------------
@@ -334,7 +335,7 @@ set cursor on
 Box(,4,60)
 @ m_x+1,m_y+2 SAY "Period od " GET dDatOd
 @ m_x+2,m_y+2 SAY "       do " GET dDatDo
-@ m_x+3,m_y+2 SAY "Vrsta dok." GET cIdVD
+@ m_x+3,m_y+2 SAY "Vrsta dok." GET cIdVD PICT "@!"
 READ
 BoxC()
 
@@ -346,6 +347,12 @@ endif
 if (cIdVD == "PP")
 	// logiraj tabelu polog pazara
 	LogPPPer(dDatOd, dDatDo)
+	return 1
+endif
+// da li se radi o tabeli poruka?
+if (cIdVD == "MS")
+	// logiraj tabelu poruka
+	LogMsgPer(dDatOd, dDatDo)
 	return 1
 endif
 
@@ -411,6 +418,31 @@ use
 return
 *}
 
+
+/*! \fn LogMsgPer(dDat1, dDat2)
+ *  \brief Logiranje poruka, tabele MESSAGE
+ *  \param dDat1 - datum od
+ *  \param dDat2 - datum do
+ */
+function LogMsgPer(dDat1, dDat2)
+*{
+private cFilter:=""
+
+cFilter:="CREATED >= " + Cm2Str(dDat1) + " .and. CREATED <= " + Cm2Str(dDat2)
+
+O_MESSAGE
+
+SET FILTER TO &cFilter
+
+cSQL:="delete from MESSAGE where CREATED >= "+SQLValue(dDat1)+" and CREATED <= "+SQLValue(dDat2)
+
+Gw(cSQL)
+go top
+Log_Tabela()
+use
+
+return
+*}
 
 
 
