@@ -632,7 +632,7 @@ endif
 return
 *}
 
-/*! \fn FillFisMartice(@aArtikli, @aArtRacun, @nUkupno)
+/*! \fn FillFisMartice(aArtikli, aArtRacun, nUkupno)
  *  \brief Puni matrice ARTIKLI.XML i ARTRACUN.XML podacima iz pripreme
  *  \param @aArtikli matrica artikala 
  *  \param @aArtRacun matrica racuna
@@ -640,27 +640,31 @@ return
 */
 function FillFisMartice(aArtikli, aArtRacun, nUkupno)
 *{
-   nWorkArea:= SELECT()
-   select ('_pripr)
-   go top
-   do while !eof()
-      cID         := GetArtCodeFromRoba(_pripr->idroba)
-      cNaziv      := alltrim(_pripr->robanaz) 
-      nCijena     := _pripr->cijena 
-      cPorez      := GetCodeTarifa(_pripr->idtarifa) 
-      cDepartment := '1'
-      cJedMjere   := GetCodeForArticleUnit(_pripr->jmj) 
-      nKolicina   := _pripr->kolicina
+   
+nWorkArea:= SELECT()
+select (_pripr)
+go top
+
+do while !eof() .and. field->idvd=="42"
+	cID:=GetArtCodeFromRoba(_pripr->idroba)
+      	cNaziv      := alltrim(_pripr->robanaz) 
+      	nCijena     := _pripr->cijena 
+      	cPorez      := GetCodeTarifa(_pripr->idtarifa) 
+      	cDepartment := '1'
+      	cJedMjere   := GetCodeForArticleUnit(_pripr->jmj) 
+      	nKolicina   := _pripr->kolicina
       
-      aadd(aArtikli, {cID, cNaziv, nCijena, cPorez, cDepartment, cJedMjere})
-      aadd(aArtRacun, {nKolicina, cID})
-      nUkupno += nCijena * nKolicina
-      skip
-   enddo
-   SELECT (nWorkArea)
+      	AADD(aArtikli, {cID, cNaziv, nCijena, cPorez, cDepartment, cJedMjere})
+      	AADD(aArtRacun, {nKolicina, cID})
+      	nUkupno += nCijena * nKolicina
+      	skip
+enddo
+
+SELECT (nWorkArea)
 
 return
 *}
+
 
 /*! \fn GetArtCodeFromRoba(cIDRoba)
  *  \brief Vraca roba._oid_ za roba.idroba
