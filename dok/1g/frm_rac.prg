@@ -94,7 +94,7 @@ endif
 cBroj:=RIGHT(cRacun,LEN(cRacun)-AT("-",cRacun))
 cBroj:=PADL(cBroj,6)
 
-ImeKol:={{ "Broj racuna",{|| padr(trim(IdPos)+"-"+alltrim(BrDok),9)}},{ "Iznos",{|| STR (SR_Iznos(), 13, 2)}},{ "Smj",{|| smjena}      },{ "Datum",{|| datum}},{ "Vr.Pl",      {|| idvrstep} },{ "Partner",    {|| idgost} },{ "Vrijeme",    {|| vrijeme} }}
+ImeKol:={{ "Broj racuna",{|| padr(trim(IdPos)+"-"+alltrim(BrDok),9)}},{ "Iznos",{|| STR (SR_Iznos(), 13, 2)}},{ "Smj",{|| smjena}      },{ "Datum",{|| datum}},{ "Vr.Pl",      {|| idvrstep} },{ IIF(IsPlNs(), "Broj NI", "Partner"),    {|| idgost} },{ "Vrijeme",    {|| vrijeme} }}
 
 if IsTigra()
 	AADD(ImeKol,{ "Placanje", {|| IIF(Placen<>"Z","GOTOVINA","ziralno ")} })
