@@ -195,8 +195,6 @@ local cFileName, cXML
 
 aArtikli = {}
 cFileName := cFilePath+'artikli.xml'
-
-//cXML := MEMOREAD(cFileName)
 cXML := FILESTR(cFileName)
 
 nStart := at('<Plu', cXML)
@@ -382,8 +380,7 @@ function ReadMainFileCode(cFileName)
    local cCode
    cCode:=''
 
-   //cCode := alltrim(MEMOREAD(cFileName))
-   cCode := FILESTR(cFileName)
+   cCode := alltrim(FILESTR(cFileName))
 
 return cCode
 *}
