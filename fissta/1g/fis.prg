@@ -1073,7 +1073,7 @@ MsgO("Izdavanje racuna na FISSTA u toku...")
 bFisRnOk:=.t.
 
 // provjeri prvo da li je interfejs startan
-CheckFisCTTStarted(.t.)
+//CheckFisCTTStarted(.t.)
 
 // upisi stavke u ARTIKLI.XML
 WrArtikliXml(aArtikli, gFisCTTPath)
