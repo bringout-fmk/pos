@@ -150,6 +150,13 @@ if IsPlanika()
 	AADD(opcexe, {|| Mnu_Poruke()})
 endif
 
+if IsPlNS()
+	if gFissta=="D"
+		AADD(opc, "F. fiskalni stampac")
+		AADD(opcexe, {|| Fissta_mnu()})
+	endif
+endif
+
 Menu_SC("adm")
 *}
 

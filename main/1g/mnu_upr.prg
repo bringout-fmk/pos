@@ -146,6 +146,13 @@ if IsPlanika()
 	AADD(opc, "M. poruke")
 	AADD(opcexe, {|| Mnu_Poruke()})
 endif
+if IsPlNS()
+	if gFissta=="D"
+		AADD(opc, "F. fiskalni stampac")
+		AADD(opcexe, {|| Mnu_Poruke()})
+	endif
+endif
+
 Menu_SC("upra")
 
 closeret

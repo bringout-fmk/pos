@@ -84,8 +84,10 @@ if IsPlanika()
 	AADD(opcexe,{|| Mnu_Poruke() })
 endif
 if IsPlNS()
-	AADD(opc,"S. fiskalni stampac ")
-	AADD(opcexe,{|| Fissta_mnu() })
+	if gFissta=="D"
+		AADD(opc,"F. fiskalni stampac ")
+		AADD(opcexe,{|| Fissta_mnu() })
+	endif
 endif
 
 if gnDebug==5
