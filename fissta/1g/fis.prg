@@ -652,6 +652,66 @@ return cCode
 *}
 
 
+/*! \fn GetCodeVrstaPl(cIdVrstaPl)
+ *  \brief Vraca FISSTA kodove za pojedine tops->vrsta placanja
+ *  \param cIdVrstaPl - id vrsta placanja, npr "01"
+ */
+function GetCodeVrstaPl(cIdVrstaPl)
+*{
+cCode:=""
+
+do case
+	// 01 - gotovina
+	case cIdVrstaPl=="01"
+		cCode:="1"
+	// CK - cek
+	case cIdVrstaPl=="CK"
+		cCode:="2"
+	// KK - kreditna kartica
+	case cIdVrstaPl=="KK"
+		cCode:="3"
+	// sve ove vrste placanja idu kao CEK (2)	
+	// GP - garantno pismo
+	case cIdVrstaPl=="GP"
+		cCode:="2"
+	// SK - sindikalni kredit
+	case cIdVrstaPl=="SK"
+		cCode:="2"
+	// ZR - ziro racun
+	case cIdVrstaPl=="ZR"
+		cCode:="2"
+endcase
+
+return cCode
+*}
+
+
+
+/*! \fn GetCodeTarifa(cIdTarifa)
+ *  \brief Vraca FISSTA kodove tarifa na osnovu TOPS->idtarifa
+ *  \param cIdTarifa - TOPS->id tarifa
+ */
+function GetCodeTarifa(cIdTarifa)
+*{
+// standardni set tarifa u TOPS-u / planikaNS
+// 1 - PPP 20%
+// 0 - PPP 0% (mada se i ne koristi)
+
+cCode:=""
+do case
+	// 0 - por 0%
+	case cIdTarifa=="0"
+		cCode:="0"
+	// 1 - por 20%
+	case cIdTarifa=="1"
+		cCode:="3"
+endcase
+
+return cCode
+*}
+
+
+
 /*! \fn GetErrFromCode(cCode)
  *  \brief Vraca opis greske na osnovu koda cCode
  *  \param cCode - "kod" greske
