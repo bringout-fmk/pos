@@ -450,7 +450,7 @@ if gRadniRac=="D"
 	ESC_BCR
   	BoxC()
 else
-	if PlNS() 
+	if IsPlNS() 
 		
 		// aArtikli:={}
 		// aArtPlacanja:={}
