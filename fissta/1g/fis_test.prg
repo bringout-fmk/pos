@@ -7,9 +7,11 @@
  
 function Fis_test_main()
 *{
-
+// test kreiranja fajla ARTIKLI.XML
 FisTestWriteArtikliXml()
 
+// test upisivanja i citanja kodova iz fajlova mainin.dat i mainout.dat
+TestRWMainInOut()
 
 
 
@@ -49,4 +51,46 @@ endif
 return 
 *}
 
+
+/*! \fn TestRWMainInOut()
+ *  \brief test upisivanja i iscitavanja komandi iz fajlova mainin.dat i mainout.dat 
+ */
+ 
+function TestRWMainInOut()
+*{
+cCode:=""
+cReadCode:=""
+cFilePath:="h:\dev\fmk\pos\fissta\1g\testdat\"
+
+// test1: upisivanja i citanja kod-a iz fajla mainin.dat
+// upisi kodove od -10 do 10
+
+for i:=-10 to 10
+	cCode:=STR(i)
+	WriteMainInCode(cCode, cFilePath)
+	cReadCode:=ReadMainInCode(cFilePath)
+	? "Test RW mainin/out krug: " + STR(i)
+	if cReadCode <> cCode
+		?? " Nepravilno upisan kod u mainin.dat"
+	else
+		?? " - OK"
+	endif
+next
+
+// test2: upisivanja i citanja kod-a iz fajla mainout.dat
+// upisi kodove od -10 do 10
+
+for i:=-10 to 10 
+	cCode:=STR(i)
+	WriteMainOutCode(cCode, cFilePath)
+	cReadCode:=ReadMainOutCode(cFilePath)
+	? "Test RW mainin/out krug: " + STR(i)
+	if cReadCode <> cCode
+		?? " Nepravilno upisan kod u mainout.dat"
+	else
+		?? " - OK"
+	endif
+next
+
+*}
 
