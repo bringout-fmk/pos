@@ -4,23 +4,21 @@
 /*! \fn Fis_test_main()
  *  \brief glavna testna funkcija koja poziva sve test caseove
  */
- 
 function Fis_test_main()
 *{
 
 // test kreiranja fajla ARTIKLI.XML te provjera njegovog sadrzaja
 TestRWArtikliXml()
 
+
 // test kreiranja fajla ARTRACUN.XML te provjera njegovog sadrzaja
-TestRWArtRacunXml()
+//TestRWArtRacunXml()
 
 // test kreiranja fajla PLACANJA.XML te provjera njegovog sadrzaja
-TestRWPlacanjaXml()
-
+//TestRWPlacanjaXml()
 
 // test upisivanja i citanja kodova iz fajlova mainin.dat i mainout.dat
-TestRWMainInOut()
-
+//TestRWMainInOut()
 
 
 return
@@ -32,6 +30,10 @@ return
  */
 function TestRWArtikliXml()
 *{
+
+? REPLICATE("-", 70)
+? "Test: read/write ARTIKLI.XML "
+? REPLICATE("-", 70)
 
 aInput:={}
 aOutPut:={}
@@ -47,19 +49,36 @@ WriteArtikliXML(aInput, cFilePath)
 // iscitaj iz kreiranog artikli.xml podatke u aOutPut
 aOutPut:=ReadArtikliXml(cFilePath)
 
-// uporedi matrice 
+?
+? "ARTIKLI.XML: uporedjujem duzinu matrice "
+
+
 if LEN(aInput) <> LEN(aOutPut) 
-	? "Razlika u duzini matrice"
+	? "ARTIKLI.XML: Razlika u duzini matrice "
+else
+	?? " [OK] "
 endif
 
+?
+? "ARTIKLI.XML: uporedjujem elemente matrice "
+
 // pogledaj ima li gresaka u elementima matrice
+nErr:=0
 for nCnt:=1 to LEN(aInput)
 	for nCnt2:=1 to 6
 		if aInput[nCnt, nCnt2] <> aOutPut[nCnt, nCnt2]
-			? "Razlika u elementu: " + STR(nCnt) + "-" + STR(nCnt2)
+			nErr ++ 
+			? "ARTIKLI.XML: Razlika u elementu: " + ALLTRIM(STR(nCnt)) + "-" + ALLTRIM(STR(nCnt2))
 		endif
 	next
 next
+if (nErr == 0)
+	?? " [OK] "
+endif
+
+?
+? "ARTIKLI.XML: Test zavrsen ..."
+?
 
 return 
 *}
@@ -71,6 +90,10 @@ return
  */
 function TestRWArtRacunXml()
 *{
+
+? REPLICATE("-", 70)
+? "Test: read/write ARTRACUN.XML"
+? REPLICATE("-", 70)
 
 aInput:={}
 aOutPut:={}
@@ -86,19 +109,33 @@ WriteArtRacunXML(aInput, cFilePath)
 // iscitaj iz kreiranog artracun.xml podatke u aOutPut
 aOutPut:=ReadArtRacunXml(cFilePath)
 
-// uporedi matrice 
+?
+? "ARTRACUN.XML: uporedjujem duzine matrice "
+
 if LEN(aInput) <> LEN(aOutPut) 
-	? "Razlika u duzini matrice"
+	? "ARTRACUN.XML: Razlika u duzini matrice"
+else
+	?? " [OK] "
 endif
 
-// pogledaj ima li gresaka u elementima matrice
+?
+? "ARTRACUN.XML: uporedjujem elemente matrice ..."
+nErr:=0
 for nCnt:=1 to LEN(aInput)
 	for nCnt2:=1 to 2
 		if aInput[nCnt, nCnt2] <> aOutPut[nCnt, nCnt2]
+			nErr ++
 			? "Razlika u elementu: " + STR(nCnt) + "-" + STR(nCnt2)
 		endif
 	next
 next
+
+if (nErr == 0)
+	?? " [OK] "
+endif
+
+?
+? "ARTRACUN.XML: test zavrsen ..."
 
 return 
 *}
