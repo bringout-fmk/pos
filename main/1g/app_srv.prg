@@ -38,6 +38,7 @@ if mpar37("/IALLMSG",oApp)
 	goModul:quit()
 endif
 
+
 return
 *}
 
