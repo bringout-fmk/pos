@@ -430,6 +430,7 @@ if (nArea==-1 .or. nArea==(F_DOKS))
 	CREATE_INDEX ("5", "Prebacen", KUMPATH+"DOKS" )
 	CREATE_INDEX ("6", "dtos(datum)", KUMPATH+"DOKS" )
 	CREATE_INDEX ("7", "IdPos+IdVD+BrDok", KUMPATH+"DOKS" )
+	CREATE_INDEX ("TK", "IdPos+DTOS(Datum)+IdVd", KUMPATH+"DOKS" )
 	CREATE_INDEX ("GOSTDAT", "IdPos+IdGost+DTOS(Datum)+IdVd+Brdok", KUMPATH+"DOKS")
 	if gBrojSto=="D"
 		CREATE_INDEX ("8", "IdPos+IdRadnik+Zakljucen+BrDok", KUMPATH+"DOKS" )
