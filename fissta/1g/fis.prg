@@ -1035,19 +1035,21 @@ WritePlacanjaXml(nIznos, cTipPlacanja, gFisCTTPath)
 
 // sada smo spremni za izdavanje racuna
 
-// pokreni komandu 1: artikli.xml => CPU
+// pokreni komandu 1: artikli.xml => PC
 RunFisCommand("1")
 
 if gnDebug == 5
 	MsgBeep("proslijedio komandu 1")
 endif
 
+// provjeri da li postoji greska i prekini izdavanje racuna
 if IsFisError()
 	bFisRnOk:=.f.
+	MsgC()
 	return bFisRnOk
 endif
 
-// pokreni komandu 8: artikli.xml => FISSTA
+// pokreni komandu 8: artikli.xml PC => FISSTA
 RunFisCommand("8")
 
 if gnDebug == 5
@@ -1056,6 +1058,7 @@ endif
 
 if IsFisError()
 	bFisRnOk:=.f.
+	MsgC()
 	return bFirRnOk
 endif
 
@@ -1068,6 +1071,7 @@ endif
 
 if IsFisError()
 	bFisRnOk:=.f.
+	MsgC()
 	return bFisRnOk
 endif
 
@@ -1098,19 +1102,21 @@ WriteArtikliXml(aArtikli, gFisCTTPath)
 
 // sada smo spremni za nivelaciju
 
-// pokreni komandu 1: artikli.xml => CPU
+// pokreni komandu 1: artikli.xml => PC
 RunFisCommand("1")
 
 if IsFisError()
 	bErr:=.t.
+	MsgC()
 	return bErr
 endif
 
-// pokreni komandu 8: artikli.xml => FISSTA
+// pokreni komandu 8: artikli.xml PC => FISSTA
 RunFisCommand("8")
 
 if IsFisError()
 	bErr:=.t.
+	MsgC()
 	return bErr
 endif
 
@@ -1133,7 +1139,7 @@ MsgO("Formiranje dnevnog izvjestaja u toku...")
 bRptOk:=.t.
 
 // provjeri prvo da li je interfejs startan
-CheckFisCTTStarted()
+CheckFisCTTStarted(.t.)
 
 // pokreni komandu 3: dnevni izvjestaj 
 RunFisCommand("3")
@@ -1161,7 +1167,7 @@ MsgO("Formiranje izvjestaja za period u toku ...")
 bRptOk:=.t.
 
 // provjeri prvo da li je interfejs startan
-CheckFisCTTStarted()
+CheckFisCTTStarted(.t.)
 
 // pokreni komandu 4: izvjestaj za period 
 RunFisCommand("4")
@@ -1175,6 +1181,54 @@ MsgC()
 return bRptOk
 *}
 
+
+
+/*! \fn FormRptDnevni()
+ *  \brief Formiranje dnevnog izvjestaja 
+ */
+ 
+function FormRptDnevni()
+*{
+
+if ReadLastFisRpt("1", DATE())
+	MsgBeep("Dnevni izvjestaj vec formiran!#Prekidam operaciju.")
+	return
+endif
+
+if Pitanje(,"Formirati dnevni izvjestaj (D/N)?", "D") == "N"
+	return
+endif
+
+if !FisRptDnevni()
+	MsgBeep("Greska pri formiranju dnevnog izvjestaja")
+endif
+
+return
+*}
+
+
+/*! \fn FormRptPeriod()
+ *  \brief Formiranje izvjestaja za period 
+ */
+ 
+function FormRptPeriod()
+*{
+
+if ReadLastFisRpt("2", DATE())
+	MsgBeep("Izvjestaj za period vec formiran!#Prekidam operaciju.")
+	return
+endif
+
+if Pitanje(,"Formirati izvjestaj za period (D/N)?", "D") == "N"
+	return
+endif
+
+if !FisRptPeriod()
+	MsgBeep("Greska pri formiranju izvjestaja za period")
+endif
+
+return
+*}
 
 
 /*! \fn WriteLastFisRpt(cRptId, dDate, cTime)
