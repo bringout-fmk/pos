@@ -441,6 +441,19 @@ if gRadniRac=="D"
 	ESC_BCR
   	BoxC()
 else
+	if PlNS() 
+		
+		// aArtikli:={}
+		// aArtPlacanja:={}
+		// nUkupno:=0 //ukupan iznos racuna
+		// NapuniMatriceIUkupnoIzPripreme(@aArtikli, @aArtRacun, @nUkupno)
+		// cVrPl:=GetCodeVrstePl(cIdVrsteP)
+		// if !FisRacun(aArtikli, aArtRacun, nUkupno, cVrPl)
+		// 	MsgBeep("Racun nije azuriran")
+		//	CLOSERET 	
+		// endif
+	endif
+	
 	// prebaci iz prip u pos
 	if (LEN(aRabat) > 0)
 		ReCalcRabat(cIdVrsteP)
@@ -518,24 +531,6 @@ else
 		// DOKS
       		sql_delete()
 	endif
-endif
-
-return
-*}
-
-function ProdTestCP()
-*{
-if gnDebug > 0
-	START PRINT2 CRET gLocPort,SPACE(5)
-	END PRN2 13
-	cCHex:=SPACE(20)
-	Box(,1,50)
-		@ m_x+1, m_y+2 SAY "STR:" GET cCHex
-		read
-	BoxC()
-	//cCHex:=CnvrtStr2Hex(TRIM(cHex))
-	//MsgBeep(cCHex)
-	Send2ComPort(&(TRIM(cCHex)))
 endif
 
 return
