@@ -579,6 +579,8 @@ public gVrstaRS         // vrsta radne stanice
                         // ( K-kasa S-server A-samostalna kasa)
 public gEvidPl          // evidentiranje podataka za vrste placanja CEK, SIND.KRED. i GARANTNO PISMO
 
+public gDisplay  // koristiti ispis na COM DISPLAY
+
 public gLocPort:="LPT1" // lokalni port za stampanje racuna
 
 public gStamPazSmj      // da li se automatski stampa pazar smjene
@@ -668,6 +670,7 @@ if (gModul=="HOPS")
 	gDirZaklj:="N"
 	gDupliArt:="N"
 	gDupliUpoz:="D"
+	gDisplay:="N"
 else
 	gVodiTreb:="N"
 	gVodiOdj:="N"
@@ -676,6 +679,7 @@ else
 	gDirZaklj:="D"
 	gDupliArt:="D"
 	gDupliUpoz:="N"
+	gDisplay:="N"
 endif
 
 public gPoreziRaster:="D"
@@ -750,6 +754,7 @@ Rpar("nk",@gStamStaPun)
 Rpar("vs",@gVsmjene)
 Rpar("ST",@gSezonaTip)
 Rpar("Si",@gSifUpravn)
+Rpar("Sx",@gDisplay)
 Rpar("Bc",@gEntBarCod)
 Rpar("Ep",@gEvidPl)
 
