@@ -4,22 +4,24 @@
 
 /*! \fn WriteArtikliXml(aArtikli, cFileName)
  *  \brief Kreira fajl ARTIKLI.XML i upisuje sadrzaj iz matrice aArtikli
- *  \param aArtikli  - matrica sa podacima o artiklima
- *  \param cFileName - putanja fajla i ime fajla - gdje ce se snimiti
+ *  \param aArtikli  - matrica sa podacima o artiklima; struktura: 			{"idartikal","naziv","cijena","poreska stopa", "odjeljenje", "jmj"}
+ *  \param cFileName - putanja ime izlaznog fajla
  */
 function WriteArtikliXML(aArtikli, cFileName)
 *{
+
+
 
 return
 *}
 
 
-/*! \fn ReadXmlError()
+/*! \fn ReadXmlError(cInputFile, cOriginalFile)
  *  \brief Vrsi komparaciju dva xml fajla
  *  \return true or false
  */
  
-function ReadXmlError()
+function ReadXmlError(cInputFile, cOriginalFile)
 *{
 
 return .f.

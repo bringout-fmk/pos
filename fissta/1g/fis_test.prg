@@ -23,6 +23,7 @@ return
 function FisTestWriteArtikliXml()
 *{
 
+lReturn:=.f.
 aInput:={}
 // aInput: id artikla (oid), naziv, cijena, por.stopa, odjeljenje, jmj
 AADD(aInput, {"100000000010", "EFFEGI 2340", 1000.00, "3", "1", "6"})
@@ -35,7 +36,7 @@ cOutPutFile:="h:\dev\fmk\pos\fissta\1g\testxml\art01g.xml"
 
 WriteArtikliXML(aInput, cOutPutFile)
 
-// uporedi kreirani fajl sa cOutPutFile
+// uporedi kreirani fajl sa originalnim fajlom
 lReturn:=ReadXmlError(cOriginalFile, cOutPutFile)
 
 if lReturn
