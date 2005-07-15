@@ -250,6 +250,9 @@ if (KLevel<L_UPRAVN)
 	AADD(opcexe, { || SetPm (nPosSetPM) })
 endif
 
+AADD(opc, "T. testcase OID ")
+AADD(opcexe, { || PlFlexTCases() })
+
 Menu_SC("aadm")
 return .f.
 *}
