@@ -15,16 +15,16 @@ nTSite := 0
 START PRINT CRET
 
 ? "------------------------------------"
-? "TOPS: TESTCASE-S", DTOS(DATE())
+? "TOPS: TESTCASE-S", DTOC(DATE())
 ? "------------------------------------"
 // TC-1: Vrati tekuci oid
 TGetCurrOid( @nTOidTek, @nTSite )
 
 // TC-2: Vrati najmanji oid za tabele ROBA, TARIFA, DOKS, POS
-TGetMinOid()
+TGetMinOid( nTSite )
 
 // TC-3: Vrati najveci oid za tabele ROBA, TARIFA, DOKS, POS
-TGetMaxOid()
+TGetMaxOid( nTSite )
 
 // TC-4: Vrati broj zapisa tabela ROBA, TARIFA, DOKS, POS
 TGetTblRecNo()
@@ -34,6 +34,13 @@ TChkDblOid()
 
 // TC-6: Koliko ima oida sa prodavnickim prefixom a koliko sa knj.prefixom
 TChkOidPrefix( nTSite )
+
+// TC-7: Broj praznih zapisa u tabelama
+TGetEmptyRecords()
+
+?
+?
+?
 
 END PRINT
 FF
@@ -63,10 +70,11 @@ return
 /*! \fn TGetMinOid()
  *  \brief Vraca najmanji broj oida
  */
-function TGetMinOid()
+function TGetMinOid( nTSite )
 *{
 MsgO("TC-2: Provjeri najmanji broj OID-a u tabelama...")
 
+MsgO("Kreiram indexe po polju OID...")
 // kreiram indexe po polju _oid_
 O_DOKS
 CREATE_INDEX("OID","_oid_",KUMPATH+"DOKS")
@@ -80,72 +88,18 @@ CREATE_INDEX("OID","_oid_",SIFPATH+"ROBA")
 O_TARIFA
 CREATE_INDEX("OID","_oid_",SIFPATH+"TARIFA")
 
-// definisi pom varijable
+MsgC()
 
-nPosOid := 0
-nDoksOid := 0
-nRobaOid := 0
-nTarOid := 0
-
-// POS
-O_POS
-select pos
-set order to tag "OID"
-go top
-do while !EOF() 
-	if (STR(field->_oid_) == "" )
-		skip
-		loop
-	endif
-	nPosOid := field->_oid_ 
-	exit
-enddo
-set order to
-
-// DOKS
-O_DOKS
-select doks
-set order to tag "OID"
-go top
-do while !EOF() 
-	if (STR(field->_oid_) == "" )
-		skip
-		loop
-	endif
-	nDoksOid := field->_oid_
-	exit
-enddo
-set order to
-
-// ROBA
-O_ROBA
-select roba
-set order to tag "OID"
-go top
-do while !EOF()
-	if ( STR(field->_oid_) == "" )
-		skip
-		loop
-	endif
-	nRobaOid := field->_oid_
-	exit
-enddo
-set order to
-
-// TARIFA
-O_TARIFA
-select tarifa
-set order to tag "OID"
-go top
-do while !EOF() 
-	if ( STR(field->_oid_) == "" )
-		skip
-		loop
-	endif
-	nTarOid := field->_oid_
-	exit
-enddo
-set order to
+cOpis1:="PROD->"
+cOpis2:="KNJIG->"
+nTS2:=0
+if (nTSite < 50)
+	cOpis1:="KNJIG->"
+	cOpis2:="PROD->"
+	nTS2:=nTSite + 40
+else
+	nTS2:=nTSite - 40
+endif
 
 // istampaj rezultat
 ?
@@ -153,10 +107,14 @@ set order to
 ? "---------------------------------"
 ? "Najmanji broj OID-a u tabelama:"
 ? "---------------------------------"
-? "POS     : ", nPosOid
-? "DOKS    : ", nDoksOid
-? "ROBA    : ", nRobaOid
-? "TARIFA  : ", nTarOid
+O_POS
+? "POS   : " + cOpis1, TMinOid("POS", nTSite), cOpis2, TMinOid("POS", nTS2)
+O_DOKS
+? "DOKS  : " + cOpis1, TMinOid("DOKS", nTSite), cOpis2, TMinOid("DOKS", nTS2)
+O_ROBA
+? "ROBA  : " + cOpis1, TMinOid("ROBA", nTSite), cOpis2, TMinOid("ROBA", nTS2)
+O_TARIFA
+? "TARIFA: " + cOpis1, TMinOid("TARIFA", nTSite), cOpis2, TMinOid("TARIFA", nTS2)
 ?
 
 MsgC()
@@ -167,76 +125,20 @@ return
 /*! \fn TGetMaxOid()
  *  \brief Vraca najveci broj oida
  */
-function TGetMaxOid()
+function TGetMaxOid( nTSite )
 *{
 MsgO("TC-3: Provjeri najveci broj OID-a u tabelama...")
 
-O_DOKS
-O_POS
-O_ROBA
-O_TARIFA
-
-// definisi pom varijable
-nPosOid := 0
-nDoksOid := 0
-nRobaOid := 0
-nTarOid := 0
-
-// POS
-select pos
-set order to tag "OID"
-go bottom
-do while !BOF() 
-	if ( STR(field->_oid_) == "" )
-		skip -1
-		loop
-	endif
-	nPosOid := field->_oid_ 
-	exit
-enddo
-set order to
-
-// DOKS
-select doks
-set order to tag "OID"
-go bottom
-do while !BOF()
-	if ( STR(field->_oid_) == "" )
-		skip -1
-		loop
-	endif
-	nDoksOid := field->_oid_
-	exit
-enddo
-set order to
-
-// ROBA
-select roba
-set order to tag "OID"
-go bottom
-do while !BOF()
-	if ( STR(field->_oid_) == "" )
-		skip -1
-		loop
-	endif
-	nRobaOid := field->_oid_
-	exit
-enddo
-set order to
-
-// TARIFA
-select tarifa
-set order to tag "OID"
-go bottom
-do while !BOF() 
-	if ( STR(field->_oid_) == "" )
-		skip -1
-		loop
-	endif
-	nTarOid := field->_oid_
-	exit
-enddo
-set order to
+cOpis1:="PROD->"
+cOpis2:="KNJIG->"
+nTS2:=0
+if (nTSite < 50)
+	cOpis1:="KNJIG->"
+	cOpis2:="PROD->"
+	nTS2:=nTSite + 40
+else
+	nTS2:=nTSite - 40
+endif
 
 // istampaj rezultat
 ?
@@ -244,16 +146,61 @@ set order to
 ? "---------------------------------"
 ? "Najveci broj OID-a u tabelama:   "
 ? "---------------------------------"
-? "POS     : ", nPosOid
-? "DOKS    : ", nDoksOid
-? "ROBA    : ", nRobaOid
-? "TARIFA  : ", nTarOid
+O_POS
+? "POS   : " + cOpis1, TMaxOid("POS", nTSite), cOpis2, TMaxOid("POS", nTS2)
+O_DOKS
+? "DOKS  : " + cOpis1, TMaxOid("DOKS", nTSite), cOpis2, TMaxOid("DOKS", nTS2)
+O_ROBA
+? "ROBA  : " + cOpis1, TMaxOid("ROBA", nTSite), cOpis2, TMaxOid("ROBA", nTS2)
+O_TARIFA
+? "TARIFA: " + cOpis1, TMaxOid("TARIFA", nTSite), cOpis2, TMaxOid("TARIFA", nTS2)
 ?
 
 MsgC()
 
 return
 *}
+
+static function TMinOid( cTbl, nSte )
+*{
+nMinOid := 0
+cSte:=ALLTRIM(STR(nSte))
+select &cTbl
+set order to tag "OID"
+go top
+do while !EOF() 
+	if SUBSTR(STR(field->_oid_), 1, 2) <> cSte
+		skip
+		loop
+	endif
+	nMinOid := field->_oid_
+	exit
+enddo
+set order to
+
+return nMinOid
+*}
+
+static function TMaxOid( cTbl, nSte )
+*{
+nMaxOid := 0
+cSte:=ALLTRIM(STR(nSte))
+select &cTbl
+set order to tag "OID"
+go bottom
+do while !BOF() 
+	if SUBSTR(STR(field->_oid_), 1, 2) <> cSte
+		skip -1
+		loop
+	endif
+	nMaxOid := field->_oid_
+	exit
+enddo
+set order to
+
+return nMaxOid
+*}
+
 
 /*! \fn TGetTblRecNo()
  *  \brief Vraca broj zapisa tabela
@@ -304,7 +251,6 @@ return
  */
 function TChkDblOid()
 *{
-MsgO("TC-5: Provjeravam duple OID-e...")
 O_DOKS
 O_POS
 O_ROBA
@@ -315,10 +261,21 @@ O_TARIFA
 ? "Provjeravam postojanje duplih OID-a"
 ? "----------------------------------------"
 
-? "POS    :", TDblOid( "POS" )
-? "DOKS   :", TDblOid( "DOKS" )
-? "ROBA   :", TDblOid( "ROBA" )
-? "TARIFA :", TDblOid( "TARIFA" )
+MsgO("TC-5: Provjeravam duple OID-e: POS")
+? "POS    :"
+TDblOid( "POS" )
+
+MsgO("TC-5: Provjeravam duple OID-e: DOKS")
+? "DOKS   :"
+TDblOid( "DOKS" )
+
+MsgO("TC-5: Provjeravam duple OID-e: ROBA")
+? "ROBA   :"
+TDblOid( "ROBA" )
+
+MsgO("TC-5: Provjeravam duple OID-e: TARIFA")
+? "TARIFA :"
+TDblOid( "TARIFA" )
 ?
 
 MsgC()
@@ -330,35 +287,55 @@ return
  */
 function TChkOidPrefix( nTSite )
 *{
-MsgO("TC-6: Provjeravam prefix-e OID-a...")
-
 O_POS
 O_DOKS
 O_ROBA
 O_TARIFA
 
+cOpis1:="PROD."
+cOpis2:="KNJIG."
+// ako je site < 50 onda je rijec o knjigovodstvu
+if (nTSite < 50 )
+	cOpis1:="KNJIG."
+	cOpis2:="PROD."
+endif
 nPfx1 := 0
 nPfx2 := 0
 
 ? "TC-6 rezultati:"
 ? "-------------------------------------"
-? "Broj oid-a glavni, pomocni"
+? "Broj oid-a " + cOpis1 + " , " + cOpis2
 ? "-------------------------------------"
 
+MsgO("TC-6: Provjeravam prefix-e OID-a: POS")
 TOidPrefix( "POS", nTSite, @nPfx1, @nPfx2 )
-? "POS   : glavni->", nPfx1, "pomocni->", nPfx2
+? "POS   : " + cOpis1 + "->", nPfx1, cOpis2 + "->", nPfx2
+
+MsgO("TC-6: Provjeravam prefix-e OID-a: DOKS")
 TOidPrefix( "DOKS", nTSite, @nPfx1, @nPfx2 )
-? "DOKS  : glavni->", nPfx1, "pomocni->", nPfx2
+? "DOKS  : " + cOpis1 + "->", nPfx1, cOpis2 + "->", nPfx2
+
+MsgO("TC-6: Provjeravam prefix-e OID-a: ROBA")
 TOidPrefix( "ROBA", nTSite, @nPfx1, @nPfx2 )
-? "ROBA  : glavni->", nPfx1, "pomocni->", nPfx2
+? "ROBA  : " + cOpis1 + "->", nPfx1, cOpis2 + "->", nPfx2
+
+MsgO("TC-6: Provjeravam prefix-e OID-a: TARIFA")
 TOidPrefix( "TARIFA", nTSite, @nPfx1, @nPfx2 )
-? "TARIFA: glavni->", nPfx1, "pomocni->", nPfx2
+? "TARIFA: " + cOpis1 + "->", nPfx1, cOpis2 + "->", nPfx2
+
 ?
+
 MsgC()
 return
 *}
 
-
+/*! \fn TOidPrefix( cTbl, nTSite, nPfx1, nPfx2 )
+ *  \brief Provjerava koliko ima prefixa OID-a, npr 10 a koliko 50
+ *  \param cTbl - tabela, npr "POS"
+ *  \param nTSite - site kase
+ *  \param nPfx1 - prefix prema site-u, npr 50
+ *  \param nPfx2 - prefix druge strane, npr 10
+ */
 static function TOidPrefix( cTbl, nTSite, nPfx1, nPfx2 )
 *{
 select &cTbl
@@ -387,7 +364,10 @@ return
 *}
 
 
-
+/*! \fn TDblOid( cTbl )
+ *  \brief Provjerava da li postoji dupli oid u tabeli cTbl
+ *  \param cTbl - tabela, npr "POS"
+ */
 static function TDblOid( cTbl )
 *{
 select &cTbl
@@ -395,35 +375,19 @@ set order to tag "OID"
 go top
 
 nCurrOid:=0
-nTmpCnt:=0
 nPomCnt:=0
 
-do while !EOF()
-	nCurrOid := field->_oid_
-	nCurrRec := RecNo()
+nPrevOid := field->_oid_
+nCurrOid := 0
 
-	COUNT TO nTmpCnt FOR field->_oid_ = nCurrOid
-	
-	/*
-	cFilter:="_oid_="+STR(nCurrOid)
-	set filter to &cFilter
-	go top
-	nCurrTot := RecCount()
-	if (nCurrTot > 1)
-		++ nPomCnt
-		? SPACE(10), field->_oid_	
-	endif
-	set filter to
-	set order to tag "OID"
-	*/
-	
-	if (nTmpCnt > 1)	
+do while !EOF()
+	skip
+	nCurrOid := field->_oid_
+	if ( nCurrOid == nPrevOid )	
 		++ nPomCnt
 		? SPACE(10), field->_oid_
 	endif
-	
-	go (nCurrRec)
-	skip
+	nPrevOid := nCurrOid
 enddo
 
 if (nPomCnt == 0)
@@ -432,3 +396,51 @@ endif
 
 return
 *}
+
+/*! \fn TGetEmptyRecords()
+ *  \brief Centralni poziv provjere praznih zapisa
+ */
+function TGetEmptyRecords()
+*{
+
+? "TC-7 rezultat:"
+? "--------------------------------------------"
+? "Broj praznih zapisa u tabelama"
+? "--------------------------------------------"
+? "POS   : "
+?? TEmptyR("POS", "idpos")
+? "DOKS  : "
+?? TEmptyR("DOKS", "idpos")
+? "ROBA  : "
+?? TEmptyR("ROBA", "id")
+? "TARIFA: "
+?? TEmptyR("TARIFA", "id")
+?
+?
+return 
+*}
+
+
+/*! \fn TEmptyR( cTbl, cSrcField )
+ *  \brief Provjerava koliko ima praznih zapisa u tabeli prema pretrazi cSrcField
+ *  \param cTbl - tabela, npr: "POS"
+ *  \param cSrcField - search field, npr "idpos"
+ */
+static function TEmptyR( cTbl, cSrcField )
+*{
+MsgO("TC-7: Trazim prazne zapise u tabeli " + cTbl)
+select &cTbl
+go top
+nRet:=0
+do while !EOF()
+	if field->&cSrcField == SPACE( LEN(field->&cSrcField) )
+		++ nRet
+	endif
+	skip
+enddo
+
+MsgC()
+
+return nRet
+*}
+
