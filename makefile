@@ -48,4 +48,10 @@ clean:
 	cd rabat/1g; make clean
 	cd fissta/1g; make clean
 	cd evidpl/1g; make clean
-	
+
+zip:
+	cd 1g; make zip
+
+commit:
+	cd 1g; make commit
+
