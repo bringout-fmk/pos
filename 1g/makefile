@@ -1,5 +1,6 @@
 VERZIJA=CDX
 MODUL=TOPS
+MODVER=1.w.1.2.36
 
 PRGS=/dev/fmk/pos/main/1g/e.prg
 CS=
@@ -56,13 +57,13 @@ mod: $(OBJS)
 endif
 
 zip:
-	rm -f /z/fmk/$(MODUL).zip
-	/sclib/zip.sh z:\\fmk\\$(MODUL).zip ..\\chs\\\*.chs \\dev\\fmk\\AF\\cl-AF\\roba\\\*.chs  $(EXEDOSDEST)\\$(MODUL).EXE 
-	rm -f /z/fmk/$(MODUL2).zip
-	/sclib/zip.sh z:\\fmk\\$(MODUL2).zip ..\\chs\\\*.chs \\dev\\fmk\\AF\\cl-AF\\roba\\\*.chs  $(EXEDOSDEST)\\$(MODUL2).EXE 
+	/sclib/zip.sh h:\\cs\\FMK\\binary\\$(MODUL).zip ..\\chs\\\*.chs \\dev\\fmk\\AF\\cl-AF\\roba\\\*.chs  $(EXEDOSDEST)\\$(MODUL).EXE 
+	/sclib/zip.sh h:\\cs\\FMK\\binary\\$(MODUL2).zip ..\\chs\\\*.chs \\dev\\fmk\\AF\\cl-AF\\roba\\\*.chs  $(EXEDOSDEST)\\$(MODUL2).EXE 
 
-
-
+commit:
+	/sclib/commit.sh $(MODVER) h:\\cs\\FMK\\binary\\$(MODUL).zip
+	/sclib/commit.sh $(MODVER) h:\\cs\\FMK\\binary\\$(MODUL2).zip
+	
 clean:
 	rm -f *.obj *.OBJ
 	rm -f $(OBJS) I$(MODULH).OBJ *.bak *.BAK
