@@ -1,6 +1,5 @@
 VERZIJA=CDX
 MODUL=TOPS
-MODVER=1.w.1.2.36
 
 PRGS=/dev/fmk/pos/main/1g/e.prg
 CS=
@@ -61,17 +60,20 @@ zip:
 	/sclib/zip.sh h:\\cs\\FMK\\binary\\$(MODUL2).zip ..\\chs\\\*.chs \\dev\\fmk\\AF\\cl-AF\\roba\\\*.chs  $(EXEDOSDEST)\\$(MODUL2).EXE 
 
 commit:
-	/sclib/commit.sh $(MODVER) h:\\cs\\FMK\\binary\\$(MODUL).zip
-	/sclib/commit.sh $(MODVER) h:\\cs\\FMK\\binary\\$(MODUL2).zip
+	/sclib/commit.sh POS h:\\cs\\FMK\\binary\\$(MODUL).zip
+	/sclib/commit.sh POS h:\\cs\\FMK\\binary\\$(MODUL).EXE.gz
+	/sclib/commit.sh POS h:\\cs\\FMK\\binary\\$(MODUL2).zip
+	/sclib/commit.sh POS h:\\cs\\FMK\\binary\\sfx\\$(MODUL).exe
+	/sclib/commit.sh POS h:\\cs\\FMK\\binary\\sfx\\$(MODUL2).exe
 	
 clean:
 	rm -f *.obj *.OBJ
 	rm -f $(OBJS) I$(MODULH).OBJ *.bak *.BAK
 
-
-sfx:
-	/cygdrive/p/bat/SFXMA.BAT tops
+7exe:
+	/sclib/7exe.sh h:\\cs\\FMK\\binary\\sfx\\$(MODUL).exe ..\\chs\\\*.chs \\dev\\fmk\\AF\\cl-AF\\roba\\\*.chs  $(EXEDOSDEST)\\$(MODUL).EXE 
+	/sclib/7exe.sh h:\\cs\\FMK\\binary\\sfx\\$(MODUL2).exe ..\\chs\\\*.chs \\dev\\fmk\\AF\\cl-AF\\roba\\\*.chs  $(EXEDOSDEST)\\$(MODUL2).EXE 
 
 gz:
-	/fmk/pos/1g/gztops.sh
+	/sclib/gz.sh $(MODUL) h:\\cs\\FMK\\binary\\ $(EXEDOSDEST)\\
 
