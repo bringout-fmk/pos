@@ -50,7 +50,7 @@ clean:
 	cd evidpl/1g; make clean
 
 zip:
-	cd 1g; make zip
+	cd 1g; make zip; make 7exe; make gz
 
 commit:
 	cd 1g; make commit
