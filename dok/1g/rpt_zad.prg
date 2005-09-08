@@ -268,7 +268,8 @@ EndIF
  ?
  ? cLM
 
- if (IsPlanika() .and. "REKL" $ cNazDok)
+ altd()
+ if (IsPlanika() .and. cNazDok == "REKLAMACIJA ")
  	StDokROP()
  endif
 
