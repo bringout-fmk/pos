@@ -90,11 +90,14 @@ if (lPregled==nil)
 	lPregled:=.f.
 endif
 
+altd()
+
 // Selektuj stavke dokumenta
 select pos
 // idpos+idvd+brdok+DTOS(_DATAZ_)+iddio+idodj
 set order to tag "7"
-hseek doks->(IdPos + VD_ROP + BrDok + DTOS(_DATAZ_) + " 1" + " 1")
+go top
+seek doks->IdPos + "99" + doks->BrDok + DTOS(doks->_DATAZ_) + " 1" + " 1"
 
 cBrDok:=pos->brdok
 cIdPos:=pos->idpos

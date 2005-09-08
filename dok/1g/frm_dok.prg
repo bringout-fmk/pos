@@ -278,6 +278,7 @@ do case
           			PrepisInvNiv(.t.)
         		case DOKS->IdVd==VD_NIV
           			PrepisInvNiv(.f.)
+				RETURN (DE_REFRESH)
         		case DOKS->IdVd==VD_PRR
           			PrepisKumPr()
         		case DOKS->IdVd==VD_PCS

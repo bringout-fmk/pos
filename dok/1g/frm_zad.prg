@@ -300,7 +300,10 @@ if !fSadAz
   		if (LASTKEY()==K_ESC)
     			EXIT
   		else
-    			StUSif()
+    			if (gnDebug == 5)
+				MsgBeep("Pozivam prvo promjenu cijene u sifrarniku!")
+			endif
+			StUSif()
     			select PRIPRZ
     			append blank
     			SELECT (cRSdbf)
@@ -399,6 +402,9 @@ return
  */
 function StUSif()
 *{
+if (gnDebug == 5)
+	MsgBeep("Mjenjam cijenu u sifrarniku")
+endif
 
 if gZadCij=="D"
 	if _cijena<>&("ROBA->cijena"+gIdCijena).and.Pitanje(,"Staviti u sifrarnik novu cijenu? (D/N)","D")=="D"

@@ -76,7 +76,7 @@ if dDatRada==nil
 	dDatRada:=gDatum
 endif
 
-if fInvent==nil
+if (fInvent==nil)
 	fInvent:=.t.
 else
 	fInvent:=fInvent
@@ -94,15 +94,16 @@ else
 	cNazDok:="NIVELACIJ"
 endif
 
-if fIzZad==nil
+if (fIzZad==nil)
 	fIzZad:=.f.  // fja pozvana iz zaduzenja
 endif
-if fSadAz==nil
+
+if (fSadAz==nil)
 	fSadAz:=.f.  // fja pozvana iz zaduzenja
 endif
 
 if fIzZad
-  // ne diraj ove varijable
+  	// ne diraj ove varijable
 else
 	private cIdOdj:=SPACE(2)
 	private cIdDio:=SPACE(2)
@@ -111,13 +112,18 @@ endif
 O_InvNiv()
 
 set cursor on
+
+altd()
+
 if !fIzZad
-// 0) izbor mjesta trebovanja za koje se radi inventura/nivelacija
-///////////////////////////////////////////////////////////
+	// 0) izbor mjesta trebovanja za koje se radi inventura/nivelacija
+	
 	aNiz:={}
+	
 	if gVodiOdj=="D"
 		AADD(aNiz,{"Sifra odjeljenja","cIdOdj","P_Odj(@cIdOdj)",,})
 	endif
+	
 	if gPostDO=="D".and.fInvent
 		AADD(aNiz,{"Sifra dijela objekta","cIdDio","P_Dio(@cIdDio)",,})
 	endif
@@ -197,22 +203,27 @@ if fPocInv
 						LOOP
           				endif
         			endif
-        			if !Empty(cIdDio).and.POS->IdDio<>cIdDio
+        			
+				if !Empty(cIdDio).and.POS->IdDio<>cIdDio
           				SKIP
 					LOOP
         			endif
-        			if cZaduzuje=="S".and.pos->idvd$"42#01"
+        			
+				if cZaduzuje=="S".and.pos->idvd$"42#01"
            				SKIP
 					LOOP  // racuni za sirovine - zdravo
         			endif
-        			if cZaduzuje=="R".and.pos->idvd=="96"
+        			
+				if cZaduzuje=="R".and.pos->idvd=="96"
            				SKIP
 					LOOP   // otpremnice za robu - zdravo
         			endif
-        			if POS->idvd$"16#00"
+        			
+				if POS->idvd$"16#00"
           				// na ulazu imam samo VD_ZAD i VD_PCS
           				_Kolicina += POS->Kolicina
-        			elseif POS->idvd $ "42#96#01#IN#NI"
+        			
+				elseif POS->idvd $ "42#96#01#IN#NI"
           				// na izlazu imam i VD_INV i VD_NIV
           				do case
             					case POS->IdVd == VD_INV
