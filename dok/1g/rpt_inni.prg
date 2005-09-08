@@ -294,36 +294,48 @@ function PrepisInvNiv(fInvent)
 
 private cIdOdj, cRsDBF, cRsBlok
 if finvent
- private cidvd:="IN"
+	private cIdVd:="IN"
 else
- private cidvd:="NI"
+ 	private cIdVd:="NI"
 endif
 
-select pos; PushWa(); use
+select pos
+PushWa()
+use
 
 select doks
 // otvori pos sa aliasom PRIPRZ, te je pozicioniraj na pravo mjesto
-select (F_POS); use pos alias priprz;  set order to 1
+select (F_POS)
+use pos alias priprz
+set order to 1
 HSEEK DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
 
 
 cidodj:=priprz->idodj
-SELECT ODJ; hseek cidodj
+SELECT ODJ
+hseek cidodj
+
 IF ODJ->Zaduzuje == "S"
-  cRSdbf := "SIROV"
-  cRSblok := "P_Sirov2 (@_IdRoba)"
-  cUI_U   := S_U; cUI_I   := S_I
+	cRSdbf := "SIROV"
+  	cRSblok := "P_Sirov2 (@_IdRoba)"
+  	cUI_U   := S_U
+	cUI_I   := S_I
 ELSE
-  cRSdbf := "ROBA"
-  cRSblok := "P_Roba2 (@_IdRoba)"
-  cUI_U   := R_U ; cUI_I   := R_I
+  	cRSdbf := "ROBA"
+  	cRSblok := "P_Roba2 (@_IdRoba)"
+  	cUI_U   := R_U 
+	cUI_I   := R_I
 ENDIF
 
 StampaInv(.f. , .t.)  // drugi parametar kaze da se radi o azuriranom dok
 
-select priprz; use  // zatvori alias
+select priprz
+use  // zatvori alias
 
-O_POS; PopWa()  // vrati pos gdje je bio
+O_POS
+PopWa()  // vrati pos gdje je bio
+
+select doks
 
 return
 *}
