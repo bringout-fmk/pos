@@ -809,7 +809,15 @@ APPEND BLANK
 sql_append()
 
 _BrDok:=cBrDok 
-	
+
+// zakljucene stavke
+if gBrojSto=="D"
+	if cIdVd<>VD_RN
+		_zakljucen := "Z"
+	endif
+endif
+
+
 if (IsPlanika() .and. cIdVd==VD_REK)
 	// reklamacija u pripremi ili realizovana
 	_sto:=cRekOp4
@@ -1379,11 +1387,13 @@ do while !eof()
   	SELECT PRIPRZ
 	// samo dokumente nivelacije !!!!!!!
   	if (field->idVd=="NI") 
-		if (ROUND(_cijena,3)<>ROUND(_nCijena, 3))
-    			SELECT (cRSdbf)
-			HSEEK _idRoba
-			SmReplace("cijena1", _nCijena)
-    			lNivel:=.t.
+		if (ROUND(_cijena,3) <> ROUND(_ncijena, 3))
+    			SELECT (cRSDbf)
+			HSEEK _idroba
+			if (field->id == _idroba)
+				SmReplace("cijena1", _ncijena)
+    			endif
+			lNivel:=.t.
     			SELECT PRIPRZ
 		endif
   	endif
@@ -1577,7 +1587,6 @@ return lFound
  */
 function CreateTmpTblForDocReView()
 *{
-
 aDbf := {}
 AADD(aDbf, {"IdRoba",   "C", 10, 0})
 AADD(aDbf, {"IdCijena", "C",  1, 0})
