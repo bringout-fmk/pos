@@ -262,8 +262,8 @@ do case
 				elseif cOdg=="D"
 	          			aVezani:={{IdPos, BrDok, IdVd, datum}}
 	          			StampaPrep(IdPos, dtos(datum)+BrDok, aVezani,.t.)
-					select POM
-					USE
+					//select POM
+					//USE
 	          			select DOKS
 				endif
         		case DOKS->IdVd=="16"
