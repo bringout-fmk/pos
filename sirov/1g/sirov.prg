@@ -203,7 +203,10 @@ while !eof()
       			if !Found()
         			set order to 1
         			cBrDok := _BrDok := NarBrDok (cIdPos, VD_RZS)
-        			Set order to 2
+        			if (gBrojSto=="D")
+					_zakljucen := "Z"
+				endif
+				Set order to 2
         			Append Blank
         			sql_append()
         			Gather()
@@ -222,7 +225,10 @@ while !eof()
 					// ne postoji RZS za cIdPos
           				set order to 1
           				cBrDok := _BrDok := NarBrDok (cIdPos, VD_RZS)
-          				Set order to 2
+          				if (gBrojSto=="D")
+						_zakljucen := "Z"
+					endif
+					Set order to 2
           				Append Blank
           				sql_append()
           				Gather()
