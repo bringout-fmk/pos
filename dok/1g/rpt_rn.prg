@@ -101,7 +101,7 @@
  *  \param cBrDok  - Broj dokumenta u _POS.DBF
  */
  
-function StampaRac(cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn)
+function StampaRac(cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aVezani)
 *{
 
 local cDbf
@@ -132,6 +132,7 @@ endif
 
 altd()
 
+
 if lPrepis
 	cPosDB:="POS"
 else
@@ -139,6 +140,20 @@ else
 endif
 
 SELECT &cPosDB
+
+//
+cCmnBrDok := cBrDok
+
+altd()
+
+nIznos:=0
+nNeplaca:=0
+
+for i:=1 to LEN(aVezani)
+
+// 
+dDatumRn :=aVezani[i, 4]
+cBrDok := aVezani[i, 2]
 
 Seek2(cIdPos+VD_RN+dtos(dDatumRn)+cBrDok)
 
@@ -159,13 +174,12 @@ SELECT &cPosDB
 
 altd()
 
-nIznos:=0
-nNeplaca:=0
 
 if VarPopPrekoOdrIzn()
 	gIsPopust:=.f.
 endif
 
+altd()
 do while !eof().and. &cPosDB->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+VD_RN+dtos(dDatumRn)+cBrDok)
 	if (gRadniRac="D" .and. gVodiTreb=="D" .and. GT=OBR_NIJE)
       		// vodi se po trebovanjima, a za ovu stavku trebovanje 
@@ -200,6 +214,10 @@ do while !eof().and. &cPosDB->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+VD_RN+dtos
   	SKIP
 enddo
 
+//
+next
+//
+
 if gDisplay=="D"
 	Send2ComPort(CHR(10)+CHR(13))
 	Send2ComPort(CHR(10)+CHR(13))
@@ -215,10 +233,12 @@ PisiIznRac(nIznos-nNeplaca)
 
 START PRINT2 CRET gLocPort,SPACE(5)
 
+cBrDok := cCmnBrDok
+
 if lPrepis
-	cTime:=RacHeder(cIdPos,DToS(dDatumRn)+cBrDok,cSto,.t.)
+	cTime:=RacHeder(cIdPos,DToS(dDatumRn)+cBrDok,cSto,.t., aVezani)
 else
-	cTime:=RacHeder(cIdPos,DTOS(dDatumRn)+cStalRac,cSto,.f.)
+	cTime:=RacHeder(cIdPos,DTOS(dDatumRn)+cStalRac,cSto,.f., aVezani)
 endif
 
 SELECT &cPosDB
@@ -228,7 +248,16 @@ seek cIdPos+"42"+dtos(dDatumRn)+cBrDok
 aPorezi:={}
 aRekPor:={}
 
-do while !eof().and.(IdPos+IdVd+DTOS(datum)+BrDok)==(cIdPos+VD_RN+dtos(dDatumRn)+cBrDok)
+//do while !eof().and.(IdPos+IdVd+DTOS(datum)+BrDok)==(cIdPos+VD_RN+dtos(dDatumRn)+cBrDok)
+altd()
+do while !eof().and.(IdPos+IdVd+DTOS(datum))==(cIdPos+VD_RN+dtos(dDatumRn))
+	if ASCAN(aVezani, {|aVal| aVal[2] == &cPosDB->brdok}) == 0
+		skip
+		loop
+	else
+		cBrDok := &cPosDB->brdok
+	endif
+	
 	cPom:=" * "
   	Scatter()
   	_Kolicina := 0
@@ -416,10 +445,10 @@ return (cTime)
 *}
 
 
-/*! \fn RacHeder(cIdPos,cDatBrDok,cSto,fPrepis)
+/*! \fn RacHeder(cIdPos,cDatBrDok,cSto,fPrepis, aVezani)
  */
  
-function RacHeder(cIdPos,cDatBrDok,cSto,fPrepis)
+function RacHeder(cIdPos,cDatBrDok,cSto,fPrepis, aVezani)
 //
 //                    1            2               3              4
 //  aVezani : {DOKS->IdPos, DOKS->(BrDok), DOKS->IdVrsteP, DOKS->Datum})
@@ -437,14 +466,17 @@ IF ! EMPTY (cStr)
 	QQOUT (cStr)
   	?
 ENDIF
-
+ 
 ?? PADC ("RACUN br. "+ALLTRIM (cIdPos)+"-"+ALLTRIM (substr(cDatBrDok,9)), 40)
 
 IF fPrepis
   	if !glRetroakt
   		? PADC ("PREPIS", 40)
   	endif
-  	cStr := Space(16)
+  	if LEN(aVezani)>1
+		? PADC("ZBIRNI", 40)
+	endif
+	cStr := Space(16)
   	FOR nCnt := 2 TO LEN (aVezani)
     		cJedan := ALLTRIM (aVezani [nCnt][1])+"-"+ALLTRIM (aVezani [nCnt][2])
     		IF LEN (cStr) + LEN (cJedan) < 38
@@ -532,40 +564,53 @@ if lViseOdjednom==nil
 	lViseOdjednom:=.f.
 endif
 
-CreateTmpTblForDocReview()
+//CreateTmpTblForDocReview()
 
 select doks
+set order to tag "1"
 
 Seek2(cIdPos + VD_RN + cDatBrDok)
+
+nTRk:=RecNo()
 
 cSto:=DOKS->Sto
 cIdRadnik:=DOKS->IdRadnik
 cSmjena:=DOKS->Smjena
 
+if gBrojSto=="D"
+	cZakljucen:=DOKS->zakljucen
+endif
+
 select pos
 
 altd()
-
 nIznos := 0
 nNeplaca:=0
 
 for nCnt:=1 to LEN(aVezani)
+	select doks
+	seek (aVezani[nCnt][1]+VD_RN+dtos(aVezani[nCnt][4])+aVezani[nCnt][2])
+	select pos
 	seek (aVezani[nCnt][1]+VD_RN+dtos(aVezani[nCnt][4])+aVezani[nCnt][2])
   	do while !EOF() .and. pos->(IdPos+IdVd+dtos(datum)+BrDok)==(aVezani[nCnt][1]+VD_RN+dtos(aVezani[nCnt][4])+aVezani[nCnt][2])
-    		select pom
-    		seek POS->IdRoba+POS->IdCijena+STR (POS->Cijena, 10, 3)
-    		if Found()
-      			replace Kolicina WITH Kolicina+POS->Kolicina
-    		else
-      			Append Blank  
-      			replace IdRoba WITH POS->IdRoba
-			replace IdCijena WITH POS->IdCijena
-			replace Cijena WITH POS->Cijena
-			replace Kolicina WITH POS->Kolicina
-              		replace NCijena WITH pos->ncijena
-              		replace datum WITH pos->datum
-    		endif
-   		select pos
+    		if gBrojSto == "D"
+			//
+		endif
+		
+		//select pom
+    		//seek POS->IdRoba+POS->IdCijena+STR (POS->Cijena, 10, 3)
+    		//if Found()
+      		//	replace Kolicina WITH Kolicina+POS->Kolicina
+    		//else
+      		//	Append Blank  
+      		//	replace IdRoba WITH POS->IdRoba
+		//	replace IdCijena WITH POS->IdCijena
+		//	replace Cijena WITH POS->Cijena
+		//	replace Kolicina WITH POS->Kolicina
+              	//	replace NCijena WITH pos->ncijena
+              	//	replace datum WITH pos->datum
+    		//endif
+   		//select pos
     		nIznos+=pos->(kolicina*cijena)
     		select odj
 		seek pos->idodj
@@ -586,8 +631,13 @@ next
 // Iskoristena funkcija StampaRac()
 // Mislim da ovo i jeste najbolja varijanta, razlika je samo u _POS i POS
 
+select doks
+go nTrk
+select pos
+
 if !gStariObrPor
-	StampaRac(cIdPos, doks->brdok, .t., doks->idvrstep, doks->datum)
+	altd()
+	StampaRac(cIdPos, doks->brdok, .t., doks->idvrstep, doks->datum, aVezani)
 	return
 endif
 
@@ -779,83 +829,64 @@ return
  *  \brief Stampa rekapitulacije racuna
  */
  
-function StampaRekap(cIdRadnik, cBrojStola, dDatumOd, dDatumDo, lStampati)
+function StampaRekap(cIdRadnik, cBrojStola, dDatumOd, dDatumDo)
 *{
 local nRecNoTrenutni
 local nRecNoNext
-
-select pos
-set order to tag 1
+private aGrupni
 
 cZakljucen:="N"
-lSiriPrikaz:=.f.
-
-if Pitanje(,"Prikazati rasclanjeno po stavkama? (D/N)","N")=="D"
-	lSiriPrikaz:=.t.
-endif
-
-if lStampati
-	nUkupnoIznos:=0
-
-	START PRINT2 CRET gLocPort, SPACE(5)
-	? SPACE(2), Date()
-	? SPACE(2) + "Rekapitulacija racuna:"
-	? SPACE(2) + "---------------------------"
-	? SPACE(2) + "stol br. " + ALLTRIM(cBrojStola)
-	?
-	? SPACE(2) + "Rn.Br.    Artikal    Iznos"
-	? SPACE(2) + "---------------------------"
-endif
 
 select doks
 set order to tag 8
+go top
+seek gIdPos + cIdRadnik + cZakljucen
 
-hseek gIdPos+cIdRadnik+cZakljucen
-altd()
-do while !EOF() .and. field->idpos==gIdPos .and. field->idradnik==cIdRadnik .and. field->datum<=dDatumDo .and. field->datum>=dDatumOd .and. field->zakljucen=="N"
+aGrupni:={}
+
+nTek:=0
+nCnt:=0
+
+do while !EOF() .and. field->idpos==gIdPos .and. field->idradnik==cIdRadnik .and. field->datum<=dDatumDo .and. field->datum>=dDatumOd 
+	
+	if field->zakljucen <> "N"
+		skip
+		loop
+	endif
+	
 	if (field->sto<>cBrojStola)
 		skip
-	else
-		// markiraj ga kao zakljucen sa Z
-		if (field->zakljucen=="N")
-			nRecNoTrenutni:=RecNo()
-			skip
-			nRecNoNext:=RecNo()
-			skip -1
-			replace field->zakljucen with "Z"
-			set order to tag 8
-			go nRecNoTrenutni
-	
-			if lStampati
-			cIdPos:=field->idpos
-			cIdVD:=field->idvd
-			cDatum:=DToS(field->datum)
-			cBrDok:=field->brdok
-			nIznos:=0
-			select pos
-			seek cIdPos+cIdVD+cDatum+cBrDok
-			do while !EOF() .and. field->idpos==cIdPos .and. field->idvd==cIdVD .and. DToS(field->datum)==cDatum .and. field->brdok==cBrDok
-				nIznos += field->kolicina * field->cijena
-				if lSiriPrikaz
-					? SPACE(8) + ALLTRIM(field->idroba) + "  " + ALLTRIM(STR(field->kolicina * field->cijena, 10, 2))
-				endif
-				skip
-			enddo			
-			? SPACE(2) + ALLTRIM(cIdPos) + "-" + ALLTRIM(cBrDok) + "  -> " + ALLTRIM(STR(nIznos,10,2)) 	
-			nUkupnoIznos+=nIznos
-			select doks
-			go nRecNoNext
-			endif
+		loop
+	endif
+	// markiraj ga kao zakljucen sa Z
+	if (field->zakljucen=="N")
+		
+		++nCnt
+		
+		if nTek==0
+			nTek := RecNo()
 		endif
+		
+		AADD(aGrupni, {doks->idpos, doks->brdok, doks->idvrstep, doks->datum})
+		
+		nTRec:=RecNo()
+		skip
+		nNNRec:=RecNo()
+		skip -1
+		replace field->zakljucen with "Z"
+		
+		go nNNRec	
 	endif
 enddo
 
-if lStampati
-	? SPACE(2) + "---------------------"
-	? SPACE(2) + "UKUPNO:  " + ALLTRIM(STR(nUkupnoIznos,10,2)) 
-	FF
-	END PRN2
+go nTek
+
+if nCnt==0
+	MsgBeep("Ne postoje otvoreni racuni za stol br." + cBrojStola)
+	return
 endif
+
+StampaPrep(gIdPos, DTOS(aGrupni[1, 4]) + aGrupni[1, 2], aGrupni, .f., .f.)
 
 return
 *}
@@ -872,7 +903,7 @@ select doks
 set order to tag 8
 go top
 
-hseek gIdPos+cIdRadnik+cZaklj
+seek gIdPos + cIdRadnik + cZaklj
 
 ? SPACE(2),  Date()
 ? SPACE(2) + "Nezakljuceni racuni:"
@@ -882,7 +913,11 @@ hseek gIdPos+cIdRadnik+cZaklj
 ? SPACE(2) + "----------------"
 
 
-do while !EOF() .and. field->idpos==gIdPos .and. field->idradnik==cIdRadnik .and. field->datum<=dDatumDo .and. field->datum>=dDatumOd .and. field->zakljucen=="N"
+do while !EOF() .and. field->idpos==gIdPos .and. field->idradnik==cIdRadnik .and. field->datum<=dDatumDo .and. field->datum>=dDatumOd
+	if field->zakljucen <> "N"
+		skip
+		loop
+	endif
 	cBrDok:=doks->brdok
 	cIdPos:=doks->idpos
 	cBrojStola:=doks->sto
@@ -894,6 +929,9 @@ enddo
 FF
 END PRINT
 
+select doks
+set order to tag "1"
+
 return
 *}
 
@@ -902,11 +940,14 @@ function SetujZakljuceno()
 *{
 local nCounter
 
-if Pitanje(,"Setovati sve racune na zakljuceno (D/N) ?","N")=="N"
+if !SigmaSif("RNZAK")
+	MsgBeep("Nemate ovlastenja za koristenje opcije!!!")
 	return
 endif
 
-MsgBeep("!!! Ovo je neophodno samo prvi put !!!")
+if Pitanje(,"Setovati sve racune na zakljuceno (D/N) ?","N")=="N"
+	return
+endif
 
 if Pitanje(,"Sto posto sigurni da zelite (D/N) ?","N")=="N"
 	return

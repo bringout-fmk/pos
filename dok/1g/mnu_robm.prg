@@ -67,6 +67,7 @@ endif
 
 Izbor:=1
 Menu_SC("gdok")
+return
 *}
 
 

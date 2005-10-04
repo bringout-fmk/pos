@@ -127,6 +127,7 @@ if gRadniRac=="D"
 	// ako se koriste radni racuni, po svakom zavrsetku unosa radnih racuna
 	Trebovanja()
 endif
+
 return
 *}
 
@@ -542,6 +543,11 @@ append blank
 replace idpos with gidpos, idvd with VD_RN, Brdok with cStalRac,idradnik with "////", datum with gdatum
 // namjerno divlji radnik!!!!  ////
 
+
+altd()
+aVezani:={}
+AADD(aVezani, {doks->idpos, cRadRac, cIdVrsteP, doks->datum})
+
 sql_azur(.t.)
 sql_append()
 replsql idpos with gidpos, idvd with VD_RN, Brdok with cStalRac,idradnik with "////", datum with gdatum
@@ -552,7 +558,8 @@ if IsPlNs() .and. gFissta=="D"
 	cIdGost:=cObrNiNr
 endif
 
-cTime:=StampaRac(cIdPos,cRadRac,.f.,cIdVrsteP)
+cTime:=StampaRac(cIdPos,cRadRac,.f.,cIdVrsteP, nil, aVezani)
+
 altd()
 if (!EMPTY(cTime))
 	AzurRacuna( cIdPos, cStalRac, cRadRac, cTime, cIdVrsteP, cIdGost)
@@ -855,9 +862,8 @@ function PreglNezakljRN()
 *{
 O_StAzur()
 
-dDatOd:=Date()-1
+dDatOd:=Date()
 dDatDo:=Date()
-cPregled:="N"
 
 Box (,1,60)
 	set cursor on
@@ -867,7 +873,7 @@ Box (,1,60)
 	ESC_BCR
 BoxC()
 
-if Pitanje(,"Pregledati nezakljucene racune (D/N) ?","N")=="D"
+if Pitanje(,"Pregledati nezakljucene racune (D/N) ?","D")=="D"
 	StampaNezakljRN(gIdRadnik,dDatOd,dDatDo)
 endif
 return
@@ -887,8 +893,6 @@ O_StAzur()
 
 dDatOd:=Date()
 dDatDo:=Date()
-cPregled:="N"
-
 
 Box (,2,60)
 	set cursor on
@@ -899,10 +903,8 @@ Box (,2,60)
 	ESC_BCR
 BoxC()
 
-if Pitanje(,"Odstampati rekapitulaciju (D/N) ?","D")=="D"
+if Pitanje(,"Odstampati zbirni racun (D/N) ?","D")=="D"
 	StampaRekapitulacije(gIdRadnik,cBrojStola,dDatOd,dDatDo,.t.)
-else
-	StampaRekapitulacije(gIdRadnik,cBrojStola,dDatOd,dDatDo,.f.)
 endif
 
 return
