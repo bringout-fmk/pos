@@ -132,6 +132,7 @@ oObj:reindex:=@reindex()
 oObj:scan:=@scan()
 
 #else
+altd()
 oObj:=TDBPos():new()
 #endif
 
