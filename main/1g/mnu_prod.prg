@@ -120,8 +120,7 @@ AADD(opcexe,{|| RekapViseRacuna() })
 AADD(opc,"2. pregled nezakljucenih racuna    ")
 AADD(opcexe,{|| PreglNezakljRN() })
 AADD(opc,"3. setuj sve RN na zakljuceno      ")
-//AADD(opcexe,{|| SetujZakljuceno() })
-AADD(opcexe,{|| NotImp() })
+AADD(opcexe,{|| SetujZakljuceno() })
 
 Menu_SC("zrn")
 
