@@ -130,6 +130,8 @@ oObj:konvZn:=@konvZn()
 oObj:open:=@open()
 oObj:reindex:=@reindex()
 oObj:scan:=@scan()
+oObj:integ:=@integ()
+oObj:chkinteg:=@chkinteg()
 
 #else
 altd()
@@ -176,6 +178,8 @@ class TDBPos: public TDB
 	  *bool open();
 	  *bool reindex();
 	  *bool scan();
+	  *bool integ();
+	  *bool chkinteg();
 }
 
 #endif
@@ -196,6 +200,8 @@ CREATE CLASS TDBPos INHERIT TDB
 	method open
 	method reindex
 	method scan
+	method integ
+	method chkinteg
 END CLASS
 #endif
 #endif
@@ -348,6 +354,10 @@ PUBLIC gaDBFs:={ ;
 {  F_MARS      , "MARS",   P_SIFPATH },;
 {  F_MESSAGE   , "MESSAGE",P_KUMPATH },;
 {  F_TMPMSG    , "TMPMSG" ,P_EXEPATH },;
+{  F_DINTEG1   , "DINTEG1",P_KUMPATH },;
+{  F_DINTEG2   , "DINTEG2",P_KUMPATH },;
+{  F_INTEG1    , "INTEG1" ,P_KUMPATH },;
+{  F_INTEG2    , "INTEG2" ,P_KUMPATH },;
 {  F_PROMVP    , "PROMVP", P_KUMPATH };
 }
 
@@ -1007,6 +1017,11 @@ if (nArea==-1 .or. nArea==(F_MESSAGE))
 	endif
 endif
 
+// planika integritet
+if (gSql == "D")
+	CreDIntDB()
+endif
+
 return
 *}
 
@@ -1053,6 +1068,11 @@ if (IsPlanika() .and. i==F_PROMVP)
 endif
 
 if (IsPlanika() .and. i==F_MESSAGE .and. i==F_TMPMSG)
+	lIdiDalje:=.t.
+endif
+
+// integritet
+if (gSql=="D" .and. (i==F_DINTEG1 .or. i==F_DINTEG2 .or. i==F_INTEG1 .or. i==F_INTEG2) )
 	lIdiDalje:=.t.
 endif
 
@@ -1351,5 +1371,41 @@ if (gVrstaRs=="S")
 	PrebSaKase()	
 endif
 
+*}
+
+/*! \fn *void TDBPos::integ()
+ */
+*void TDBPos::integ()
+*{
+method integ
+
+if gSql == "N"
+	return
+endif
+// vazi samo za prodavnicu
+if gSamoProdaja == "D"
+	UpdInt1()
+	//UpdInt2()
+else
+	return
+endif
+*}
+
+
+/*! \fn *void TDBPos::chkinteg()
+ */
+*void TDBPos::chkinteg()
+*{
+method chkinteg
+
+if gSql == "N"
+	return
+endif
+if gSamoProdaja == "N"
+	ChkInt1()
+	//ChkInt2()
+else
+	return
+endif
 *}
 
