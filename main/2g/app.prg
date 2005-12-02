@@ -297,10 +297,19 @@ Fy:=8
 
 if gSql=="D"
 	O_Log()
+	CreDIntDB()
 endif
 
 self:oDatabase:scan()
 close all
+
+if gSql=="D"
+	if gSamoProdaja=="D"
+		self:oDataBase:integ()
+	else
+		self:oDataBase:chkinteg()
+	endif
+endif
 
 if IsPlNS() 
 	if gFissta=="D"
