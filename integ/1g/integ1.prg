@@ -448,7 +448,7 @@ if lForce
 		@ 2+m_x, 2+m_y SAY cKRoba
 		
 		if !Found()
-			AddToErrors("C", cKRoba, kalk->idfirma+"-"+kalk->idvd+"-"+ALLTRIM(kalk->brdok), "Roba ne postoji u sifrarniku kase!")
+			AddToErrors("W", cKRoba, kalk->idfirma+"-"+kalk->idvd+"-"+ALLTRIM(kalk->brdok), "Roba ne postoji u sifrarniku kase!")
 		endif
 		
 		select kalk	
