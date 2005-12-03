@@ -240,6 +240,8 @@ endif
 if gSQL=="D"
 	AADD(opc,"#. bug - zakrpe")
 	AADD(opcexe, {|| Zakrpe() })
+	AADD(opc,"I. INTEG testovi")
+	AADD(opcexe, {|| Mnu_Integ() })
 endif
 
 if (KLevel<L_UPRAVN)
