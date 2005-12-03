@@ -22,6 +22,7 @@ all:
 	make -C rabat/1g
 	make -C fissta/1g
 	make -C evidpl/1g
+	make -C integ/1g
 	make -C 1g
 
 clean:	
@@ -48,6 +49,7 @@ clean:
 	cd rabat/1g; make clean
 	cd fissta/1g; make clean
 	cd evidpl/1g; make clean
+	cd integ/1g; make clean
 
 zip:
 	cd 1g; make zip; make 7exe; make gz
