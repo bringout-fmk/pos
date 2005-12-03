@@ -27,6 +27,7 @@ if !FILE(KUMPATH + "DINTEG1.DBF")
 	AADD(aDbf, {"DATUM", "D", 8, 0})
 	AADD(aDbf, {"VRIJEME", "C", 5, 0 })
 	AADD(aDbf, {"CHKDAT", "D", 8, 0 })
+	//AADD(aDbf, {"CHKOK", "C", 1, 0 })
 	// + spec.OID polja
 	if gSql=="D"
 		AddOidFields(@aDbf)

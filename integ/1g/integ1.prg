@@ -44,7 +44,7 @@ nPcStanje:=0
 
 Box(,3,65)
 
-@ 1+m_x, 2+m_y SAY "Vrsim obradu stanja artikla, na dan" + DToC(dChDate)
+@ 1+m_x, 2+m_y SAY "Vrsim obradu stanja artikla, na dan " + DToC(dChDate) + " br." + ALLTRIM(STR(nNextID))
 
 do while !eof() .and. field->idodj == cIdOdj
 	
@@ -130,6 +130,14 @@ enddo
 
 // dodaj kontrolni artikal sa sumarnim vrijednostima
 AddInteg1(nNextID, cTestRoba, 0, "", nUkKStanje, nUkFStanje, nUkKartCnt, nUkRobaCnt, nUkCijena)	
+
+// upisi da je izvrsena provjera chkok => "D"
+//select dinteg1
+//set order to tag "2"
+//hseek nNextID
+//if Found()
+//	SmReplace("chkok", "D")
+//endif
 
 BoxC()
 
@@ -241,7 +249,7 @@ cKPKonto := PADR(cKPKonto, 7)
 
 Box(,2,65)
 
-@ 1+m_x, 2+m_y SAY "Vrsim provjeru integriteta podataka, na dan" + DToC(dChkDate)
+@ 1+m_x, 2+m_y SAY "Vrsim provjeru integriteta podataka, na dan " + DToC(dChkDate) + " br." + ALLTRIM(STR(nTest)) 
 
 do while !eof() .and. field->idodj == cIdOdj
 	
@@ -477,10 +485,10 @@ if lForce
 		do case
 			// stanje kalk -> kasa
 			case ROUND(integ1->stanjek,3) <> ROUND(nKStK,3)
-				AddToErrors("C", cKRoba, "","KALK->TOPS: neispravno kolicinsko stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStK,3))) + " (TOPSK)=" + ALLTRIM(STR(ROUND(integ1->stanjek,3))))
+				AddToErrors("C", cKRoba, "","KALK->TOPS: neispravno kolicinsko stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStK,3))) + " (TOPSP)=" + ALLTRIM(STR(ROUND(integ1->stanjek,3))))
 
 			case ROUND(integ1->stanjef,3) <> ROUND(nKStF,3)
-				AddToErrors("C", cKRoba, "", "KALK->TOPS: neispravno finansijsko stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStF,3))) + " (TOPSK)=" + ALLTRIM(STR(ROUND(integ1->stanjef,3))))
+				AddToErrors("C", cKRoba, "", "KALK->TOPS: neispravno finansijsko stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStF,3))) + " (TOPSP)=" + ALLTRIM(STR(ROUND(integ1->stanjef,3))))
 
 		endcase
 	
@@ -511,12 +519,11 @@ START PRINT CRET
 nCrit:=0
 nNorm:=0
 nWarr:=0
-nCnt:=0
+nCnt:=1
 
 go top
 do while !EOF()
 	cErRoba := field->idroba
-	++nCnt
 	if lOnlyCrit .and. ALLTRIM(field->type) == "C"
 		? STR(nCnt, 4) + ". " + ALLTRIM(field->idroba)
 	endif
@@ -530,6 +537,8 @@ do while !EOF()
 			skip
 			loop
 		endif
+		
+		++nCnt
 		
 		? SPACE(5) + GetErrorDesc(ALLTRIM(field->type)), ALLTRIM(field->doks), ALLTRIM(field->opis)	
 	
