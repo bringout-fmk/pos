@@ -36,31 +36,35 @@ nUkRobaCnt:=0
 nUkFStanje:=0
 nUkKStanje:=0
 
-Box(,2,65)
+Box(,3,65)
 
 @ 1+m_x, 2+m_y SAY "Vrsim obradu stanja artikla"
 
 do while !eof() .and. field->idodj == cIdOdj
 	
+	altd()
 	// setuj osnovne varijable	
 	nFStanje:=0
 	nKStanje:=0
   	cIdRoba:=field->IdRoba
-	nCijena:=0
+	nRCjen:=0
 	nKartCnt:=0 // broj stavki kartice
 	nRobaCnt:=0 // broj sifara artikla
   	
 	// pronadji robu	
 	select roba
 	nRobaCnt := GetRobaCnt(cIdRoba)
-	
+	select roba
+	go top
 	hseek cIdRoba
-	nCijena := field->cijena1
-	nOidRoba := field->_oid_
-	cIdTarifa := field->idtarifa
+	nRCjen := roba->cijena1
+	nOidRoba := roba->_oid_
+	cIdTarifa := roba->idtarifa
 	
 	@ 2+m_x, 2+m_y SAY SPACE(65)
+	@ 3+m_x, 2+m_y SAY SPACE(65)
 	@ 2+m_x, 2+m_y SAY "Artikal: " + ALLTRIM(cIdRoba) + ", " + ALLTRIM(field->naz)
+	@ 3+m_x, 2+m_y SAY "Cijena: " + ALLTRIM(STR(nRCjen))
 	
 	select pos
 	
@@ -74,29 +78,34 @@ do while !eof() .and. field->idodj == cIdOdj
 		
       		if field->idvd $ DOK_ULAZA
         		nKStanje += field->Kolicina
+			//nFStanje += field->kolicina * field->cijena
       		elseif field->idvd $ "IN"
         		nKStanje -= (field->Kolicina - field->Kol2 )
+			//nFStanje -= (field->kolicina - field->kol2) * field->cijena
       		elseif field->idvd $ DOK_IZLAZA
-        		nKStanje -= POS->Kolicina
+        		nKStanje -= field->Kolicina
+			//nFStanje -= field->kolicina * field->cijena
       		elseif field->IdVd == "NI"
         		// ne mjenja se kolicina
-
+			//nFStanje -= nKStanje * (field->cijena - field->ncijena)
 		endif
 		
 		++ nKartCnt
 		
 		nUkKartCnt += nKartCnt
 		nUkKStanje += nKStanje
-		nUkFStanje += nFStanje
+		//nUkFStanje += nFStanje
 		
 		skip
 	enddo
 	
-	nUkCijena += nCijena
+	nUkCijena += nRCjen
 	nUkRobaCnt += nRobaCnt
+	nFStanje := nKStanje * nRCjen
+	nUkFStanje += nFStanje
 	
 	// upisi zapis u INTEG1.DBF
-	AddInteg1(nNextID, cIdRoba, nOidRoba, cIdTarifa, nKStanje, nFStanje, nKartCnt, nRobaCnt, nCijena)	
+	AddInteg1(nNextID, cIdRoba, nOidRoba, cIdTarifa, nKStanje, nFStanje, nKartCnt, nRobaCnt, nRCjen)	
 	
 	select pos
 enddo
@@ -135,8 +144,13 @@ if Pitanje(,"Provjeriti integritet podataka","N")=="N"
 endif
 
 O_ROBA
+O_DOKS
 O_POS
+O_ERRORS
 O_INTEG1
+
+select errors
+zap
 
 // prodji kroz POS
 select pos
@@ -151,10 +165,6 @@ nUkKartCnt:=0
 nUkRobaCnt:=0
 nUkCijena:=0
 
-aErrCritical := {}
-aErrNormal := {}
-aErrWarrning := {}
-
 Box(,2,65)
 
 @ 1+m_x, 2+m_y SAY "Vrsim provjeru integriteta podataka..."
@@ -164,7 +174,7 @@ do while !eof() .and. field->idodj == cIdOdj
 	// setuj osnovne varijable	
 	nFStanje:=0
 	nKStanje:=0
-  	nCijena:=0
+  	nRCjen:=0
 	nKartCnt:=0 // broj stavki kartice
 	nRobaCnt:=0 // broj sifara artikla
   
@@ -179,7 +189,7 @@ do while !eof() .and. field->idodj == cIdOdj
 	nRobaCnt := GetRobaCnt(cIdRoba)
 	
 	hseek cIdRoba
-	nCijena := field->cijena1
+	nRCjen := field->cijena1
 	nOidRoba := field->_oid_
 	cIdTarifa := field->idtarifa
 	
@@ -190,6 +200,17 @@ do while !eof() .and. field->idodj == cIdOdj
 	
 	do while !EOF() .and. pos->(IdOdj+IdRoba)==(cIdOdj+cIdRoba)
     		
+		// ispitaj da li postoji doks master record za ovaj dokument
+		select doks
+		set order to tag "1"
+		hseek pos->idpos + pos->idvd + DTOS(pos->datum) + pos->brdok
+		
+		if !Found()
+			AddToErrors("C", cIdRoba, pos->idvd + "-" + ALLTRIM(pos->brdok) + ", datuma:" + DTOC(pos->datum), "Za ovaj dokument ne postoji DOKS master zapis!" )
+		endif
+		
+		select pos
+
 		// ako je dokument 96 - preskoci
 		if field->idvd=="96"
     			skip
@@ -198,60 +219,118 @@ do while !eof() .and. field->idodj == cIdOdj
 		
       		if field->idvd $ DOK_ULAZA
         		nKStanje += field->Kolicina
+        		//nFStanje += field->Kolicina * field->cijena
 			
       		elseif field->idvd $ "IN"
         		nKStanje -= (field->Kolicina - field->Kol2 )
+        		//nFStanje -= (field->Kolicina - field->Kol2 ) * field->cijena
 			
       		elseif field->idvd $ DOK_IZLAZA
         		nKStanje -= field->Kolicina
+			//nFStanje -= field->kolicina * field->cijena
 			
       		elseif field->IdVd == "NI"
         		// ne mjenja se kolicina
-
+			//nFStanje -= nKStanje * (field->cijena - field->ncijena)
 		endif
 		
 		++ nKartCnt
 		
 		nUkKartCnt += nKartCnt
 		nUkFStanje += nFStanje
-		nUkKStanje += nKStanje
+		//nUkKStanje += nKStanje
 		
 		skip
 	enddo
-	
-	nUkCijena += nCijena
+
+	nUkCijena += nRCjen
 	nUkRobaCnt += nRobaCnt
+	
+	nFStanje := nKStanje * nRCjen
+	nUkFStanje += nFStanje
+	
+	// zakaci se na kalk
+	SELECT (F_KALK)
+	USE ("k:\plflex\kalk\kum1\KALK")
+	set order to tag "4"
+	
+	altd()
+	hseek "50" + "13270  " + cIdRoba
+	
+	cKRoba:=kalk->idroba
+	nKKStanje:=0
+	nKFStanje:=0
+	nKKartCnt:=0
+	
+	altd()	
+
+	do while !EOF() .and. kalk->(idfirma+pkonto+idroba) == "50"+"13270  "+cKRoba
+		// ulazni dokumenti
+		if kalk->pu_i == "1"
+			nKKStanje += kalk->kolicina - kalk->gkolicina - kalk->gkolicin2
+			nKFStanje += kalk->mpcsapp * kalk->kolicina
+		endif
+		// izlazni dokumenti
+		if kalk->pu_i == "5"
+			nKKStanje -= kalk->kolicina
+			nKFStanje -= kalk->kolicina * kalk->mpcsapp
+		endif
+		// ovo ne znam sta je ???
+		if kalk->pu_i == "I"
+			nKKStanje -= kalk->gkolicin2
+			nKFStanje -= kalk->mpcsapp * kalk->gkolicin2
+		endif
+		// nivelacija
+		if kalk->pu_i == "3"
+			nKFStanje += kalk->mpcsapp * kalk->kolicina
+		endif
+			
+		++ nKKartCnt
+		skip
+	enddo
+	
 	
 	// provjera prema INTEG1
 	do case
 		// provjeri OID
 		case integ1->oidroba <> nOidRoba
-			AADD(aErrCritical, {cIdRoba, "Greska u OID-u: (TOPSP)=" + ALLTRIM(STR(integ1->oidroba)) + ", (TOPSK)=" + ALLTRIM(STR(nOidRoba)) })
+			AddToErrors("C", cIdRoba, "", "Greska u OID-u: (TOPSP)=" + ALLTRIM(STR(integ1->oidroba)) + ", (TOPSK)=" + ALLTRIM(STR(nOidRoba)) )
 		
 		// provjeri TARIFA
 		case integ1->idtarifa <> cIdTarifa
-			AADD(aErrCritical, {cIdRoba, "Greska u tarifi: (TOPSP)=" + integ1->idtarifa + ", (TOPSK)=" + cIdTarifa })
-		
+			AddToErrors("C", cIdRoba, "", "Greska u tarifi: (TOPSP)=" + integ1->idtarifa + ", (TOPSK)=" + cIdTarifa )
 		
 		// provjeri STANJE artikla kolicinski
 		case integ1->stanjek <> nKStanje
-			AADD(aErrCritical, {cIdRoba, "Greska u stanju artikla kolicinski: (TOPSP)=" + ALLTRIM(STR(integ1->stanjek)) + ", (TOPSK)=" + ALLTRIM(STR(nKStanje)) })
+			AddToErrors("C", cIdRoba, "", "Greska u stanju artikla kolicinski: (TOPSP)=" + ALLTRIM(STR(integ1->stanjek)) + ", (TOPSK)=" + ALLTRIM(STR(nKStanje)) )
 
 		// provjeri stanje artikla finansijski
 		case integ1->stanjef <> nFStanje
-			AADD(aErrCritical, {cIdRoba, "Greska u stanju artikla finansijski: (TOPSP)=" + ALLTRIM(STR(integ1->stanjef)) + ", (TOPSK)=" + ALLTRIM(STR(nFStanje)) })
+			AddToErrors("C", cIdRoba, "", "Greska u stanju artikla finansijski: (TOPSP)=" + ALLTRIM(STR(integ1->stanjef)) + ", (TOPSK)=" + ALLTRIM(STR(nFStanje)) )
 		
 		// provjeri broj stavki kartice
 		case integ1->kartcnt <> nKartCnt
-			AADD(aErrCritical, {cIdRoba, "Greska u broju stavki kartice: (TOPSP)=" + ALLTRIM(STR(integ1->kartcnt)) + ", (TOPSK)=" + ALLTRIM(STR(nKartCnt)) })
+			AddToErrors("C", cIdRoba, "", "Greska u broju stavki kartice: (TOPSP)=" + ALLTRIM(STR(integ1->kartcnt)) + ", (TOPSK)=" + ALLTRIM(STR(nKartCnt)) )
 	
 		// provjeri broj istih artikala u sifrarniku artikala
-		case integ1->sifrobacnt <> nRobaCnt
-			AADD(aErrWarrning, {cIdRoba, "Postoje duple sifre: (TOPSP)=" + ALLTRIM(STR(integ1->sifrobacnt)) + ", (TOPSK)=" + ALLTRIM(STR(nRobaCnt)) })
+		case integ1->sifrobacnt > 1 .or. nRobaCnt > 1
+			AddToErrors("W", cIdRoba, "", "Postoje duple sifre: (TOPSP)=" + ALLTRIM(STR(integ1->sifrobacnt)) + ", (TOPSK)=" + ALLTRIM(STR(nRobaCnt)) )
 		// provjeri cijenu artikla
-		case integ1->robacijena <> nCijena
-			AADD(aErrCritical, {cIdRoba, "Greska u cijeni artikla: (TOPSP)=" + ALLTRIM(STR(integ1->robacijena)) + ", (TOPSK)=" + ALLTRIM(STR(nCijena)) })
+		case integ1->robacijena <> nRCjen
+			AddToErrors("C", cIdRoba, "", "Greska u cijeni artikla: (TOPSP)=" + ALLTRIM(STR(integ1->robacijena)) + ", (TOPSK)=" + ALLTRIM(STR(nRCjen)) )
 	
+		// provjera kartica kalk
+		case nKKartCnt <> nKartCnt
+			AddToErrors("C", cIdRoba, "", "Greska u broju stavki kartice: (TOPSK)=" + ALLTRIM(STR(nKartCnt)) + ", (KALK)=" + ALLTRIM(STR(nKKartCnt)) )
+		
+		// provjera stanja artikla kalk-tops
+		case nKKStanje <> nKStanje
+			AddToErrors("C", cIdRoba, "", "Greska u kolicinskom stanju: (TOPSK)=" + ALLTRIM(STR(nKStanje)) + ", (KALK)=" + ALLTRIM(STR(nKKStanje)))
+	
+		// provjera stanja artikla kalk-tops
+		case nKFStanje <> nFStanje
+			AddToErrors("C", cIdRoba, "", "Greska u prodajnom stanju: (TOPSK)=" + ALLTRIM(STR(nFStanje)) + ", (KALK)=" + ALLTRIM(STR(nKFStanje)) )
+			
 	endcase
 	
 	select pos
@@ -260,49 +339,34 @@ enddo
 BoxC()
 MsgC()
 
-if (LEN(aErrCritical) + LEN(aErrNormal) + LEN(aErrWarrning)) == 0
+select errors
+set order to tag "1"
+if RecCount() == 0
 	MsgBeep("Integritet podataka ok")
 	return
 endif
 
 START PRINT CRET
 
-// provjeri kriticne greske
-nLen := LEN(aErrCritical)
-if nLen > 0
-	? ALLTRIM(STR(nLen)) + " critical errors:"
-	? "---------------------------------------------------"
-	? "Id artikal  * Opis greske "
-	? "---------------------------------------------------"
-	for i:=1 to nLen
-		? aErrCritical[i, 1] + " " + aErrCritical[i, 2]
-	next
-	?
-endif
+? "Rezultati analize integriteta podataka"
+? "===================================================="
+?
 
-nLen := LEN(aErrNormal)
-if nLen > 0
-	? ALLTRIM(STR(nLen)) + " normal errors:"
-	? "---------------------------------------------------"
-	? "Id artikal  * Opis greske "
-	? "---------------------------------------------------"
-	for i:=1 to nLen
-		? aErrNormal[i, 1] + " " + aErrNormal[i, 2]
-	next
-	?
-endif
+nCrit:=0
+nNorm:=0
+nWarr:=0
+nCnt:=0
 
-nLen := LEN(aErrWarrning)
-if nLen > 0
-	? ALLTRIM(STR(nLen)) + " warrnings:"
-	? "---------------------------------------------------"
-	? "Id artikal  * Opis greske "
-	? "---------------------------------------------------"
-	for i:=1 to nLen
-		? aErrWarrning[i, 1] + " " + aErrWarrning[i, 2]
-	next
-	?
-endif
+go top
+do while !EOF()
+	++nCnt
+	? STR(nCnt, 4) + " " + ALLTRIM(field->type), ALLTRIM(field->idroba), ALLTRIM(field->doks)
+	? SPACE(5) + "Opis: " + ALLTRIM(field->opis)
+	skip
+enddo
+
+?
+?
 
 FF
 END PRINT
@@ -310,6 +374,23 @@ END PRINT
 
 return
 *}
+
+
+/*! \fn AddToErrors(cType, cIdRoba, cDoks, cOpis)
+ *  \brief dodaj zapis u tabelu errors
+ */
+function AddToErrors(cType, cIDroba, cDoks, cOpis)
+*{
+O_ERRORS
+append blank
+replace field->type with cType
+replace field->idroba with cIdRoba
+replace field->doks with cDoks
+replace field->opis with cOpis
+
+return
+*}
+
 
 /*! \fn GetRobaCnt(cIdRoba)
  *  \brief Vraca broj sifara robe u sifrarniku robe

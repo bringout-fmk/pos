@@ -7,6 +7,16 @@
 function CreDIntDB()
 *{
 
+// provjeri da li postoji tabela ERRORS.DBF
+if !FILE(PRIVPATH+"ERRORS.DBF")
+	aDbf := {}
+	AADD(aDbf, {"TYPE", "C", 10, 0})
+	AADD(aDbf, {"IDROBA", "C", 10, 0})
+	AADD(aDbf, {"DOKS", "C", 50, 0})
+	AADD(aDbf, {"OPIS", "C", 100, 0})
+	DBcreate2(PRIVPATH+"ERRORS.DBF", aDbf)
+endif
+
 // provjeri da li postoji tabela DINTEG1
 if !FILE(KUMPATH + "DINTEG1.DBF")
 	// kreiraj tabelu DINTEG1/2
@@ -40,6 +50,9 @@ if !FILE(KUMPATH + "INTEG1.DBF")
 	AADD(aDbf, {"KARTCNT", "N", 6, 0})
 	AADD(aDbf, {"SIFROBACNT", "N", 15, 0})
 	AADD(aDbf, {"ROBACIJENA", "N", 15, 5})
+	AADD(aDbf, {"KALKKARTCNT", "N", 6, 0})
+	AADD(aDbf, {"KALKKSTANJE", "N", 20, 5})
+	AADD(aDbf, {"KALKFSTANJE", "N", 20, 5})
 	// + spec.OID polja
 	if gSql=="D"
 		AddOidFields(@aDbf)
@@ -80,6 +93,9 @@ CREATE_INDEX ("1", "STR(ID)+IDROBA", KUMPATH+"INTEG1")
 
 // kreiraj index za tabelu INTEG2
 CREATE_INDEX ("1", "STR(ID)+IDROBA", KUMPATH+"INTEG2")
+
+// kreiraj index za tabelu ERRORS
+CREATE_INDEX ("1", "TYPE+IDROBA", PRIVPATH+"ERRORS")
 
 return
 *}
