@@ -1238,7 +1238,15 @@ if !SigmaSif("GENDOKS")
 	return
 endif
 close all
+
 O_DOKS
+
+Box(,1,60)
+	cTipDok := SPACE(2)
+	@ 1+m_x, 2+m_y SAY "Tip dokumenta (prazno-svi)" GET cTipDok
+	read
+BoxC()
+
 if Pitanje(,"Izbrisati doks ??","D")=="D"
 	ZAPP()
 	if gSQL=="D"
@@ -1246,9 +1254,19 @@ if Pitanje(,"Izbrisati doks ??","D")=="D"
    		Gw("delete from doks")
 	endif
 endif
+
 O_POS
 GO TOP
+
 do while !eof()
+	
+	if !Empty(cTipDok)
+		if pos->idvd <> cTipDok
+			skip
+			loop
+		endif
+	endif
+	
 	Scatter()
   	do while !eof() .and. _idpos==idpos .and. _idvd==idvd .and. _Datum==datum.and._brdok==brdok
      		skip
