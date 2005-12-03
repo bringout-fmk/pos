@@ -26,6 +26,7 @@ if !FILE(KUMPATH + "DINTEG1.DBF")
 	AADD(aDbf, {"ID", "N", 20, 0})
 	AADD(aDbf, {"DATUM", "D", 8, 0})
 	AADD(aDbf, {"VRIJEME", "C", 5, 0 })
+	AADD(aDbf, {"CHKDAT", "D", 8, 0 })
 	// + spec.OID polja
 	if gSql=="D"
 		AddOidFields(@aDbf)
@@ -95,7 +96,7 @@ CREATE_INDEX ("1", "STR(ID)+IDROBA", KUMPATH+"INTEG1")
 CREATE_INDEX ("1", "STR(ID)+IDROBA", KUMPATH+"INTEG2")
 
 // kreiraj index za tabelu ERRORS
-CREATE_INDEX ("1", "TYPE+IDROBA", PRIVPATH+"ERRORS")
+CREATE_INDEX ("1", "IDROBA+TYPE", PRIVPATH+"ERRORS")
 
 return
 *}
