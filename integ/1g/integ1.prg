@@ -110,7 +110,6 @@ do while !eof() .and. field->idodj == cIdOdj
 		
 		nUkKartCnt += nKartCnt
 		nUkKStanje += nKStanje
-		//nUkFStanje += nFStanje
 		
 		skip
 	enddo
@@ -131,59 +130,89 @@ enddo
 // dodaj kontrolni artikal sa sumarnim vrijednostima
 AddInteg1(nNextID, cTestRoba, 0, "", nUkKStanje, nUkFStanje, nUkKartCnt, nUkRobaCnt, nUkCijena)	
 
-// upisi da je izvrsena provjera chkok => "D"
-//select dinteg1
-//set order to tag "2"
-//hseek nNextID
-//if Found()
-//	SmReplace("chkok", "D")
-//endif
+// Ubaci checksum podatak u DINTEG1
+UpdCSum1(nNextID)
 
 BoxC()
-
 MsgC()
 
 return
 *}
 
 
-/*! \fn IntegTekGod()
- *  \brief Vraca tekucu godinu, ako je tek.datum veci od 10.01.TG onda je godina = TG, ako je tek.datum <= 10.01.TG onda je godina (TG - 1)
- *  \return string cYear
+/*! \fn UpdCSum1(nId)
+ *  \brief Dodaj checksum zapis u DINTEG1
+ *  \param nId - id testa
  */
-function IntegTekGod()
+function UpdCSum1(nId)
 *{
-local dTDate
-local dPDate
-local dTYear
-local cYear
+local nCSum1:=0
+local nCSum2:=0
+local nCnt:=0
 
-dTYear := YEAR(DATE()) // tekuca godina
-dPDate := SToD(ALLTRIM(STR(dTYear))+"0110") // preracunati datum
-dTDate := DATE() // tekuci datum
+O_DINTEG1
+O_INTEG1
 
-if dTDate > dPDate
-	cYear := ALLTRIM( STR( YEAR( DATE() ) ))	
-else
-	cYear := ALLTRIM( STR( YEAR( DATE() ) - 1 ))
+select dinteg1
+set order to tag "2"
+hseek nId
+// prodanadji id testa
+if Found()
+	select integ1
+	set order to tag "2"
+	hseek nId
+	do while !EOF() .and. field->id == nId
+		nCSum1 -= integ1->stanjef 
+		nCSum2 += integ1->stanjek
+		++nCnt
+		skip
+	enddo
+	select dinteg1	
+	SmReplace("chkok", "D")
+	SmReplace("csum1", nCSum1)
+	SmReplace("csum2", nCSum2)
+	SmReplace("csum3", nCnt)
 endif
 
-return cYear
+return
 *}
 
 
-/*! \fn IntegTekGod() 
- *  \brief Vraca datum od kada pocinje tekuca godina TOPS, 01.01.TG
+/*! \fn GetCSum1(nIntID)
+ *  \brief Vrati ispravnost checksum-a za integ1
+ *  \param nIntID - integ1 id test
  */
-function IntegTekDat()
+function GetCSum1(nIntID)
 *{
-local dYear
-local cDate
+local nCSum1:=0
+local nCSum2:=0
+local nCnt:=0
 
-dYear := YEAR(DATE())
-cDate := ALLTRIM( IntegTekGod() ) + "0101"
+O_INTEG1
+select integ1
+set order to tag "2"
+hseek nIntId
 
-return SToD(cDate)
+do while !EOF() .and. integ1->id == nIntId
+	nCSum1 -= integ1->stanjef 
+	nCSum2 += integ1->stanjek
+	++nCnt
+	skip
+enddo
+	
+// provjeri sada sa DINTEG-om
+if (dinteg1->csum3 <> nCnt)
+	MsgBeep("INTEG1 TOPS-P/K, ne odgovara broj zapisa!")
+	return .f.
+endif
+if (dinteg1->csum1 <> nCSum1)
+	return .f.
+endif
+if (dinteg1->csum2 <> nCSum2)
+	return .f.
+endif
+
+return .t.
 *}
 
 
@@ -194,38 +223,49 @@ return SToD(cDate)
  */
 function ChkInt1(lForce)
 *{
+// privatne varijable
+private nTest:=0 // id test integ1
+private dChkDate := DATE() - 1 // datum provjere
+private lChkOk // da li je update u DINTEG1 - OK
+
+private cKFirma:="" // kalk id firma
+private cKPKonto:="" // kalk konto prodavnice
+private cKKPath:="" // kalk putanja do kalk.dbf
+
 if ( lForce == nil )
 	lForce := .f.
 endif
+
 // ova operacija se vrsi samo u knjigovodstvu
 if gSamoProdaja == "D"
 	return
 endif
 
-private nTest:=0
-private dChkDate := DATE() - 1
-
 // da li treba provjeravati integritet i koji je test u pitanju
-if !RunChk1(@nTest, @dChkDate)
-	if !lForce
+if !RunChk1(@nTest, @dChkDate, @lChkOk)
+	if !lForce 
+		return
+	elseif !lChkOk
+		// nije update dobar - prekini
 		return
 	endif
 endif
 
+// postavi pitanje
 if !lForce .and. Pitanje(,"Provjeriti integritet podataka","N")=="N"
 	return
 endif
+
+// uzmi kalk varijable
+GetKalkVars(@cKFirma, @cKPKonto, @cKKPath)
 
 O_ROBA
 O_DOKS
 O_POS
 O_ERRORS
 O_INTEG1
-// zakaci se na kalk
-SELECT (F_KALK)
-cKKPath:=IzFmkIni("TOPS","KalkKumPath","i:\sigma\kalk\kum1",PRIVPATH)
-USE (cKKPath + SLASH + "kalk")
-set order to tag "4"
+// otvori i kalk
+OpenKalkDB(cKKPath)
 
 select errors
 zap
@@ -243,9 +283,6 @@ nUkKartCnt:=0
 nUkRobaCnt:=0
 nUkCijena:=0
 nPcStanje:=0
-cKFirma:="50"
-cKPKonto := IzFmkIni("TOPS","TopsKalkKonto","13270",PRIVPATH)
-cKPKonto := PADR(cKPKonto, 7)
 
 Box(,2,65)
 
@@ -328,8 +365,7 @@ do while !eof() .and. field->idodj == cIdOdj
 		endif
 		
 		nUkKartCnt += nKartCnt
-		nUkFStanje += nFStanje
-		//nUkKStanje += nKStanje
+		nUkKStanje += nKStanje
 		
 		skip
 	enddo
@@ -340,7 +376,7 @@ do while !eof() .and. field->idodj == cIdOdj
 	
 	nFStanje := nKStanje * nRCjen
 	nUkFStanje += nFStanje
-	
+
 	select kalk	
 	hseek cKFirma + cKPKonto + cIdRoba
 	
@@ -425,79 +461,110 @@ do while !eof() .and. field->idodj == cIdOdj
 	select pos
 enddo
 
-// ako je forsirano pokretanje opcije
 if lForce
-	select kalk
-	set order to tag "4"
-	hseek cKFirma + cKPKonto
-
-	@ 1+m_x, 2+m_y SAY SPACE(65)
-	@ 1+m_x, 2+m_y SAY "Provjera integriteta na osnovu KALK-a..."
-	
-	do while !EOF() .and. kalk->(idfirma+pkonto)==cKFirma+cKPKonto
-		
-		cKRoba := kalk->idroba
-		nKStK := 0
-		nKStF := 0
-	
-		select integ1
-		set order to tag "1"
-		hseek STR(nTest) + cKRoba
-
-		@ 2+m_x, 2+m_y SAY SPACE(65)
-		@ 2+m_x, 2+m_y SAY cKRoba
-		
-		if !Found()
-			AddToErrors("W", cKRoba, kalk->idfirma+"-"+kalk->idvd+"-"+ALLTRIM(kalk->brdok), "Roba ne postoji u sifrarniku kase!")
-		endif
-		
-		select kalk	
-		
-		do while !EOF() .and. kalk->(idfirma+pkonto+idroba)==cKFirma+cKPKonto+cKRoba
-			if ( kalk->datdok > dChkDate )
-				skip
-				loop
-			endif
-			// ulazni dokumenti
-			if kalk->pu_i == "1"
-				nKStK += kalk->kolicina - kalk->gkolicina - kalk->gkolicin2
-				nKStF += kalk->mpcsapp * kalk->kolicina
-			endif
-			// izlazni dokumenti
-			if kalk->pu_i == "5"
-				nKStK -= kalk->kolicina
-				nKStF -= kalk->kolicina * kalk->mpcsapp
-			endif
-			// ovo ne znam sta je ???
-			if kalk->pu_i == "I"
-				nKStK -= kalk->gkolicin2
-				nKStF -= kalk->mpcsapp * kalk->gkolicin2
-			endif
-			// nivelacija
-			if kalk->pu_i == "3"
-				nKStF += kalk->mpcsapp * kalk->kolicina
-			endif
-			
-			skip
-		enddo
-
-		// provjeri integritet sa INTEG1
-		do case
-			// stanje kalk -> kasa
-			case ROUND(integ1->stanjek,3) <> ROUND(nKStK,3)
-				AddToErrors("C", cKRoba, "","KALK->TOPS: neispravno kolicinsko stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStK,3))) + " (TOPSP)=" + ALLTRIM(STR(ROUND(integ1->stanjek,3))))
-
-			case ROUND(integ1->stanjef,3) <> ROUND(nKStF,3)
-				AddToErrors("C", cKRoba, "", "KALK->TOPS: neispravno finansijsko stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStF,3))) + " (TOPSP)=" + ALLTRIM(STR(ROUND(integ1->stanjef,3))))
-
-		endcase
-	
-	enddo
+	// ako je forsirano pokretanje opcije pokreni i test KALK->TOPS
+	Int1KalkTops(nTest, dChkDate)
 endif
 
 BoxC()
 MsgC()
 
+// pokreni izvjestaj o greskama za integ1
+RptInt1()
+
+return
+*}
+
+
+/*! \fn Int1KalkTops(nTest, dChkDate)
+ *  \brief Testiranje podataka od strane KALK-a prema TOPS-u
+ *  \param nTest - id testa iz integ1
+ *  \param dChkDate - datum do kojeg se provjerava stanje
+ */
+function Int1KalkTops(nTest, dChkDate)
+*{
+local cFirma
+local cKonto
+local cRoba
+local nKStK
+local nKStF
+local cPath
+
+GetKalkVars(@cFirma, @cKonto, @cPath)
+
+select kalk
+set order to tag "4"
+hseek cFirma + cKonto
+
+@ 1+m_x, 2+m_y SAY SPACE(65)
+@ 1+m_x, 2+m_y SAY "Provjera integriteta na osnovu KALK-a..."
+	
+do while !EOF() .and. kalk->(idfirma+pkonto)==cFirma+cKonto
+	cRoba := kalk->idroba
+	nKStK := 0
+	nKStF := 0
+
+	select integ1
+	set order to tag "1"
+	hseek STR(nTest) + cRoba
+
+	@ 2+m_x, 2+m_y SAY SPACE(65)
+	@ 2+m_x, 2+m_y SAY cRoba
+		
+	if !Found()
+		AddToErrors("W", cRoba, kalk->idfirma+"-"+kalk->idvd+"-"+ALLTRIM(kalk->brdok), "Roba ne postoji u sifrarniku kase!")
+	endif
+		
+	select kalk	
+		
+	do while !EOF() .and. kalk->(idfirma+pkonto+idroba)==cFirma+cKonto+cRoba
+		if ( kalk->datdok > dChkDate )
+			skip
+			loop
+		endif
+		// ulazni dokumenti
+		if kalk->pu_i == "1"
+			nKStK += kalk->kolicina - kalk->gkolicina - kalk->gkolicin2
+			nKStF += kalk->mpcsapp * kalk->kolicina
+		endif
+		// izlazni dokumenti
+		if kalk->pu_i == "5"
+			nKStK -= kalk->kolicina
+			nKStF -= kalk->kolicina * kalk->mpcsapp
+		endif
+		// ovo ne znam sta je ???
+		if kalk->pu_i == "I"
+			nKStK -= kalk->gkolicin2
+			nKStF -= kalk->mpcsapp * kalk->gkolicin2
+		endif
+		// nivelacija
+		if kalk->pu_i == "3"
+			nKStF += kalk->mpcsapp * kalk->kolicina
+		endif
+			
+		skip
+	enddo
+
+	// provjeri integritet sa INTEG1
+	do case
+		// stanje kalk -> kasa
+		case ROUND(integ1->stanjek,3) <> ROUND(nKStK,3)
+			AddToErrors("C", cRoba, "","KALK->TOPS: neispravno kolicinsko stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStK,3))) + " (TOPSP)=" + ALLTRIM(STR(ROUND(integ1->stanjek,3))))
+		case ROUND(integ1->stanjef,3) <> ROUND(nKStF,3)
+			AddToErrors("C", cRoba, "", "KALK->TOPS: neispravno finansijsko stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStF,3))) + " (TOPSP)=" + ALLTRIM(STR(ROUND(integ1->stanjef,3))))
+	endcase
+enddo
+
+return
+*}
+
+
+/*! \fn RptInt1()
+ *  \brief report nakon testa integ1
+ */
+function RptInt1()
+*{
+O_ERRORS
 select errors
 set order to tag "1"
 if RecCount() == 0
@@ -566,58 +633,9 @@ enddo
 FF
 END PRINT
 
-
 return
 *}
 
-function GetErrorDesc(cType)
-*{
-cRet := ""
-do case
-	case cType == "C"
-		cRet := "Critical"
-	case cType == "N"
-		cRet := "Normal"
-	case cType == "W"
-		cRet := "Warrning"
-endcase
-
-return cRet
-*}
-
-
-/*! \fn AddToErrors(cType, cIdRoba, cDoks, cOpis)
- *  \brief dodaj zapis u tabelu errors
- */
-function AddToErrors(cType, cIDroba, cDoks, cOpis)
-*{
-O_ERRORS
-append blank
-replace field->type with cType
-replace field->idroba with cIdRoba
-replace field->doks with cDoks
-replace field->opis with cOpis
-
-return
-*}
-
-
-/*! \fn GetRobaCnt(cIdRoba)
- *  \brief Vraca broj sifara robe u sifrarniku robe
- *  \param cIdRoba - trazeni artikal
- */
-function GetRobaCnt(cIdRoba)
-*{
-select roba
-hseek cIdRoba
-nRet:=0
-do while !EOF() .and. field->id == cIdRoba
-	++ nRet
-	skip
-enddo
-
-return nRet
-*}
 
 
 /*! \fn RunInt1()
@@ -631,8 +649,11 @@ O_DINTEG1
 set order to tag "1"
 go bottom
 
-// ako je proslo 10 dana od proteklog testiranja pokreni test
-dChkDate := DATE()-10
+// koliko dana unazad treba cekati
+nDays:=20
+
+// ako je proslo nDays od proteklog testiranja pokreni test
+dChkDate := DATE()-nDays
 
 if ( field->datum < dChkDate )
 	return .t.
@@ -642,10 +663,13 @@ return .f.
 *}
 
 
-/*! \fn RunChk1(nTest)
+/*! \fn RunChk1(nTest, lChkOk)
  *  \brief Provjerava da li treba pokrenuti provjeru integriteta u knjigovodstvu
+ *  \param nTest - id integ1
+ *  \param dDate - datum provjere
+ *  \param lChkOk - da li je odradjen update 
  */
-function RunChk1(nTest, dCkDate)
+function RunChk1(nTest, dDate, lChkOk)
 *{
 local dChkDate
 
@@ -653,12 +677,23 @@ O_DINTEG1
 set order to tag "1"
 go bottom
 
-// ako je proslo 10 dana od proteklog testiranja pokreni test
 dChkDate := DATE()
 
 if ( field->datum == dChkDate )
+	if (field->chkok <> "D" )
+		lChkOk := .f.
+		return .f.
+	endif
 	nTest := field->id
 	dDate := field->chkdat
+	// provjeri checksum
+	if !GetCSum1(nTest)
+		MsgBeep("Checksum nije OK!!!")	
+		lChkOk := .f.
+		return .f.
+	endif
+	
+	lChkOk := .t.
 	return .t.
 endif
 

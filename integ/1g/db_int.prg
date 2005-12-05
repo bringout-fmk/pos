@@ -27,7 +27,10 @@ if !FILE(KUMPATH + "DINTEG1.DBF")
 	AADD(aDbf, {"DATUM", "D", 8, 0})
 	AADD(aDbf, {"VRIJEME", "C", 5, 0 })
 	AADD(aDbf, {"CHKDAT", "D", 8, 0 })
-	//AADD(aDbf, {"CHKOK", "C", 1, 0 })
+	AADD(aDbf, {"CHKOK", "C", 1, 0 })
+	AADD(aDbf, {"CSUM1", "N", 20, 5 })
+	AADD(aDbf, {"CSUM2", "N", 20, 5 })
+	AADD(aDbf, {"CSUM3", "N", 20, 0 })
 	// + spec.OID polja
 	if gSql=="D"
 		AddOidFields(@aDbf)
@@ -73,9 +76,9 @@ if !FILE(KUMPATH + "INTEG2.DBF")
 	AADD(aDbf, {"IDROBA", "C", 10, 0})
 	AADD(aDbf, {"OIDROBA", "N", 12, 0})
 	AADD(aDbf, {"IDTARIFA", "C", 6, 0})
-	AADD(aDbf, {"KOLICINA", "N", 20, 5})
-	AADD(aDbf, {"KARTCNT", "N", 6, 0})
-	AADD(aDbf, {"SIFROBACNT", "N", 3, 0})
+	AADD(aDbf, {"STANJEF", "N", 20, 5})
+	AADD(aDbf, {"STANJEK", "N", 20, 5})
+	AADD(aDbf, {"ROBACJEN", "N", 15, 5})
 	// + spec.OID polja
 	if gSql=="D"
 		AddOidFields(@aDbf)
@@ -92,9 +95,11 @@ CREATE_INDEX ("2", "ID", KUMPATH+"DINTEG2")
 
 // kreiraj index za tabelu INTEG1
 CREATE_INDEX ("1", "STR(ID)+IDROBA", KUMPATH+"INTEG1")
+CREATE_INDEX ("2", "ID", KUMPATH+"INTEG1")
 
 // kreiraj index za tabelu INTEG2
 CREATE_INDEX ("1", "STR(ID)+IDROBA", KUMPATH+"INTEG2")
+CREATE_INDEX ("2", "ID", KUMPATH+"INTEG2")
 
 // kreiraj index za tabelu ERRORS
 CREATE_INDEX ("1", "IDROBA+TYPE", PRIVPATH+"ERRORS")
