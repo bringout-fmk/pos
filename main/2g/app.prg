@@ -646,6 +646,7 @@ public gFmkSif:=""
 public gLocPort:="LPT1"
 public gIdCijena:="1"
 public gsOsInfo:="win98"
+public gDiskFree:="N"
 
 #ifdef CLIP
 	return
@@ -795,6 +796,7 @@ Rpar("Si",@gSifUpravn)
 Rpar("Sx",@gDisplay)
 Rpar("Bc",@gEntBarCod)
 Rpar("Ep",@gEvidPl)
+Rpar("dF",@gDiskFree)
 
 // izgled racuna
 gSjecistr:=padr(GETPStr(gSjeciStr),20)
