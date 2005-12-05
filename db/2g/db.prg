@@ -1354,7 +1354,7 @@ endif
 
 ScanDb()
 
-if (gSql=="D")
+if (gSql=="D") .and. (gDiskFree == "D")
 	
 	nFree:=GwDiskFree()
 	//odredi kolicinu u MB
@@ -1382,10 +1382,15 @@ method integ
 if gSql == "N"
 	return
 endif
+
+if gAppSrv
+	return
+endif
+
 // vazi samo za prodavnicu
 if gSamoProdaja == "D"
 	UpdInt1()
-	//UpdInt2()
+	UpdInt2()
 else
 	return
 endif
@@ -1398,12 +1403,27 @@ endif
 *{
 method chkinteg
 
+// ako je aplikacioni server onda izadji....
+if gAppSrv
+	return
+endif
+
 if gSql == "N"
 	return
 endif
+
+nRes1:=0
+nRes2:=0
+
 if gSamoProdaja == "N"
-	ChkInt1()
-	//ChkInt2()
+	if Pitanje(,"Provjeriti integritet podataka (D/N)?","D")=="N"
+		return
+	endif
+	nRes1:=ChkInt1()
+	nRes2:=ChkInt2()
+	if (nRes1 + nRes2) <> 0
+		RptInteg()
+	endif
 else
 	return
 endif
