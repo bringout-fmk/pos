@@ -18,7 +18,7 @@ if !FILE(PRIVPATH+"ERRORS.DBF")
 endif
 
 // provjeri da li postoji tabela DINTEG1
-if !FILE(KUMPATH + "DINTEG1.DBF")
+if !FILE(KUMPATH + "DINTEG1.DBF") .or. !FILE(KUMPATH + "DINTEG2.DBF")
 	// kreiraj tabelu DINTEG1/2
 	
 	// definicija tabele DINTEG1/2
@@ -36,8 +36,12 @@ if !FILE(KUMPATH + "DINTEG1.DBF")
 		AddOidFields(@aDbf)
 	endif   
 	// kreiraj tabelu DINTEG1/2
-	DBcreate2(KUMPATH+"DINTEG1.DBF", aDbf)
-	DBcreate2(KUMPATH+"DINTEG2.DBF", aDbf)
+	if !File(KUMPATH + "DINTEG1.DBF")
+		DBcreate2(KUMPATH+"DINTEG1.DBF", aDbf)
+	endif
+	if !File(KUMPATH + "DINTEG2.DBF")
+		DBcreate2(KUMPATH+"DINTEG2.DBF", aDbf)
+	endif
 endif
 
 // provjeri da li postoji tabela INTEG1
@@ -78,7 +82,8 @@ if !FILE(KUMPATH + "INTEG2.DBF")
 	AADD(aDbf, {"IDTARIFA", "C", 6, 0})
 	AADD(aDbf, {"STANJEF", "N", 20, 5})
 	AADD(aDbf, {"STANJEK", "N", 20, 5})
-	AADD(aDbf, {"ROBACJEN", "N", 15, 5})
+	AADD(aDbf, {"SIFROBACNT", "N", 15, 0})
+	AADD(aDbf, {"ROBACIJENA", "N", 15, 5})
 	// + spec.OID polja
 	if gSql=="D"
 		AddOidFields(@aDbf)

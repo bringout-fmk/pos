@@ -12,7 +12,7 @@ endif
 
 // provjeri da li treba pokretati INTEG-1
 dChDate := DATE() - 1
-if !lForce .and. !RunInt1()
+if !lForce .and. !RunInt1Upd()
 	return
 endif
 
@@ -238,22 +238,17 @@ endif
 
 // ova operacija se vrsi samo u knjigovodstvu
 if gSamoProdaja == "D"
-	return
+	return 0
 endif
 
 // da li treba provjeravati integritet i koji je test u pitanju
-if !RunChk1(@nTest, @dChkDate, @lChkOk)
+if !RunInt1Chk(@nTest, @dChkDate, @lChkOk)
 	if !lForce 
-		return
+		return 0
 	elseif !lChkOk
 		// nije update dobar - prekini
-		return
+		return 0
 	endif
-endif
-
-// postavi pitanje
-if !lForce .and. Pitanje(,"Provjeriti integritet podataka","N")=="N"
-	return
 endif
 
 // uzmi kalk varijable
@@ -286,7 +281,7 @@ nPcStanje:=0
 
 Box(,2,65)
 
-@ 1+m_x, 2+m_y SAY "Vrsim provjeru integriteta podataka, na dan " + DToC(dChkDate) + " br." + ALLTRIM(STR(nTest)) 
+@ 1+m_x, 2+m_y SAY "Vrsim provjeru integriteta stanja, na dan " + DToC(dChkDate) + " br." + ALLTRIM(STR(nTest)) 
 
 do while !eof() .and. field->idodj == cIdOdj
 	
@@ -469,10 +464,7 @@ endif
 BoxC()
 MsgC()
 
-// pokreni izvjestaj o greskama za integ1
-RptInt1()
-
-return
+return 1
 *}
 
 
@@ -559,89 +551,11 @@ return
 *}
 
 
-/*! \fn RptInt1()
- *  \brief report nakon testa integ1
- */
-function RptInt1()
-*{
-O_ERRORS
-select errors
-set order to tag "1"
-if RecCount() == 0
-	MsgBeep("Integritet podataka ok")
-	return
-endif
 
-lOnlyCrit:=.f.
-if Pitanje(,"Prikazati samo critical errors (D/N)?","N")=="D"
-	lOnlyCrit:=.t.
-endif
-
-START PRINT CRET
-
-? "Rezultati analize integriteta podataka"
-? "===================================================="
-?
-
-nCrit:=0
-nNorm:=0
-nWarr:=0
-nCnt:=1
-
-go top
-do while !EOF()
-	cErRoba := field->idroba
-	if lOnlyCrit .and. ALLTRIM(field->type) == "C"
-		? STR(nCnt, 4) + ". " + ALLTRIM(field->idroba)
-	endif
-	if !lOnlyCrit
-		? STR(nCnt, 4) + ". " + ALLTRIM(field->idroba)
-	endif
-	
-	do while !EOF() .and. field->idroba == cErRoba
-		
-		if lOnlyCrit .and. ALLTRIM(field->type) <> "C"
-			skip
-			loop
-		endif
-		
-		++nCnt
-		
-		? SPACE(5) + GetErrorDesc(ALLTRIM(field->type)), ALLTRIM(field->doks), ALLTRIM(field->opis)	
-	
-		if ALLTRIM(field->type) == "C"
-			++ nCrit 
-		endif
-		if ALLTRIM(field->type) == "N"
-			++ nNorm 
-		endif
-		if ALLTRIM(field->type) == "W"
-			++ nWarr 
-		endif
-		skip
-	enddo
-enddo
-
-?
-? "-----------------------------------------"
-? "Critical errors:", ALLTRIM(STR(nCrit))
-? "Normal errors:", ALLTRIM(STR(nNorm))
-? "Warrnings:", ALLTRIM(STR(nWarr))
-?
-?
-
-FF
-END PRINT
-
-return
-*}
-
-
-
-/*! \fn RunInt1()
+/*! \fn RunInt1Upd()
  *  \brief Provjerava da li treba pokrenuti INTEG-1
  */
-function RunInt1()
+function RunInt1Upd()
 *{
 local dChkDate
 
@@ -663,13 +577,13 @@ return .f.
 *}
 
 
-/*! \fn RunChk1(nTest, lChkOk)
+/*! \fn RunInt1Chk(nTest, lChkOk)
  *  \brief Provjerava da li treba pokrenuti provjeru integriteta u knjigovodstvu
  *  \param nTest - id integ1
  *  \param dDate - datum provjere
  *  \param lChkOk - da li je odradjen update 
  */
-function RunChk1(nTest, dDate, lChkOk)
+function RunInt1Chk(nTest, dDate, lChkOk)
 *{
 local dChkDate
 

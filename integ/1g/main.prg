@@ -59,7 +59,7 @@ endif
 return cYear
 *}
 
-/*! \fn IntegTekGod() 
+/*! \fn IntegTekDat() 
  *  \brief Vraca datum od kada pocinje tekuca godina TOPS, 01.01.TG
  */
 function IntegTekDat()
@@ -125,6 +125,81 @@ endcase
 return cRet
 *}
 
+/*! \fn RptInteg()
+ *  \brief report nakon testa integ1
+ */
+function RptInteg()
+*{
+O_ERRORS
+select errors
+set order to tag "1"
+if RecCount() == 0
+	MsgBeep("Integritet podataka ok")
+	return
+endif
 
+lOnlyCrit:=.f.
+if Pitanje(,"Prikazati samo critical errors (D/N)?","N")=="D"
+	lOnlyCrit:=.t.
+endif
+
+START PRINT CRET
+
+? "Rezultati analize integriteta podataka"
+? "===================================================="
+?
+
+nCrit:=0
+nNorm:=0
+nWarr:=0
+nCnt:=1
+
+go top
+do while !EOF()
+	cErRoba := field->idroba
+	if lOnlyCrit .and. ALLTRIM(field->type) == "C"
+		? STR(nCnt, 4) + ". " + ALLTRIM(field->idroba)
+	endif
+	if !lOnlyCrit
+		? STR(nCnt, 4) + ". " + ALLTRIM(field->idroba)
+	endif
+	
+	do while !EOF() .and. field->idroba == cErRoba
+		
+		if lOnlyCrit .and. ALLTRIM(field->type) <> "C"
+			skip
+			loop
+		endif
+		
+		++nCnt
+		
+		? SPACE(5) + GetErrorDesc(ALLTRIM(field->type)), ALLTRIM(field->doks), ALLTRIM(field->opis)	
+	
+		if ALLTRIM(field->type) == "C"
+			++ nCrit 
+		endif
+		if ALLTRIM(field->type) == "N"
+			++ nNorm 
+		endif
+		if ALLTRIM(field->type) == "W"
+			++ nWarr 
+		endif
+		skip
+	enddo
+enddo
+
+?
+? "-----------------------------------------"
+? "Critical errors:", ALLTRIM(STR(nCrit))
+? "Normal errors:", ALLTRIM(STR(nNorm))
+? "Warrnings:", ALLTRIM(STR(nWarr))
+?
+?
+
+FF
+END PRINT
+
+return
+*}
 
 

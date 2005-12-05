@@ -20,19 +20,31 @@ Menu_SC("int")
 return
 *}
 
+/*! \fn CaseInt1()
+ *  \brief pokretanje integ1 testa sa menija
+ */
 function CaseInt1()
 *{
 if gSamoProdaja=="D"
 	UpdInt1(.t.)
 else
 	ChkInt1(.t.)
+	RptInteg()
 endif
 return
 *}
 
+/*! \fn CaseInt2()
+ *  \brief pokretanje integ2 testa sa menija
+ */
 function CaseInt2()
 *{
-
+if gSamoProdaja=="D"
+	UpdInt2(.t.)
+else
+	ChkInt2(.t.)
+	RptInteg()
+endif
 return
 *}
 
