@@ -11,10 +11,10 @@ function GetKalkVars(cFirma, cKonto, cPath)
 // firma je uvijek 50
 cFirma:="50"
 // konto prodavnicki
-cKonto := IzFmkIni("TOPS", "TopsKalkKonto", "13270", PRIVPATH)
+cKonto := IzFmkIni("TOPS", "TopsKalkKonto", "13270", KUMPATH)
 cKonto := PADR(cKPKonto, 7)
 // putanja
-cPath := IzFmkIni("TOPS", "KalkKumPath", "i:\sigma", PRIVPATH)
+cPath := IzFmkIni("TOPS", "KalkKumPath", "i:\sigma", KUMPATH)
 return
 *}
 
