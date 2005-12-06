@@ -1416,7 +1416,7 @@ endif
 nRes1:=0
 nRes2:=0
 
-if gSamoProdaja == "N"
+if gSamoProdaja == "N" .and. IzFmkIni("TOPS","INTEG","N",EXEPATH)=="D"
 	lReindex := .f.
 	nRes1:=ChkInt1(.f., @lReindex)
 	nRes2:=ChkInt2(.f., @lReindex)
