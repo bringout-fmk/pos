@@ -109,6 +109,11 @@ CREATE_INDEX ("2", "ID", KUMPATH+"INTEG2")
 // kreiraj index za tabelu ERRORS
 CREATE_INDEX ("1", "IDROBA+TYPE", PRIVPATH+"ERRORS")
 
+// OID indexi
+CREATE_INDEX("OID","_oid_",KUMPATH+"DOKS")
+CREATE_INDEX("OID","_oid_",KUMPATH+"POS")
+CREATE_INDEX("OID","_oid_",SIFPATH+"ROBA")
+
 return
 *}
 

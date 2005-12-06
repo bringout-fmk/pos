@@ -1,11 +1,12 @@
 #include "\dev\fmk\pos\pos.ch"
 
 
-/*! \fn UpdInt2(lForce)
+/*! \fn UpdInt2(lForce, lReindex)
  *  \brief Update podataka INTEG-2
  *  \param lForce - pokreni forsirano
+ *  \param lReindex - reindexirati tabele
  */
-function UpdInt2(lForce)
+function UpdInt2(lForce, lReindex)
 *{
 local dChDate
 local nNextID
@@ -33,6 +34,12 @@ dDateOd := dChDate - 10
 
 if !lForce .and. !RunInt2Upd()
 	return
+endif
+
+// ako treba reindexiraj tabele
+if !lReindex
+	Reindex(.t.)
+	lReindex := .t.
 endif
 
 MsgO("Vrsim analizu integriteta...molimo sacekajte!")
@@ -149,7 +156,7 @@ function RunInt2Upd()
 local dChkDate
 
 O_DINTEG2
-set order to tag "1"
+set order to tag "2"
 go bottom
 
 // koliko dana unazad treba cekati (def.5)
@@ -166,11 +173,12 @@ return .f.
 *}
 
 
-/*! \fn ChkInt2(lForce)
+/*! \fn ChkInt2(lForce, lReindex)
  *  \brief Provjera integriteta INTEG-2
  *  \param lForce - forsirano pokretanje
+ *  \param lReindex - reindexiraj tabele
  */
-function ChkInt2(lForce)
+function ChkInt2(lForce, lReindex)
 *{
 local nTest:=0 // id test integ1
 local dChkDate := DATE() - 1 // datum provjere
@@ -181,6 +189,7 @@ local cIdRoba
 local cIdTarifa
 local cRCjen
 local nOidRoba
+local lRunOidChk:=.f.
 
 //local cKFirma:="" // kalk id firma
 //local cKPKonto:="" // kalk konto prodavnice
@@ -196,13 +205,19 @@ if gSamoProdaja == "D"
 endif
 
 // da li treba provjeravati integritet i koji je test u pitanju
-if !RunInt2Chk(@nTest, @dChkDate, @lChkOk)
+if !RunInt2Chk(@nTest, @dChkDate, @lChkOk, lForce)
 	if !lForce 
 		return 0
 	elseif !lChkOk
 		// nije update dobar - prekini
 		return 0
 	endif
+endif
+
+// ako je potrebno reindexiraj tabele
+if !lReindex
+	Reindex(.t.)
+	lReindex := .t.
 endif
 
 dDateOd := dChkDate - 10
@@ -215,12 +230,9 @@ O_DOKS
 O_POS
 O_ERRORS
 O_INTEG2
-// otvori i kalk
-//OpenKalkDB(cKKPath)
 
 // probrisi tabelu errors
-select errors
-zap
+BrisiError()
 
 // prodji kroz POS
 select pos
@@ -313,6 +325,10 @@ do while !eof() .and. field->idodj == cIdOdj
 			else
 				AddToErrors("C", cIdRoba, "", "Greska u OID-u: (TOPSP)=" + ALLTRIM(STR(integ2->oidroba)) + ", (TOPSK)=" + ALLTRIM(STR(nOidRoba)) )
 			endif
+			
+			// ako je doslo do ovoga provjeri i oid-e
+			lRunOidChk := .t.
+			
 		// provjeri TARIFA
 		case integ2->idtarifa <> cIdTarifa
 			AddToErrors("C", cIdRoba, "", "Greska u tarifi: (TOPSP)=" + integ2->idtarifa + ", (TOPSK)=" + cIdTarifa )
@@ -320,7 +336,8 @@ do while !eof() .and. field->idodj == cIdOdj
 		// provjeri STANJE artikla kolicinski
 		case ROUND(integ2->stanjek,3) <> ROUND(nKStanje,3)
 			AddToErrors("C", cIdRoba, "", "Greska u prodaji kolicinski: (TOPSP)=" + ALLTRIM(STR(integ2->stanjek)) + ", (TOPSK)=" + ALLTRIM(STR(nKStanje)) )
-
+			// i ovo moze biti indikator dupliranog stanja
+			lRunOidChk := .t.
 		// provjeri stanje artikla finansijski
 		case ROUND(integ2->stanjef,3) <> ROUND(nFStanje,2)
 			AddToErrors("C", cIdRoba, "", "Greska u prodaji finansijski: (TOPSP)=" + ALLTRIM(STR(integ2->stanjef)) + ", (TOPSK)=" + ALLTRIM(STR(nFStanje)) )
@@ -336,8 +353,19 @@ do while !eof() .and. field->idodj == cIdOdj
 	select pos
 enddo
 
+// upisi da sam zavrsio provjeru
+if !lForce
+	Int2ChkOK(nTest)
+endif
+
 BoxC()
 MsgC()
+
+// ako je .t. pokreni i ovaj test
+if lRunOidChk
+	//     datum od, datum do, ne kompletne tabele (samo datumski period)
+	OidChk(dDateOd, dChkDate, .f.)
+endif
 
 return 1
 *}
@@ -346,20 +374,26 @@ return 1
 /*! \fn RunInt2Chk(nTest, dDate, lChkOk)
  *  \brief Treba li pokretati ChkInt2()
  */
-function RunInt2Chk(nTest, dDate, lChkOk)
+function RunInt2Chk(nTest, dDate, lChkOk, lForce)
 *{
 local dChkDate
 
 O_DINTEG2
-set order to tag "1"
+set order to tag "2"
 go bottom
 
 dChkDate := DATE()
 
 if ( field->datum == dChkDate )
-	if (field->chkok <> "D" )
-		lChkOk := .f.
-		return .f.
+	if !lForce
+		if (field->chkok == "Z")
+			lChkOk := .f.
+			return .f.
+		endif
+		if (field->chkok <> "U" )
+			lChkOk := .f.
+			return .f.
+		endif
 	endif
 	nTest := field->id
 	dDate := field->chkdat
@@ -405,7 +439,7 @@ if Found()
 		skip
 	enddo
 	select dinteg2
-	SmReplace("chkok", "D")
+	SmReplace("chkok", "U")
 	SmReplace("csum1", nCSum1)
 	SmReplace("csum2", nCSum2)
 	SmReplace("csum3", nCnt)
@@ -451,6 +485,25 @@ endif
 
 return .t.
 *}
+
+
+/*! \fn Int2ChkOK(nId)
+ *  \brief Upisuje da je check procedura zavrsena
+ */
+function Int2ChkOK(nId)
+*{
+O_DINTEG2
+select dinteg2
+set order to tag "2"
+hseek nId
+// prodanadji id testa
+if Found()
+	replace field->chkok with "Z"
+endif
+return
+*}
+
+
 
 
 /*! \fn AddDInteg2(nIntegID, dCDate)

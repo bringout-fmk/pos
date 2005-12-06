@@ -127,9 +127,18 @@ return cRet
 
 /*! \fn RptInteg()
  *  \brief report nakon testa integ1
+ *  \param lFilter - filter za kriticne greske
+ *  \param lAutoSent - automatsko slanje email-a
  */
-function RptInteg()
+function RptInteg(lFilter, lAutoSent)
 *{
+if (lFilter == nil)
+	lFilter := .f.
+endif
+if (lAutoSent == nil)
+	lAutoSent := .f.
+endif
+
 O_ERRORS
 select errors
 set order to tag "1"
@@ -139,7 +148,7 @@ if RecCount() == 0
 endif
 
 lOnlyCrit:=.f.
-if Pitanje(,"Prikazati samo critical errors (D/N)?","N")=="D"
+if lFilter .and. Pitanje(,"Prikazati samo critical errors (D/N)?","N")=="D"
 	lOnlyCrit:=.t.
 endif
 
@@ -199,6 +208,313 @@ enddo
 FF
 END PRINT
 
+RptSendEmail(lAutoSent)
+
+return
+*}
+
+/*! \fn RptSendEmail()
+ *  \brief Slanje reporta na email
+ */
+function RptSendEmail(lAuto)
+*{
+local cScript
+local cPSite
+local cRptFile
+
+if (lAuto == nil)
+	lAuto := .f.
+endif
+// postavi pitanje ako nije lAuto
+if !lAuto .and. Pitanje(,"Proslijediti report email-om (D/N)?", "D") == "N"
+	return
+endif
+
+// setuj varijable
+GetSendVars(@cScript, @cPSite, @cRptFile)
+// komanda je sljedeca
+cKom := cScript + " " + cPSite + " " + cRptFile 
+
+// snimi sliku i ocisti ekran
+save screen to cRbScr
+clear screen
+
+? "TOPS::err2mail send..."
+// pokreni komandu
+run &cKom
+
+Sleep(3)
+// vrati staro stanje ekrana
+restore screen from cRbScr
+
+return
+*}
+
+
+/*! \fn GetSendVars(cScript)
+ *  \param cScript - ruby skripta
+ *  \param cPSite - prodavnicki site
+ *  \param cRptFile - report fajl
+ */
+function GetSendVars(cScript, cPSite, cRptFile)
+*{
+cScript := IzFmkIni("Ruby","Err2Mail","c:\sigma\err2mail.rb", EXEPATH)
+cPSite := ALLTRIM(STR(gSqlSite))
+cRptFile := PRIVPATH + "outf.txt"
+return
+*}
+
+
+/*! \fn OidChk(dDatOd, dDatDo, lSve)
+ *  \brief Provjera duplih OID-a
+ *  \param dDatOd - datum od provjera
+ *  \param dDatDo - datum do provjera
+ *  \param lSve - kompletna tabela
+ */
+function OidChk(dDatOd, dDatDo, lSve)
+*{
+MsgO("Provjeravam integritet OID-a ...")
+
+// otvori box
+Box(,2,65)
+
+// provjeri pos
+O_POS
+select pos
+set order to tag "OID"
+PosOidChk(dDatOd, dDatDo, lSve)
+
+// provjeri doks
+O_DOKS
+select doks
+set order to tag "OID"
+DoksOidChk(dDatOd, dDatDo, lSve)
+
+// provjeri roba
+O_ROBA
+select roba
+set order to tag "OID"
+RobaOidChk()
+
+BoxC()
+MsgC()
+
+return
+*}
+
+
+/*! \fn PosOidChk()
+ *  \brief Provjera duplih oid-a u tabeli POS
+ *  \param dDatOd - datum od kojeg se vrsi provjera
+ *  \param dDatDo - datum do kojeg se vrsi provjera
+ *  \param lSve - kompletna tabela
+ */
+function PosOidChk(dDatOd, dDatDo, lSve)
+*{
+local nOid
+local cFirma
+local cBrDok
+local dDatum
+local cIdRoba
+local nKolicina
+local nCijena
+local nCnt
+local cIdVd
+local lReindex
+
+@ 1+m_x, 2+m_y SAY SPACE(65)
+@ 1+m_x, 2+m_y SAY "Vrsim provjeru tabele POS..."
+
+go top
+do while !EOF()
+	// uzmi glavne vrijednosti tekuceg zapisa
+	nOid := field->_oid_
+	cFirma := field->idpos
+	cBrDok := field->brdok
+	cIdVd := field->idvd
+	dDatum := field->datum
+	cRoba := field->idroba
+	nKolicina := field->kolicina
+	nCijena := field->cijena
+	nCnt := 0
+	
+	@ 2+m_x, 2+m_y SAY SPACE(65)
+	@ 2+m_x, 2+m_y SAY ALLTRIM(STR(nOid))
+	
+	do while !EOF() .and. field->_oid_ == nOid
+		// vrsi se provjera datumskog perioda
+		altd()
+		if !lSve
+			if (field->datum < dDatOd) .or. (field->datum > dDatDo)
+				skip
+				loop
+			endif
+		endif
+		++ nCnt
+		// ako je prvi zapis njega smo uzeli pa cemo ga preskociti
+		if (nCnt > 1)
+			if field->_oid_ == nOid
+				// uporedi zapise
+				if pos->(idpos + brdok + idvd + DToS(datum) + idroba + STR(kolicina) + STR(cijena)) == cFirma + cBrDok + cIdVd + DToS(dDatum) + cRoba + STR(nKolicina) + STR(nCijena)
+					// dupli oid isti zapisi
+					
+					// dodaj u pom.tabelu sta si izbrisao
+					AddToErrors("W", "OIDDEL", pos->idvd + "-" + pos->brdok + " od " + DToC(pos->datum), "POS.DBF: pobrisan OID " + ALLTRIM(STR(field->_oid_)) + "!")
+					// brisi ga
+					select pos
+					delete
+				else
+					// dupli oid razliciti zapisi
+					AddToErrors("C", "OIDERR", pos->idvd + "-" + pos->brdok + " od " + DToC(pos->datum), "POS.DBF: Postoji dupli OID, podaci polja nisu identicni!")
+					select pos
+				endif
+			endif
+		endif
+		
+		select pos		
+		skip
+	enddo
+enddo
+
+return 1
+*}
+
+
+/*! \fn DoksOidChk(dDatOd, dDatDo, lSve)
+ *  \brief Provjera duplih oida u tabeli DOKS
+ *  \param dDatOd - datum od provjera
+ *  \param dDatDo - datum do provjera
+ *  \param lAll - kompletna tabela
+ */
+function DoksOidChk(dDatOd, dDatDo, lSve)
+*{
+local nOid
+local cFirma
+local cBrDok
+local dDatum
+local cIdVd
+local nCnt
+
+@ 1+m_x, 2+m_y SAY SPACE(65)
+@ 1+m_x, 2+m_y SAY "Vrsim provjeru tabele DOKS ..."
+
+go top
+do while !EOF()
+	// uzmi glavne vrijednosti tekuceg zapisa
+	nOid := field->_oid_
+	cFirma := field->idpos
+	cBrDok := field->brdok
+	dDatum := field->datum
+	cIdVd := field->idvd
+	nCnt := 0
+	
+	@ 2+m_x, 2+m_y SAY SPACE(65)
+	@ 2+m_x, 2+m_y SAY ALLTRIM(STR(nOid))
+
+	do while !EOF() .and. field->_oid_ == nOid
+		// vrsi se provjera datumskog perioda
+		if !lSve
+			if (field->datum < dDatOd) .or. (field->datum > dDatDo)
+				skip
+				loop
+			endif
+		endif
+		
+		++ nCnt
+		// ako je prvi zapis njega smo uzeli pa cemo ga preskociti
+		if (nCnt > 1)
+			if field->_oid_ == nOid
+				// uporedi zapise
+				if doks->(idpos + brdok + DToS(datum) + idvd) == cFirma + cBrDok + DToS(dDatum) + cIdVd
+					// dupli oid isti zapisi
+				
+					// dodaj u pom.tabelu sta si izbrisao
+					AddToErrors("W", "OIDDEL", doks->idvd + "-" + doks->brdok + " od " + DToC(doks->datum), "DOKS.DBF: pobrisan OID " + ALLTRIM(STR(field->_oid_)) + "!")
+					// brisi ga
+					select doks
+					delete
+				else
+					// dupli oid razliciti zapisi
+					AddToErrors("C", "OIDERR", doks->idvd + "-" + doks->brdok + " od " + DToC(doks->datum), "DOKS.DBF: Postoji dupli OID, podaci polja nisu identicni!")
+					select doks
+				endif
+			endif
+		endif
+		
+		select doks
+		skip
+	enddo
+enddo
+
+return 1
+*}
+
+
+/*! \fn RobaOidChk()
+ *  \brief Provjera duplih oid-a u tabeli ROBA
+ */
+function RobaOidChk()
+*{
+local nOid
+local cIdRoba
+local cRobaNaz
+local nCijena1
+local cTarifa
+local nCnt
+
+@ 1+m_x, 2+m_y SAY SPACE(65)
+@ 1+m_x, 2+m_y SAY "Vrsim provjeru tabele ROBA ..."
+
+go top
+do while !EOF()
+	// uzmi glavne vrijednosti tekuceg zapisa
+	nOid := field->_oid_
+	cIdRoba := field->id
+	cRobaNaz := field->naz
+	nCijena1 := field->cijena1
+	cTarifa := field->idtarifa
+	nCnt := 0
+	
+	@ 2+m_x, 2+m_y SAY SPACE(65)
+	@ 2+m_x, 2+m_y SAY ALLTRIM(STR(nOid))
+
+	do while !EOF() .and. field->_oid_ == nOid
+		++ nCnt
+		// ako je prvi zapis njega smo uzeli pa cemo ga preskociti
+		if (nCnt > 1)
+			if field->_oid_ == nOid
+				// uporedi zapise
+				if roba->(id + naz + idtarifa + STR(cijena1)) == cIdRoba + cRobaNaz + cTarifa + STR(nCijena1)
+					// dupli oid isti zapisi
+					// dodaj u pom.tabelu sta si izbrisao
+					AddToErrors("W", "OIDDEL", roba->id + "-" + roba->naz, "ROBA.DBF: Pobrisan oid " + ALLTRIM(STR(field->_oid_))+ "!")
+					// brisi ga
+					select roba
+					delete
+				else
+					// dupli oid razliciti zapisi
+					AddToErrors("C", "OIDERR", roba->id + "-" + roba->naz, "ROBA.DBF: Postoji dupli OID, podaci polja nisu identicni!")
+					select roba
+				endif
+			endif
+		endif
+		
+		select roba
+		skip
+	enddo
+enddo
+
+return 1
+*}
+
+/*! \fn BrisiError()
+ *  \brief Brisanje tabele Errors.dbf
+ */
+function BrisiError()
+*{
+O_ERRORS
+select errors
+zap
 return
 *}
 

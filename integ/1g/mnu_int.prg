@@ -10,10 +10,12 @@ private opc:={}
 private opcexe:={}
 private izbor:=1
 
-AADD(opc, "1. INTEG-1: stanje artikala       ")
+AADD(opc, "1. INTEG-1: stanje artikala                   ")
 AADD(opcexe, {|| CaseInt1()})
 AADD(opc, "2. INTEG-2: stanje prodaje ")
 AADD(opcexe, {|| CaseInt2()})
+AADD(opc, "O. OIDERR: provjera duplih oid-a u tabelama ")
+AADD(opcexe, {|| CaseIntOid()})
 
 Menu_SC("int")
 
@@ -26,10 +28,10 @@ return
 function CaseInt1()
 *{
 if gSamoProdaja=="D"
-	UpdInt1(.t.)
+	UpdInt1(.t., .f.)
 else
-	ChkInt1(.t.)
-	RptInteg()
+	ChkInt1(.t., .f.)
+	RptInteg(.t., .f.)
 endif
 return
 *}
@@ -40,10 +42,26 @@ return
 function CaseInt2()
 *{
 if gSamoProdaja=="D"
-	UpdInt2(.t.)
+	UpdInt2(.t., .f.)
 else
-	ChkInt2(.t.)
-	RptInteg()
+	ChkInt2(.t., .f.)
+	RptInteg(.t., .f.)
+endif
+return
+*}
+
+
+/*! \fn CaseIntOid()
+ *  \brief pokretanje provjere oid-a
+ */
+function CaseIntOid()
+*{
+if gSamoProdaja=="N"
+	// prvo reindexiraj
+	Reindex(.t.)
+	BrisiError()
+	OidChk(DATE(), DATE(), .t.)
+	RptInteg(.t., .f.)
 endif
 return
 *}

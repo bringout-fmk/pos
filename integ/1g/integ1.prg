@@ -1,10 +1,10 @@
 #include "\dev\fmk\pos\pos.ch"
 
 
-/*! \fn UpdInt1()
+/*! \fn UpdInt1(lForce, lReindex)
  *  \brief Pokrecu se testovi INTEG-1
  */
-function UpdInt1(lForce)
+function UpdInt1(lForce, lReindex)
 *{
 if lForce == nil
 	lForce := .f.
@@ -14,6 +14,12 @@ endif
 dChDate := DATE() - 1
 if !lForce .and. !RunInt1Upd()
 	return
+endif
+
+// ako treba reindexiraj tabele
+if !lReindex
+	Reindex(.t.)
+	lReindex := .t.
 endif
 
 MsgO("Vrsim analizu integriteta...molimo sacekajte!")
@@ -49,7 +55,6 @@ Box(,3,65)
 do while !eof() .and. field->idodj == cIdOdj
 	
 	
-	altd()
 	// setuj osnovne varijable	
 	nFStanje:=0
 	nKStanje:=0
@@ -168,7 +173,7 @@ if Found()
 		skip
 	enddo
 	select dinteg1	
-	SmReplace("chkok", "D")
+	SmReplace("chkok", "U")
 	SmReplace("csum1", nCSum1)
 	SmReplace("csum2", nCSum2)
 	SmReplace("csum3", nCnt)
@@ -216,12 +221,29 @@ return .t.
 *}
 
 
+/*! \fn Int1ChkOK(nId)
+ *  \brief Upisuje da je check procedura zavrsena
+ */
+function Int1ChkOK(nId)
+*{
+O_DINTEG1
+select dinteg1
+set order to tag "2"
+hseek nId
+// prodanadji id testa
+if Found()
+	replace field->chkok with "Z"
+endif
 
-/*! \fn ChkInt1(lForce)
+return
+*}
+
+/*! \fn ChkInt1(lForce, lReindex)
  *  \brief Provjeri test INTEG-1
  *  \param lForce - forsirano
+ *  \param lReindex - reindexirati tabele
  */
-function ChkInt1(lForce)
+function ChkInt1(lForce, lReindex)
 *{
 // privatne varijable
 private nTest:=0 // id test integ1
@@ -242,13 +264,19 @@ if gSamoProdaja == "D"
 endif
 
 // da li treba provjeravati integritet i koji je test u pitanju
-if !RunInt1Chk(@nTest, @dChkDate, @lChkOk)
+if !RunInt1Chk(@nTest, @dChkDate, @lChkOk, lForce)
 	if !lForce 
 		return 0
 	elseif !lChkOk
 		// nije update dobar - prekini
 		return 0
 	endif
+endif
+
+// ako treba reindexiraj tabele
+if !lReindex
+	Reindex(.t.)
+	lReindex := .t.
 endif
 
 // uzmi kalk varijable
@@ -262,8 +290,7 @@ O_INTEG1
 // otvori i kalk
 OpenKalkDB(cKKPath)
 
-select errors
-zap
+BrisiError()
 
 // prodji kroz POS
 select pos
@@ -456,6 +483,10 @@ do while !eof() .and. field->idodj == cIdOdj
 	select pos
 enddo
 
+// upisi da sam zavrsio provjeru
+if !lForce
+	Int1ChkOK(nTest)
+endif
 if lForce
 	// ako je forsirano pokretanje opcije pokreni i test KALK->TOPS
 	Int1KalkTops(nTest, dChkDate)
@@ -560,7 +591,7 @@ function RunInt1Upd()
 local dChkDate
 
 O_DINTEG1
-set order to tag "1"
+set order to tag "2"
 go bottom
 
 // koliko dana unazad treba cekati
@@ -577,26 +608,32 @@ return .f.
 *}
 
 
-/*! \fn RunInt1Chk(nTest, lChkOk)
+/*! \fn RunInt1Chk(nTest, lChkOk, lForce)
  *  \brief Provjerava da li treba pokrenuti provjeru integriteta u knjigovodstvu
  *  \param nTest - id integ1
  *  \param dDate - datum provjere
  *  \param lChkOk - da li je odradjen update 
  */
-function RunInt1Chk(nTest, dDate, lChkOk)
+function RunInt1Chk(nTest, dDate, lChkOk, lForce)
 *{
 local dChkDate
 
 O_DINTEG1
-set order to tag "1"
+set order to tag "2"
 go bottom
 
 dChkDate := DATE()
 
 if ( field->datum == dChkDate )
-	if (field->chkok <> "D" )
-		lChkOk := .f.
-		return .f.
+	if !lForce
+		if (field->chkok == "Z")
+			lChkOk := .f.
+			return .f.
+		endif
+		if (field->chkok <> "U")
+			lChkOk := .f.
+			return .f.
+		endif
 	endif
 	nTest := field->id
 	dDate := field->chkdat
