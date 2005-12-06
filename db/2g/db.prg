@@ -1389,8 +1389,9 @@ endif
 
 // vazi samo za prodavnicu
 if gSamoProdaja == "D"
-	UpdInt1()
-	UpdInt2()
+	lReindex := .f.
+	UpdInt1(.f., @lReindex)
+	UpdInt2(.f., @lReindex)
 else
 	return
 endif
@@ -1416,13 +1417,11 @@ nRes1:=0
 nRes2:=0
 
 if gSamoProdaja == "N"
-	if Pitanje(,"Provjeriti integritet podataka (D/N)?","D")=="N"
-		return
-	endif
-	nRes1:=ChkInt1()
-	nRes2:=ChkInt2()
+	lReindex := .f.
+	nRes1:=ChkInt1(.f., @lReindex)
+	nRes2:=ChkInt2(.f., @lReindex)
 	if (nRes1 + nRes2) <> 0
-		RptInteg()
+		RptInteg(.f., .t.)
 	endif
 else
 	return
