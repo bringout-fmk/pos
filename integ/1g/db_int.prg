@@ -25,7 +25,7 @@ if !FILE(KUMPATH + "DINTEG1.DBF") .or. !FILE(KUMPATH + "DINTEG2.DBF")
 	aDbf := {}
 	AADD(aDbf, {"ID", "N", 20, 0})
 	AADD(aDbf, {"DATUM", "D", 8, 0})
-	AADD(aDbf, {"VRIJEME", "C", 5, 0 })
+	AADD(aDbf, {"VRIJEME", "C", 8, 0 })
 	AADD(aDbf, {"CHKDAT", "D", 8, 0 })
 	AADD(aDbf, {"CHKOK", "C", 1, 0 })
 	AADD(aDbf, {"CSUM1", "N", 20, 5 })
