@@ -308,7 +308,7 @@ nPcStanje:=0
 
 Box(,2,65)
 
-@ 1+m_x, 2+m_y SAY "Vrsim provjeru integriteta stanja, na dan " + DToC(dChkDate) + " br." + ALLTRIM(STR(nTest)) 
+@ 1+m_x, 2+m_y SAY "Vrsim provjeru integriteta stanja, na dan " + DToC(dChkDate) + " br." + ALLTRIM(STR(nTest)) + " K" + ALLTRIM(cKPKonto) 
 
 do while !eof() .and. field->idodj == cIdOdj
 	
