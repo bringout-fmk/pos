@@ -359,7 +359,7 @@ do while !eof() .and. field->idodj == cIdOdj
 		hseek pos->idpos + pos->idvd + DTOS(pos->datum) + pos->brdok
 		
 		if !Found()
-			AddToErrors("C", cIdRoba, pos->idvd + "-" + ALLTRIM(pos->brdok) + ", datuma:" + DTOC(pos->datum), "Za ovaj dokument ne postoji DOKS master zapis!" )
+			AddToErrors("C", "DOKSERR", pos->idvd + "-" + ALLTRIM(pos->brdok) + "-" + DToC(pos->datum), "Za ovaj dokument ne postoji DOKS master zapis!" )
 		endif
 		
 		select pos

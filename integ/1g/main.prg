@@ -162,6 +162,8 @@ nCrit:=0
 nNorm:=0
 nWarr:=0
 nCnt:=1
+cTmpDoks:="XXXX"
+
 
 go top
 do while !EOF()
@@ -179,6 +181,16 @@ do while !EOF()
 			skip
 			loop
 		endif
+		
+		// ako je prazno DOKSERR onda fali doks
+		if cErRoba = "DOKSERR"
+			if ALLTRIM(field->doks) == cTmpDoks
+				skip
+				loop
+			endif
+		endif
+		
+		cTmpDoks := ALLTRIM(field->doks)
 		
 		++nCnt
 		
