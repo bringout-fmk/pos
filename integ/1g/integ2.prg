@@ -205,10 +205,10 @@ if gSamoProdaja == "D"
 endif
 
 // da li treba provjeravati integritet i koji je test u pitanju
-if !RunInt2Chk(@nTest, @dChkDate, @lChkOk, lForce)
-	if !lForce 
+if !RunInt2Chk(@nTest, @dChkDate, @lChkOk, @lForce)
+	if lForce == .f.
 		return 0
-	elseif !lChkOk
+	elseif lChkOk == .f.
 		// nije update dobar - prekini
 		return 0
 	endif
@@ -392,32 +392,37 @@ go bottom
 
 dChkDate := DATE()
 
-if ( field->datum == dChkDate )
-	if !lForce
+// ako nije forsirano provjeri datum
+if !lForce
+	if ( field->datum == dChkDate )
 		if (field->chkok == "Z")
 			lChkOk := .f.
 			return .f.
 		endif
-		if (field->chkok <> "U" )
+		if (field->chkok <> "U")
 			lChkOk := .f.
 			return .f.
 		endif
-	endif
-	nTest := field->id
-	dDate := field->chkdat
-	// provjeri checksum
-	if !GetCSum2(nTest)
-		MsgBeep("Checksum nije OK!!!")	
+	else
 		lChkOk := .f.
 		return .f.
 	endif
-	
-	lChkOk := .t.
-	return .t.
 endif
 
-return .f.
+// dodijeli parametre
+nTest := field->id
+dDate := field->chkdat
+// provjeri checksum
+if !GetCSum2(nTest)
+	MsgBeep("Checksum nije OK!!!")	
+	lChkOk := .f.
+	return .f.
+endif
+
+lChkOk := .t.
+return .t.
 *}
+
 
 /*! \fn UpdCSum2(nId)
  *  \brief Dodaj checksum zapis u DINTEG2

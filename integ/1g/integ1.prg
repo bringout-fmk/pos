@@ -245,6 +245,7 @@ return
  */
 function ChkInt1(lForce, lReindex)
 *{
+local lOidChk := .f.
 // privatne varijable
 private nTest:=0 // id test integ1
 private dChkDate := DATE() - 1 // datum provjere
@@ -264,10 +265,10 @@ if gSamoProdaja == "D"
 endif
 
 // da li treba provjeravati integritet i koji je test u pitanju
-if !RunInt1Chk(@nTest, @dChkDate, @lChkOk, lForce)
-	if !lForce 
+if !RunInt1Chk(@nTest, @dChkDate, @lChkOk, @lForce)
+	if lForce == .f. 
 		return 0
-	elseif !lChkOk
+	elseif lChkOk == .f.
 		// nije update dobar - prekini
 		return 0
 	endif
@@ -321,9 +322,15 @@ do while !eof() .and. field->idodj == cIdOdj
   
   	cIdRoba:=field->IdRoba
 	
+	altd()
+	
 	select integ1
 	set order to tag "1"
 	hseek STR(nTest) + cIdRoba
+	
+	if (integ1->idroba <> cIdRoba)
+		lOidChk := .t.
+	endif
 	
 	// pronadji robu	
 	select roba
@@ -391,11 +398,10 @@ do while !eof() .and. field->idodj == cIdOdj
 		
 		skip
 	enddo
-
+	
 	nUkCijena += nRCjen
 	nUkRobaCnt += nRobaCnt
 	nUkKartCnt += nPcStanje // dodaj i dok.pocetnog stanja
-	
 	nFStanje := nKStanje * nRCjen
 	nUkFStanje += nFStanje
 
@@ -634,8 +640,9 @@ go bottom
 
 dChkDate := DATE()
 
-if ( field->datum == dChkDate )
-	if !lForce
+// ako nije forsirano provjeri datum
+if !lForce
+	if ( field->datum == dChkDate )
 		if (field->chkok == "Z")
 			lChkOk := .f.
 			return .f.
@@ -644,21 +651,24 @@ if ( field->datum == dChkDate )
 			lChkOk := .f.
 			return .f.
 		endif
-	endif
-	nTest := field->id
-	dDate := field->chkdat
-	// provjeri checksum
-	if !GetCSum1(nTest)
-		MsgBeep("Checksum nije OK!!!")	
+	else
 		lChkOk := .f.
 		return .f.
 	endif
-	
-	lChkOk := .t.
-	return .t.
 endif
 
-return .f.
+// dodijeli parametre
+nTest := field->id
+dDate := field->chkdat
+// provjeri checksum
+if !GetCSum1(nTest)
+	MsgBeep("Checksum nije OK!!!")	
+	lChkOk := .f.
+	return .f.
+endif
+
+lChkOk := .t.
+return .t.
 *}
 
 
