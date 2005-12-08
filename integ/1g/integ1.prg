@@ -442,7 +442,10 @@ do while !eof() .and. field->idodj == cIdOdj
 		// provjeri OID
 		case integ1->oidroba <> nOidRoba
 			AddToErrors("C", cIdRoba, "", "Greska u OID-u: (TOPSP)=" + ALLTRIM(STR(integ1->oidroba)) + ", (TOPSK)=" + ALLTRIM(STR(nOidRoba)) )
-		
+			// pokreni update sifre iz TOPS-K
+			GenSifProd(cIdRoba)
+			select pos
+			
 		// provjeri TARIFA
 		case integ1->idtarifa <> cIdTarifa
 			AddToErrors("C", cIdRoba, "", "Greska u tarifi: (TOPSP)=" + integ1->idtarifa + ", (TOPSK)=" + cIdTarifa )
@@ -462,6 +465,9 @@ do while !eof() .and. field->idodj == cIdOdj
 		// provjeri broj istih artikala u sifrarniku artikala
 		case integ1->sifrobacnt > 1 .or. nRobaCnt > 1
 			AddToErrors("W", cIdRoba, "", "Postoje duple sifre: (TOPSP)=" + ALLTRIM(STR(integ1->sifrobacnt)) + ", (TOPSK)=" + ALLTRIM(STR(nRobaCnt)) )
+			// generisi i sifru za prodavnicu
+			GenSifProd(cIdRoba)
+			select pos	
 		// provjeri cijenu artikla
 		case integ1->robacijena <> nRCjen
 			AddToErrors("C", cIdRoba, "", "Greska u cijeni artikla: (TOPSP)=" + ALLTRIM(STR(integ1->robacijena)) + ", (TOPSK)=" + ALLTRIM(STR(nRCjen)) )
@@ -487,6 +493,7 @@ enddo
 if !lForce
 	Int1ChkOK(nTest)
 endif
+
 if lForce
 	// ako je forsirano pokretanje opcije pokreni i test KALK->TOPS
 	Int1KalkTops(nTest, dChkDate)

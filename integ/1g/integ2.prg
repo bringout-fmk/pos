@@ -324,6 +324,8 @@ do while !eof() .and. field->idodj == cIdOdj
 				AddToErrors("N", cIdRoba, "", "Provjerite OID: (TOPSP)=" + ALLTRIM(STR(integ2->oidroba)) + ", (TOPSK)=" + ALLTRIM(STR(nOidRoba)) )
 			else
 				AddToErrors("C", cIdRoba, "", "Greska u OID-u: (TOPSP)=" + ALLTRIM(STR(integ2->oidroba)) + ", (TOPSK)=" + ALLTRIM(STR(nOidRoba)) )
+				// generisi novu sifru za prodavnicu
+				GenSifProd(cIdRoba)
 			endif
 			
 			// ako je doslo do ovoga provjeri i oid-e
@@ -345,6 +347,9 @@ do while !eof() .and. field->idodj == cIdOdj
 		// provjeri broj istih artikala u sifrarniku artikala
 		case integ2->sifrobacnt > 1 .or. nRobaCnt > 1
 			AddToErrors("W", cIdRoba, "", "Postoje duple sifre: (TOPSP)=" + ALLTRIM(STR(integ2->sifrobacnt)) + ", (TOPSK)=" + ALLTRIM(STR(nRobaCnt)) )
+			// generisi novu sifru za prodavnicu
+			GenSifProd(cIdRoba)
+			
 		// provjeri cijenu artikla
 		case integ2->robacijena <> nRCjen
 			AddToErrors("C", cIdRoba, "", "Greska u cijeni artikla: (TOPSP)=" + ALLTRIM(STR(integ2->robacijena)) + ", (TOPSK)=" + ALLTRIM(STR(nRCjen)) )

@@ -144,7 +144,7 @@ select errors
 set order to tag "1"
 if RecCount() == 0
 	MsgBeep("Integritet podataka ok")
-	return
+	//return
 endif
 
 lOnlyCrit:=.f.
@@ -515,6 +515,16 @@ function BrisiError()
 O_ERRORS
 select errors
 zap
+return
+*}
+
+
+/*! \fn GenSifProd(cIdRoba)
+ *  \brief generisi log za sifre artikala u prodavnici
+ */
+function GenSifProd(cIdRoba)
+*{
+LogRecRoba(cIdRoba)
 return
 *}
 
