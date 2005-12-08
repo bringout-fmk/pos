@@ -1247,7 +1247,7 @@ Box(,1,60)
 	read
 BoxC()
 
-if Empty(ALLTRIM(cTipDok)) .and. Pitanje(,"Izbrisati doks ??","D")=="D"
+if Empty(ALLTRIM(cTipDok)) .and. Pitanje(,"Izbrisati doks ??","N")=="D"
 	ZAPP()
 	if gSQL=="D"
 		Gw("update doks set BRISANO='1'")
