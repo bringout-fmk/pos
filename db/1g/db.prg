@@ -1247,7 +1247,7 @@ Box(,1,60)
 	read
 BoxC()
 
-if Pitanje(,"Izbrisati doks ??","D")=="D"
+if Empty(ALLTRIM(cTipDok)) .and. Pitanje(,"Izbrisati doks ??","D")=="D"
 	ZAPP()
 	if gSQL=="D"
 		Gw("update doks set BRISANO='1'")
@@ -1260,7 +1260,7 @@ GO TOP
 
 do while !eof()
 	
-	if !Empty(cTipDok)
+	if !Empty(ALLTRIM(cTipDok))
 		if pos->idvd <> cTipDok
 			skip
 			loop
@@ -1272,7 +1272,18 @@ do while !eof()
      		skip
   	enddo
   	SELECT doks
-  	APPEND BLANK
+	
+	if !Empty(ALLTRIM(cTipDok))
+		set order to tag "1"
+		hseek _idpos + _idvd + DTOS(_datum)
+		if Found()
+			select pos
+			skip
+			loop
+		endif
+	endif
+  	
+	APPEND BLANK
 	if gSQL=="D"
 	  	sql_append()
 	endif
