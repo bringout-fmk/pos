@@ -7,6 +7,8 @@
 function CreDIntDB()
 *{
 
+ChkDTbl()
+
 // provjeri da li postoji tabela ERRORS.DBF
 if !FILE(PRIVPATH+"ERRORS.DBF")
 	aDbf := {}
@@ -62,6 +64,15 @@ if !FILE(KUMPATH + "INTEG1.DBF")
 	AADD(aDbf, {"KALKKARTCNT", "N", 6, 0})
 	AADD(aDbf, {"KALKKSTANJE", "N", 20, 5})
 	AADD(aDbf, {"KALKFSTANJE", "N", 20, 5})
+	AADD(aDbf, {"N1", "N", 12, 0})
+	AADD(aDbf, {"N2", "N", 12, 0})
+	AADD(aDbf, {"N3", "N", 12, 0})
+	AADD(aDbf, {"C1", "C", 20, 0})
+	AADD(aDbf, {"C2", "C", 20, 0})
+	AADD(aDbf, {"C3", "C", 20, 0})
+	AADD(aDbf, {"DAT1", "D", 8, 0})
+	AADD(aDbf, {"DAT2", "D", 8, 0})
+	AADD(aDbf, {"DAT3", "D", 8, 0})
 	// + spec.OID polja
 	if gSql=="D"
 		AddOidFields(@aDbf)
@@ -84,6 +95,15 @@ if !FILE(KUMPATH + "INTEG2.DBF")
 	AADD(aDbf, {"STANJEK", "N", 20, 5})
 	AADD(aDbf, {"SIFROBACNT", "N", 15, 0})
 	AADD(aDbf, {"ROBACIJENA", "N", 15, 5})
+	AADD(aDbf, {"N1", "N", 12, 0})
+	AADD(aDbf, {"N2", "N", 12, 0})
+	AADD(aDbf, {"N3", "N", 12, 0})
+	AADD(aDbf, {"C1", "C", 20, 0})
+	AADD(aDbf, {"C2", "C", 20, 0})
+	AADD(aDbf, {"C3", "C", 20, 0})
+	AADD(aDbf, {"DAT1", "D", 8, 0})
+	AADD(aDbf, {"DAT2", "D", 8, 0})
+	AADD(aDbf, {"DAT3", "D", 8, 0})
 	// + spec.OID polja
 	if gSql=="D"
 		AddOidFields(@aDbf)
@@ -116,6 +136,24 @@ CREATE_INDEX("OID","_oid_",SIFPATH+"ROBA")
 
 return
 *}
+
+/*! \fn ChkDTbl()
+ *  \brief 
+ */
+function ChkDTbl()
+*{
+if FILE(KUMPATH + "INTEG1.DBF")
+	O_INTEG1
+	// ako nema polja N1 pobrisi tabele i generisi nove tabele
+	if integ1->(FieldPos("N1")) == 0
+		// trala lalalalall
+		FErase(KUMPATH + "INTEG1")
+		FErase(KUMPATH + "INTEG2")
+	endif
+endif
+return
+*}
+
 
 /*! \fn DInt1NextID()
  *  \brief Vrati sljedeci zapis polja ID za tabelu DINTEG1

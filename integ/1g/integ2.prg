@@ -22,6 +22,8 @@ local nRCjen
 local cIdTarifa
 local nOidRoba
 local dDateOd
+local dKLast
+local dPLast
 
 if lForce == nil
 	lForce := .f.
@@ -100,7 +102,7 @@ do while !eof() .and. field->idodj == cIdOdj
 		endif
 
 		// ako je dokument 96 - preskoci
-		if field->idvd=="96"
+		if field->idvd $ "96#99"
     			skip
 			loop
     		endif
@@ -112,6 +114,8 @@ do while !eof() .and. field->idodj == cIdOdj
 			loop
 		endif
       		
+		dPLast := field->datum
+		
 		skip
 	enddo
 
@@ -123,7 +127,7 @@ do while !eof() .and. field->idodj == cIdOdj
 	nFStanje := nKStanje * nRCjen
 	
 	// upisi zapis u INTEG2.DBF
-	AddInteg2(nNextID, cIdRoba, nOidRoba, cIdTarifa, nKStanje, nFStanje, nRobaCnt, nRCjen)	
+	AddInteg2(nNextID, cIdRoba, nOidRoba, cIdTarifa, nKStanje, nFStanje, nRobaCnt, nRCjen, dPLast, nil, nil, nil, nil, nil, nil, nil, nil)	
 	
 	select pos
 enddo
@@ -190,6 +194,9 @@ local cIdTarifa
 local cRCjen
 local nOidRoba
 local lRunOidChk:=.f.
+local lEtySif := .f.
+local dPLast 
+local dKLast
 
 //local cKFirma:="" // kalk id firma
 //local cKPKonto:="" // kalk konto prodavnice
@@ -222,9 +229,6 @@ endif
 
 dDateOd := dChkDate - 10
 
-// uzmi kalk varijable
-//GetKalkVars(@cKFirma, @cKPKonto, @cKKPath)
-
 O_ROBA
 O_DOKS
 O_POS
@@ -254,6 +258,10 @@ do while !eof() .and. field->idodj == cIdOdj
 	lOidChk:=.f.
   
   	cIdRoba:=field->IdRoba
+	
+	if ALLTRIM(cIdRoba) == ""
+		lEtySif := .t.
+	endif
 	
 	select integ2
 	set order to tag "1"
@@ -285,7 +293,7 @@ do while !eof() .and. field->idodj == cIdOdj
 			loop
 		endif
 		// ako je dokument 96 preskoci
-		if field->idvd=="96"
+		if field->idvd $ "96#99"
     			skip
 			loop
     		endif
@@ -304,6 +312,8 @@ do while !eof() .and. field->idodj == cIdOdj
 		if !Found()
 			AddToErrors("C", "DOKSERR", pos->idvd + "-" + ALLTRIM(pos->brdok) + "-" + DToC(pos->datum), "Za ovaj dokument ne postoji DOKS master zapis!" )
 		endif
+		
+		dPLast := field->datum
 		
 		select pos
 		skip
@@ -357,6 +367,8 @@ do while !eof() .and. field->idodj == cIdOdj
 		case integ2->robacijena <> nRCjen
 			AddToErrors("C", cIdRoba, "", "Greska u cijeni artikla: (TOPSP)=" + ALLTRIM(STR(integ2->robacijena)) + ", (TOPSK)=" + ALLTRIM(STR(nRCjen)) )
 	endcase
+	
+	lEtySif := .f.
 	
 	select pos
 enddo
@@ -543,7 +555,7 @@ return
  *  \brief Upisi zapis u tabelu INTEG2.DBF
  *  \param nIntegID - ID - veza sa tabelom DINTEG2
  */
-function AddInteg2(nIntegID, cRoba, nOidRoba, cIdTarifa, nStanjeK, nStanjeF, nRobaCnt, nCijena)
+function AddInteg2(nIntegID, cRoba, nOidRoba, cIdTarifa, nStanjeK, nStanjeF, nRobaCnt, nCijena, dDat1, dDat2, dDat3, nN1, nN2, nN3, cC1, cC2, cC3)
 *{
 O_INTEG2
 select integ2
@@ -558,6 +570,33 @@ SmReplace("stanjek", nStanjeK)
 SmReplace("stanjef", nStanjeF)
 SmReplace("sifrobacnt", nRobaCnt)
 SmReplace("robacijena", nCijena)
+if nN1 <> nil
+	SmReplace("N1", nN1)
+endif
+if nN2 <> nil
+	SmReplace("N2", nN2)
+endif
+if nN3 <> nil
+	SmReplace("N3", nN3)
+endif
+if cC1 <> nil
+	SmReplace("C1", cC1)
+endif
+if cC2 <> nil
+	SmReplace("C2", cC2)
+endif
+if cC3 <> nil
+	SmReplace("C3", cC3)
+endif
+if dDat1 <> nil
+	SmReplace("DAT1", dDat1)
+endif
+if dDat2 <> nil
+	SmReplace("DAT2", dDat2)
+endif
+if dDat3 <> nil
+	SmReplace("DAT3", dDat3)
+endif
 
 return
 *}

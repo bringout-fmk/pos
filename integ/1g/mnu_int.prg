@@ -30,8 +30,10 @@ function CaseInt1()
 if gSamoProdaja=="D"
 	UpdInt1(.t., .f.)
 else
-	ChkInt1(.t., .f.)
-	RptInteg(.t., .f.)
+	if !EmptDInt(1)
+		ChkInt1(.t., .f.)
+		RptInteg(.t., .f.)
+	endif
 endif
 return
 *}
@@ -44,8 +46,10 @@ function CaseInt2()
 if gSamoProdaja=="D"
 	UpdInt2(.t., .f.)
 else
-	ChkInt2(.t., .f.)
-	RptInteg(.t., .f.)
+	if !EmptDInt(2)
+		ChkInt2(.t., .f.)
+		RptInteg(.t., .f.)
+	endif
 endif
 return
 *}

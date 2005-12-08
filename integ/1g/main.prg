@@ -12,7 +12,7 @@ function GetKalkVars(cFirma, cKonto, cPath)
 cFirma:="50"
 // konto prodavnicki
 cKonto := IzFmkIni("TOPS", "TopsKalkKonto", "13270", KUMPATH)
-cKonto := PADR(cKPKonto, 7)
+cKonto := PADR(cKonto, 7)
 // putanja
 cPath := IzFmkIni("TOPS", "KalkKumPath", "i:\sigma", KUMPATH)
 return
@@ -115,11 +115,13 @@ function GetErrorDesc(cType)
 cRet := ""
 do case
 	case cType == "C"
-		cRet := "Critical"
+		cRet := "Critical:"
 	case cType == "N"
-		cRet := "Normal"
+		cRet := "Normal:  "
 	case cType == "W"
-		cRet := "Warrning"
+		cRet := "Warrning:"
+	case cType == "P"
+		cRet := "Probably OK:"
 endcase
 
 return cRet
@@ -161,6 +163,7 @@ START PRINT CRET
 nCrit:=0
 nNorm:=0
 nWarr:=0
+nPrOk:=0
 nCnt:=1
 cTmpDoks:="XXXX"
 
@@ -205,6 +208,10 @@ do while !EOF()
 		if ALLTRIM(field->type) == "W"
 			++ nWarr 
 		endif
+		if ALLTRIM(field->type) == "P"
+			++ nPrOk
+		endif
+	
 		skip
 	enddo
 enddo
@@ -214,6 +221,7 @@ enddo
 ? "Critical errors:", ALLTRIM(STR(nCrit))
 ? "Normal errors:", ALLTRIM(STR(nNorm))
 ? "Warrnings:", ALLTRIM(STR(nWarr))
+? "Probably OK:", ALLTRIM(STR(nPrOK))
 ?
 ?
 
@@ -540,4 +548,24 @@ LogRecRoba(cIdRoba)
 return
 *}
 
+/*! \fn EmptDInt(nInteg)
+ *  \brief Da li je prazna tabela dinteg
+ */
+function EmptDInt(nInteg)
+*{
+local cInteg := ALLTRIM(STR(nInteg))
+local cTbl := "DINTEG" + cInteg
+O_DINTEG1
+O_DINTEG2
+select &cTbl
+
+if RecCount() == 0
+	MsgBeep("Tabela " + cTbl + " je prazna !!!")
+	return .t.
+else
+	return .f.
+endif
+
+return
+*}
 

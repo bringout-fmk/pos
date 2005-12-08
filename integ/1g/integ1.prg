@@ -6,6 +6,23 @@
  */
 function UpdInt1(lForce, lReindex)
 *{
+local cIdOdj:="  " // id odjeljenje
+local nUkCijena:=0 // ukupno cijena
+local nUkKartCnt:=0 // ukupno kartica
+local nUkRobaCnt:=0 // ukupno roba cnt
+local nUkFStanje:=0 // ukupno fin.stanje
+local nUkKStanje:=0 // ukupno kol.stanje
+local nPcStanje:=0 // pocetno stanje
+local dChDate // datum provjere integriteta
+local nNextId // sljedeci brojac za testove
+local nFStanje // fin.stanje
+local nKStanje // kol.stanje
+local cIdRoba // idroba
+local cIdTarifa // tarifa
+local nOidRoba // _oid_ roba
+local nRCjen // roba cijena
+local dPLast // POS datum zadnjeg dokuemnta sa kartice
+
 if lForce == nil
 	lForce := .f.
 endif
@@ -39,22 +56,11 @@ select pos
 set order to tag "2"
 go top
 
-cIdOdj:="  "
-cTestRoba:="CTRLCTRL"
-nUkCijena:=0
-nUkKartCnt:=0
-nUkRobaCnt:=0
-nUkFStanje:=0
-nUkKStanje:=0
-nPcStanje:=0
-
 Box(,3,65)
 
 @ 1+m_x, 2+m_y SAY "Vrsim obradu stanja artikla, na dan " + DToC(dChDate) + " br." + ALLTRIM(STR(nNextID))
 
 do while !eof() .and. field->idodj == cIdOdj
-	
-	
 	// setuj osnovne varijable	
 	nFStanje:=0
 	nKStanje:=0
@@ -88,7 +94,7 @@ do while !eof() .and. field->idodj == cIdOdj
 		endif
 
 		// ako je dokument 96 - preskoci
-		if field->idvd=="96"
+		if field->idvd $ "96#99"
     			skip
 			loop
     		endif
@@ -106,6 +112,8 @@ do while !eof() .and. field->idodj == cIdOdj
         		// ne mjenja se kolicina
 			//nFStanje -= nKStanje * (field->cijena - field->ncijena)
 		endif
+		
+		dPLast := field->datum
 		
 		if ( field->datum > IntegTekDat() )
 			++ nKartCnt
@@ -127,13 +135,10 @@ do while !eof() .and. field->idodj == cIdOdj
 	nUkKartCnt += nPcStanje // dodaj i pocetno stanje
 	
 	// upisi zapis u INTEG1.DBF
-	AddInteg1(nNextID, cIdRoba, nOidRoba, cIdTarifa, nKStanje, nFStanje, nKartCnt + nPcStanje, nRobaCnt, nRCjen)	
+	AddInteg1(nNextID, cIdRoba, nOidRoba, cIdTarifa, nKStanje, nFStanje, nKartCnt + nPcStanje, nRobaCnt, nRCjen, dPLast, nil, nil, nil, nil, nil, nil, nil, nil)	
 	
 	select pos
 enddo
-
-// dodaj kontrolni artikal sa sumarnim vrijednostima
-AddInteg1(nNextID, cTestRoba, 0, "", nUkKStanje, nUkFStanje, nUkKartCnt, nUkRobaCnt, nUkCijena)	
 
 // Ubaci checksum podatak u DINTEG1
 UpdCSum1(nNextID)
@@ -246,14 +251,31 @@ return
 function ChkInt1(lForce, lReindex)
 *{
 local lOidChk := .f.
-// privatne varijable
-private nTest:=0 // id test integ1
-private dChkDate := DATE() - 1 // datum provjere
-private lChkOk // da li je update u DINTEG1 - OK
-
-private cKFirma:="" // kalk id firma
-private cKPKonto:="" // kalk konto prodavnice
-private cKKPath:="" // kalk putanja do kalk.dbf
+local lEtySif := .f.
+local nTest:=0 // id test integ1
+local dChkDate := DATE() - 1 // datum provjere
+local lChkOk // da li je update u DINTEG1 - OK
+local cKFirma:="" // kalk id firma
+local cKPKonto:="" // kalk konto prodavnice
+local cKKPath:="" // kalk putanja do kalk.dbf
+local dPLast // POS kartica datum zadnjeg dokumenta
+local dKLast // KALK kartica datum zadnjeg dokumenta
+local cIdOdj:="  "
+local nUkKStanje:=0
+local nUkFStanje:=0
+local nUkKartCnt:=0
+local nUkRobaCnt:=0
+local nUkCijena:=0
+local nPcStanje:=0
+local nFStanje
+local nKStanje
+local cIdRoba
+local cIdTarifa
+local nOidRoba
+local nKartCnt
+local nRobaCnt
+local nRCjen
+local cMsg
 
 if ( lForce == nil )
 	lForce := .f.
@@ -291,6 +313,7 @@ O_INTEG1
 // otvori i kalk
 OpenKalkDB(cKKPath)
 
+// pobrisi tabelu error
 BrisiError()
 
 // prodji kroz POS
@@ -298,21 +321,11 @@ select pos
 set order to tag "2"
 go top
 
-cIdOdj:="  "
-cTestRoba:="CTRLCTRL"
-nUkKStanje:=0
-nUkFStanje:=0
-nUkKartCnt:=0
-nUkRobaCnt:=0
-nUkCijena:=0
-nPcStanje:=0
-
 Box(,2,65)
 
 @ 1+m_x, 2+m_y SAY "Vrsim provjeru integriteta stanja, na dan " + DToC(dChkDate) + " br." + ALLTRIM(STR(nTest)) + " K" + ALLTRIM(cKPKonto) 
 
 do while !eof() .and. field->idodj == cIdOdj
-	
 	// setuj osnovne varijable	
 	nFStanje:=0
 	nKStanje:=0
@@ -322,10 +335,10 @@ do while !eof() .and. field->idodj == cIdOdj
   
   	cIdRoba:=field->IdRoba
 	
-	if cIdRoba = "01MTR"
-		altd()
+	if ALLTRIM(cIdRoba) == ""
+		lEtySif := .t.
 	endif
-
+	
 	select integ1
 	set order to tag "1"
 	hseek STR(nTest) + cIdRoba
@@ -367,7 +380,7 @@ do while !eof() .and. field->idodj == cIdOdj
 		select pos
 
 		// ako je dokument 96 - preskoci
-		if field->idvd=="96"
+		if field->idvd $ "96#99"
     			skip
 			loop
     		endif
@@ -398,8 +411,16 @@ do while !eof() .and. field->idodj == cIdOdj
 		nUkKartCnt += nKartCnt
 		nUkKStanje += nKStanje
 		
+		dPLast := field->datum
+		
 		skip
 	enddo
+	
+	// upisi u integ1 dat2 = dPLast
+	select integ1
+	if integ1->idroba == cIdRoba
+		replace field->dat2 with dPLast
+	endif
 	
 	nUkCijena += nRCjen
 	nUkRobaCnt += nRobaCnt
@@ -407,13 +428,14 @@ do while !eof() .and. field->idodj == cIdOdj
 	nFStanje := nKStanje * nRCjen
 	nUkFStanje += nFStanje
 
-	select kalk	
-	hseek cKFirma + cKPKonto + cIdRoba
 	
-	cKRoba:=kalk->idroba
 	nKKStanje:=0
 	nKFStanje:=0
 	nKKartCnt:=0
+
+	select kalk	
+	hseek cKFirma + cKPKonto + cIdRoba
+	cKRoba:=kalk->idroba
 	
 	do while !EOF() .and. kalk->(idfirma+pkonto+idroba) == cKFirma + cKPKonto + cKRoba
 		if ( kalk->datdok > dChkDate )
@@ -441,14 +463,28 @@ do while !eof() .and. field->idodj == cIdOdj
 		endif
 			
 		++ nKKartCnt
+
+		dKLast := kalk->datdok
+		
 		skip
 	enddo
 	
+	if (nKKStanje == 0 .and. integ1->dat1 < IntegTekDat() )
+		AddToErrors("P", cIdRoba, "", "KALK stanje 0, zadnji TOPS dokument postoji na datum " + DToC(integ1->dat1))
+	
+	endif
+	
+	if nKStanje <> 0
+		// koja je poruka za gresku "C" ili "P"
+		cMsg := DatChk1(integ1->dat1, integ1->dat2, dKLast, dChkDate)
+	else
+		cMsg := "P"
+	endif
 	
 	// provjera prema INTEG1
 	do case
 		// provjeri OID
-		case integ1->oidroba <> nOidRoba
+		case !lEtySif .and. integ1->oidroba <> nOidRoba
 			AddToErrors("C", cIdRoba, "", "Greska u OID-u: (TOPSP)=" + ALLTRIM(STR(integ1->oidroba)) + ", (TOPSK)=" + ALLTRIM(STR(nOidRoba)))
 			// pokreni update sifre iz TOPS-K
 			GenSifProd(cIdRoba)
@@ -457,16 +493,16 @@ do while !eof() .and. field->idodj == cIdOdj
 			select pos
 			
 		// provjeri TARIFA
-		case integ1->idtarifa <> cIdTarifa
+		case !lEtySif .and. integ1->idtarifa <> cIdTarifa
 			AddToErrors("C", cIdRoba, "", "Greska u tarifi: (TOPSP)=" + integ1->idtarifa + ", (TOPSK)=" + cIdTarifa )
 		
 		// provjeri STANJE artikla kolicinski
 		case ROUND(integ1->stanjek,3) <> ROUND(nKStanje,3)
-			AddToErrors("C", cIdRoba, "", "Greska u stanju artikla kolicinski: (TOPSP)=" + ALLTRIM(STR(integ1->stanjek)) + ", (TOPSK)=" + ALLTRIM(STR(nKStanje)) )
+			AddToErrors("C", cIdRoba, "", "Greska u stanju artikla kolicinski: (TOPSP)=" + ALLTRIM(STR(integ1->stanjek)) + ", (TOPSK)=" + ALLTRIM(STR(nKStanje)) + " TOPSPDAT=" + DToC(integ1->dat1) + " TOPSKDAT=" + DToC(integ1->dat2))
 
 		// provjeri stanje artikla finansijski
 		case ROUND(integ1->stanjef,3) <> ROUND(nFStanje,2)
-			AddToErrors("C", cIdRoba, "", "Greska u stanju artikla finansijski: (TOPSP)=" + ALLTRIM(STR(integ1->stanjef)) + ", (TOPSK)=" + ALLTRIM(STR(nFStanje)) )
+			AddToErrors("C", cIdRoba, "", "Greska u stanju artikla finansijski: (TOPSP)=" + ALLTRIM(STR(integ1->stanjef)) + ", (TOPSK)=" + ALLTRIM(STR(nFStanje)) + " TOPSPDAT=" + DToC(integ1->dat1) + " TOPSKDAT=" + DToC(integ1->dat2))
 		
 		// provjeri broj stavki kartice
 		case integ1->kartcnt <> nKartCnt + nPcStanje
@@ -484,18 +520,22 @@ do while !eof() .and. field->idodj == cIdOdj
 			AddToErrors("C", cIdRoba, "", "Greska u cijeni artikla: (TOPSP)=" + ALLTRIM(STR(integ1->robacijena)) + ", (TOPSK)=" + ALLTRIM(STR(nRCjen)) )
 	
 		// provjera kartica kalk
-		case (nKStanje > 0) .and. nKKartCnt <> (nKartCnt + nPcStanje)
-			AddToErrors("W", cIdRoba, "", "Greska u broju stavki kartice: (TOPSK)=" + ALLTRIM(STR(nKartCnt + nPcStanje)) + ", (KALK)=" + ALLTRIM(STR(nKKartCnt)) )
+		case (nKKStanje <> 0 .and. nKKartCnt > 0) .and. nKKartCnt <> (nKartCnt + nPcStanje)
+			AddToErrors("P", cIdRoba, "", "Greska u broju stavki kartice: (TOPSK)=" + ALLTRIM(STR(nKartCnt + nPcStanje)) + ", (KALK)=" + ALLTRIM(STR(nKKartCnt)) )
 		
 		// provjera stanja artikla kalk-tops
-		case ROUND(nKKStanje,3) <> ROUND(nKStanje,3)
-			AddToErrors("C", cIdRoba, "", "Greska u kolicinskom stanju: (TOPSK)=" + ALLTRIM(STR(nKStanje)) + ", (KALK)=" + ALLTRIM(STR(nKKStanje)))
+		case (ROUND(nKKStanje,3) <> ROUND(nKStanje,3))
+			AddToErrors(cMsg, cIdRoba, "", "Greska u kolicinskom stanju: (TOPSK)=" + ALLTRIM(STR(nKStanje)) + ", (KALK)=" + ALLTRIM(STR(nKKStanje)) + " TOPSDAT=" + DToC(integ1->dat2) + " KALKDAT=" + DToC(dKLast))
+			
 	
 		// provjera stanja artikla kalk-tops
-		case ROUND(nKFStanje,3) <> ROUND(nFStanje,3)
-			AddToErrors("C", cIdRoba, "", "Greska u prodajnom stanju: (TOPSK)=" + ALLTRIM(STR(nFStanje)) + ", (KALK)=" + ALLTRIM(STR(nKFStanje)) )
+		case (ROUND(nKFStanje,3) <> ROUND(nFStanje,3))
+			AddToErrors(cMsg, cIdRoba, "", "Greska u prodajnom stanju: (TOPSK)=" + ALLTRIM(STR(nFStanje)) + ", (KALK)=" + ALLTRIM(STR(nKFStanje)) + " TOPSDAT=" + DToC(integ1->dat2) + " KALKDAT=" + DToC(dKLast) )
+		
 			
 	endcase
+	
+	lEtySif:=.f.
 	
 	select pos
 enddo
@@ -517,6 +557,32 @@ return 1
 *}
 
 
+/*! \fn DatChk1(dTopsP, dTopsK, dKalk, dChk)
+ *  \brief Provjerava ispravnost na osnovu datuma
+ *  \param dTopsP - datum tops-p
+ *  \param dTopsK - datum tops-k
+ *  \param dKalk - datum kalk
+ *  \param dChk - datum provjere
+ *  \ret "C" or "P"
+ */
+function DatChk1(dTopsP, dTopsK, dKalk, dChk)
+*{
+local dTmp
+// provjeri TOPSP i TOPSK datum, ako nisu identicni ne valja sigurno
+if dTopsP <> dTopsK
+	return "C"
+endif
+// provjeri datum 
+dTmp := dChk - 2
+
+if (dKalk >= dTmp) .and. (dTopsK >= dTmp)
+	return "P"
+endif
+
+return "C"
+*}
+
+
 /*! \fn Int1KalkTops(nTest, dChkDate)
  *  \brief Testiranje podataka od strane KALK-a prema TOPS-u
  *  \param nTest - id testa iz integ1
@@ -530,6 +596,7 @@ local cRoba
 local nKStK
 local nKStF
 local cPath
+local dKLast // datum zadnje kalkulacije za karticu 
 
 GetKalkVars(@cFirma, @cKonto, @cPath)
 
@@ -541,10 +608,16 @@ hseek cFirma + cKonto
 @ 1+m_x, 2+m_y SAY "Provjera integriteta na osnovu KALK-a..."
 	
 do while !EOF() .and. kalk->(idfirma+pkonto)==cFirma+cKonto
+	
+	if !(field->pu_i $ "1#3#5#I")
+		skip
+		loop
+	endif
+	
 	cRoba := kalk->idroba
 	nKStK := 0
 	nKStF := 0
-
+	
 	select integ1
 	set order to tag "1"
 	hseek STR(nTest) + cRoba
@@ -552,8 +625,8 @@ do while !EOF() .and. kalk->(idfirma+pkonto)==cFirma+cKonto
 	@ 2+m_x, 2+m_y SAY SPACE(65)
 	@ 2+m_x, 2+m_y SAY cRoba
 		
-	if !Found()
-		AddToErrors("W", cRoba, kalk->idfirma+"-"+kalk->idvd+"-"+ALLTRIM(kalk->brdok), "Roba ne postoji u sifrarniku kase!")
+	if !Found() .and. kalk->idvd <> "19"
+		AddToErrors("P", cRoba, kalk->idfirma+"-"+kalk->idvd+"-"+ALLTRIM(kalk->brdok), "Roba ne postoji u sifrarniku kase!")
 	endif
 		
 	select kalk	
@@ -582,17 +655,22 @@ do while !EOF() .and. kalk->(idfirma+pkonto)==cFirma+cKonto
 		if kalk->pu_i == "3"
 			nKStF += kalk->mpcsapp * kalk->kolicina
 		endif
+		
+		dKLast := kalk->datdok
 			
 		skip
 	enddo
 
 	// provjeri integritet sa INTEG1
+	// koja ce biti poruka za razlike
+	cMsg := DatChk1(integ1->dat1, integ1->dat2, dKLast, dChkDate)
+	
 	do case
 		// stanje kalk -> kasa
 		case ROUND(integ1->stanjek,3) <> ROUND(nKStK,3)
-			AddToErrors("C", cRoba, "","KALK->TOPS: neispravno kolicinsko stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStK,3))) + " (TOPSP)=" + ALLTRIM(STR(ROUND(integ1->stanjek,3))))
+			AddToErrors(cMsg, cRoba, "","KALK->TOPS: neispravno kolicinsko stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStK,3))) + " (TOPSP)=" + ALLTRIM(STR(ROUND(integ1->stanjek,3))) + " KALKDAT=" + DToC(dKLast) + " TOPSDAT=" + DToC(integ1->dat2) )
 		case ROUND(integ1->stanjef,3) <> ROUND(nKStF,3)
-			AddToErrors("C", cRoba, "", "KALK->TOPS: neispravno finansijsko stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStF,3))) + " (TOPSP)=" + ALLTRIM(STR(ROUND(integ1->stanjef,3))))
+			AddToErrors(cMsg, cRoba, "", "KALK->TOPS: neispravno finansijsko stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStF,3))) + " (TOPSP)=" + ALLTRIM(STR(ROUND(integ1->stanjef,3))) + " KALKDAT=" + DToC(dKLast) + " TOPSDAT=" + DToC(integ1->dat2))
 	endcase
 enddo
 
@@ -710,7 +788,7 @@ return
  *  \brief Upisi zapis u tabelu INTEG1.DBF
  *  \param nIntegID - ID - veza sa tabelom DINTEG1
  */
-function AddInteg1(nIntegID, cRoba, nOidRoba, cIdTarifa, nStanjeK, nStanjeF, nKartCnt, nRobaCnt, nCijena)	
+function AddInteg1(nIntegID, cRoba, nOidRoba, cIdTarifa, nStanjeK, nStanjeF, nKartCnt, nRobaCnt, nCijena, dDat1, dDat2, dDat3, nN1, nN2, nN3, cC1, cC2, cC3)	
 *{
 O_INTEG1
 select integ1
@@ -726,6 +804,34 @@ SmReplace("stanjef", nStanjeF)
 SmReplace("kartcnt", nKartCnt)
 SmReplace("sifrobacnt", nRobaCnt)
 SmReplace("robacijena", nCijena)
+
+if nN1 <> nil
+	SmReplace("N1", nN1)
+endif
+if nN2 <> nil
+	SmReplace("N2", nN2)
+endif
+if nN3 <> nil
+	SmReplace("N3", nN3)
+endif
+if cC1 <> nil
+	SmReplace("C1", cC1)
+endif
+if cC2 <> nil
+	SmReplace("C2", cC2)
+endif
+if cC3 <> nil
+	SmReplace("C3", cC3)
+endif
+if dDat1 <> nil
+	SmReplace("DAT1", dDat1)
+endif
+if dDat2 <> nil
+	SmReplace("DAT2", dDat2)
+endif
+if dDat3 <> nil
+	SmReplace("DAT3", dDat3)
+endif
 
 return
 *}
