@@ -322,8 +322,10 @@ do while !eof() .and. field->idodj == cIdOdj
   
   	cIdRoba:=field->IdRoba
 	
-	altd()
-	
+	if cIdRoba = "01MTR"
+		altd()
+	endif
+
 	select integ1
 	set order to tag "1"
 	hseek STR(nTest) + cIdRoba
