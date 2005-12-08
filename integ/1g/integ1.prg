@@ -441,9 +441,11 @@ do while !eof() .and. field->idodj == cIdOdj
 	do case
 		// provjeri OID
 		case integ1->oidroba <> nOidRoba
-			AddToErrors("C", cIdRoba, "", "Greska u OID-u: (TOPSP)=" + ALLTRIM(STR(integ1->oidroba)) + ", (TOPSK)=" + ALLTRIM(STR(nOidRoba)) )
+			AddToErrors("C", cIdRoba, "", "Greska u OID-u: (TOPSP)=" + ALLTRIM(STR(integ1->oidroba)) + ", (TOPSK)=" + ALLTRIM(STR(nOidRoba)))
 			// pokreni update sifre iz TOPS-K
 			GenSifProd(cIdRoba)
+			// dodaj obavjestenje da si generisao log
+			AddToErrors("W", cIdRoba, "", "Generisan sql log za TOPS-P, OK")
 			select pos
 			
 		// provjeri TARIFA
@@ -467,6 +469,7 @@ do while !eof() .and. field->idodj == cIdOdj
 			AddToErrors("W", cIdRoba, "", "Postoje duple sifre: (TOPSP)=" + ALLTRIM(STR(integ1->sifrobacnt)) + ", (TOPSK)=" + ALLTRIM(STR(nRobaCnt)) )
 			// generisi i sifru za prodavnicu
 			GenSifProd(cIdRoba)
+			AddToErrors("W", cIdRoba, "", "Generisan sql log za TOPS-P, OK")
 			select pos	
 		// provjeri cijenu artikla
 		case integ1->robacijena <> nRCjen
