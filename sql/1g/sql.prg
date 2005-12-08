@@ -316,7 +316,28 @@ ScanDb()
 return 1
 *}
 
- 
+
+/*! \fn LogRecRoba(cIdRoba)
+ *  \brief logiranje zapisa tabele roba
+ *  \param cIdRoba - id roba
+ */
+function LogRecRoba(cIdRoba)
+*{
+O_ROBA
+set order to tag "ID"
+hseek cIdRoba
+altd()
+
+cSQL:="delete from ROBA where Id="+SQLValue(cIdRoba)
+Gw(cSQL)
+
+// logiraj record
+Log_Record()
+
+return
+*}
+
+
 /*! \fn LogPeriod()
  *  \brief
  */
