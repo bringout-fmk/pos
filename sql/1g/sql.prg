@@ -338,6 +338,35 @@ return
 *}
 
 
+/*! \fn NewRecRoba(cIdRoba)
+ *  \brief dodavanje novog zapisa tabele roba
+ *  \param cIdRoba - id roba
+ */
+function NewRecRoba(cIdRoba)
+*{
+local nTRec
+O_ROBA
+set order to tag "ID"
+hseek cIdRoba
+nTRec := RecNo()
+
+cSQL:="delete from ROBA where Id="+SQLValue(cIdRoba)
+Gw(cSQL)
+
+// logiraj record
+New_Record()
+
+O_ROBA
+go (nTRec)
+if (roba->id == cIdRoba)
+	delete
+endif
+
+return
+*}
+
+
+
 /*! \fn LogPeriod()
  *  \brief
  */
