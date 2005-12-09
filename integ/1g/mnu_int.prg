@@ -31,6 +31,7 @@ if gSamoProdaja=="D"
 	UpdInt1(.t., .f.)
 else
 	if !EmptDInt(1)
+		BrisiError()
 		ChkInt1(.t., .f.)
 		RptInteg(.t., .f.)
 	endif
@@ -47,6 +48,7 @@ if gSamoProdaja=="D"
 	UpdInt2(.t., .f.)
 else
 	if !EmptDInt(2)
+		BrisiError()
 		ChkInt2(.t., .f.)
 		RptInteg(.t., .f.)
 	endif

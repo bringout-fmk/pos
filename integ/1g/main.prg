@@ -548,6 +548,16 @@ LogRecRoba(cIdRoba)
 return
 *}
 
+/*! \fn NewSifProd(cIdRoba)
+ *  \brief generisi log za sifre artikala u prodavnici
+ */
+function NewSifProd(cIdRoba)
+*{
+NewRecRoba(cIdRoba)
+return
+*}
+
+
 /*! \fn EmptDInt(nInteg)
  *  \brief Da li je prazna tabela dinteg
  */

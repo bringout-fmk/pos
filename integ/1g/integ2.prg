@@ -235,9 +235,6 @@ O_POS
 O_ERRORS
 O_INTEG2
 
-// probrisi tabelu errors
-BrisiError()
-
 // prodji kroz POS
 select pos
 set order to tag "2"

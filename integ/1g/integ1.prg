@@ -276,6 +276,11 @@ local nKartCnt
 local nRobaCnt
 local nRCjen
 local cMsg
+local cPLVd
+local cKLU_I
+local nKKStanje
+local nKFStanje
+local nKKartCnt
 
 if ( lForce == nil )
 	lForce := .f.
@@ -313,9 +318,6 @@ O_INTEG1
 // otvori i kalk
 OpenKalkDB(cKKPath)
 
-// pobrisi tabelu error
-BrisiError()
-
 // prodji kroz POS
 select pos
 set order to tag "2"
@@ -332,11 +334,14 @@ do while !eof() .and. field->idodj == cIdOdj
   	nRCjen:=0
 	nKartCnt:=0 // broj stavki kartice
 	nRobaCnt:=0 // broj sifara artikla
-  
+ 	lEtySif := .f. 
   	cIdRoba:=field->IdRoba
 	
 	if ALLTRIM(cIdRoba) == ""
 		lEtySif := .t.
+		//delete
+		skip
+		loop
 	endif
 	
 	select integ1
@@ -412,6 +417,7 @@ do while !eof() .and. field->idodj == cIdOdj
 		nUkKStanje += nKStanje
 		
 		dPLast := field->datum
+		cPLVd := field->idvd
 		
 		skip
 	enddo
@@ -420,6 +426,7 @@ do while !eof() .and. field->idodj == cIdOdj
 	select integ1
 	if integ1->idroba == cIdRoba
 		replace field->dat2 with dPLast
+		replace field->c1 with cPLVd
 	endif
 	
 	nUkCijena += nRCjen
@@ -465,18 +472,22 @@ do while !eof() .and. field->idodj == cIdOdj
 		++ nKKartCnt
 
 		dKLast := kalk->datdok
+		dKLU_I := kalk->pu_i
 		
 		skip
 	enddo
+
 	
-	if (nKKStanje == 0 .and. integ1->dat1 < IntegTekDat() )
+	altd()
+
+	if (ROUND(nKKStanje, 4) == 0 .and. integ1->dat1 < IntegTekDat() )
 		AddToErrors("P", cIdRoba, "", "KALK stanje 0, zadnji TOPS dokument postoji na datum " + DToC(integ1->dat1))
 	
 	endif
-	
-	if nKStanje <> 0
+
+	if !lEtySif .and. (ROUND(nKStanje, 4) <> 0)
 		// koja je poruka za gresku "C" ili "P"
-		cMsg := DatChk1(integ1->dat1, integ1->dat2, dKLast, dChkDate)
+		cMsg := DatChk1(integ1->dat1, integ1->dat2, dKLast, dChkDate, cKLU_I, cPLVd)
 	else
 		cMsg := "P"
 	endif
@@ -487,22 +498,27 @@ do while !eof() .and. field->idodj == cIdOdj
 		case !lEtySif .and. integ1->oidroba <> nOidRoba
 			AddToErrors("C", cIdRoba, "", "Greska u OID-u: (TOPSP)=" + ALLTRIM(STR(integ1->oidroba)) + ", (TOPSK)=" + ALLTRIM(STR(nOidRoba)))
 			// pokreni update sifre iz TOPS-K
-			GenSifProd(cIdRoba)
+			NewSifProd(cIdRoba)
 			// dodaj obavjestenje da si generisao log
-			AddToErrors("W", cIdRoba, "", "Generisan sql log za TOPS-P, OK")
+			AddToErrors("W", cIdRoba, "", "Generisana nova sifra na obje strane, OK")
 			select pos
 			
 		// provjeri TARIFA
 		case !lEtySif .and. integ1->idtarifa <> cIdTarifa
 			AddToErrors("C", cIdRoba, "", "Greska u tarifi: (TOPSP)=" + integ1->idtarifa + ", (TOPSK)=" + cIdTarifa )
-		
+			// pokreni update sifre iz TOPS-K
+			GenSifProd(cIdRoba)
+			// dodaj obavjestenje da si generisao log
+			AddToErrors("W", cIdRoba, "", "Generisan sql log za TOPS-P, OK")
+			select pos
+			
 		// provjeri STANJE artikla kolicinski
 		case ROUND(integ1->stanjek,3) <> ROUND(nKStanje,3)
-			AddToErrors("C", cIdRoba, "", "Greska u stanju artikla kolicinski: (TOPSP)=" + ALLTRIM(STR(integ1->stanjek)) + ", (TOPSK)=" + ALLTRIM(STR(nKStanje)) + " TOPSPDAT=" + DToC(integ1->dat1) + " TOPSKDAT=" + DToC(integ1->dat2))
+			AddToErrors("C", cIdRoba, "", "Greska, kol.stanje: (TOPSP)=" + ALLTRIM(STR(integ1->stanjek)) + ", (TOPSK)=" + ALLTRIM(STR(nKStanje)) + " TOPSPDAT=" + DToC(integ1->dat1) + " TOPSKDAT=" + DToC(integ1->dat2))
 
 		// provjeri stanje artikla finansijski
 		case ROUND(integ1->stanjef,3) <> ROUND(nFStanje,2)
-			AddToErrors("C", cIdRoba, "", "Greska u stanju artikla finansijski: (TOPSP)=" + ALLTRIM(STR(integ1->stanjef)) + ", (TOPSK)=" + ALLTRIM(STR(nFStanje)) + " TOPSPDAT=" + DToC(integ1->dat1) + " TOPSKDAT=" + DToC(integ1->dat2))
+			AddToErrors("C", cIdRoba, "", "Greska, fin.stanje: (TOPSP)=" + ALLTRIM(STR(integ1->stanjef)) + ", (TOPSK)=" + ALLTRIM(STR(nFStanje)) + " TOPSPDAT=" + DToC(integ1->dat1) + " TOPSKDAT=" + DToC(integ1->dat2))
 		
 		// provjeri broj stavki kartice
 		case integ1->kartcnt <> nKartCnt + nPcStanje
@@ -525,12 +541,12 @@ do while !eof() .and. field->idodj == cIdOdj
 		
 		// provjera stanja artikla kalk-tops
 		case (ROUND(nKKStanje,3) <> ROUND(nKStanje,3))
-			AddToErrors(cMsg, cIdRoba, "", "Greska u kolicinskom stanju: (TOPSK)=" + ALLTRIM(STR(nKStanje)) + ", (KALK)=" + ALLTRIM(STR(nKKStanje)) + " TOPSDAT=" + DToC(integ1->dat2) + " KALKDAT=" + DToC(dKLast))
+			AddToErrors(cMsg, cIdRoba, "", "TOPS->KALK: kol.stanje: (TOPSK)=" + ALLTRIM(STR(nKStanje)) + ", (KALK)=" + ALLTRIM(STR(nKKStanje)) + " TOPSDAT=" + DToC(integ1->dat2) + " KALKDAT=" + DToC(dKLast))
 			
 	
 		// provjera stanja artikla kalk-tops
 		case (ROUND(nKFStanje,3) <> ROUND(nFStanje,3))
-			AddToErrors(cMsg, cIdRoba, "", "Greska u prodajnom stanju: (TOPSK)=" + ALLTRIM(STR(nFStanje)) + ", (KALK)=" + ALLTRIM(STR(nKFStanje)) + " TOPSDAT=" + DToC(integ1->dat2) + " KALKDAT=" + DToC(dKLast) )
+			AddToErrors(cMsg, cIdRoba, "", "TOPS->KALK: fin.stanje: (TOPSK)=" + ALLTRIM(STR(nFStanje)) + ", (KALK)=" + ALLTRIM(STR(nKFStanje)) + " TOPSDAT=" + DToC(integ1->dat2) + " KALKDAT=" + DToC(dKLast) )
 		
 			
 	endcase
@@ -557,28 +573,35 @@ return 1
 *}
 
 
-/*! \fn DatChk1(dTopsP, dTopsK, dKalk, dChk)
+/*! \fn DatChk1(dTopsP, dTopsK, dKalk, dChk, cLKU_I, cLPVd)
  *  \brief Provjerava ispravnost na osnovu datuma
  *  \param dTopsP - datum tops-p
  *  \param dTopsK - datum tops-k
  *  \param dKalk - datum kalk
  *  \param dChk - datum provjere
+ *  \param cLKU_I - zadnji dokument u kalk - kalk.pu_i
+ *  \param cLPVd - zadnji dokument u TOPS - tip dokumenta
  *  \ret "C" or "P"
  */
-function DatChk1(dTopsP, dTopsK, dKalk, dChk)
+function DatChk1(dTopsP, dTopsK, dKalk, dChk, cLKU_I, cLPVd)
 *{
 local dTmp
-// provjeri TOPSP i TOPSK datum, ako nisu identicni ne valja sigurno
-if dTopsP <> dTopsK
-	return "C"
-endif
-// provjeri datum 
+
 dTmp := dChk - 2
 
-if (dKalk >= dTmp) .and. (dTopsK >= dTmp)
-	return "P"
-endif
+do case
+	// datum tops-p i tops-k se ne slazu
+	case dTopsP <> dTopsK
+		return "C"
+	// datum kalk >= provjera - 2 i tip dokumenta je zaduzenje
+	case (dKalk >= dTmp) .and. (cLKU_I == "1")
+		return "P"
+	// datum topsk >= provjera - 2 i tip dokumenta izlaz
+	case (dTopsK >= dTmp) .and. (cLPVd $ DOK_IZLAZA)
+		return "P"
+endcase
 
+// sve ostalo je "C"
 return "C"
 *}
 
@@ -597,6 +620,7 @@ local nKStK
 local nKStF
 local cPath
 local dKLast // datum zadnje kalkulacije za karticu 
+local cKLU_I
 
 GetKalkVars(@cFirma, @cKonto, @cPath)
 
@@ -609,7 +633,7 @@ hseek cFirma + cKonto
 	
 do while !EOF() .and. kalk->(idfirma+pkonto)==cFirma+cKonto
 	
-	if !(field->pu_i $ "1#3#5#I")
+	if !(field->pu_i $ "1#3#5#I") .or. Empty(ALLTRIM(cRoba))
 		skip
 		loop
 	endif
@@ -663,15 +687,16 @@ do while !EOF() .and. kalk->(idfirma+pkonto)==cFirma+cKonto
 
 	// provjeri integritet sa INTEG1
 	// koja ce biti poruka za razlike
-	cMsg := DatChk1(integ1->dat1, integ1->dat2, dKLast, dChkDate)
+	cMsg := DatChk1(integ1->dat1, integ1->dat2, dKLast, dChkDate, cKLU_I, ALLTRIM(integ1->c1))
 	
 	do case
 		// stanje kalk -> kasa
 		case ROUND(integ1->stanjek,3) <> ROUND(nKStK,3)
-			AddToErrors(cMsg, cRoba, "","KALK->TOPS: neispravno kolicinsko stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStK,3))) + " (TOPSP)=" + ALLTRIM(STR(ROUND(integ1->stanjek,3))) + " KALKDAT=" + DToC(dKLast) + " TOPSDAT=" + DToC(integ1->dat2) )
+			AddToErrors(cMsg, cRoba, "","KALK->TOPS: kol.stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStK,3))) + " (TOPSP)=" + ALLTRIM(STR(ROUND(integ1->stanjek,3))) + " KALKDAT=" + DToC(dKLast) + " TOPSDAT=" + DToC(integ1->dat2) )
 		case ROUND(integ1->stanjef,3) <> ROUND(nKStF,3)
-			AddToErrors(cMsg, cRoba, "", "KALK->TOPS: neispravno finansijsko stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStF,3))) + " (TOPSP)=" + ALLTRIM(STR(ROUND(integ1->stanjef,3))) + " KALKDAT=" + DToC(dKLast) + " TOPSDAT=" + DToC(integ1->dat2))
+			AddToErrors(cMsg, cRoba, "", "KALK->TOPS: fin.stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStF,3))) + " (TOPSP)=" + ALLTRIM(STR(ROUND(integ1->stanjef,3))) + " KALKDAT=" + DToC(dKLast) + " TOPSDAT=" + DToC(integ1->dat2))
 	endcase
+	select kalk
 enddo
 
 return
