@@ -146,6 +146,7 @@ if FILE(KUMPATH + "INTEG1.DBF")
 	// ako nema polja N1 pobrisi tabele i generisi nove tabele
 	if integ1->(FieldPos("N1")) == 0
 		// trala lalalalall
+		use
 		FErase(KUMPATH + "\INTEG1.DBF")
 		FErase(KUMPATH + "\INTEG1.CDX")
 		FErase(KUMPATH + "\INTEG2.DBF")

@@ -481,7 +481,7 @@ do while !eof() .and. field->idodj == cIdOdj
 	altd()
 
 	if (ROUND(nKKStanje, 4) == 0 .and. integ1->dat1 < IntegTekDat() )
-		AddToErrors("P", cIdRoba, "", "KALK stanje 0, zadnji TOPS dokument postoji na datum " + DToC(integ1->dat1))
+		AddToErrors("P", cIdRoba, "", "KALK stanje 0, zadnji TOPS dokument postoji na datum " + ShowDatum(integ1->dat1))
 	
 	endif
 
@@ -498,9 +498,9 @@ do while !eof() .and. field->idodj == cIdOdj
 		case !lEtySif .and. integ1->oidroba <> nOidRoba
 			AddToErrors("C", cIdRoba, "", "Greska u OID-u: (TOPSP)=" + ALLTRIM(STR(integ1->oidroba)) + ", (TOPSK)=" + ALLTRIM(STR(nOidRoba)))
 			// pokreni update sifre iz TOPS-K
-			NewSifProd(cIdRoba)
+			GenSifProd(cIdRoba)
 			// dodaj obavjestenje da si generisao log
-			AddToErrors("W", cIdRoba, "", "Generisana nova sifra na obje strane, OK")
+			AddToErrors("W", cIdRoba, "", "Generisan sql log za TOPS-P, OK")
 			select pos
 			
 		// provjeri TARIFA
@@ -514,11 +514,11 @@ do while !eof() .and. field->idodj == cIdOdj
 			
 		// provjeri STANJE artikla kolicinski
 		case ROUND(integ1->stanjek,3) <> ROUND(nKStanje,3)
-			AddToErrors("C", cIdRoba, "", "Greska, kol.stanje: (TOPSP)=" + ALLTRIM(STR(integ1->stanjek)) + ", (TOPSK)=" + ALLTRIM(STR(nKStanje)) + " TOPSPDAT=" + DToC(integ1->dat1) + " TOPSKDAT=" + DToC(integ1->dat2))
+			AddToErrors("C", cIdRoba, "", "Greska, kol.stanje: (TOPSP)=" + ALLTRIM(STR(integ1->stanjek)) + ", (TOPSK)=" + ALLTRIM(STR(nKStanje)) + " TOPSPDAT=" + ShowDatum(integ1->dat1) + " TOPSKDAT=" + ShowDatum(integ1->dat2))
 
 		// provjeri stanje artikla finansijski
 		case ROUND(integ1->stanjef,3) <> ROUND(nFStanje,2)
-			AddToErrors("C", cIdRoba, "", "Greska, fin.stanje: (TOPSP)=" + ALLTRIM(STR(integ1->stanjef)) + ", (TOPSK)=" + ALLTRIM(STR(nFStanje)) + " TOPSPDAT=" + DToC(integ1->dat1) + " TOPSKDAT=" + DToC(integ1->dat2))
+			AddToErrors("C", cIdRoba, "", "Greska, fin.stanje: (TOPSP)=" + ALLTRIM(STR(integ1->stanjef)) + ", (TOPSK)=" + ALLTRIM(STR(nFStanje)) + " TOPSPDAT=" + ShowDatum(integ1->dat1) + " TOPSKDAT=" + ShowDatum(integ1->dat2))
 		
 		// provjeri broj stavki kartice
 		case integ1->kartcnt <> nKartCnt + nPcStanje
@@ -541,12 +541,12 @@ do while !eof() .and. field->idodj == cIdOdj
 		
 		// provjera stanja artikla kalk-tops
 		case (ROUND(nKKStanje,3) <> ROUND(nKStanje,3))
-			AddToErrors(cMsg, cIdRoba, "", "TOPS->KALK: kol.stanje: (TOPSK)=" + ALLTRIM(STR(nKStanje)) + ", (KALK)=" + ALLTRIM(STR(nKKStanje)) + " TOPSDAT=" + DToC(integ1->dat2) + " KALKDAT=" + DToC(dKLast))
+			AddToErrors(cMsg, cIdRoba, "", "TOPS->KALK: kol.stanje: (TOPSK)=" + ALLTRIM(STR(nKStanje)) + ", (KALK)=" + ALLTRIM(STR(nKKStanje)) + " TOPSDAT=" + ShowDatum(integ1->dat2) + " KALKDAT=" + ShowDatum(dKLast))
 			
 	
 		// provjera stanja artikla kalk-tops
 		case (ROUND(nKFStanje,3) <> ROUND(nFStanje,3))
-			AddToErrors(cMsg, cIdRoba, "", "TOPS->KALK: fin.stanje: (TOPSK)=" + ALLTRIM(STR(nFStanje)) + ", (KALK)=" + ALLTRIM(STR(nKFStanje)) + " TOPSDAT=" + DToC(integ1->dat2) + " KALKDAT=" + DToC(dKLast) )
+			AddToErrors(cMsg, cIdRoba, "", "TOPS->KALK: fin.stanje: (TOPSK)=" + ALLTRIM(STR(nFStanje)) + ", (KALK)=" + ALLTRIM(STR(nKFStanje)) + " TOPSDAT=" + ShowDatum(integ1->dat2) + " KALKDAT=" + ShowDatum(dKLast) )
 		
 			
 	endcase
@@ -572,6 +572,19 @@ MsgC()
 return 1
 *}
 
+/*! \fn ShowDatum(dDate)
+ *  \brief Prikazi datum
+ *  \param dDate - datum
+ */
+function ShowDatum(dDate)
+*{
+local cRet:=""
+if (dDate == nil)
+	return cRet
+endif
+cRet:=DToC(dDate)
+return cRet
+*}
 
 /*! \fn DatChk1(dTopsP, dTopsK, dKalk, dChk, cLKU_I, cLPVd)
  *  \brief Provjerava ispravnost na osnovu datuma
@@ -586,6 +599,11 @@ return 1
 function DatChk1(dTopsP, dTopsK, dKalk, dChk, cLKU_I, cLPVd)
 *{
 local dTmp
+
+// ako ne postoji datum kalk-a
+if (dKalk == nil)
+	return "C"
+endif
 
 dTmp := dChk - 2
 
@@ -633,12 +651,13 @@ hseek cFirma + cKonto
 	
 do while !EOF() .and. kalk->(idfirma+pkonto)==cFirma+cKonto
 	
+	cRoba := kalk->idroba
+	
 	if !(field->pu_i $ "1#3#5#I") .or. Empty(ALLTRIM(cRoba))
 		skip
 		loop
 	endif
 	
-	cRoba := kalk->idroba
 	nKStK := 0
 	nKStF := 0
 	
@@ -692,9 +711,9 @@ do while !EOF() .and. kalk->(idfirma+pkonto)==cFirma+cKonto
 	do case
 		// stanje kalk -> kasa
 		case ROUND(integ1->stanjek,3) <> ROUND(nKStK,3)
-			AddToErrors(cMsg, cRoba, "","KALK->TOPS: kol.stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStK,3))) + " (TOPSP)=" + ALLTRIM(STR(ROUND(integ1->stanjek,3))) + " KALKDAT=" + DToC(dKLast) + " TOPSDAT=" + DToC(integ1->dat2) )
+			AddToErrors(cMsg, cRoba, "","KALK->TOPS: kol.stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStK,3))) + " (TOPSP)=" + ALLTRIM(STR(ROUND(integ1->stanjek,3))) + " KALKDAT=" + ShowDatum(dKLast) + " TOPSDAT=" + ShowDatum(integ1->dat2) )
 		case ROUND(integ1->stanjef,3) <> ROUND(nKStF,3)
-			AddToErrors(cMsg, cRoba, "", "KALK->TOPS: fin.stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStF,3))) + " (TOPSP)=" + ALLTRIM(STR(ROUND(integ1->stanjef,3))) + " KALKDAT=" + DToC(dKLast) + " TOPSDAT=" + DToC(integ1->dat2))
+			AddToErrors(cMsg, cRoba, "", "KALK->TOPS: fin.stanje, (KALK)=" + ALLTRIM(STR(ROUND(nKStF,3))) + " (TOPSP)=" + ALLTRIM(STR(ROUND(integ1->stanjef,3))) + " KALKDAT=" + ShowDatum(dKLast) + " TOPSDAT=" + ShowDatum(integ1->dat2))
 	endcase
 	select kalk
 enddo
