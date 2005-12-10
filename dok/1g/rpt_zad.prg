@@ -112,8 +112,15 @@ IF RecCount2()>0
   DO WHILE ! EOF()
 
     nIzn:=cijena*kolicina
-    WhileaTarife(IdRoba, nIzn, @aTarife, @nPPP, @nPPU, @nOsn, @nPP)
-
+    if !IsPDV()
+    	if priprz->idtarifa = "PDV17"
+		WhilePTarife(IdRoba, IdTarifa, nIzn, @aTarife, @nPPP, @nPPU, @nOsn, @nPP)
+	else
+		WhileaTarife(IdRoba, nIzn, @aTarife, @nPPP, @nPPU, @nOsn, @nPP)
+	endif
+    else
+    	WhileaTarife(IdRoba, nIzn, @aTarife, @nPPP, @nPPU, @nOsn, @nPP)
+    endif
     if fpred .and. !empty(IdDio)
      // ne stampaj nista
     else
@@ -248,7 +255,15 @@ EndIF
    ?? TRANS (POS->Kolicina, cPicKol)
    nFinZad += POS->(Kolicina * Cijena)
    if gModul="TOPS"
-    WhileaTarife(pos->IdRoba, POS->(Kolicina * Cijena) , @aTarife )
+    if !IsPDV() 
+        if pos->idtarifa = "PDV17"
+    		WhilePTarife(pos->IdRoba,pos->idtarifa, POS->(Kolicina * Cijena) , @aTarife )
+	else
+    		WhileaTarife(pos->IdRoba, POS->(Kolicina * Cijena) , @aTarife )
+	endif
+    else	
+    	WhileaTarife(pos->IdRoba, POS->(Kolicina * Cijena) , @aTarife )
+    endif
    endif
    SKIP
  ENDDO

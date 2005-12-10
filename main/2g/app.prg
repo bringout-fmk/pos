@@ -295,6 +295,8 @@ gPrevPos:=gIdPos
 Fx:=4
 Fy:=8
 
+altd()
+
 if gSql=="D"
 	O_Log()
 	CreDIntDB()

@@ -851,7 +851,7 @@ if (!FOUND())
 	lNovi:=.t.
 endif
 if !lNovi
-	if naz<>katops->naziv .or. jmj<>katops->jmj .or. cijena1<>katops->mpc .or. idtarifa<>katops->idtarifa
+	if (naz<>katops->naziv) .or. jmj<>katops->jmj .or. cijena1<>katops->mpc .or. idtarifa<>katops->idtarifa
 		//MsgBeep("Sifra artikla:"+id+"#Doslo je do njegove promjene!#Promjena je izvrsena !")
 	endif
 endif
@@ -860,7 +860,14 @@ endif
 SmReplace("naz", katops->naziv)
 SmReplace("jmj", katops->jmj)
 SmReplace("cijena1", katops->mpc)
-SmReplace("idtarifa", katops->idtarifa)
+
+if IsPDV()
+	SmReplace("idtarifa", katops->idtarifa)
+else
+	if !lNovi
+		SmReplace("idtarifa", roba->idtarifa)
+	endif
+endif
 
 if roba->(FIELDPOS("K1"))<>0  .and. katops->(FIELDPOS("K1"))<>0
 	SmReplace("k1", katops->k1)
@@ -885,7 +892,20 @@ sql_azur(.t.)
 select priprz
 APPEND BLANK
 
-replace  idroba with katops->idroba,CIJENA with katops->mpc,idtarifa with katops->idtarifa,KOLICINA with katops->kolicina,JMJ with katops->jmj,RobaNaz with katops->naziv,PREBACEN with OBR_NIJE,IDRADNIK with gIdRadnik,IdPos with KATOPS->IdPos,IdOdj WITH cIdOdj,IdVd WITH cIdVD, Smjena WITH gSmjena ,BrDok with cBrdok,DATUM with gDatum
+replace idroba with katops->idroba
+replace CIJENA with katops->mpc
+replace idtarifa with katops->idtarifa
+replace KOLICINA with katops->kolicina
+replace JMJ with katops->jmj
+replace RobaNaz with katops->naziv
+replace PREBACEN with OBR_NIJE
+replace IDRADNIK with gIdRadnik
+replace IdPos with KATOPS->IdPos
+replace IdOdj WITH cIdOdj
+replace IdVd WITH cIdVD
+replace Smjena WITH gSmjena 
+replace BrDok with cBrdok
+replace DATUM with gDatum
 
 //priprz
 if cIdVd=="NI"
