@@ -185,10 +185,8 @@ O_OSOB
 set order to tag "NAZ"
 O_TARIFA 
 O_VALUTE
-if gSifK=="D"
-	O_SIFK
-	O_SIFV
-endif
+O_SIFK
+O_SIFV
 O_SIROV
 O_ROBA
 
@@ -223,10 +221,8 @@ O_RNGOST
 O_OSOB
 O_STRAD
 
-if (gSifK=="D")
-	O_SIFK
- 	O_SIFV
-endif
+O_SIFK
+O_SIFV
 
 return
 *}
@@ -762,11 +758,6 @@ if fCROba
 	 ASQLCroba(@nH,"#END#"+cSQLFile)
 	 Msgc()
 endif 
-
-// TIGRA-AURA
-if gDuplo=="D"   
-  	tgrDuploAzur()
-endif
 
 // ako se koristi varijanta evidentiranja podataka o nacinu placanja
 // nIznRn = iznos zakljucenog racuna
