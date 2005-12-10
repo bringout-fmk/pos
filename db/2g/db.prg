@@ -1418,6 +1418,7 @@ nRes2:=0
 
 if gSamoProdaja == "N" .and. IzFmkIni("TOPS","INTEG","N",EXEPATH)=="D"
 	lReindex := .f.
+	BrisiError()
 	nRes1:=ChkInt1(.f., @lReindex)
 	nRes2:=ChkInt2(.f., @lReindex)
 	if (nRes1 + nRes2) <> 0
