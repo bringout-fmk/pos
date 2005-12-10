@@ -244,10 +244,8 @@ O_MJTRUR
 O_ODJ
 O_DIO
 
-if gSifK=="D"
-	O_SIFK
-	O_SIFV
-endif
+O_SIFK
+O_SIFV
 
 O_SAST
 O_SIROV
@@ -278,10 +276,8 @@ O_POS
 O__POS
 O_PRIPRZ
 
-if gSifK=="D"
-	O_SIFK
-	O_SIFV
-endif
+O_SIFK
+O_SIFV
 
 O_ROBA 
 O_SIROV
@@ -296,10 +292,8 @@ function ODbRpt()
 *{
 
 O_OSOB
-if gSifK=="D"
-	O_SIFK
-	O_SIFV
-endif
+O_SIFK
+O_SIFV
 O_VRSTEP 
 O_ROBA
 O_ODJ 
@@ -330,10 +324,8 @@ O_UREDJ
 O_ODJ 
 O_K2C
 O_ROBA
-if gSifK=="D"
-	O_SIFK
-	O_SIFV
-endif
+O_SIFK
+O_SIFV
 O__PRIPR 
 O__POS
 return
