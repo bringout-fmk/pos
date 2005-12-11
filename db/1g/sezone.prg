@@ -90,46 +90,87 @@ AADD(aFiles, "VRSTEP.CDX")
 
 return aFiles
 
+
+// poziva se iz glavnog menija
+function PPrenosPos()
+local dLastDokDatum
+local dCurDate
+
+dCurDate := DATE()
+if MONTH(dCurDate) > 1 
+ // ovo se radi u januaru
+ return
+endif 
+
+close all
+O_DOKS
+//TAG "6" : "dtos(datum)", KUMPATH+"DOKS" 
+SET ORDER TO TAG "6"
+
+GO BOTTOM
+dLastDokDatum := doks->datum
+if  ( YEAR(dLastDokDatum) < YEAR(dCurDate)  )
+  lSplit := .t.
+endif
+
+close
+
+if !lSplit
+  return .t.
+endif
+
+if (KLevel > L_UPRAVN) .or. (Pitanje(nil, "Nova je godina: " + DTOC(dCurDate) + " , izvrsiti razdvajanje sezona ?", "N") == "N")
+	MsgBeep("Tekuci datum je : " + DTOC(dCurDate) + "##" + ;
+                "Posljednji dokument ima datum : " + DTOC(dLastDokDatum) + ;
+                "## zbog toka ne mozete nastaviti rad. ## bye bye ...")
+    if (KLevel <= L_ADMIN)
+      	// administrator moze uci u kasu
+      	lSplit := .f.
+    else
+    	return .f.
+    endif
+endif
+
+if lSplit
+ ng_pocetak(STR(YEAR(gDatum),4))
+endif
+
+return .t.
+
 // hajmo_ispocetka: ng_pocetak
 // 
 function ng_pocetak(cSezona)
-
 // sve tabele moraju biti zatvorene
 close all
-
 copy_2_sezona(cSezona)
-
 // provjeri integritet podataka izmedju RADP i cSezona
-integ_sez_tek_godina()
-
-zap_all_promet()
-
+if integ_sez_radp()
+   // ako su u sezonskom podrucju podaci isti kao u radnom
+   zap_all_promet()
+endif
 END PRINT
 return
 
-
+function integ_sez_radp()
+  MsgBeep("Nije implementirano !")
+return
 
 //zapuj sav promet
 function zap_all_promet()
-
 brisi_rupe()
-
 // zapuj pos
 OX_POS
 zap
-
 // zapuj doks
 OX_DOKS
 zap
-
+// pakuj robu
 OX_ROBA
-_dbpack()
-
+__dbpack()
 return
 
 
 function brisi_rupe()
-
 MsgO("Brisem prazne sifre: ROBA")
 O_ROBA
 SET ORDER TO 0
@@ -151,7 +192,7 @@ START PRINT CRET
 
 // pripremi sezonski direktorij
 if !cre_sez_dirs(cSezona)  
-  MessageBeep("Sezonski direktoriji se ne mogu formirati !?")
+  MsgBeep("Sezonski direktoriji se ne mogu formirati !?")
   END PRINT
 endif
 
@@ -178,17 +219,17 @@ return
 // napravi sezonske direktorije
 function cre_sez_dirs(cSezona)
 
-lOk := cre_ren_if_exist(KUMPATH, cSezona)
-lOk := lOk .and. cre_ren_if_exist(PRIVPATH, cSezona)
-lOK := lOk .and. cre_ren_if_exist(SIFPATH, cSezona)
-lOk := lOK .and. cre_ren_if_exist(KUMPATH + "\SQL", cSezona)
+lOk := cre_ren_dir(KUMPATH, cSezona)
+lOk := lOk .and. cre_ren_dir(PRIVPATH, cSezona)
+lOK := lOk .and. cre_ren_dir(SIFPATH, cSezona)
+lOk := lOK .and. cre_ren_dir(KUMPATH + "\SQL", cSezona)
 
 return lOk
 
 
 // npr rename_if_exist( 'c:\tops\kum1\', '2005')
 // napravi c:\tops\kum1\2005.1
-static function cre_ren_exist(cDir, cPodDir)
+static function cre_ren_dir(cDir, cPodDir)
 
 if FILE(cDir + cPodDir)
 
@@ -266,6 +307,6 @@ return
 function cp_file(cOld, cNew)
 ? DATE(), TIME(), ": cp_file:" , cOld, "->", cNew
 MsgO( "cp_file:" + cOld + "->" + cNew )
-FCOPY(cOld, cNew)
+COPY FILE cOld TO  cNew
 MsgC()
 return

@@ -2,11 +2,6 @@
 
 /* Copyright (C) 1997-2002, Sigma-com Zenica BiH
  * 
- * Header  : $Header: c:/cvsroot/cl/sigma/fmk/pos/main/1g/prijava.prg,v 1.4 2003/01/19 23:44:18 ernad Exp $
- * Author  : $Author: ernad $
- * Date    : $Date: 2003/01/19 23:44:18 $
- * Revision: $Revision: 1.4 $
- *
  */
  
 

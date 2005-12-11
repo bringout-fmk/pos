@@ -174,8 +174,7 @@ endif
 
 MsgBeep("Ukoliko je predhodni put u toku rada#bilo problema  (nestanak struje, blokirao racunar...),## kucajte lozinku IB, pa <ENTER> !")
 
-if (gVrstaRS<>"S")
-	do while (.t.)
+do while (.t.)
       		m_x:=Fx
       		m_y:=Fy
       		KLevel:=PosPrijava(Fx, Fy)
@@ -194,15 +193,14 @@ if (gVrstaRS<>"S")
         		OdrediSmjenu(.t.) 
       		endif
       		exit
-    	enddo
-  	PrikStatus()
-  	SETPOS(Fx, Fy)
-  	fPrviPut:=.t.
-else
-	fPrviPut:=.f.
-endif
+enddo
+PrikStatus()
+SETPOS(Fx, Fy)
+fPrviPut:=.t.
 
-PPrenosPos()
+if !PPrenosPos()
+ self:lTerminate = .t.
+endif
 
 do while (.t.)
 
