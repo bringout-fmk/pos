@@ -4,66 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/rpt/1g/rpt_rkas.prg,v $
- * $Author: mirsad $ 
- * $Revision: 1.23 $
- * $Log: rpt_rkas.prg,v $
- * Revision 1.23  2003/08/20 13:37:30  mirsad
- * omogucio ispis poreza na svakoj stavci i na prepisu racuna, kao i na realizaciji kase po robama
- *
- * Revision 1.22  2003/07/08 10:58:29  mirsad
- * uveo fmk.ini/kumpath/[POS]/Retroaktivno=D za mogucnost ispisa azur.racuna bez teksta "PREPIS" i za ispis "datuma do" na realizaciji umjesto tekuceg datuma
- *
- * Revision 1.21  2003/06/28 15:05:36  mirsad
- * omogucen ispis naziva firme na izvjestajima
- *
- * Revision 1.20  2003/04/24 20:45:02  mirsad
- * prenos TOPS->FAKT
- *
- * Revision 1.19  2002/07/06 11:14:51  ernad
- *
- *
- * debug porez po tarifama za gVrstaRs="S"
- *
- * Revision 1.18  2002/06/26 10:45:35  ernad
- *
- *
- * ciscenja POS, planika - uvodjenje u funkciju IsPlanika funkcije (dodana inicijalizacija
- * varijabli iz FmkSvi u main/2g/app.prg/metod setGvars
- *
- * Revision 1.17  2002/06/24 16:11:53  ernad
- *
- *
- * planika - uvodjenje izvjestaja 98-reklamacija, izvjestaj planika/promet po vrstama placanja, debug
- *
- * Revision 1.16  2002/06/24 11:23:55  ernad
- *
- *
- * ciscenje: uvedena podfunkcija TotalKase
- *
- * Revision 1.15  2002/06/24 07:01:38  ernad
- *
- *
- * meniji, u oDatabase:scan ubacen GwDiskFree ..., debug...
- *
- * Revision 1.14  2002/06/19 05:53:14  ernad
- *
- *
- * ciscenja, debug
- *
- * Revision 1.13  2002/06/18 13:16:01  ernad
- * razbio "kobasica" funkciju !
- *
- * Revision 1.12  2002/06/17 13:18:22  mirsad
- * dokumentovanje f-ja (priprema za doxy)
- *
- * Revision 1.11  2002/06/17 11:45:25  mirsad
- * dokumentovanje f-ja (priprema za doxy)
- *
- * Revision 1.10  2002/06/14 14:02:43  mirsad
- * prirpeme za doxy dokumenter
- *
- *
  */
 
 /*! \file fmk/pos/rpt/1g/rpt_rkas.prg
@@ -240,9 +180,6 @@ endif
 AADD(aNiz,{"Radnici (prazno-svi)","cRadnici",,"@!S30",})
 AADD(aNiz,{"Vrste placanja (prazno-sve)","cVrsteP",,"@!S30",})
 
-if IsTigra()
-	AADD(aNiz,{"Placanje (G-gotovinsko,Z-ziralno,prazno-sve)","cGotZir","cGotZir$'GZ '","@!",})
-endif
 
 if gVodiOdj=="D"
 	AADD(aNiz,{"Odjeljenje (prazno-sva)","cIdOdj","EMPTY(cIdOdj).or.P_Odj(@cIdOdj)","@!",})

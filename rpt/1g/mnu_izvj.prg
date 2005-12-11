@@ -4,31 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/rpt/1g/mnu_izvj.prg,v $
- * $Author: sasa $ 
- * $Revision: 1.9 $
- * $Log: mnu_izvj.prg,v $
- * Revision 1.9  2003/08/08 16:25:36  sasa
- * dodani brojaci partnera i stavki
- *
- * Revision 1.8  2003/06/16 17:30:47  sasa
- * generacija zbirnog racuna
- *
- * Revision 1.7  2003/02/13 21:43:56  ernad
- * tigra - PartnSt
- *
- * Revision 1.6  2003/01/04 14:34:19  ernad
- * PartnSt - ispravke izvjestaja (umjesto I_RnGostiju staviti StanjePartnera)
- *
- * Revision 1.5  2002/12/22 20:42:02  sasa
- * dorade
- *
- * Revision 1.4  2002/07/01 13:58:56  ernad
- *
- *
- * izvjestaj StanjePm nije valjao za gVrstaRs=="S" (prebacen da je isti kao za kasu "A")
- *
- *
  */
  
 function Izvj()
@@ -81,32 +56,18 @@ else
 	AADD(opcexe,{|| TopN()})
 	AADD(opc,"7. stanje partnera")
 	AADD(opcexe,{|| StanjePartnera()})
-	if IsTigra()
-		AADD(opc, "8. stanje partnera - pregled HH")
-		AADD(opcexe, {|| Rpt_Ostav()})
-	endif
 	AADD(opc,"K. stanje artikala po K1 ")
   	AADD(opcexe,{|| StanjeK1()})
 	AADD(opc,"A. stampa azuriranog dokumenta")
 	AADD(opcexe,{|| PrepisDok()})
 endif
 
-if IzFMKIni("Tigra","Partner01","N")=="D"
-	AADD(opc,"M. marsrute" )
-  	AADD(opcexe,{|| Marsrute()})
-else
   	AADD(opc,"-------------------")
   	AADD(opcexe,nil)
-endif
 
 if gPVrsteP
   AADD(opc,"N. pregled prometa po v.placanja")
   AADD(opcexe,{|| PrometVPl()})
-endif
-
-if IsTigra()
-	AADD(opc,"X. pregled prometa partnera")
-  	AADD(opcexe,{|| RptPrPa()})
 endif
 
 Menu_SC("izvt")

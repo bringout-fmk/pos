@@ -4,85 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/main/1g/mnu_adm.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.26 $
- * $Log: mnu_adm.prg,v $
- * Revision 1.26  2004/01/06 13:28:33  sasavranic
- * Menij poruke samo za varijantu planika=D
- *
- * Revision 1.25  2004/01/05 14:19:47  sasavranic
- * Brisane duplih sifara
- *
- * Revision 1.24  2003/10/27 13:01:23  sasavranic
- * Dorade
- *
- * Revision 1.23  2003/07/22 15:08:05  sasa
- * prenos pos<->pos
- *
- * Revision 1.22  2003/06/16 17:30:36  sasa
- * generacija zbirnog racuna
- *
- * Revision 1.21  2003/04/24 14:19:07  mirsad
- * prenos tops->fakt
- *
- * Revision 1.20  2003/04/24 06:59:58  mirsad
- * prenos TOPS->FAKT
- *
- * Revision 1.19  2003/01/29 15:35:03  ernad
- * tigra - PartnSt
- *
- * Revision 1.18  2002/12/27 12:41:44  sasa
- * prebacene opcije za prenos na hh
- *
- * Revision 1.17  2002/12/22 20:41:41  sasa
- * dorade
- *
- * Revision 1.16  2002/11/21 13:24:47  mirsad
- * ispravka bug-a: umjesto ZakljuciRadnika() sada se poziva Zakljuci() za zakljucenje radnika
- *
- * Revision 1.15  2002/07/06 11:06:42  ernad
- *
- *
- * gVrstaRs="S" debug, dodan opcija u meni "osvjezi sifrarnik robe iz fmk"
- *
- * Revision 1.14  2002/07/01 17:49:28  ernad
- *
- *
- * formiranje finalnih build-ova (fin, kalk, fakt, pos) pred teren planika
- *
- * Revision 1.13  2002/06/24 17:04:15  ernad
- *
- *
- * omoguceno da se "restartuje" program .... nakon podesenja sistemskog sata -> oApp:run() ....
- *
- * Revision 1.12  2002/06/24 16:11:53  ernad
- *
- *
- * planika - uvodjenje izvjestaja 98-reklamacija, izvjestaj planika/promet po vrstama placanja, debug
- *
- * Revision 1.11  2002/06/24 10:08:22  ernad
- *
- *
- * ciscenje ...
- *
- * Revision 1.10  2002/06/24 07:01:38  ernad
- *
- *
- * meniji, u oDatabase:scan ubacen GwDiskFree ..., debug...
- *
- * Revision 1.9  2002/06/21 02:28:36  ernad
- * interni sql parser - init, testiranje pos-sql
- *
- * Revision 1.8  2002/06/19 19:46:47  ernad
- *
- *
- * rad u sez.podr., debug., gateway
- *
- * Revision 1.7  2002/06/15 08:35:10  sasa
- * no message
- *
- *
  */
  
 
@@ -117,14 +38,6 @@ AADD(opcexe, {|| Real2Kalk() })
 if IsPlanika()
 	AADD(opc, "O. prenos reklamacija u KALK")
 	AADD(opcexe, {|| Rek2Kalk() })
-endif
-if IsTigra()
-	AADD(opc, "H. prepakivanje ")
-	AADD(opcexe, {|| SvediNaPrP()})
-	AADD(opc, "F. prenos realizacije u FAKT")
-	AADD(opcexe, {|| Real2Fakt() })
-	AADD(opc, "G. prenos stanja robe u FAKT")
-	AADD(opcexe, {|| Stanje2Fakt() })
 endif
 AADD(opc, "S. sifrarnici                  ")
 AADD(opcexe, {|| MenuSifre() })

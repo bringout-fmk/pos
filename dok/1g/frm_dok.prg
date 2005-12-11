@@ -80,23 +80,16 @@ if IzFMKIni("TOPS","StAzurDok_PrikazKolonePartnera","N",EXEPATH)=="D"
   	AADD(ImeKol,{PADR("Partner",25),{||PADR(TRIM(idgost)+"-"+TRIM(rngost->naz),25)}})
 endif
 
-if IsTigra()
-	AADD(ImeKol,{"VP",{||IdVrsteP}})
-	AADD(ImeKol,{"Sati",{||vrijeme}})
-	AADD(ImeKol,{"Datum",{||datum}})
-	AADD(ImeKol,{PADC("Iznos",10),{|| DokIznos(NIL)}})
-	AADD(ImeKol,{"Radnik",{||IdRadnik}})
-else
-	AADD(ImeKol,{"VP",{||IdVrsteP}})
-	AADD(ImeKol,{"Datum",{||datum}})
-	AADD(ImeKol,{"Smj",{||smjena}})
-	AADD(ImeKol,{PADC("Iznos",10),{|| DokIznos(NIL)}})
-	if IsPlanika()
-		// reklamacije (R)ealizovane, (P)riprema
-		AADD(ImeKol,{"Rekl",{||sto}})
-	endif
-	AADD(ImeKol,{"Radnik",{||IdRadnik}})
+AADD(ImeKol,{"VP",{||IdVrsteP}})
+AADD(ImeKol,{"Datum",{||datum}})
+AADD(ImeKol,{"Smj",{||smjena}})
+AADD(ImeKol,{PADC("Iznos",10),{|| DokIznos(NIL)}})
+if IsPlanika()
+  // reklamacije (R)ealizovane, (P)riprema
+  AADD(ImeKol,{"Rekl",{||sto}})
 endif
+AADD(ImeKol,{"Radnik",{||IdRadnik}})
+
 
 Kol:={}
 for i:=1 to LEN(ImeKol)

@@ -4,61 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/db/1g/sezone.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.14 $
- * $Log: sezone.prg,v $
- * Revision 1.14  2004/04/27 11:01:39  sasavranic
- * Rad sa sezonama - bugfix
- *
- * Revision 1.13  2003/05/23 13:07:46  ernad
- * tigra: spajanje sezona, PartnSt generacija otvorenih stavki
- *
- * Revision 1.12  2003/01/19 23:44:18  ernad
- * test network speed (sa), korekcija bl.lnk
- *
- * Revision 1.11  2003/01/14 15:24:41  ernad
- * debug .. tigra ... razdvajanje sezona ... mora gSQLDirekno biti "N" !!!
- *
- * Revision 1.10  2003/01/14 10:32:18  ernad
- * pripreme za tigru ...
- *
- * Revision 1.9  2002/06/30 20:28:44  ernad
- *
- *
- *
- * pos meni za odabir firme /MNU_INI
- *
- * Revision 1.8  2002/06/26 08:14:40  ernad
- *
- *
- * debug DELETE FROM PROMVP ... <<WHERE>> falilo
- *
- * Revision 1.7  2002/06/25 23:46:15  ernad
- *
- *
- * pos, prenos pocetnog stanja
- *
- * Revision 1.6  2002/06/23 11:57:23  ernad
- * ciscenja sql - planika
- *
- * Revision 1.5  2002/06/20 12:54:09  ernad
- *
- *
- * cisenje sezonsko<->radno podrucje (izbcena fja GSezona())
- *
- * Revision 1.4  2002/06/19 19:46:47  ernad
- *
- *
- * rad u sez.podr., debug., gateway
- *
- * Revision 1.3  2002/06/17 13:58:54  sasa
- * no message
- *
- * Revision 1.2  2002/06/15 12:04:51  sasa
- * no message
- *
- *
  */
  
 /*! \file fmk/pos/db/1g/sezone.prg
@@ -224,7 +169,8 @@ if (goModul:oDatabase:cRadimUSezona=="RADP")
 	if (cOldSez <> cNewSeason .and.  bPrometExist .and. nDayOfDate > 4  .and. gSamoProdaja=="N")
     
       		// ne prelazi u novu sezonu sve dok ne prodje 10 - ti u mjesecu
-      		if gVrstaRS<>"K"  // neka K tip kase suti
+                // neka K tip kase suti
+      		if gVrstaRS<>"K"  
         		MsgBeep("Prema satu racunara tekuca sezona je "+cNewSeason + "##Ukoliko je ovo prvo pokretanje programa u #novoj sezoni na sljedece pitanje odgovorite sa 'D' .", 0)
       		endif
 
@@ -298,7 +244,7 @@ O_PROMVP
 OX_POS        
 OX_DOKS
 
-lSpajanjeRazdCijene:= ( IsTigra() .or. IzFmkIni('TOPS','SpajanjeRazdCijene','N', KUMPATH)=='D')
+lSpajanjeRazdCijene:= (  IzFmkIni('TOPS','SpajanjeRazdCijene','N', KUMPATH)=='D')
 
 if (gSezonaTip=="M")
   	// ako je danasnja (novaz) sezona 0206 -> dDat=CTOD("01.06.02")

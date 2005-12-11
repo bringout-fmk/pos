@@ -3,112 +3,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/db/2g/db.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.29 $
- * $Log: db.prg,v $
- * Revision 1.29  2003/12/24 09:54:35  sasavranic
- * Nova varijanta poreza, uvrstene standardne funkcije za poreze iz FMK
- *
- * Revision 1.28  2003/11/28 11:38:01  sasavranic
- * Prilikom prenosa realizacije u KALK da generise i barkodove iz TOPS-a
- *
- * Revision 1.27  2003/11/21 14:53:22  sasavranic
- * radi sa promvp samo ako je planika u pitanju
- *
- * Revision 1.26  2003/10/29 10:25:29  sasavranic
- * funkcija kreiranja message.dbf prebacena u pos/db
- *
- * Revision 1.25  2003/10/27 13:01:23  sasavranic
- * Dorade
- *
- * Revision 1.24  2003/07/26 15:06:34  sasa
- * novi index na rngost
- *
- * Revision 1.23  2003/07/22 15:07:48  sasa
- * prenos pos<->pos
- *
- * Revision 1.22  2003/06/24 13:15:09  sasa
- * no message
- *
- * Revision 1.21  2003/06/16 17:30:15  sasa
- * generacija zbirnog racuna
- *
- * Revision 1.20  2003/06/14 03:03:49  mirsad
- * debug-hops
- *
- * Revision 1.19  2003/05/23 13:07:46  ernad
- * tigra: spajanje sezona, PartnSt generacija otvorenih stavki
- *
- * Revision 1.18  2002/12/22 20:41:10  sasa
- * dorade
- *
- * Revision 1.17  2002/08/19 10:01:12  ernad
- *
- *
- * sql synchro cijena1, idtarifa za tabelu roba
- *
- * Revision 1.16  2002/07/06 08:13:34  ernad
- *
- *
- * - uveden parametar PrivPath/POS/Slave koji se stavi D za kasu kod koje ne zelimo ScanDb
- * Takodje je za gVrstaRs="S" ukinuto scaniranje baza
- *
- * - debug ispravke racuna (ukinute funkcije PostaviSpec, SiniSpec, zamjenjene sa SetSpec*, UnSetSpec*)
- *
- * Revision 1.15  2002/07/04 19:03:22  ernad
- *
- *
- * PROMVP nije bila uvrstena u metod oDbPos:obaza(i)
- *
- * Revision 1.14  2002/07/04 18:42:57  ernad
- *
- *
- * novi sclib, uklonjene debug poruke
- *
- * Revision 1.13  2002/07/03 07:31:12  ernad
- *
- *
- * planika, debug na terenu
- *
- * Revision 1.12  2002/06/30 20:28:44  ernad
- *
- *
- *
- * pos meni za odabir firme /MNU_INI
- *
- * Revision 1.11  2002/06/28 06:45:01  sasa
- * no message
- *
- * Revision 1.10  2002/06/25 23:46:15  ernad
- *
- *
- * pos, prenos pocetnog stanja
- *
- * Revision 1.9  2002/06/25 12:04:07  ernad
- *
- *
- * ubaceno kreiranje SECUR-a (posto je prebacen u kumpath)
- *
- * Revision 1.8  2002/06/24 16:11:53  ernad
- *
- *
- * planika - uvodjenje izvjestaja 98-reklamacija, izvjestaj planika/promet po vrstama placanja, debug
- *
- * Revision 1.7  2002/06/24 07:01:38  ernad
- *
- *
- * meniji, u oDatabase:scan ubacen GwDiskFree ..., debug...
- *
- * Revision 1.6  2002/06/21 14:18:11  ernad
- *
- *
- * pos - planika, import sql
- *
- * Revision 1.5  2002/06/14 12:43:46  ernad
- * header
- *
- *
  */
  
 
@@ -638,7 +532,7 @@ if (nArea==-1 .or. nArea==(F_PRIPRG))
 		 //     "IdRoba+IdCijena+Str (Cijena, 10, 3)+IdTarifa",;
 		 //     PRIVPATH+"PRIPRG")
 
-	if (IsTigra() .or. IzFmkIni('TOPS','SpajanjeRazdCijene','N', KUMPATH)=='D')
+	if (IzFmkIni('TOPS','SpajanjeRazdCijene','N', KUMPATH)=='D')
 		CREATE_INDEX ("3", "IdVd+IdPos+IdVrsteP+IdGost+Placen+IdDio+IdOdj+IdRoba+STR(Cijena,10,2)", PRIVPATH+"PRIPRG")
 	else
 		CREATE_INDEX ("3", "IdVd+IdPos+IdVrsteP+IdGost+Placen+IdDio+IdOdj+IdRoba", PRIVPATH+"PRIPRG")
@@ -940,10 +834,6 @@ if (nArea==-1 .or. nArea==(F_RNGOST))
 	endif
 	CREATE_INDEX("ID", "ID", SIFPATH+"RNGOST")
 	CREATE_INDEX("NAZ", "NAZ", SIFPATH+"RNGOST")
-	if IsTigra()
-		CREATE_INDEX("IDN","idn",SIFPATH+"RNGOST",.t.)
-		CREATE_INDEX("IDFMK","idfmk",SIFPATH+"RNGOST",.t.)
-	endif
 endif
 
 if (nArea==-1 .or. nArea==(F_SIFK))

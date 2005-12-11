@@ -4,29 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/rpt/1g/rpt_rrad.prg,v $
- * $Author: mirsad $ 
- * $Revision: 1.7 $
- * $Log: rpt_rrad.prg,v $
- * Revision 1.7  2003/07/08 10:58:29  mirsad
- * uveo fmk.ini/kumpath/[POS]/Retroaktivno=D za mogucnost ispisa azur.racuna bez teksta "PREPIS" i za ispis "datuma do" na realizaciji umjesto tekuceg datuma
- *
- * Revision 1.6  2003/06/28 15:05:36  mirsad
- * omogucen ispis naziva firme na izvjestajima
- *
- * Revision 1.5  2003/04/24 20:45:02  mirsad
- * prenos TOPS->FAKT
- *
- * Revision 1.4  2002/06/17 13:18:22  mirsad
- * dokumentovanje f-ja (priprema za doxy)
- *
- * Revision 1.3  2002/06/17 11:45:25  mirsad
- * dokumentovanje f-ja (priprema za doxy)
- *
- * Revision 1.2  2002/06/14 14:02:43  mirsad
- * prirpeme za doxy dokumenter
- *
- *
  */
 
 /*! \file fmk/pos/rpt/1g/rpt_rrad.prg
@@ -109,9 +86,6 @@ ELSE
   ENDIF
   AADD(aNiz,{"Sifra radnika  (prazno-svi)","cIdRadnik","IF(!EMPTY(cIdRadnik),P_OSOB(@cIdRadnik),.t.)",,})
   AADD(aNiz,{"Vrsta placanja (prazno-sve)","cVrsteP",,"@!S30",})
-  if IsTigra()
-  	AADD(aNiz,{"Placanje (G-gotovinsko,Z-ziralno,prazno-sva)","cGotZir","cGotZir$'GZ '","@!",})
-  endif
   AADD(aNiz,{"Smjena (prazno-sve)","cSmjena",,,})
   AADD(aNiz,{"Izvjestaj se pravi od datuma","dDatOd",,,})
   AADD(aNiz,{"                   do datuma","dDatDo",,,})
@@ -196,14 +170,6 @@ else
   ? "PROD.MJESTO: "+cidpos+"-"+IF(EMPTY(cIdPos),"SVA",Ocitaj (F_KASE, cIdPos,"Naz"))
   ? "RADNIK     : "+IF(EMPTY(cIdRadnik),"svi",cIdRadnik+"-"+RTRIM(Ocitaj(F_OSOB,cIdRadnik,"naz")))
   ? "VR.PLACANJA: "+IF(EMPTY(cVrsteP),"sve",RTRIM(cVrsteP))
-  if IsTigra()
-  	if empty(cGotZir)
-	  ? "PLACANJE   : gotovinsko i ziralno"
-	else
-	  ? "PLACANJE   : "+if(cGotZir<>"Z","gotovinsko","ziralno")
-	  aUsl1+=".and. placen"+if(cGotZir<>"Z","<>'Z'","=='Z'")
-	endif	
-  endif
   IF ! EMPTY (cSmjena)
     ? "SMJENA     : "+RTRIM(cSmjena)
   ENDIF

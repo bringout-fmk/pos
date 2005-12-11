@@ -4,45 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/dok/1g/frm_rac.prg,v $
- * $Author: mirsad $ 
- * $Revision: 1.12 $
- * $Log: frm_rac.prg,v $
- * Revision 1.12  2003/07/09 06:21:40  mirsad
- * ispravka bug-a na pregledu racuna nakon uvodjenja uslova za PM- filter mora uvijek obuhvatati i "X "
- *
- * Revision 1.11  2003/07/05 11:27:43  mirsad
- * uveo uslov za prodajno mjesto pri pozivu pregleda racuna
- *
- * Revision 1.10  2003/04/24 20:45:02  mirsad
- * prenos TOPS->FAKT
- *
- * Revision 1.9  2002/07/08 23:03:55  ernad
- *
- *
- * trgomarket debug dok 80, 81, izvjestaj lager lista magacin po proizv. kriteriju
- *
- * Revision 1.8  2002/07/06 08:13:34  ernad
- *
- *
- * - uveden parametar PrivPath/POS/Slave koji se stavi D za kasu kod koje ne zelimo ScanDb
- * Takodje je za gVrstaRs="S" ukinuto scaniranje baza
- *
- * - debug ispravke racuna (ukinute funkcije PostaviSpec, SiniSpec, zamjenjene sa SetSpec*, UnSetSpec*)
- *
- * Revision 1.7  2002/06/25 10:56:10  sasa
- * no message
- *
- * Revision 1.6  2002/06/19 19:46:47  ernad
- *
- *
- * rad u sez.podr., debug., gateway
- *
- * Revision 1.5  2002/06/17 13:11:43  sasa
- * no message
- *
- * Revision 1.4  2002/06/15 08:17:46  sasa
- * no message
  *
  *
  */
@@ -96,11 +57,7 @@ cBroj:=PADL(cBroj,6)
 
 ImeKol:={{ "Broj racuna",{|| padr(trim(IdPos)+"-"+alltrim(BrDok),9)}},{ "Iznos",{|| STR (SR_Iznos(), 13, 2)}},{ "Smj",{|| smjena}      },{ "Datum",{|| datum}},{ "Vr.Pl",      {|| idvrstep} },{ IIF(IsPlNs(), "Broj NI", "Partner"),    {|| idgost} },{ "Vrijeme",    {|| vrijeme} }}
 
-if IsTigra()
-	AADD(ImeKol,{ "Placanje", {|| IIF(Placen<>"Z","GOTOVINA","ziralno ")} })
-else
-	AADD(ImeKol,{ "Placen",     {|| IIF (Placen==PLAC_NIJE,"  NE","  DA")} })
-endif
+AADD(ImeKol,{ "Placen",     {|| IIF (Placen==PLAC_NIJE,"  NE","  DA")} })
 
 if kLevel<=L_UPRAVN
 	Kol:={1,2,3,4,5,6,7,8}
@@ -159,11 +116,7 @@ else
   	bMarkF:=NIL
 endif
 
-if IsTigra()
-	ObjDBedit( , 20, 77, {|| EdPRacuni(fMark) },IIF(gRadniRac=="D", "  STALNI ","  ")+"RACUNI    G-gotovina/Z-ziralno ", "", .F.,cFnc,,bMarkF)
-else
-	ObjDBedit( , 20, 65, {|| EdPRacuni(fMark) },IIF(gRadniRac=="D", "  STALNI ","  ")+"RACUNI  ", "", .F.,cFnc,,bMarkF)
-endif
+ObjDBedit( , 20, 65, {|| EdPRacuni(fMark) },IIF(gRadniRac=="D", "  STALNI ","  ")+"RACUNI  ", "", .F.,cFnc,,bMarkF)
 
 SET FILTER TO
 
@@ -232,15 +185,6 @@ if fMark .and. (LastKey()==Asc("+"))
 	return DE_REFRESH
 endif
 
-if IsTigra()
-	if UPPER(CHR(LASTKEY()))=="Z"
-		replace placen with "Z"
-		return DE_REFRESH
-	elseif UPPER(CHR(LASTKEY()))=="G"
-		replace placen with "G"
-		return DE_REFRESH
-	endif
-endif
 
 if UPPER(CHR(LASTKEY()))=="P"
 	PreglSRacun(DOKS->IdPos,doks->datum,DOKS->BrDok)

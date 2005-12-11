@@ -4,49 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/sif/1g/sif.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.14 $
- * $Log: sif.prg,v $
- * Revision 1.14  2004/02/09 14:09:00  sasavranic
- * Apend sql loga i za sif osoblja
- *
- * Revision 1.13  2003/12/24 09:54:36  sasavranic
- * Nova varijanta poreza, uvrstene standardne funkcije za poreze iz FMK
- *
- * Revision 1.12  2003/09/01 09:02:10  sasa
- * uvedeno polje ugovor u rngost (tigra-aura)
- *
- * Revision 1.11  2003/06/16 17:30:55  sasa
- * generacija zbirnog racuna
- *
- * Revision 1.10  2003/01/19 23:44:18  ernad
- * test network speed (sa), korekcija bl.lnk
- *
- * Revision 1.9  2002/12/27 12:42:27  sasa
- * dodat unos inicijalne vrijednosti za popunjavanje polja IDN u rngost
- *
- * Revision 1.8  2002/12/26 11:54:04  sasa
- * dodato polje oznaka u rngost
- *
- * Revision 1.7  2002/12/22 20:42:18  sasa
- * dorade
- *
- * Revision 1.6  2002/06/30 20:28:44  ernad
- *
- *
- *
- * pos meni za odabir firme /MNU_INI
- *
- * Revision 1.5  2002/06/19 19:46:47  ernad
- *
- *
- * rad u sez.podr., debug., gateway
- *
- * Revision 1.4  2002/06/17 08:58:49  sasa
- * no message
- *
- *
  */
  
 /*! \fn P_Kase(cId,dx,dy)
@@ -471,18 +428,6 @@ O_RNGOST
 if gModul=="TOPS"
 	ImeKol:={{"ID ",{|| id },"id",{|| .t.},{|| vpsifra(wId)}},{PADC("Naziv",30),{|| naz},LEFT("naz",30)},{"Tip",{|| tip},"tip",{|| wTip:=iif(empty(wTip),"P",wTip),.T.},{|| wTip$"SP"}},{"Aktivan",{|| PADC(IIF(Status=="D","DA","NE"),7)},"Status",{|| wStatus:=iif(empty(wStatus),"D",wStatus), .t.},{|| wStatus $ "DN"}}}
 	
-	if IsTigra()
-		AADD(ImeKol,{"Ugovor",{|| ugovor},"ugovor"})
-		AADD(ImeKol,{"IDN",{|| idn},"idn",{|| IncIDN(@wIDN),.f.},{||.t.},,"999999"})
-		AADD(ImeKol,{"IDFMK",{|| idfmk},"idfmk"})
-		AADD(ImeKol,{"OZNAKA",{|| oznaka},"oznaka"})
-		AADD(ImeKol,{"HH",{|| hh},"hh"})
-		if rngost->(fieldpos("IZLOZENOST"))<>0
-			AADD(ImeKol,{"IZLOZENOST",{|| izlozenost},"izlozenost"})
-			AADD(ImeKol,{"POPTDR",{|| poptdr},"poptdr"})
-			AADD(ImeKol,{"POPKON",{|| popkon},"popkon"})
-		endif
-	endif
 else
 	ImeKol:={{"ID ",{|| id },"id",{|| .t.},{|| vpsifra(wId)}},{ PADC("Naziv",30),{|| naz},LEFT("naz",30)},{"Tip",{|| tip},"tip",{|| wTip:=iif(empty(wTip),"P",wTip),.T.},{|| wTip$"SP"}},{"Vrsta placanja",{|| IdVrsteP},"IdVrsteP",{|| .T.},{|| P_VRSTEP(@wIdVrsteP)}},{"Aktivan",{|| PADC(IIF(Status=="D","DA","NE"),7)},"Status",{|| wStatus:=iif(empty(wStatus),"D",wStatus), .T.},{|| wStatus $ "DN"}}}
 endif
@@ -500,11 +445,7 @@ else
 endif
 
 if gModul="TOPS"
-	if IsTigra()
-		return PostojiSifra(F_RNGOST,I_ID,10,75,"Sifrarnik partnera",@cid,dx,dy,{|Ch| PopuniIDN(Ch)},nil,nil,aZabrane)
-	else
-		return PostojiSifra(F_RNGOST,I_ID,10,75,"Sifrarnik partnera",@cid,dx,dy,nil,nil,nil,aZabrane)
-	endif
+	return PostojiSifra(F_RNGOST,I_ID,10,75,"Sifrarnik partnera",@cid,dx,dy,nil,nil,nil,aZabrane)
 else 
 	return PostojiSifra(F_RNGOST,I_ID,10,75,"Sifrarnik partnera/soba",@cid,dx,dy,NIL, NIL, NIL, aZabrane)
 endif 

@@ -4,38 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/rpt/1g/rpt_part.prg,v $
- * $Author: sasa $ 
- * $Revision: 1.10 $
- * $Log: rpt_part.prg,v $
- * Revision 1.10  2003/08/08 16:25:36  sasa
- * dodani brojaci partnera i stavki
- *
- * Revision 1.9  2003/06/28 15:05:36  mirsad
- * omogucen ispis naziva firme na izvjestajima
- *
- * Revision 1.8  2003/05/23 13:07:46  ernad
- * tigra: spajanje sezona, PartnSt generacija otvorenih stavki
- *
- * Revision 1.7  2003/02/13 21:43:56  ernad
- * tigra - PartnSt
- *
- * Revision 1.6  2003/01/29 15:35:03  ernad
- * tigra - PartnSt
- *
- * Revision 1.5  2003/01/29 06:00:36  ernad
- * citanje ini fajlova
- *
- * Revision 1.4  2003/01/14 10:32:18  ernad
- * pripreme za tigru ...
- *
- * Revision 1.3  2003/01/04 14:34:19  ernad
- * PartnSt - ispravke izvjestaja (umjesto I_RnGostiju staviti StanjePartnera)
- *
- * Revision 1.2  2002/06/14 14:02:43  mirsad
- * prirpeme za doxy dokumenter
- *
- *
  */
 
 
@@ -60,12 +28,6 @@ private cSpec:="D"
 private cVrstP:=SPACE(2)
 private cGotZir:=SPACE(1)
 private cSifraDob:=SPACE(8)
-altd()
-// generisanje stanja partnera
-if IsTigra()
-	private nSldMinIzn
-	private lGenPartnSt
-endif
 
 O_RNGOST
 
@@ -84,10 +46,6 @@ do while .t.
 		exit
 	endif
 enddo
-
-if IsTigra()
-	GenPartnSt(@lGenPartnSt, @nSldMinIzn)
-endif
 
 O_ROBA
 O_POS
@@ -235,7 +193,7 @@ do while !eof()
 		fPisi:=.t.
 		? REPL("-",80)
 		++ nBrojacPartnera	
-		if IsTigra() .and. lGenPartnSt
+		if lGenPartnSt
 			if (RNGOST->HH == "D" .and. !Empty(RNGOST->IDN))
 				AzurTopsOstav(RNGOST->IDN, RNGOST->IDFMK, RNGOST->Naz, nStanje, nSldMinIzn)
 			endif
@@ -316,7 +274,7 @@ if gVrstaRS<>"S"
 	PaperFeed()
 endif
 
-if IsTigra() .and. lGenPartnSt
+if lGenPartnSt
 	AddPAzToParams(dDat)
 	AddSCnToParams()
 	AddPCnToParams()
