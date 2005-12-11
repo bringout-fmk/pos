@@ -4,28 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/rpt/1g/rpt_kart.prg,v $
- * $Author: mirsad $ 
- * $Revision: 1.11 $
- * $Log: rpt_kart.prg,v $
- * Revision 1.11  2003/06/28 15:05:36  mirsad
- * omogucen ispis naziva firme na izvjestajima
- *
- * Revision 1.10  2003/01/21 15:01:18  ernad
- * probelm excl stanje artikala - nema problema
- *
- * Revision 1.9  2002/06/24 16:11:53  ernad
- *
- *
- * planika - uvodjenje izvjestaja 98-reklamacija, izvjestaj planika/promet po vrstama placanja, debug
- *
- * Revision 1.8  2002/06/17 13:18:22  mirsad
- * dokumentovanje f-ja (priprema za doxy)
- *
- * Revision 1.7  2002/06/14 14:02:43  mirsad
- * prirpeme za doxy dokumenter
- *
- *
  */
  
 
@@ -46,20 +24,6 @@
   * \param N - prikaz prilagoðen sirini trake POS-stampaèa, default vrijednost
   */
 *string FmkIni_KumPath_KARTICA_SirokiPapir;
-
-
-/*! \var *string FmkIni_PrivPath_TOPS_PrepakPotraz
-  * \brief D - prikazati prepakivanje na potraznoj strani
-  * \param N - prikazati prepakivanje na dugovnoj strani, default vrijednost
-  */
-*string FmkIni_PrivPath_TOPS_PrepakPotraz;
-
-
-/*! \var *string FmkIni_PrivPath_TOPS_KarticaBezPrepakivanja
-  * \brief D - omoguæava upit za prikaz dokumenata prepakivanja
-  * \param N - uvijek prikazuje dokumente prepakivanja, default vrijednost
-  */
-*string FmkIni_PrivPath_TOPS_KarticaBezPrepakivanja;
 
 
 /*! \fn Kartica()
@@ -97,10 +61,10 @@ O_POS
 
 cRoba:=SPACE(len(idroba))
 cIdPos:=gIdPos
-cPPar:="N"     // prikaz partnera
 
-// maska za postavljanje uslova
-///////////////////////////////
+// prikaz partnera
+cPPar:="N"     
+
 O_PARAMS
 private cSection:="I"
 private cHistory:="K"
@@ -188,21 +152,13 @@ else
 	endif
 endif
 
-//   1
 if gVrstaRS=="S"
-	cLM:=SPACE(5)
-	nSir:=80
+  cLM:=SPACE(5)
+  nSir:=80
 endif
 
-lPrepakPot:=(IzFMKINI("TOPS","PrepakPotraz","N",PRIVPATH)=="D")
 
-if IzFMKIni("TOPS","KarticaBezPrepakivanja","N",PRIVPATH)=="D"
-	lBezPrepak := Pitanje(,"Ignorisati dokumente prepakivanja?","D")=="D"
-else
-	lBezPrepak := .f.
-endif
-
-if cPPar=="D"  .or. lPrepakPot
+if cPPar=="D"  
 	O_DOKS
 	SELECT (F_DOKS)
 	// "IdPos+IdVd+dtos(datum)+BrDok"
@@ -229,14 +185,12 @@ endif
 EOF CRET
 
 
-// pravljenje izvjestaja
-////////////////////////
-
 START PRINT CRET
 
+// ovo je S - server
 if gVrstaRS=="S"
-	P_INI
-	P_10CPI
+   P_INI
+   P_10CPI
 endif
 
 ZagFirma()
@@ -348,27 +302,29 @@ do while !eof() .and. POS->IdOdj==cIdOdj
 		loop
       	endif
       	if (Klevel>"0" .and. pos->idpos="X") .or. (!empty(cIdPos) .and. IdPos<>cIdPos)
-        	// (POS->IdPos="X" .and. AllTrim (cIdPos)<>"X") .or. ;  // ?MS
         	skip
 		loop
       	endif
+	
       	if (cZaduzuje=="R" .and. pos->idvd=="96") .or. (cZaduzuje=="S".and.pos->idvd$"42#01")
         	skip
 		loop
       	endif
-      	if POS->idvd $ DOK_ULAZA
+	
+      	if pos->idvd $ DOK_ULAZA
         	nStanje += POS->Kolicina
-        	//nVrijednost += POS->Kolicina * POS->Cijena
-      	elseif Pos->idvd $ "IN"
+		
+      	elseif pos->idvd $ "IN"
         	nStanje -= (POS->Kolicina - POS->Kol2 )
         	nVrijednost += (POS->Kol2-POS->Kolicina) * POS->Cijena
-      	elseif POS->idvd $ DOK_IZLAZA
+		
+      	elseif pos->idvd $ DOK_IZLAZA
         	nStanje -= POS->Kolicina
-        	//nVrijednost -= POS->Kolicina * POS->Cijena
-      	elseif POS->IdVd == "NI"
+		
+      	elseif pos->IdVd == "NI"
         	// ne mijenja kolicinu
-        	//nVrijednost := POS->Kolicina * POS->Ncijena
       	endif
+	
       	skip
       enddo
       
@@ -420,10 +376,6 @@ do while !eof() .and. POS->IdOdj==cIdOdj
       	loop
       endif
 
-      if gVrstaRS=="S".and.prow()>63-gPStranica
-      	FF
-      endif
-      //
       if fSt
         SELECT (cRSdbf)
 	HSEEK cIdRoba
@@ -440,23 +392,6 @@ do while !eof() .and. POS->IdOdj==cIdOdj
       
       if POS->idvd $ DOK_ULAZA
       
-        if gVrstaRS=="S".and.prow()>63-gPstranica-3
-          FF
-        endif
-
-        lPrepak:=.f.
-	
-        if lPrepakPot .and. POS->idvd=="16".and.Ocitaj(F_DOKS,POS->(IdPos+IdVd+dtos(datum)+BrDok),"idvrstep")=="PR"
-	
-          lPrepak:=.t.
-	  
-          if lBezPrepak
-            skip 1
-	    loop
-          endif
-	  
-        endif
-
         ? cLM
 	
         if cSiroki=="D"
@@ -465,16 +400,10 @@ do while !eof() .and. POS->IdOdj==cIdOdj
 	
         ?? POS->IdVd+"-"+PADR(AllTrim(POS->BrDok),nMDBrDok),""
 	
-        if lPrepakPot.and.POS->kolicina<0.and.lPrepak
-          ?? SPACE(10), STR(ABS(POS->Kolicina), 10, 3), ""
-          nIzlaz += ABS(POS->Kolicina)
-        else
-          ?? STR (POS->Kolicina, 10, 3), SPACE (10), ""
-          nUlaz += POS->Kolicina
-        endif
+        ?? STR (POS->Kolicina, 10, 3), SPACE (10), ""
+        nUlaz += POS->Kolicina
 	
         nStanje += POS->Kolicina
-        //nVrijednost += POS->Kolicina*POS->Cijena
         ?? STR (nStanje, 10, 3)
 	
         if gVrstaRS == "S"
@@ -483,11 +412,6 @@ do while !eof() .and. POS->IdOdj==cIdOdj
 	
       elseif POS->IdVd == "NI"
       
-          // nivelacija
-          if gVrstaRS=="S" .and. Prow() > 63-gPstranica-3
-            FF
-          endif
-	  
           //nVrijednost := POS->Kolicina * POS->Ncijena
           ? cLM
 	  
@@ -516,14 +440,11 @@ do while !eof() .and. POS->IdOdj==cIdOdj
 	
         nIzlaz += nKol
 	nStanje -= nKol
-        //nVrijednost -= nKol * POS->Cijena
-        //
 	
         if gVrstaRS=="S" .and. Prow() > 63-gPstranica-3
           FF
         endif
 	
-        //
         ? cLM
 	
         if cSiroki=="D"
@@ -539,18 +460,16 @@ do while !eof() .and. POS->IdOdj==cIdOdj
 	
       endif // izlaz, in
 
+      // prikaz partnera
       if cPPar=="D"
         ?? " "
         ?? Ocitaj(F_DOKS,POS->(IdPos+IdVd+dtos(datum)+BrDok),"idgost")
       endif
+      
 
       skip
     enddo
     //
-    
-    if gVrstaRS=="S" .and. Prow() > 63-gPstranica-3
-      FF
-    endif
     
     ? m
     ? cLM
@@ -559,7 +478,7 @@ do while !eof() .and. POS->IdOdj==cIdOdj
        ?? space(8)+" "
     endif
     
-    ?? " UKUPNO",STR(nUlaz,10,3),STR(nIzlaz,10,3),STR(nStanje,10,3)
+    ?? " UKUPNO", STR(nUlaz,10,3), STR(nIzlaz,10,3), STR(nStanje,10,3)
       
     if gVrstaRS == "S"
 	?? "", STR (nCijena1*nStanje, 12, 3)
@@ -581,15 +500,16 @@ do while !eof() .and. POS->IdOdj==cIdOdj
     
   enddo
   
-  if !empty(cRoba)  // izleti ako je zadata konkretna roba
+  // izleti ako je zadata konkretna roba
+  if !empty(cRoba)  
     exit
   endif
-  
-enddo // cidodj
+ 
+// cidodj
+enddo 
 
 PaperFeed ()
 END PRINT
 CLOSERET
+
 *}
-
-

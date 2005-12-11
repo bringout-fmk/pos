@@ -5,163 +5,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/main/2g/app.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.43 $
- * $Log: app.prg,v $
- * Revision 1.43  2004/05/21 11:25:02  sasavranic
- * Uvedena opcija popusta preko odredjenog iznosa
- *
- * Revision 1.42  2004/05/19 12:16:44  sasavranic
- * no message
- *
- * Revision 1.41  2004/05/11 07:39:33  sasavranic
- * Parametar za clanove/popust prebacen iz KUMPATH-a u PRIVPATH
- *
- * Revision 1.40  2004/04/27 11:01:39  sasavranic
- * Rad sa sezonama - bugfix
- *
- * Revision 1.39  2004/04/26 14:32:30  sasavranic
- * Dorade na opciji prenosa stanja partnera
- *
- * Revision 1.38  2004/04/19 14:50:28  sasavranic
- * Importovanje poruka sa druge lokacije:
- * APPSERVER: tops 11 11 /APPSRV /IMPMSG /P=I: /L=50
- * P= path
- * L= site
- *
- * Revision 1.37  2004/04/05 09:40:59  sasavranic
- * Uvedeno ispitivanje da li se TOPS treba registrovati ili ne
- *
- * Revision 1.36  2004/03/18 13:38:30  sasavranic
- * Popust za partnere
- *
- * Revision 1.35  2003/12/24 09:54:36  sasavranic
- * Nova varijanta poreza, uvrstene standardne funkcije za poreze iz FMK
- *
- * Revision 1.34  2003/11/28 11:38:13  sasavranic
- * Prilikom prenosa realizacije u KALK da generise i barkodove iz TOPS-a
- *
- * Revision 1.33  2003/10/27 13:01:24  sasavranic
- * Dorade
- *
- * Revision 1.32  2003/10/08 15:07:52  sasavranic
- * Uvedena mogucnost debug-a
- *
- * Revision 1.31  2003/09/08 11:49:41  mirsad
- * sada je PorezNaSvakuStavku=D po default-u
- *
- * Revision 1.30  2003/08/20 13:37:30  mirsad
- * omogucio ispis poreza na svakoj stavci i na prepisu racuna, kao i na realizaciji kase po robama
- *
- * Revision 1.29  2003/07/08 15:54:34  mirsad
- * uveo fmk.ini/kumpath/[POS]/Retroaktivno=D za mogucnost ispisa azur.racuna bez teksta "PREPIS" i za ispis "datuma do" na realizaciji umjesto tekuceg datuma
- *
- * Revision 1.28  2003/07/08 10:58:29  mirsad
- * uveo fmk.ini/kumpath/[POS]/Retroaktivno=D za mogucnost ispisa azur.racuna bez teksta "PREPIS" i za ispis "datuma do" na realizaciji umjesto tekuceg datuma
- *
- * Revision 1.27  2003/07/01 06:02:54  mirsad
- * 1) uveo public gCijDec za format prikaza decimala cijene na racunu
- * 2) prosirio format za kolicinu za jos jedan znak
- * 3) uveo puni ispis naziva robe na racunu (lomljenje u dva reda)
- *
- * Revision 1.26  2003/06/30 08:08:48  mirsad
- * 1) prosirio format prikaza kolicine na racunu sa 6 na 8 znakova i uveo public gKolDec za definisanje broja decimala
- *
- * Revision 1.25  2003/06/28 15:05:36  mirsad
- * omogucen ispis naziva firme na izvjestajima
- *
- * Revision 1.24  2003/01/21 16:18:22  ernad
- * planika gSQL=D bug tops
- *
- * Revision 1.23  2003/01/14 17:48:39  ernad
- * tigra primpak
- *
- * Revision 1.22  2002/11/21 10:12:33  mirsad
- * promjena ::super:setGVars -> ::super:setTGVars
- *
- * Revision 1.21  2002/08/19 10:01:12  ernad
- *
- *
- * sql synchro cijena1, idtarifa za tabelu roba
- *
- * Revision 1.20  2002/07/01 11:24:11  ernad
- *
- *
- * gateway treba onemoguciti kada smo u meniju za odabir Db-a
- *
- * Revision 1.19  2002/07/01 10:46:40  ernad
- *
- *
- * oApp:lTerminate - kada je true, napusta se run metod oApp objekta
- *
- * Revision 1.18  2002/06/30 20:28:44  ernad
- *
- *
- *
- * pos meni za odabir firme /MNU_INI
- *
- * Revision 1.17  2002/06/30 11:08:53  ernad
- *
- *
- * razrada: kalk/specif/planika/rpt_ppp.prg; pos/prikaz privatnog direktorija na vrhu; doxy
- *
- * Revision 1.16  2002/06/28 23:25:14  ernad
- *
- *
- * TOPS/HOPS naslovni ekran na osnovu FmkIni/KumPath [POS]/Modul=HOPS ili TOPS
- *
- * Revision 1.15  2002/06/26 10:45:35  ernad
- *
- *
- * ciscenja POS, planika - uvodjenje u funkciju IsPlanika funkcije (dodana inicijalizacija
- * varijabli iz FmkSvi u main/2g/app.prg/metod setGvars
- *
- * Revision 1.14  2002/06/26 00:15:45  ernad
- *
- *
- * Pos applikacioni server ...
- * poziv je: tops 11 11 /APPSRV /ISQLLOG /L=50
- *           tops 21 21 /APPSRV /ISQLLOG /L=51 itd.
- *
- * Revision 1.13  2002/06/25 10:15:08  ernad
- *
- *
- * krenuo dodati parametar "Planika" ... pa se sjetio da je to fmk/svi/specif.prg ... fja IsPlanika()
- *
- * Revision 1.12  2002/06/24 17:04:15  ernad
- *
- *
- * omoguceno da se "restartuje" program .... nakon podesenja sistemskog sata -> oApp:run() ....
- *
- * Revision 1.11  2002/06/24 07:01:38  ernad
- *
- *
- * meniji, u oDatabase:scan ubacen GwDiskFree ..., debug...
- *
- * Revision 1.10  2002/06/23 11:57:23  ernad
- * ciscenja sql - planika
- *
- * Revision 1.9  2002/06/21 14:18:11  ernad
- *
- *
- * pos - planika, import sql
- *
- * Revision 1.8  2002/06/19 19:46:47  ernad
- *
- *
- * rad u sez.podr., debug., gateway
- *
- * Revision 1.7  2002/06/19 17:40:29  ernad
- * ciscenje ...
- *
- * Revision 1.6  2002/06/18 07:01:21  ernad
- * Gparams -> oAppMod:gParams()
- *
- * Revision 1.5  2002/06/17 07:31:39  sasa
- * no message
- *
- *
  */
  
 
@@ -249,9 +92,6 @@ return
 *void TPosMod::initdb()
 *{
 method initdb()
-#ifdef CLIP
-	? "TPosMod:initdb"
-#endif
 ::oDatabase:=TDBPosNew()
 return
 *}
@@ -274,7 +114,6 @@ do case
         self:oDatabase:vratiSez()
       CASE Ch==K_SH_F6
         IF kLevel <= L_UPRAVN
-          altd()
 	  self:oDatabase:logAgain(Godina_2(gDatum)+padl(month(gDatum),2,"0"),.f.,.t.)
 	EndIF
       CASE Ch==K_SH_F7
@@ -728,7 +567,7 @@ public gPratiStanje:="N"
 public gIdPos:="1 "
 public gPostDO:="N"
 public gIdDio:="  "
-// PUBLIC gNazKase      := PADR ("Kasa 1", 15)
+
 public nFeedLines:=6
 public gPocStaSmjene:="N"
 public gStamPazSmj:="D"
@@ -751,7 +590,8 @@ gKalkDEST:=PADR(ToUnix("a:\",20))
 
 public gModemVeza:="N"
 public gStrValuta:=space(4)
-public gUpitNp := "N"  // upit o nacinu placanja
+// upit o nacinu placanja
+public gUpitNp := "N"  
 
 O_PARAMS
 private cSection:="1"
@@ -778,7 +618,6 @@ endif
 
 // principi rada kase
 cPrevPSS := gPocStaSmjene
-//
 
 Rpar("n2",@gVodiTreb)
 Rpar("zc",@gZadCij)
@@ -867,10 +706,6 @@ if (gVrstaRS=="S")
 endif
 
 public gSQLKom
-if (IzFmkIni('CROBA','GledajTops','N',KUMPATH)=="D")
-	gSQLKom:= IzFmkIni("SQL","cSQLKom","mysql -f -h 192.168.0.1 -B -N ",KUMPATH)
-	gSQLKom+=" "
-endif
 gSQL:=IzFmkIni("Svi","SQLLog","N",KUMPATH)
 gSamoProdaja:=IzFmkIni("TOPS","SamoProdaja","N",PRIVPATH)
 gSQLLogBase:=IzFmkIni("SQL","SQLLogBase","c:\sigma",EXEPATH)
@@ -901,7 +736,6 @@ gFisRptEvid:=(IzFmkIni("FISSTA", "FisRptEvid", "N", EXEPATH))
 public gFisConStr
 gFisConStr:=(IzFmkIni("FISSTA", "CmdKonekcija", "0_1", EXEPATH))
 
-//
 
 gPosSirovine:="D"
 gPosKalk:="D"

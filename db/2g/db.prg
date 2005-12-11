@@ -1238,29 +1238,13 @@ local cSlaveKasa
 
 cSlaveKasa:=IzFmkIni("POS","Slave","N",PRIVPATH)
 
-if ((gVrstaRs=="S") .or. (cSlaveKasa=="D"))
+if cSlaveKasa=="D"
 	return
 endif
 
 ScanDb()
 
-if (gSql=="D") .and. (gDiskFree == "D")
-	
-	nFree:=GwDiskFree()
-	//odredi kolicinu u MB
-	nFree:=ROUND(((nFree)/1024)/1024,1)
-	for i:=1 to 2
-		if (nFree<50)
-			MsgBeep("Na disku C: je ostalo samo "+ALLTRIM(STR(nFree,10,1))+" MB#oslobodite prostor na disku # ... ili prijavite u servis SC-a !!") 
-		endif
-	next
-endif
 return
-
-if (gVrstaRs=="S")
-	PrebSaKase()	
-endif
-
 *}
 
 /*! \fn *void TDBPos::integ()

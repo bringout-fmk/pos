@@ -101,16 +101,11 @@ do while !eof() .and. field->idodj == cIdOdj
 		
       		if field->idvd $ DOK_ULAZA
         		nKStanje += field->Kolicina
-			//nFStanje += field->kolicina * field->cijena
       		elseif field->idvd $ "IN"
         		nKStanje -= (field->Kolicina - field->Kol2 )
-			//nFStanje -= (field->kolicina - field->kol2) * field->cijena
       		elseif field->idvd $ DOK_IZLAZA
         		nKStanje -= field->Kolicina
-			//nFStanje -= field->kolicina * field->cijena
       		elseif field->IdVd == "NI"
-        		// ne mjenja se kolicina
-			//nFStanje -= nKStanje * (field->cijena - field->ncijena)
 		endif
 		
 		dPLast := field->datum
@@ -165,8 +160,9 @@ O_INTEG1
 
 select dinteg1
 set order to tag "2"
+
 hseek nId
-// prodanadji id testa
+// pronadji id testa
 if Found()
 	select integ1
 	set order to tag "2"
@@ -392,19 +388,14 @@ do while !eof() .and. field->idodj == cIdOdj
 		
       		if field->idvd $ DOK_ULAZA
         		nKStanje += field->Kolicina
-        		//nFStanje += field->Kolicina * field->cijena
 			
       		elseif field->idvd $ "IN"
         		nKStanje -= (field->Kolicina - field->Kol2 )
-        		//nFStanje -= (field->Kolicina - field->Kol2 ) * field->cijena
 			
       		elseif field->idvd $ DOK_IZLAZA
         		nKStanje -= field->Kolicina
-			//nFStanje -= field->kolicina * field->cijena
 			
       		elseif field->IdVd == "NI"
-        		// ne mjenja se kolicina
-			//nFStanje -= nKStanje * (field->cijena - field->ncijena)
 		endif
 		
 		if ( field->datum > IntegTekDat() )

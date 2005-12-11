@@ -1,9 +1,7 @@
-*
-***** Prometne datoteke
+// Prometne datoteke
 #xcommand O_DOKS      => SELECT (F_DOKS); USE (KUMPATH+"DOKS"); set order to 1
 #xcommand O_POS       => SELECT (F_POS); USE (KUMPATH+"POS"); set order to 1
 #xcommand O_RNGPLA    => SELECT (F_RNGPLA); USE (KUMPATH+"RNGPLA"); set order to 1
-*#xcommand O_CROBA     => SELECT (F_CROBA); USE (gCENTPATH+"CROBA"); set order to tag "IDROBA"
 #xcommand O_PROMVP    => SELECT (F_PROMVP); USE (KUMPATH+"PROMVP"); set order to 1
 
 // exclusive use
@@ -12,9 +10,7 @@
 #xcommand OX_RNGPLA   => SELECT (F_RNGPLA); USEX (KUMPATH+"RNGPLA"); set order to 1
 #xcommand OX_PROMVP    => SELECT (F_PROMVP); USEX (KUMPATH+"PROMVP"); set order to 1
 
-*
-*
-***** Pomocne prometne datoteke
+// Pomocne prometne datoteke
 #xcommand O__POS      => SELECT (F__POS)  ; USEX (PRIVPATH+"_POS")  ; set order to 1
 #xcommand O__PRIPR    => SELECT (F__PRIPR); USEX (PRIVPATH+"_PRIPR"); set order to 1
 #xcommand O_PRIPRZ    => SELECT (F_PRIPRZ); USEX (PRIVPATH+"PRIPRZ"); set order to 1
@@ -30,10 +26,7 @@
 #xcommand O_ERRORS => SELECT (F_ERRORS); USEX (PRIVPATH+"ERRORS"); set order to tag "1"
 
 
-
-
-
-***** Privatne datoteke
+// Privatne datoteke
 #xcommand O_K2C       => SELECT (F_K2C)   ; USE (PRIVPATH+"K2C")   ; set order to 1
 #xcommand O_MJTRUR    => SELECT (F_MJTRUR); USE (PRIVPATH+"MJTRUR"); set order to 1
 #xcommand O_ROBAIZ    => SELECT (F_ROBAIZ); USE (PRIVPATH+"ROBAIZ"); set order to 1
@@ -44,9 +37,7 @@
 #xcommand OX_ROBAIZ   => SELECT (F_ROBAIZ); USEX (PRIVPATH+"ROBAIZ"); set order to 1
 #xcommand OX_RAZDR    => SELECT (F_RAZDR); USEX (PRIVPATH+"RAZDR")
 
-*
-*
-***** SIFARNICI
+// SIFARNICI
 #xcommand O_ROBA   => SELECT (F_ROBA); USE (gSIFPATH+"ROBA"); set order to tag "ID"
 #xcommand O_SIROV  => SELECT (F_SIROV); USE (gSIFPATH+"SIROV"); set order to tag "ID"
 #xcommand O_SAST   => SELECT (F_SAST); USE (gSIFPATH+"SAST"); set order to tag "ID"
@@ -76,54 +67,4 @@
 #xcommand OX_UREDJ  => SELECT (F_UREDJ); USEX (gSIFPATH+"UREDJ"); set order to tag "ID"
 #xcommand OX_RNGOST => SELECT (F_RNGOST); USEX (gSIFPATH+"RNGOST"); set order to tag "ID"
 #xcommand OX_MARS   => SELECT (F_MARS); USEX (gSIFPATH+"MARS"); set order to tag "ID"
-*
-*
-**** Prometne datoteke na SERVERU
-#xcommand O_DOKS_S    => SELECT (F_DOKS_S);
-			    ;IF FILE (gServKumPath + "DOKS.DBF")     ;
-			    ;	USE (gServKumPath + "DOKS") ALIAS DOKS_S ;
-                            ;   set order to 1                    ;
-                            ;   lProso := .T.                     ;
-                            ;ELSE                                 ;
-                            ;   lProso := .F.                     ;
-                            ;ENDIF
-#xcommand O_POS_S     => SELECT (F_POS_S);
-                            ;IF FILE (gServKumPath + "POS.DBF") ;
-                            ;   USE (gServKumPath + "POS") ALIAS POS_S;
-                            ;   set order to 1                    ;
-                            ;   lProso := .T.                     ;
-                            ;ELSE                                 ;
-                            ;   lProso := .F.                     ;
-                            ;ENDIF
-
-*
-*
-**** Prometne datoteke u PRETHODNOJ SEZONI
-#xcommand O_DOKS_SEZ  => SELECT (F_DOKS_SEZ);
-                            ;IF FILE (cSezRad + "DOKS.DBF")     ;
-                            ;   USE (cSezRad + "DOKS") ALIAS DOKS_SEZ ;
-                            ;   set order to 1                ;
-                            ;   lProso := .T.                 ;
-                            ;ELSE                             ;
-                            ;   lProso := .F.                 ;
-                            ;ENDIF
-#xcommand O_POS_SEZ   => SELECT (F_POS_SEZ);
-                            ;IF FILE (cSezRad + "POS.DBF") ;
-                            ;   USE (cSezRad + "POS") ALIAS POS_SEZ;
-                            ;   set order to 1               ;
-                            ;   lProso := .T.                ;
-                            ;ELSE                            ;
-                            ;   lProso := .F.                ;
-                            ;ENDIF
-
-*
-*
-**** Prometne datoteke na KASI
-#xcommand O_DOKS_K    => SELECT (F_DOKS_K);
-                            ;USE (gKasaPath + "DOKS") ALIAS DOKS_K ;
-                            ;   set order to 1
-#xcommand O_POS_K     => SELECT (F_POS_K);
-                            ;USE (gKasaPath + "POS") ALIAS POS_K;
-                            ;   set order to 1
-
 
