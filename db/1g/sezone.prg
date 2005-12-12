@@ -200,9 +200,9 @@ if !copy_2_sezona(cSezona)
 endif
 
 // provjeri integritet podataka izmedju RADP i cSezona
-if integ_sez_radp()
+if integ_sez_radp(cSezona)
    // ako su u sezonskom podrucju podaci isti kao u radnom
-   zap_all_promet()
+   zap_all_promet(cSezona)
 endif
 
 goModul:oDatabase:saveSezona(cSezona)
@@ -219,13 +219,13 @@ endif
 
 return .t.
 
-function integ_sez_radp()
+function integ_sez_radp(cSezona)
   MsgBeep("Nije implementirano ! - lafo je sve ok")
 return .t.
 
 //zapuj sav promet
-function zap_all_promet()
-brisi_rupe()
+function zap_all_promet(cSezona)
+brisi_rupe_pdv17(cSezona)
 // zapuj pos
 OX_POS
 zap
@@ -238,7 +238,7 @@ __dbpack()
 return
 
 
-function brisi_rupe()
+function brisi_rupe_pdv17(cSezona)
 MsgO("Brisem prazne sifre: ROBA")
 O_ROBA
 SET ORDER TO 0
@@ -247,9 +247,27 @@ do while !eof()
    if empty(id) .and. empty(naz)
 	DELETE
    endif
+   if gPDV == "N" .and cSezona == "2005"
+   	// prelazak na PDV 01.01.2006
+	replace IDTARIFA with "PDV17"
+   endif
+   
    SKIP
 enddo
 MsgC()
+
+// stavi u RADP PDV17 tarifu
+if gPDV == "N" .and cSezona == "2005"
+O_TARIFA
+set order to tag "ID"
+seek "PDV17"
+if !found()
+	APPEND BLANK
+	replace id with "PDV17",;
+	    opp with 17
+endif		
+endif
+
 close all
 return
 
