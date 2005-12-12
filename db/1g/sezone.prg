@@ -1,5 +1,7 @@
 #include "\dev\fmk\pos\pos.ch"
 
+static error_no 
+
 /*
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
@@ -9,6 +11,8 @@
 // files kumulativ - tops/kum1
 function a_fi_kum()
 aFiles = {}
+AADD(aFiles, "AKTIVNI.DBF")
+
 AADD(aFiles, "POS.DBF")
 AADD(aFiles, "POS.CDX")
 
@@ -18,14 +22,19 @@ AADD(aFiles, "DOKS.CDX")
 AADD(aFiles, "PROMVP.DBF")
 AADD(aFiles, "PROMVP.CDX")
 
+
+AADD(aFiles, "SECUR.DBF")
+AADD(aFiles, "SECUR.CDX")
+
 AADD(aFiles, "MESSAGE.DBF")
-AADD(aFiles, "PROMVP.CDX")
+
+AADD(aFiles, "FMK.INI")
 return aFiles
 
 // files kum1/sql
 function a_fi_kum_sql()
 aFiles = {}
-AADD(aFiles, "POS.DBF")
+AADD(aFiles, "SQLPAR.DBF")
 return aFiles
 
 // files privatni tops/11
@@ -33,6 +42,10 @@ function a_fi_priv()
 aFiles = {}
 AADD(aFiles, "GPARAMS.DBF")
 AADD(aFiles, "GPARAMS.CDX")
+
+AADD(aFiles, "PARAMS.DBF")
+AADD(aFiles, "PARAMS.CDX")
+
 
 AADD(aFiles, "K2C.DBF")
 AADD(aFiles, "K2C.CDX")
@@ -47,6 +60,7 @@ AADD(aFiles, "_POS.CDX")
 AADD(aFiles, "_PRIPR.DBF")
 AADD(aFiles, "_PRIPR.CDX")
 
+AADD(aFiles, "FMK.INI")
 return aFiles
 
 // files tops/sif
@@ -70,11 +84,20 @@ AADD(aFiles, "TARIFA.CDX")
 AADD(aFiles, "STRAD.DBF")
 AADD(aFiles, "STRAD.CDX")
 
+AADD(aFiles, "SIROV.DBF")
+AADD(aFiles, "SIROV.CDX")
+
 AADD(aFiles, "OSOB.DBF")
 AADD(aFiles, "OSOB.CDX")
 
 AADD(aFiles, "KASE.DBF")
 AADD(aFiles, "KASE.CDX")
+
+AADD(aFiles, "DIO.DBF")
+AADD(aFiles, "DIO.CDX")
+
+AADD(aFiles, "UREDJ.DBF")
+AADD(aFiles, "UREDJ.CDX")
 
 AADD(aFiles, "ODJ.DBF")
 AADD(aFiles, "ODJ.CDX")
@@ -88,6 +111,7 @@ AADD(aFiles, "VALUTE.CDX")
 AADD(aFiles, "VRSTEP.DBF")
 AADD(aFiles, "VRSTEP.CDX")
 
+AADD(aFiles, "FMK.INI")
 return aFiles
 
 
@@ -95,6 +119,14 @@ return aFiles
 function PPrenosPos()
 local dLastDokDatum
 local dCurDate
+
+error_no := 0
+
+// prenos se ne radi ako nije radno podrucje
+
+if goModul:oDatabase:cRadimUSezona <> "RADP"
+	return .t.
+endif
 
 dCurDate := DATE()
 if MONTH(dCurDate) > 1 
@@ -109,14 +141,26 @@ SET ORDER TO TAG "6"
 
 GO BOTTOM
 dLastDokDatum := doks->datum
+
+// baza je prazna
+if EMPTY(dLastDokDatum)
+  return .t.
+endif
+
 if  ( YEAR(dLastDokDatum) < YEAR(dCurDate)  )
   lSplit := .t.
+else
+  lSplit := .f.
 endif
 
 close
 
 if !lSplit
   return .t.
+endif
+
+if KLevel == nil
+  KLevel := "3"
 endif
 
 if (KLevel > L_UPRAVN) .or. (Pitanje(nil, "Nova je godina: " + DTOC(dCurDate) + " , izvrsiti razdvajanje sezona ?", "N") == "N")
@@ -132,7 +176,10 @@ if (KLevel > L_UPRAVN) .or. (Pitanje(nil, "Nova je godina: " + DTOC(dCurDate) + 
 endif
 
 if lSplit
- ng_pocetak(STR(YEAR(gDatum),4))
+ // 01.01.2006 => cSezona = "2005"
+ if !ng_pocetak(STR( YEAR(DATE()) - 1 , 4))
+	return .f.
+ endif
 endif
 
 return .t.
@@ -142,18 +189,39 @@ return .t.
 function ng_pocetak(cSezona)
 // sve tabele moraju biti zatvorene
 close all
-copy_2_sezona(cSezona)
+
+START PRINT CRET
+if !copy_2_sezona(cSezona)
+        ? "ERROR : copy_2_sezona :"+ cSezona + " neuspješno zavrseno !!!"
+        ++ error_no
+	END PRINT
+	MsgBeep("broj gresaka: " + STR(error_no, 5, 0))
+	return .f.
+endif
+
 // provjeri integritet podataka izmedju RADP i cSezona
 if integ_sez_radp()
    // ako su u sezonskom podrucju podaci isti kao u radnom
    zap_all_promet()
 endif
+
+goModul:oDatabase:saveSezona(cSezona)
+
+goModul:oDatabase:cRadimUSezona:="RADP"
+goModul:oDatabase:saveRadimUSezona("RADP")
+? DATE(), TIME(), "Setujem goModul:oDatabase:saveSezona", cSezona 
+? DATE(), TIME(), "Setujem goModul:oDatabase:saveRadimUSezona :", "RADP"
 END PRINT
-return
+
+if error_no > 0
+  MsgBeep("broj gresaka: " + STR(error_no, 5, 0))
+endif
+
+return .t.
 
 function integ_sez_radp()
-  MsgBeep("Nije implementirano !")
-return
+  MsgBeep("Nije implementirano ! - lafo je sve ok")
+return .t.
 
 //zapuj sav promet
 function zap_all_promet()
@@ -179,8 +247,9 @@ do while !eof()
    if empty(id) .and. empty(naz)
 	DELETE
    endif
+   SKIP
 enddo
-
+MsgC()
 close all
 return
 
@@ -188,19 +257,17 @@ return
 // copy sve u sezonske direktorije
 function copy_2_sezona(cSezona)
 
-START PRINT CRET
-
 // pripremi sezonski direktorij
 if !cre_sez_dirs(cSezona)  
   MsgBeep("Sezonski direktoriji se ne mogu formirati !?")
-  END PRINT
+  return .f.
 endif
 
 
 goModul:oDatabase:cRadimUSezona:="RADP"
 goModul:oDatabase:radiUSezonskomPodrucju() 
 
-MsgBeep(KUMPATH + "##" + PRIVPATH + "##" + SIFPATH)
+//MsgBeep(KUMPATH + "##" + PRIVPATH + "##" + SIFPATH)
 
 // kreiram sezonske direktorije
 cre_sez_dirs(cSezona)
@@ -213,7 +280,7 @@ cp_priv(cSezona)
 
 
 
-return
+return .t.
 
 
 // napravi sezonske direktorije
@@ -222,7 +289,8 @@ function cre_sez_dirs(cSezona)
 lOk := cre_ren_dir(KUMPATH, cSezona)
 lOk := lOk .and. cre_ren_dir(PRIVPATH, cSezona)
 lOK := lOk .and. cre_ren_dir(SIFPATH, cSezona)
-lOk := lOK .and. cre_ren_dir(KUMPATH + "\SQL", cSezona)
+// kreiraj i tops/kum1/2005/sql
+lOk := lOK .and. cre_ren_dir(KUMPATH + cSezona + "\", "SQL")
 
 return lOk
 
@@ -231,26 +299,26 @@ return lOk
 // napravi c:\tops\kum1\2005.1
 static function cre_ren_dir(cDir, cPodDir)
 
-if FILE(cDir + cPodDir)
+if PostDir(cDir + cPodDir)
 
  // ako postoji /2005 i /2005.1, i /2005.2 on ce /2005 preimenovati u /2005.3
  for i:=1 to 50
    cAlter = ALLTRIM(STR(i, 5, 0))
-   if !FILE(cDir + cPodDir + "." +  cAlter)
-      FRENAME( cDir + cPodDir, cDir + cPodDir + "." + cAlter )
+   if !PostDir(cDir + cPodDir + "_" +  cAlter)
+      FRENAME( cDir + cPodDir, cDir + cPodDir + "_" + cAlter )
       exit
    endif
  next
  if (i == 50)
-   ? "error: Nesto nije u redu  zar postoji 50 poddira od " + cDir + cPodDir + " ?!"
+   ? DATE(), TIME(), "error: Nesto nije u redu  zar postoji 50 poddira od " + cDir + cPodDir + " ?!"
  endif
 
 endif
 
 DirMake(cDir + cPodDir)
 
-if FILE(cDir + cPodDir)
-  ? "Sezonski direktorij kreiran :" + cDir + cPodDir
+if PostDir(cDir + cPodDir)
+  ?  DATE(), TIME(), "Sezonski direktorij kreiran :" + cDir + cPodDir
   return .t.
 else
   return .f.
@@ -272,7 +340,7 @@ return
 
 // privatni
 // tops\11
-function cp_priv()
+function cp_priv(cSezona)
 
 aFiles := a_fi_priv()
 
@@ -284,7 +352,7 @@ return
 
 // sifrarnici
 // tops\SIF\
-function cp_sif()
+function cp_sif(cSezona)
 
 aFiles := a_fi_sif()
 
@@ -296,17 +364,40 @@ return
 
 // sql parametri
 // tops\KUM1\SQL
-function cp_kum_sql()
+function cp_kum_sql(cSezona)
 aFiles := a_fi_kum_sql()
 for i:=1 to len(aFiles)
-  cp_file(KUMPATH + "SQL\" + aFiles[i], KUMPATH +  "SQL\" + cSezona + "\" + aFiles[i] )
+  cp_file(KUMPATH + "SQL\" + aFiles[i], KUMPATH +  + cSezona + "\SQL\" + aFiles[i] )
 next
 return 
 
 
 function cp_file(cOld, cNew)
+local objLocal, bLastHandler
+
 ? DATE(), TIME(), ": cp_file:" , cOld, "->", cNew
 MsgO( "cp_file:" + cOld + "->" + cNew )
-COPY FILE cOld TO  cNew
+
+bLastHandler := ERRORBLOCK( {|objErr| MyHandler(objErr, .t.)})
+BEGIN SEQUENCE
+  COPY FILE (cOld) TO (cNew)
+RECOVER USING objLocal
+  ? "Error cp_file: ", cOld, " -> ", cNew
+  ++ error_no
+END SEQUENCE
+
 MsgC()
+
+ErrorBlock(bLastHandler)
 return
+
+
+static function  MyHandler( objError, lLocalHandler)
+
+if lLocalHandler
+  BREAK objError
+endif
+
+
+return nil
+

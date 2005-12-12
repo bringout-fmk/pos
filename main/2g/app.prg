@@ -181,6 +181,12 @@ do while (.t.)
       		if (self:lTerminate)
 			return
 		endif
+		if !PPrenosPos()
+                    self:lTerminate := .t.
+                    return
+                endif
+
+
 		SETPOS (Fx, Fy)
       		if (KLevel > L_UPRAVN  .and. gVSmjene=="D")
       			Msg("NIJE ODREDJENA SMJENA!!#"+"POTREBNO JE DA SE PRIJAVI SEF OBJEKTA#ILI NEKO VISEG RANGA!!!", 20)
@@ -198,11 +204,9 @@ PrikStatus()
 SETPOS(Fx, Fy)
 fPrviPut:=.t.
 
-if !PPrenosPos()
- self:lTerminate = .t.
-endif
 
 do while (.t.)
+
 
 	m_x:=Fx
 	m_y:=Fy
@@ -213,6 +217,9 @@ do while (.t.)
   	else
     		KLevel:=PosPrijava(Fx, Fy)
     		PrikStatus()
+                if !PPrenosPos()
+                    self:lTerminate := .t.
+                endif
   	endif
   	SETPOS (Fx, Fy)
   	MMenuLevel(KLevel,Fx,Fy)
