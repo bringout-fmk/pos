@@ -28,7 +28,9 @@ return
 function CaseInt1()
 *{
 if gSamoProdaja=="D"
-	UpdInt1(.t., .f.)
+	if Pitanje(,"Pokrenuti forsirani integ1 (D/N)","N") == "D"
+		UpdInt1(.t., .f.)
+	endif
 else
 	if !EmptDInt(1)
 		BrisiError()
@@ -45,7 +47,9 @@ return
 function CaseInt2()
 *{
 if gSamoProdaja=="D"
-	UpdInt2(.t., .f.)
+	if Pitanje(,"Pokrenuti forsirani integ2 (D/N)","N") == "D"
+		UpdInt2(.t., .f.)
+	endif
 else
 	if !EmptDInt(2)
 		BrisiError()
