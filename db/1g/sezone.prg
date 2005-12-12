@@ -147,6 +147,15 @@ if EMPTY(dLastDokDatum)
   return .t.
 endif
 
+// gPDV := "N"
+// ako je 2006 i nije razdvojena sezona
+if STR(YEAR(dCurDate),4) == "2006"
+	if ( YEAR(dLastDokDatum) < 2006 )
+		gPDV:="N"
+		SetPDVBoje()
+	endif
+endif
+
 if  ( YEAR(dLastDokDatum) < YEAR(dCurDate)  )
   lSplit := .t.
 else
@@ -203,6 +212,7 @@ endif
 if integ_sez_radp(cSezona)
    // ako su u sezonskom podrucju podaci isti kao u radnom
    zap_all_promet(cSezona)
+   set_pdv_var()
 endif
 
 goModul:oDatabase:saveSezona(cSezona)
@@ -218,6 +228,16 @@ if error_no > 0
 endif
 
 return .t.
+
+
+function set_pdv_var()
+O_PARAMS
+gPDV:="D"
+private cSection:="1",cHistory:=" "; aHistory:={}
+WPar("PD", @gPDV)
+SetPDVBoje()
+return
+
 
 function integ_sez_radp(cSezona)
 local lRet
