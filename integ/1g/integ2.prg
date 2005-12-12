@@ -159,6 +159,10 @@ function RunInt2Upd()
 *{
 local dChkDate
 
+if MONTH(DATE()) == 1 .and. DAY(DATE()) < 6
+	return .f.
+endif
+
 O_DINTEG2
 set order to tag "2"
 go bottom
