@@ -337,7 +337,7 @@ do while !eof()
    if empty(id) .and. empty(naz)
 	DELETE
    endif
-   if gPDV == "N" .and. cSezona == "2005"
+   if IsPDV() 
    	// prelazak na PDV 01.01.2006
 	replace IDTARIFA with "PDV17"
    endif
@@ -347,15 +347,16 @@ enddo
 MsgC()
 
 // stavi u RADP PDV17 tarifu
-if gPDV == "N" .and. cSezona == "2005"
-O_TARIFA
-set order to tag "ID"
-seek "PDV17"
-if !found()
-	APPEND BLANK
-	replace id with "PDV17",;
-	    opp with 17
-endif		
+if IsPDV()
+	O_TARIFA
+	set order to tag "ID"
+	seek "PDV17"
+	if !found()
+		APPEND BLANK
+		replace id with "PDV17"
+		replace naz with "PDV"
+		replace opp with 17
+	endif		
 endif
 
 close all
