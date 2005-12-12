@@ -220,8 +220,98 @@ endif
 return .t.
 
 function integ_sez_radp(cSezona)
-  MsgBeep("Nije implementirano ! - lafo je sve ok")
+local lRet
+
+altd()
+// provjeri doks
+lRet := integ_doks(cSezona)
+if lRet == .f.
+	return lRet
+endif
+// provjeri pos
+lRet := integ_pos(cSezona)
+if lRet == .f.
+	return lRet
+endif
+// provjeri roba
+lRet := integ_roba(cSezona)
+if lRet == .f.
+	return lRet
+endif
+
 return .t.
+
+
+function integ_doks(cSezona)
+*{
+local nSezRec
+local nRpRec
+
+O_DOKS
+// uzmi tekuci podatak
+nRpRec:=RecCount()
+
+select (0)
+use (KUMPATH+cSezona+SLASH+"DOKS") alias DOKSSZ
+// uzmi podatak iz sezone
+nSezRec:=RecCount()
+
+close all
+
+if nRpRec <> nSezRec
+	MsgBeep("Checksum tabela DOKS nije ok!")
+	return .f.
+endif
+
+return .t.
+*}
+
+function integ_pos(cSezona)
+*{
+local nSezRec
+local nRpRec
+
+O_POS
+// uzmi tekuci podatak
+nRpRec:=RecCount()
+select (0)
+use (KUMPATH+cSezona+SLASH+"POS") alias POSSZ
+// uzmi podatak iz sezone
+nSezRec:=RecCount()
+
+close all
+
+if nRpRec <> nSezRec
+	MsgBeep("Checksum tabela POS nije ok!")
+	return .f.
+endif
+
+return .t.
+*}
+
+function integ_roba(cSezona)
+*{
+local nSezRec
+local nRpRec
+
+O_ROBA
+// uzmi tekuci podatak
+nRpRec:=RecCount()
+
+select (0)
+use (SIFPATH+cSezona+SLASH+"ROBA") alias ROBASZ
+// uzmi podatak iz sezone
+nSezRec:=RecCount()
+
+close all
+
+if nRpRec <> nSezRec
+	MsgBeep("Checksum tabela ROBA nije ok!")
+	return .f.
+endif
+
+return .t.
+*}
 
 //zapuj sav promet
 function zap_all_promet(cSezona)
