@@ -131,7 +131,7 @@ endif
 dCurDate := DATE()
 if MONTH(dCurDate) > 1 
  // ovo se radi u januaru
- return
+ return .t.
 endif 
 
 close all
