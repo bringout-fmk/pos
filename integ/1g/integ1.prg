@@ -489,18 +489,22 @@ do while !eof() .and. field->idodj == cIdOdj
 		case !lEtySif .and. integ1->oidroba <> nOidRoba
 			AddToErrors("C", cIdRoba, "", "Greska u OID-u: (TOPSP)=" + ALLTRIM(STR(integ1->oidroba)) + ", (TOPSK)=" + ALLTRIM(STR(nOidRoba)))
 			// pokreni update sifre iz TOPS-K
-			GenSifProd(cIdRoba)
-			// dodaj obavjestenje da si generisao log
-			AddToErrors("W", cIdRoba, "", "Generisan sql log za TOPS-P, OK")
+			if !SetGenSif1()
+				GenSifProd(cIdRoba)
+				// dodaj obavjestenje da si generisao log
+				AddToErrors("W", cIdRoba, "", "Generisan sql log za TOPS-P, OK")
+			endif
 			select pos
 			
 		// provjeri TARIFA
 		case !lEtySif .and. integ1->idtarifa <> cIdTarifa
 			AddToErrors("C", cIdRoba, "", "Greska u tarifi: (TOPSP)=" + integ1->idtarifa + ", (TOPSK)=" + cIdTarifa )
 			// pokreni update sifre iz TOPS-K
-			GenSifProd(cIdRoba)
-			// dodaj obavjestenje da si generisao log
-			AddToErrors("W", cIdRoba, "", "Generisan sql log za TOPS-P, OK")
+			if !SetGenSif1()
+				GenSifProd(cIdRoba)
+				// dodaj obavjestenje da si generisao log
+				AddToErrors("W", cIdRoba, "", "Generisan sql log za TOPS-P, OK")
+			endif
 			select pos
 			
 		// provjeri STANJE artikla kolicinski
@@ -519,8 +523,10 @@ do while !eof() .and. field->idodj == cIdOdj
 		case integ1->sifrobacnt > 1 .or. nRobaCnt > 1
 			AddToErrors("W", cIdRoba, "", "Postoje duple sifre: (TOPSP)=" + ALLTRIM(STR(integ1->sifrobacnt)) + ", (TOPSK)=" + ALLTRIM(STR(nRobaCnt)) )
 			// generisi i sifru za prodavnicu
-			GenSifProd(cIdRoba)
-			AddToErrors("W", cIdRoba, "", "Generisan sql log za TOPS-P, OK")
+			if !SetGenSif1()
+				GenSifProd(cIdRoba)
+				AddToErrors("W", cIdRoba, "", "Generisan sql log za TOPS-P, OK")
+			endif
 			select pos	
 		// provjeri cijenu artikla
 		case integ1->robacijena <> nRCjen

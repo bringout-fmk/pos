@@ -579,3 +579,30 @@ endif
 return
 *}
 
+
+
+function SetGenSif1()
+*{
+// da li je generisan log
+if ALLTRIM(integ1->c3) == "G"
+	return .t.
+else
+	replace integ1->c3 with "G"
+	return .f.
+endif
+return .f.
+*}
+
+
+function SetGenSif2()
+*{
+// da li je generisan log
+if ALLTRIM(integ2->c3) == "G"
+	return .t.
+else
+	replace integ2->c3 with "G"
+	return .f.
+endif
+return .f.
+*}
+

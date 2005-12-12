@@ -336,9 +336,11 @@ do while !eof() .and. field->idodj == cIdOdj
 			else
 				AddToErrors("C", cIdRoba, "", "Greska u OID-u: (TOPSP)=" + ALLTRIM(STR(integ2->oidroba)) + ", (TOPSK)=" + ALLTRIM(STR(nOidRoba)) )
 				// generisi novu sifru za prodavnicu
-				GenSifProd(cIdRoba)
-				// dodaj obavjestenje da si generisao log za prodavnicu
-				AddToErrors("W", cIdRoba, "", "Generisan sql log za TOPS-P, OK")
+				if !SetGenSif2()
+					GenSifProd(cIdRoba)
+					// dodaj obavjestenje da si generisao log za prodavnicu
+					AddToErrors("W", cIdRoba, "", "Generisan sql log za TOPS-P, OK")
+				endif
 			endif
 			
 			// ako je doslo do ovoga provjeri i oid-e
@@ -361,9 +363,11 @@ do while !eof() .and. field->idodj == cIdOdj
 		case integ2->sifrobacnt > 1 .or. nRobaCnt > 1
 			AddToErrors("W", cIdRoba, "", "Postoje duple sifre: (TOPSP)=" + ALLTRIM(STR(integ2->sifrobacnt)) + ", (TOPSK)=" + ALLTRIM(STR(nRobaCnt)) )
 			// generisi novu sifru za prodavnicu
-			GenSifProd(cIdRoba)
-			// dodaj obavjestenje da si generisao log za prodavnicu	
-			AddToErrors("W", cIdRoba, "", "Generisan sql log za TOPS-P, OK")
+			if !SetGenSif2()
+				GenSifProd(cIdRoba)
+				// dodaj obavjestenje da si generisao log za prodavnicu	
+				AddToErrors("W", cIdRoba, "", "Generisan sql log za TOPS-P, OK")
+			endif
 		// provjeri cijenu artikla
 		case integ2->robacijena <> nRCjen
 			AddToErrors("C", cIdRoba, "", "Greska u cijeni artikla: (TOPSP)=" + ALLTRIM(STR(integ2->robacijena)) + ", (TOPSK)=" + ALLTRIM(STR(nRCjen)) )
