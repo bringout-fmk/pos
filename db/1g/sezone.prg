@@ -210,9 +210,9 @@ endif
 
 // provjeri integritet podataka izmedju RADP i cSezona
 if integ_sez_radp(cSezona)
+   set_pdv_var()
    // ako su u sezonskom podrucju podaci isti kao u radnom
    zap_all_promet(cSezona)
-   set_pdv_var()
 endif
 
 goModul:oDatabase:saveSezona(cSezona)
