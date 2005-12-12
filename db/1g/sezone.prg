@@ -216,11 +216,12 @@ if integ_sez_radp(cSezona)
 endif
 
 goModul:oDatabase:saveSezona(cSezona)
-
 goModul:oDatabase:cRadimUSezona:="RADP"
 goModul:oDatabase:saveRadimUSezona("RADP")
+
 ? DATE(), TIME(), "Setujem goModul:oDatabase:saveSezona", cSezona 
 ? DATE(), TIME(), "Setujem goModul:oDatabase:saveRadimUSezona :", "RADP"
+
 END PRINT
 
 if error_no > 0
