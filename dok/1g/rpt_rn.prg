@@ -1067,6 +1067,7 @@ for i:=1 to LEN(aRacuni)
 	endif
 	
 	select osob
+	set order to tag "NAZ"
 	hseek cIdRadnik
 	cRdnkNaz := osob->naz
 
@@ -1085,6 +1086,7 @@ for i:=1 to LEN(aRacuni)
 	nUPopust := 0
 	nUBPDVPopust := 0
 	nUTotal := 0
+	nIznPop := 0
 
 	do while !eof() .and. &cPosDB->(idpos + idvd + DToS(datum) + brdok) == (cIdPos + VD_RN + DToS(dDatRn) + cBrDok)
 		
@@ -1121,33 +1123,39 @@ for i:=1 to LEN(aRacuni)
 		do case
 			case gPopVar="P" .and. gClanPopust 
 				if !EMPTY(cPartner)
-					nCjen2PDV := field->ncijena
+					nIznPop := field->ncijena
 				endif
 			case gPopVar="P" .and. !gClanPopust
-				nCjen2PDV := field->ncijena
+				nIznPop := field->ncijena
 		endcase
 
+		// procenat popusta
+		nPopust := nCjenPDV / nIznPop
+	
+		// iznos popusta
+		nCjen2PDV := nCjenPDV - nIznPop
+		
 		// izracunaj cijenu sa popustom 
 		nCjen2BPDV := nCjen2PDV / (1 + nPPDV/100)
-		// procenat popusta
-		nPopust := 0
+
 		// izracunaj ukupno za stavku
-		nUkupno :=  (nKolicina * nCjenPDV) - (nKolicina * nCjen2PDV)
+		nUkupno :=  (nKolicina * nCjenPDV) - (nKolicina * nIznPop)
 		// izracunaj ukupnu vrijednost pdv-a
 		nVPDV := nUkupno * (nPPDV/100)
 
-		if Round(nCjen2BPDV,2)<>0
-			// ukupno popust
-			nUPopust += nCjenBPDV - nCjen2BPDV
-			// ukupno bez pdv-a - popust
-			nUBPDVPopust += nUPopust	
-		endif
 		// ukupno bez pdv-a
 		nUBPDV += nKolicina * nCjenBPDV
 		// ukupno pdv
 		nUPDV += nVPDV
 		// total racuna
 		nUTotal += nUkupno
+
+		if Round(nCjen2BPDV,2)<>0
+			// ukupno popust
+			nUPopust += nCjenBPDV - nCjen2BPDV
+			// ukupno bez pdv-a - popust
+			nUBPDVPopust += nUBPDV - nUPopust	
+		endif
 
 		++ nCSum
 
