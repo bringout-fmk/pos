@@ -975,6 +975,17 @@ return
 *}
 
 
+function firma_params_fill()
+*{
+// podaci firme
+add_drntext("I01", gFirNaziv)
+add_drntext("I02", gFirAdres)
+add_drntext("I03", gFirIdBroj)
+add_drntext("I04", gFirPM)
+
+return
+*}
+
 function fill_rb_traka(cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime)
 *{
 local cPosDB
@@ -1004,6 +1015,7 @@ local nUPopust
 local nUBPDVPopust
 local nUTotal
 local nCSum
+local cRdnkNaz := ""
 
 drn_create()
 drn_open()
@@ -1011,10 +1023,13 @@ drn_empty()
 
 O_Nar()
 O_ROBA
+O_OSOB
 O_POS
 O_DOKS
 O_TARIFA
 O__POS
+
+firma_params_fill()
 
 cPosDB := "_POS"
 
@@ -1050,6 +1065,10 @@ for i:=1 to LEN(aRacuni)
 		cSmjena := doks->smjena
 		cTime := doks->vrijeme
 	endif
+	
+	select osob
+	hseek cIdRadnik
+	cRdnkNaz := osob->naz
 
 	select &cPosDB
 
@@ -1081,6 +1100,7 @@ for i:=1 to LEN(aRacuni)
 		cIdRoba := field->idroba
 		cRobaNaz := field->robanaz	
 		cIdTarifa := field->idtarifa
+		
 		select roba
 		hseek cIdRoba
 		cJmj := roba->jmj
@@ -1090,6 +1110,7 @@ for i:=1 to LEN(aRacuni)
 		hseek cIdTarifa
 		nPPDV := tarifa->opp	
 
+		
 		select &cPosDB
 
 		nKolicina := field->kolicina
@@ -1138,7 +1159,14 @@ for i:=1 to LEN(aRacuni)
 	enddo
 
 	// dodaj zapis u drn.dbf
-	add_drn(cBrDok, dDatRn, nil, nil, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUTotal, nCSum)
+	add_drn(cBrDok, dDatRn, nil, nil, cTime, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUTotal, nCSum)
+	
+	// mjesto nastanka racuna
+	add_drntext("R01", gRnMjesto)
+	// dodaj naziv radnika
+	add_drntext("R02", cRdnkNaz)
+	// dodaj podatak o smjeni
+	add_drntext("R03", cSmjena)
 
 next
 
