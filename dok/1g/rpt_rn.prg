@@ -970,3 +970,205 @@ MsgBeep("Setovano ukupno " + ALLTRIM(STR(nCounter)) + " racuna!!!")
 return
 *}
 
+
+function fill_rb_traka(cIdPos, cBrDok, lPrepis, aRacuni, cTime)
+*{
+local cPosDB
+local dDatumRn
+local cBrDok
+local cSto
+local cIdRadnik
+local cSmjena
+local cIdRoba
+local cIdTarifa
+local cRobaNaz
+local nRbr
+// rn vars
+local nCjenBPDV
+local nCjenPDV
+local nKolicina
+local nPopust
+local nCjen2BPDV
+local nCjen2PDV
+local nVPDV
+local nPPDV
+local nUkupno
+local cRbr
+local cJmj
+// drn vars
+local nUBPDV
+local nUPDV
+local nUPopust
+local nUBPDVPopust
+local nUTotal
+local nCSum
+
+drn_create()
+drn_open()
+
+O_ROBA
+O_TARIFA
+O__POS
+
+cPosDB := "_POS"
+
+if lPrepis
+	O_POS
+	O_DOKS
+	cPosDB := "POS"
+endif
+
+select &cPosDB
+
+// checksum
+nCSum := 0
+
+// matrica aRacuni moze da sadrzi vise racuna, u svakom slucaju sadrzi 1 racun
+// aRacuni : {DOKS->IdPos, DOKS->(BrDok), DOKS->IdVrsteP, DOKS->Datum})
+
+for i:=1 to LEN(aRacuni)
+
+	dDatRn := aRacuni[i, 4]
+	cBrDok := aRacuni[i, 2]
+
+	Seek2(cIdPos + VD_RN + DToS(dDatRn) + cBrDok)
+
+	if !lPrepis
+		cSto := &cPosDB->sto
+		cIdRadnik := &cPosDB->idradnik
+		cSmjena := &cPosDB->smjena
+		cTime := LEFT(TIME(), 5)
+	else
+		select doks
+		Seek2(cIdPos + VD_RN + DToS(dDatRn) + cBrDok)
+		cSto := doks->sto
+		cIdRadnik := doks->idRadnik
+		cSmjena := doks->smjena
+		cTime := doks->vrijeme
+	endif
+
+	select &cPosDB
+
+	nCjenBPDV := 0
+	nCjenPDV := 0
+	nKolicina := 0
+ 	nPopust := 0
+	nCjen2BPDV := 0
+	nCjen2PDV := 0
+ 	nPDV := 0
+	nUkupno := 0
+	nUBPDV := 0
+	nUPDV := 0
+	nUPopust := 0
+	nUBPDVPopust := 0
+	nUTotal := 0
+
+	do while !eof() .and. &cPosDB->(idpos + idvd + DToS(datum) + brdok) == (cIdPos + VD_RN + DToS(dDatRn) + cBrDok)
+		
+		// trebovanja - da li ovo i dalje treba
+		if (gRadniRac="D" .and. gVodiTreb=="D" .and. GT=OBR_NIJE)
+      			// vodi se po trebovanjima, a za ovu stavku trebovanje 
+			// nije izgenerisano
+      			// s obzirom da se nalazimo u procesu zakljucenja, 
+			//nuliramo kolicinu
+      			replace kolicina with 0 // nuliraj kolicinu
+  		endif
+		
+		cIdRoba := field->idroba
+
+		// seek-uj robu
+		select roba
+		hseek cIdRoba 	
+
+		cRobaNaz := roba->naz	
+		cIdTarifa := roba->idtarifa
+		cJmj := roba->jmj
+
+		// seek-uj tarifu
+		select tarifa
+		hseek cIdTarifa
+		nPPDV := tarifa->ppp	
+
+		select &cPosDB
+
+		nKolicina := field->kolicina
+ 		nCjenPDV := field->cijena
+		nCjenBPDV := nCjenPDV / (1 + nPPDV/100)	
+		cRbr := field->rbr
+		
+		// popust - ovo treba jos dobro pregledati
+		do case
+			case gPopVar="P" .and. gClanPopust 
+				if !EMPTY(cPartner)
+					nCjen2PDV := field->ncijena
+				endif
+			case gPopVar="P" .and. !gClanPopust
+				nCjen2PDV := field->ncijena
+		endcase
+
+		// izracunaj cijenu sa popustom 
+		nCjen2BPDV := nCjen2PDV / (1 + nPPDV/100)
+		// procenat popusta
+		nPopust := 0
+		// izracunaj ukupno za stavku
+		nUkupno :=  (nKolicina * nCjenPDV) - (nKolicina * nCjen2PDV)
+		// izracunaj ukupnu vrijednost pdv-a
+		nVPDV := nUkupno / (1 + nPPDV/100)
+
+		// ukupno popust
+		nUPopust += nCjenBPDV - nCjen2BPDV
+		// ukupno bez pdv-a
+		nUBPDV += nKolicina * nCjenBPDV
+		// ukupno bez pdv-a - popust
+		nUBPDVPopust += nUPopust	
+		// ukupno pdv
+		nUPDV += nVPDV
+		// total racuna
+		nUTotal += nUkupno
+
+		++ nCSum
+
+		// dodaj stavku u rn.dbf
+		add_to_rn(cBrDok, cRbr, "", cIdRoba, cRobaNaz, cJmj, nKolicina, nCjenPDV, nCjenBPDV, nCjen2PDV, nCjen2BPDV, nPopust, nPPDV, nVPDV, nUkupno)
+
+		select &cPosDB
+  		skip
+	enddo
+
+	// dodaj zapis u drn.dbf
+	add_to_drn(cBrDok, dDatRn, nil, nil, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUTotal, nCSum)
+
+next
+
+return
+*}
+
+
+
+function PDVStampaRac(cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aRacuni)
+*{
+local cTime
+
+if (lPrepis == nil)
+	lPrepis := .f.
+endif
+
+if (cIdVrsteP == nil)
+	cIdVrsteP := ""
+endif
+
+if (dDatumRn == nil)
+	dDatumRn := gDatum
+endif
+
+// napuni tabele podacima
+fill_rb_traka(cIdPos, cBrDok, dDatumRn, lPrepis, aRacuni, @cTime)
+
+// ispisi racun
+rb_print()
+
+return cTime
+*}
+
+
+
