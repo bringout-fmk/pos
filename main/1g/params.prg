@@ -258,6 +258,9 @@ Rpar("Sx",@gDisplay)
 Rpar("Bc",@gEntBarCod)
 Rpar("Ep",@gEvidPl)
 Rpar("dF",@gDiskFree)
+if IsPDV()
+	Rpar("pF",@gPorFakt)
+endif
 
 UsTipke()
 set cursor on
@@ -308,6 +311,10 @@ AADD (aNiz, {"Stampa na POS displej (D/N)? " , "gDisplay", "gDisplay$'DN'", "@!"
 AADD (aNiz, {"Evidentiranje podataka o vrstama placanja (D/N)? " , "gEvidPl", "gEvidPl$'DN'", "@!", })
 
 AADD (aNiz, {"Provjera prostora na disku (D/N)? " , "gDiskFree", "gDiskFree$'DN'", "@!", })
+if IsPDV()
+	AADD (aNiz, {"Stampati poreske fakture (D/N)? " , "gPorFakt", "gPorFakt$'DN'", "@!", })
+
+endif
 
 VarEdit(aNiz,5,2,24,79,"PARAMETRI RADA PROGRAMA - PRINCIPI RADA","B1")
 BosTipke()
@@ -337,6 +344,9 @@ if LASTKEY()<>K_ESC
     	Wpar("np",@gUpitNP, .t., "Z")
     	Wpar("Ep",@gEvidPl, .t., "Z")
     	Wpar("dF",@gDiskFree, .t., "Z")
+	if IsPDV()
+    		Wpar("pF",@gPorFakt, .t., "Z")
+	endif
     	MsgC()
 endif
 return
