@@ -141,6 +141,10 @@ if gSql=="D"
 	CreDIntDB()
 endif
 
+if IsPDV()
+	dokspf_create()
+endif
+
 self:oDatabase:scan()
 close all
 
@@ -610,11 +614,13 @@ if IsPDV()
 	public gFirIdBroj := SPACE(12)
 	public gFirPM := SPACE(35)
 	public gRnMjesto := SPACE(20)
+	public gPorFakt := "N"
 	Rpar("F1",@gFirNaziv)
 	Rpar("F2",@gFirAdres)
 	Rpar("F3",@gFirIdBroj)
 	Rpar("F4",@gFirPM)
 	Rpar("F5",@gRnMjesto)
+	Rpar("pF",@gPorFakt)
 endif
 
 Rpar("n8",@gVrstaRS)
