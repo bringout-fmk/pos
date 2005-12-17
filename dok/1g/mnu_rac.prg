@@ -567,7 +567,11 @@ endif
 altd()
 
 if (!EMPTY(cTime))
-	AzurRacuna( cIdPos, cStalRac, cRadRac, cTime, cIdVrsteP, cIdGost)
+	AzurRacuna(cIdPos, cStalRac, cRadRac, cTime, cIdVrsteP, cIdGost)
+	// azuriranje podataka o kupcu
+	if IsPDV()
+		AzurKupData(cIdPos)
+	endif
 else
   	SkloniIznRac()
 	MsgBeep("Radni racun <" + ALLTRIM (cRadRac) + "> nije zakljucen!#" + "ponovite proceduru stampanja !!!", 20)

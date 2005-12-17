@@ -1026,6 +1026,7 @@ O_ROBA
 O_OSOB
 O_POS
 O_DOKS
+O_DOKSPF
 O_TARIFA
 O__POS
 
@@ -1049,6 +1050,9 @@ for i:=1 to LEN(aRacuni)
 
 	dDatRn := aRacuni[i, 4]
 	cBrDok := aRacuni[i, 2]
+	if lPrepis
+		cStalRac := cBrDok
+	endif
 
 	Seek2(cIdPos + VD_RN + DToS(dDatRn) + cBrDok)
 
@@ -1058,6 +1062,11 @@ for i:=1 to LEN(aRacuni)
 		cSmjena := &cPosDB->smjena
 		cTime := LEFT(TIME(), 5)
 	else
+		// nadji parametre kupca
+		select dokspf
+		set order to tag "1"
+		hseek cIdPos + VD_RN + DToS(dDatRn) + cBrDok
+		// nadji doks master record
 		select doks
 		Seek2(cIdPos + VD_RN + DToS(dDatRn) + cBrDok)
 		cSto := doks->sto
@@ -1073,23 +1082,25 @@ for i:=1 to LEN(aRacuni)
 
 	select &cPosDB
 
-	nCjenBPDV := 0
-	nCjenPDV := 0
-	nKolicina := 0
- 	nPopust := 0
-	nCjen2BPDV := 0
-	nCjen2PDV := 0
- 	nPDV := 0
 	nUkupno := 0
 	nUBPDV := 0
 	nUPDV := 0
 	nUPopust := 0
 	nUBPDVPopust := 0
 	nUTotal := 0
-	nIznPop := 0
 
 	do while !eof() .and. &cPosDB->(idpos + idvd + DToS(datum) + brdok) == (cIdPos + VD_RN + DToS(dDatRn) + cBrDok)
 		
+		
+		nCjenBPDV := 0
+		nCjenPDV := 0
+		nKolicina := 0
+ 		nPopust := 0
+		nCjen2BPDV := 0
+		nCjen2PDV := 0
+ 		nPDV := 0
+		nIznPop := 0
+			
 		// trebovanja - da li ovo i dalje treba
 		if (gRadniRac="D" .and. gVodiTreb=="D" .and. GT=OBR_NIJE)
       			// vodi se po trebovanjima, a za ovu stavku trebovanje 
@@ -1100,13 +1111,13 @@ for i:=1 to LEN(aRacuni)
   		endif
 		
 		cIdRoba := field->idroba
-		cRobaNaz := field->robanaz	
 		cIdTarifa := field->idtarifa
 		
 		select roba
 		hseek cIdRoba
 		cJmj := roba->jmj
-
+		cRobaNaz := roba->naz	
+		
 		// seek-uj tarifu
 		select tarifa
 		hseek cIdTarifa
@@ -1129,19 +1140,26 @@ for i:=1 to LEN(aRacuni)
 				nIznPop := field->ncijena
 		endcase
 
-		// procenat popusta
-		nPopust := nCjenPDV / nIznPop
-	
-		// iznos popusta
-		nCjen2PDV := nCjenPDV - nIznPop
+		nPopust := 0
 		
-		// izracunaj cijenu sa popustom 
-		nCjen2BPDV := nCjen2PDV / (1 + nPPDV/100)
-
+		if Round(nIznPop, 4) <> 0
+		
+			// cjena 2 : cjena sa pdv - iznos popusta
+			nCjen2PDV := nCjenPDV - nIznPop
+			
+			// cjena 2 : cjena bez pdv - iznos popusta bez pdv
+			nCjen2BPDV := nCjenBPDV - (nIznPop / (1 + nPPDV/100))
+			
+			// procenat popusta
+			nPopust := ((nIznPop / (1 + nPPDV/100)) / nCjenBPDV) * 100
+			
+		endif
+		
+	
 		// izracunaj ukupno za stavku
 		nUkupno :=  (nKolicina * nCjenPDV) - (nKolicina * nIznPop)
 		// izracunaj ukupnu vrijednost pdv-a
-		nVPDV := nUkupno * (nPPDV/100)
+		nVPDV := ((nKolicina * nCjenBPDV) - (nKolicina * (nIznPop / (1 + nPPDV/100)))) * (nPPDV/100)
 
 		// ukupno bez pdv-a
 		nUBPDV += nKolicina * nCjenBPDV
@@ -1153,21 +1171,22 @@ for i:=1 to LEN(aRacuni)
 		if Round(nCjen2BPDV,2)<>0
 			// ukupno popust
 			nUPopust += nCjenBPDV - nCjen2BPDV
-			// ukupno bez pdv-a - popust
-			nUBPDVPopust += nUBPDV - nUPopust	
 		endif
+		
+		// ukupno bez pdv-a - popust
+		nUBPDVPopust := nUBPDV - nUPopust	
 
 		++ nCSum
 
 		// dodaj stavku u rn.dbf
-		add_rn(cBrDok, STR(nCSum, 3), "", cIdRoba, cRobaNaz, cJmj, nKolicina, nCjenPDV, nCjenBPDV, nCjen2PDV, nCjen2BPDV, nPopust, nPPDV, nVPDV, nUkupno)
+		add_rn(cStalRac, STR(nCSum, 3), "", cIdRoba, cRobaNaz, cJmj, nKolicina, Round(nCjenPDV,3), Round(nCjenBPDV,3), Round(nCjen2PDV,3), Round(nCjen2BPDV,3), Round(nPopust,2), Round(nPPDV,2), Round(nVPDV,3), Round(nUkupno,3))
 
 		select &cPosDB
   		skip
 	enddo
 
 	// dodaj zapis u drn.dbf
-	add_drn(cBrDok, dDatRn, nil, nil, cTime, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUTotal, nCSum)
+	add_drn(cStalRac, dDatRn, nil, nil, cTime, Round(nUBPDV,2), Round(nUPopust,2), Round(nUBPDVPopust,2), Round(nUPDV,2), Round(nUTotal,2), nCSum)
 	
 	// mjesto nastanka racuna
 	add_drntext("R01", gRnMjesto)
@@ -1175,6 +1194,19 @@ for i:=1 to LEN(aRacuni)
 	add_drntext("R02", cRdnkNaz)
 	// dodaj podatak o smjeni
 	add_drntext("R03", cSmjena)
+	
+	// ako je prepis
+	if lPrepis
+		// podaci o kupcu
+		add_drntext("K01", dokspf->knaz)
+		add_drntext("K02", dokspf->kadr)
+		add_drntext("K03", dokspf->kidbr)
+		// dodaj D01 - A - azuriran dokument
+		add_drntext("D01", "A")
+	else
+		// dodaj D01 - P - priprema
+		add_drntext("D01", "P")
+	endif
 
 next
 
