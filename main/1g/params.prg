@@ -65,6 +65,10 @@ AADD(opc,"4. cijene")
 AADD(opcexe,{|| ParCijene()})
 AADD(opc,"5. postavi vrijeme i datum kase")
 AADD(opcexe,{|| PostaviDat()})
+if IsPDV()
+	AADD(opc,"6. podaci firme")
+	AADD(opcexe,{|| ParFirma()})
+endif
 
 Menu_SC("par")
 return .f.
@@ -164,6 +168,53 @@ endif
 
 return
 *}
+
+
+// parametri - podaci firme
+function ParFirma()
+*{
+local aNiz:={}
+local cPom:=""
+
+O_PARAMS
+private cHistory:=" "
+private aHistory:={}
+private cSection:="1"
+
+// Citam postojece/default podatke o kasi
+Rpar("F1",@gFirNaziv)
+Rpar("F2",@gFirAdres)
+Rpar("F3",@gFirIdBroj)
+Rpar("F4",@gFirPM)
+Rpar("F5",@gRnMjesto)
+
+UsTipke()
+set cursor on
+
+AADD(aNiz,{"Puni naziv firme", "gFirNaziv", , , })
+AADD(aNiz,{"Adresa firme", "gFirAdres", , , })
+AADD(aNiz,{"ID broj", "gFirIdBroj", , , })
+AADD(aNiz,{"Prodajno mjesto" , "gFirPM", , , })
+AADD(aNiz,{"Mjesto nastanka racuna", "gRnMjesto" , , , })
+VarEdit(aNiz,7,2,24,78,"PODACI FIRME","B1")
+
+BosTipke()
+
+// Upisujem nove parametre
+if LASTKEY()<>K_ESC
+	MsgO("Azuriram parametre PZ")
+    	Wpar("F1",gFirNaziv, .t.,"D")
+    	Wpar("F2",gFirAdres, .t.,"D")
+    	Wpar("F3",gFirIdBroj, .t.,"D")
+    	Wpar("F4",gFirPM, .t.,"D")
+    	Wpar("F5",gRnMjesto, .t.,"D")
+    	MsgC()
+endif
+
+return
+*}
+
+
 
 
 /*! \fn ParPrRada()
