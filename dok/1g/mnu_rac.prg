@@ -558,9 +558,14 @@ if IsPlNs() .and. gFissta=="D"
 	cIdGost:=cObrNiNr
 endif
 
-cTime:=StampaRac(cIdPos,cRadRac,.f.,cIdVrsteP, nil, aVezani)
+if IsPDV()
+	cTime:=PDVStampaRac(cIdPos, cRadRac, .f., cIdVrsteP, nil, aVezani)
+else
+	cTime:=StampaRac(cIdPos,cRadRac,.f.,cIdVrsteP, nil, aVezani)
+endif
 
 altd()
+
 if (!EMPTY(cTime))
 	AzurRacuna( cIdPos, cStalRac, cRadRac, cTime, cIdVrsteP, cIdGost)
 else

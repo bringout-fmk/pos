@@ -636,8 +636,12 @@ go nTrk
 select pos
 
 if !gStariObrPor
-	altd()
-	StampaRac(cIdPos, doks->brdok, .t., doks->idvrstep, doks->datum, aVezani)
+	if IsPDV()
+		PDVStampaRac(cIdPos, doks->brdok, .t., doks->idvrstep, doks->datum, aVezani)
+	else
+		StampaRac(cIdPos, doks->brdok, .t., doks->idvrstep, doks->datum, aVezani)
+	endif
+	
 	return
 endif
 
@@ -971,11 +975,10 @@ return
 *}
 
 
-function fill_rb_traka(cIdPos, cBrDok, lPrepis, aRacuni, cTime)
+function fill_rb_traka(cIdPos, cBrDok, dDatRn, lPrepis, aRacuni, cTime)
 *{
 local cPosDB
 local dDatumRn
-local cBrDok
 local cSto
 local cIdRadnik
 local cSmjena
@@ -993,7 +996,6 @@ local nCjen2PDV
 local nVPDV
 local nPPDV
 local nUkupno
-local cRbr
 local cJmj
 // drn vars
 local nUBPDV
@@ -1005,16 +1007,18 @@ local nCSum
 
 drn_create()
 drn_open()
+drn_empty()
 
+O_Nar()
 O_ROBA
+O_POS
+O_DOKS
 O_TARIFA
 O__POS
 
 cPosDB := "_POS"
 
 if lPrepis
-	O_POS
-	O_DOKS
 	cPosDB := "POS"
 endif
 
@@ -1075,26 +1079,22 @@ for i:=1 to LEN(aRacuni)
   		endif
 		
 		cIdRoba := field->idroba
-
-		// seek-uj robu
+		cRobaNaz := field->robanaz	
+		cIdTarifa := field->idtarifa
 		select roba
-		hseek cIdRoba 	
-
-		cRobaNaz := roba->naz	
-		cIdTarifa := roba->idtarifa
+		hseek cIdRoba
 		cJmj := roba->jmj
 
 		// seek-uj tarifu
 		select tarifa
 		hseek cIdTarifa
-		nPPDV := tarifa->ppp	
+		nPPDV := tarifa->opp	
 
 		select &cPosDB
 
 		nKolicina := field->kolicina
  		nCjenPDV := field->cijena
 		nCjenBPDV := nCjenPDV / (1 + nPPDV/100)	
-		cRbr := field->rbr
 		
 		// popust - ovo treba jos dobro pregledati
 		do case
@@ -1113,14 +1113,16 @@ for i:=1 to LEN(aRacuni)
 		// izracunaj ukupno za stavku
 		nUkupno :=  (nKolicina * nCjenPDV) - (nKolicina * nCjen2PDV)
 		// izracunaj ukupnu vrijednost pdv-a
-		nVPDV := nUkupno / (1 + nPPDV/100)
+		nVPDV := nUkupno * (nPPDV/100)
 
-		// ukupno popust
-		nUPopust += nCjenBPDV - nCjen2BPDV
+		if Round(nCjen2BPDV,2)<>0
+			// ukupno popust
+			nUPopust += nCjenBPDV - nCjen2BPDV
+			// ukupno bez pdv-a - popust
+			nUBPDVPopust += nUPopust	
+		endif
 		// ukupno bez pdv-a
 		nUBPDV += nKolicina * nCjenBPDV
-		// ukupno bez pdv-a - popust
-		nUBPDVPopust += nUPopust	
 		// ukupno pdv
 		nUPDV += nVPDV
 		// total racuna
@@ -1129,14 +1131,14 @@ for i:=1 to LEN(aRacuni)
 		++ nCSum
 
 		// dodaj stavku u rn.dbf
-		add_to_rn(cBrDok, cRbr, "", cIdRoba, cRobaNaz, cJmj, nKolicina, nCjenPDV, nCjenBPDV, nCjen2PDV, nCjen2BPDV, nPopust, nPPDV, nVPDV, nUkupno)
+		add_rn(cBrDok, STR(nCSum, 3), "", cIdRoba, cRobaNaz, cJmj, nKolicina, nCjenPDV, nCjenBPDV, nCjen2PDV, nCjen2BPDV, nPopust, nPPDV, nVPDV, nUkupno)
 
 		select &cPosDB
   		skip
 	enddo
 
 	// dodaj zapis u drn.dbf
-	add_to_drn(cBrDok, dDatRn, nil, nil, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUTotal, nCSum)
+	add_drn(cBrDok, dDatRn, nil, nil, nUBPDV, nUPopust, nUBPDVPopust, nUPDV, nUTotal, nCSum)
 
 next
 
