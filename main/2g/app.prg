@@ -604,6 +604,19 @@ private cHistory:=" "
 private aHistory:={}
 
 // podaci kase
+if IsPDV()
+	public gFirNaziv := SPACE(35)
+	public gFirAdres := SPACE(35)
+	public gFirIdBroj := SPACE(12)
+	public gFirPM := SPACE(35)
+	public gRnMjesto := SPACE(20)
+	Rpar("F1",@gFirNaziv)
+	Rpar("F2",@gFirAdres)
+	Rpar("F3",@gFirIdBroj)
+	Rpar("F4",@gFirPM)
+	Rpar("F5",@gRnMjesto)
+endif
+
 Rpar("n8",@gVrstaRS)
 Rpar("na",@gIdPos)
 Rpar("PD",@gPostDO)
