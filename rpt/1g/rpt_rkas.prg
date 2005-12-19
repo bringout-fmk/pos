@@ -142,10 +142,18 @@ endif
 
 if !fZaklj
 	//Porezi po tarifama
-	PorPoTar(dDat0, dDat1, cIdPos, nil, cIdodj)
+	if IsPDV()
+		PDVPorPoTar(dDat0, dDat1, cIdPos, nil, cIdodj)
+	else
+		PorPoTar(dDat0, dDat1, cIdPos, nil, cIdodj)
+	endif
 	if ROUND(ABS(nTotal2)+ABS(nTotal3),4)<>0
 		ODbRpt()
-		PorPoTar(dDat0,dDat1,cIdPos,"3")  // STA JE OVO? => APOTEKE!!
+		if IsPDV()
+			PDVPorPoTar(dDat0,dDat1,cIdPos,"3")  // STA JE OVO? => APOTEKE!!
+		else
+			PorPoTar(dDat0,dDat1,cIdPos,"3")  // STA JE OVO? => APOTEKE!!
+		endif	
 	endif
 endif
 
