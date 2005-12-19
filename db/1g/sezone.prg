@@ -215,6 +215,8 @@ if integ_sez_radp(cSezona)
    zap_all_promet(cSezona)
 endif
 
+altd()
+
 goModul:oDatabase:saveSezona(cSezona)
 goModul:oDatabase:cRadimUSezona:="RADP"
 goModul:oDatabase:saveRadimUSezona("RADP")

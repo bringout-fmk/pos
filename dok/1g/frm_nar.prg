@@ -135,6 +135,10 @@ aAutoKeys:=HangKeys ()
 bPrevDn:=SETKEY(K_PGDN, {|| DummyProc()})
 bPrevUp:=SETKEY(K_PGUP, {|| DummyProc()})
 
+if IsPDV()
+	SETKEY(K_F7, {|| f7_pf_traka()})
+endif
+
 // <*> - ispravka tekuce narudzbe
 //       (ukljucujuci brisanje i ispravku vrijednosti)
 // </> - pregled racuna - kod HOPSa

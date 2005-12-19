@@ -133,7 +133,7 @@ Gw("SET POCSTANJE ON")
 
 // ove tabele se nalaze u direktoriju sifrarnika
 GW("SET TABLE_DIRSIF  #ROBA#SIFK#SIFV#OSOB#TARIFA#VALUTE#VRSTEP#ODJ#UREDJ#STRAD")
-GW("SET TABLE_DIRKUM  #POS#DOKS#")
+GW("SET TABLE_DIRKUM  #POS#DOKS#DOKSPF")
 
 Gw("ZAP ROBA")
 Gw("ZAP SIFK")
@@ -189,8 +189,12 @@ Log_Tabela("STRAD")
 
 Gw("ZAP POS")
 Gw("ZAP DOKS")
+if IsPDV()
+	Gw("ZAP DOKSPF")
+endif
 Gw("ZAP KPARAMS")
 Gw("ZAP PROMVP")
+
 O_POS
 @ m_x+2,m_y+2 SAY "Logiram tabelu  "+padr(ALIAS(),15)
 Log_Tabela("POS")
@@ -198,6 +202,12 @@ Log_Tabela("POS")
 O_DOKS
 @ m_x+2,m_y+2 SAY "Logiram tabelu  "+padr(ALIAS(),15)
 Log_Tabela("DOKS")
+
+if IsPDV()
+	O_DOKSPF
+	@ m_x+2,m_y+2 SAY "Logiram tabelu  "+padr(ALIAS(),15)
+	Log_Tabela("DOKSPF")
+endif
 
 O_KPARAMS
 @ m_x+2,m_y+2 SAY "Logiram tabelu  "+padr(ALIAS(),15)
@@ -285,7 +295,7 @@ Box(,3,60)
 
 @ m_x+1,m_y+2 SAY "Vrsim importovanje podataka"
 Gw("SET TABLE_DIRSIF  #ROBA#SIFK#SIFV#OSOB#TARIFA#VALUTE#VRSTEP#ODJ#UREDJ#STRAD#")
-Gw("SET TABLE_DIRKUM  #POS#DOKS#KPARAMS#PROMVP#MESSAGE#DINTEG1#DINTEG2#INTEG1#INTEG2")
+Gw("SET TABLE_DIRKUM  #POS#DOKS#KPARAMS#PROMVP#MESSAGE#DINTEG1#DINTEG2#INTEG1#INTEG2#DOKSPF")
 Gw("SET TABLE_DIRPRIV #PARAMS#")
 Gw("SET DIRKUM "+KUMPATH)
 Gw("SET DIRSIF "+SIFPATH)

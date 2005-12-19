@@ -252,6 +252,7 @@ PUBLIC gaDBFs:={ ;
 {  F_DINTEG2   , "DINTEG2",P_KUMPATH },;
 {  F_INTEG1    , "INTEG1" ,P_KUMPATH },;
 {  F_INTEG2    , "INTEG2" ,P_KUMPATH },;
+{  F_DOKSPF    , "DOKSPF" ,P_KUMPATH },;
 {  F_PROMVP    , "PROMVP", P_KUMPATH };
 }
 
@@ -912,6 +913,10 @@ if (gSql == "D")
 	CreDIntDB()
 endif
 
+if IsPDV()
+	dokspf_create()
+endif
+
 return
 *}
 
@@ -933,7 +938,7 @@ PUBLIC gSifPath := SIFPATH
 
 lIdiDalje:=.f.
 
-if ( i==F_DOKS .or. i==F_POS .or. i==F_RNGPLA .or. i==F__POS .or. i==F__PRIPR .or. i==F_PRIPRZ .or. i==F__POSP) 
+if ( i==F_DOKS .or. i==F_POS .or. i==F_RNGPLA .or. i==F__POS .or. i==F__PRIPR .or. i==F_PRIPRZ .or. i==F__POSP .or. i==F_DOKSPF) 
 	lIdiDalje:=.t.
 endif
 
