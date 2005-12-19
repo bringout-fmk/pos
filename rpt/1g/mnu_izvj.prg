@@ -51,7 +51,7 @@ else
 	AADD(opc,"4. kartice artikala")
 	AADD(opcexe,{|| Kartica()})
 	AADD(opc,"5. porezi po tarifama")
-	AADD(opcexe,{|| PorPoTar()})
+	AADD(opcexe,{|| IF(IsPDV(), PDVPorPoTar(),PorPoTar())})
 	AADD(opc,"6. najprometniji artikli")
 	AADD(opcexe,{|| TopN()})
 	AADD(opc,"7. stanje partnera")
@@ -108,7 +108,7 @@ else
   	AADD(opc,"5. kartice artikala")
 	AADD(opcexe,{|| Kartica()})
 	AADD(opc,"6. porezi po tarifama")
-	AADD(opcexe,{|| PorPoTar()})
+	AADD(opcexe,{|| IF(IsPDV(), PDVPorPoTar(), PorPoTar())})
 	AADD(opc,"7. najprometniji artikli")
 	AADD(opcexe,{|| TopN()})
 endif
