@@ -71,4 +71,41 @@ return NIL
 *}
 
 
+function PDVRekTarife(aTarife)
+*{
+
+?
+?
+? "REKAPITULACIJA POREZA PO TARIFAMA"
+? "---------------------------------"
+nTotOsn := 0
+nTotPPP := 0
+nTotPPU := 0
+nTotPP:=0
+
+m:= REPLICATE ("-", 6)+" "+REPLICATE ("-", 12)+" "+REPLICATE ("-", 12)+" "+REPLICATE ("-", 12)
+
+ASORT (aTarife,,, {|x, y| x[1] < y[1]})
+
+? m
+
+? "Tarifa", PADC ("PV bez PDV", 12), PADC ("PDV", 12), padC ("PV sa PDV",12)
+
+? m
+
+for nCnt := 1 TO LEN(aTarife)
+  	? aTarife [nCnt][1], STR(aTarife [nCnt][2], 12, 2), STR (aTarife [nCnt][3], 12, 2), STR( round(aTarife[nCnt][2],2)+round(aTarife[nCnt][3],2), 12,2)
+	nTotOsn += round(aTarife [nCnt][2],2)
+  	nTotPPP += round(aTarife [nCnt][3],2)
+next
+
+? m
+
+? "UKUPNO", STR (nTotOsn, 12, 2), STR (nTotPPP, 12, 2),str(nTotOsn+nTotPPP,12,2)
+? m
+?
+?
+return NIL
+*}
+
 

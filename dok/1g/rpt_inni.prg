@@ -238,7 +238,11 @@ endif
 
 
 if gModul="TOPS"
-  RekTarife(aTarife)
+  if IsPDV()
+ 	PDVRekTarife(aTarife)
+  else
+ 	RekTarife(aTarife)
+  endif
 endif
 
 IF gVrstaRS == "S"

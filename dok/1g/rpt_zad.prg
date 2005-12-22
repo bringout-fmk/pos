@@ -254,6 +254,9 @@ EndIF
    EndIF
    ?? TRANS (POS->Kolicina, cPicKol)
    nFinZad += POS->(Kolicina * Cijena)
+   
+   altd()
+   
    if gModul="TOPS"
     if !IsPDV() 
         if pos->idtarifa = "PDV17"
@@ -289,7 +292,11 @@ EndIF
  endif
 
  if gModul=="TOPS"
-   RekTarife(aTarife)
+   if IsPDV()
+   	PDVRekTarife(aTarife)
+   else
+   	RekTarife(aTarife)
+   endif
  endif
 
 

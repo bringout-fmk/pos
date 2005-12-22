@@ -860,8 +860,9 @@ endif
 SmReplace("naz", katops->naziv)
 SmReplace("jmj", katops->jmj)
 SmReplace("cijena1", katops->mpc)
-SmReplace("idtarifa", katops->idtarifa)
-
+if lNovi
+	SmReplace("idtarifa", katops->idtarifa)
+endif
 if roba->(FIELDPOS("K1"))<>0  .and. katops->(FIELDPOS("K1"))<>0
 	SmReplace("k1", katops->k1)
 	SmReplace("k2", katops->k2)
