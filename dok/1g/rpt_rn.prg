@@ -1195,6 +1195,9 @@ for i:=1 to LEN(aRacuni)
 	// dodaj podatak o smjeni
 	add_drntext("R03", cSmjena)
 	
+	// Broj linija potrebnih da se ocjepi traka
+	add_drntext("P12", ALLTRIM(STR(nFeedLines)))
+	
 	// ako je prepis
 	if lPrepis
 		// podaci o kupcu
