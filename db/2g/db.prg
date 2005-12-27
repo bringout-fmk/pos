@@ -913,9 +913,6 @@ if (gSql == "D")
 	CreDIntDB()
 endif
 
-if IsPDV()
-	dokspf_create()
-endif
 
 return
 *}
