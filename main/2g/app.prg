@@ -141,11 +141,12 @@ if gSql=="D"
 	CreDIntDB()
 endif
 
+self:oDatabase:scan()
+
 if IsPDV()
 	dokspf_create()
 endif
 
-self:oDatabase:scan()
 close all
 
 if gSql=="D"
@@ -389,6 +390,27 @@ return
 *}
 
 
+function PDVParams()
+*{
+O_PARAMS
+private cSection:="1",cHistory:=" "; aHistory:={}
+RPar("PD",@gPDV)
+lSql:=.f.
+if gSQL=="D"
+	lSql := .t.
+	gSQL:="N"
+endif
+ParPDV()
+WPar("PD",gPDV)
+if lSql
+	gSQL:="D"
+endif
+SetPDVBoje()
+
+return
+*}
+
+
 /*! \fn *void TPosMod::setGVars()
  *  \brief opste funkcije POS modula
  */
@@ -402,6 +424,8 @@ method setGVars()
 
 SetFmkRGVars()
 SetFmkSGVars()
+
+PdvParams()
 
 // gPrevIdPos - predhodna vrijednost gIdPos
 public gPrevIdPos:="  "
