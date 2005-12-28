@@ -281,13 +281,8 @@ do while !eof().and.(IdPos+IdVd+DTOS(datum))==(cIdPos+VD_RN+dtos(dDatumRn))
 		next
    		SELECT &cPosDB
 		
-   		//**** sasa, 18.05.04
-		// ovo sam izbacio jer je skroz nelogicno, cijena stavke mora biti prava cijena i na nju se obracunava porez, a odobravanjem popusta firma gubi na marzi!!!
-		//****
-		// uzmi u obzir popust !!!!!
-   		//nIznosSt:=_Kolicina*(_Cijena-_NCijena)
+   		nIznosSt:=_Kolicina*(_Cijena-_NCijena)
    		
-		nIznosSt:=_Kolicina*(_Cijena)
 		if gKolDec==N_ROUNDTO
 	   		? SPACE(1)+PADR("(T" + ALLTRIM(_IdTarifa)+")",6)+STR(_Kolicina,9,N_ROUNDTO),if(!lPrepis,_Jmj,roba->jmj),"x "
 		else
