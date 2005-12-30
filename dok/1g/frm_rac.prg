@@ -238,29 +238,29 @@ if cLevel<="0"
     		return DE_CONT
   	endif
   	if ch==K_CTRL_F9
-    		if SigmaSif("BRISRN")
+    		//if SigmaSif("BRISRN")
 			return BrisiRacun()
-		endif
+		//endif
   	endif
 	if ch==K_F2
-		if SigmaSif("PRBRRN")
+		//if SigmaSif("PRBRRN")
       			return PromBrRN()
-		endif
+		//endif
   	endif
   	if ch==K_SH_F9
-		if SigmaSif("BRSVE")
+		//if SigmaSif("BRSVE")
       			return  BrisiRNVP()
-		endif
+		//endif
   	endif
   	if ch==K_F5
-		if SigmaSif("STELA")
+		//if SigmaSif("STELA")
 			return PromIdPM()
-		endif
+		//endif
   	endif
   	if ch==K_CTRL_F5
-		if SigmaSif("STELA")
+		//if SigmaSif("STELA")
     			return PromIdPMVP()
-		endif
+		//endif
   	endif
 endif // KLEVEL - vlasnik
 return (DE_CONT)
