@@ -65,10 +65,8 @@ AADD(opc,"4. cijene")
 AADD(opcexe,{|| ParCijene()})
 AADD(opc,"5. postavi vrijeme i datum kase")
 AADD(opcexe,{|| PostaviDat()})
-if IsPDV()
-	AADD(opc,"6. podaci firme")
-	AADD(opcexe,{|| ParFirma()})
-endif
+AADD(opc,"6. podaci firme")
+AADD(opcexe,{|| ParFirma()})
 
 Menu_SC("par")
 return .f.
@@ -187,6 +185,8 @@ Rpar("F2",@gFirAdres)
 Rpar("F3",@gFirIdBroj)
 Rpar("F4",@gFirPM)
 Rpar("F5",@gRnMjesto)
+
+gFirIdBroj := PADR(gFirIdBroj, 13)
 
 UsTipke()
 set cursor on
