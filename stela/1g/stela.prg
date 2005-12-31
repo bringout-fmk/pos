@@ -179,6 +179,7 @@ O_POS
 O_DOKS
 
 altd()
+
 cNajstariji:=UzmiIzIni(PRIVPATH+"fmk.ini",'POS','XPM',"-",'READ')
 
 if cNajstariji!="-" .and. (!IsPlanika()) .and. Pitanje(,"Izvrsiti sortiranje racuna ?","N")=="D"
@@ -744,6 +745,8 @@ if cNajstariji!="-" .and. (!IsPlanika()) .and. Pitanje(,"Izvrsiti sortiranje rac
 			MsgC()
 			return
 		endif
+		
+		altd()
 
 		do while !bof().and.DOKS->IdPos==_IdPos.and.cNewSeason==eval(bDatum).and.DOKS->IdVd==VD_RN.and.DOKS->IdPos<"X"
 
@@ -826,13 +829,20 @@ if cNajstariji!="-" .and. (!IsPlanika()) .and. Pitanje(,"Izvrsiti sortiranje rac
 				select precno
 				go nTRecNo
 			endif
+			// novi broj dokumenta
 			cNoviBroj:=IncId(cNoviBroj)
+			
+			// uzmi vrijednost koliko skipova treba 
+			// odraditi za precno
+			
+			nSkip:=drecno->brst
+			
 			select drecno
 			skip -1
-			// uzmi vrijednost koliko skipova treba
-			nSkip:=drecno->brst
+		
 			select precno
 			skip -nSkip
+			
 			nTRecNo:=RecNo()
 			
 		enddo
