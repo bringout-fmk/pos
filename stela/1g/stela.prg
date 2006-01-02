@@ -121,7 +121,8 @@ PRacuni(,,,fScope,cFil0,qIdRoba)
 // postavi scope: P_StalniRac(dDat,cBroj,fPrep,fScope)
 
 CLOSE ALL
-Presort2()
+//Presort2()
+RnPresort()
 
 if gModul=="HOPS"
 
@@ -877,4 +878,221 @@ endif
 CLOSERET
 return
 *}
+
+
+function cre_pdtbl_st()
+*{
+
+close all
+FErase(PRIVPATH + "POS_ST.DBF")
+FErase(PRIVPATH + "DOKS_ST.DBF")
+
+O_POS
+select pos
+copy structure to (PRIVPATH+"struct")
+create (PRIVPATH + "pos_st") from (PRIVPATH + "struct")
+
+O_DOKS
+select doks
+copy structure to (PRIVPATH+"struct")
+create (PRIVPATH + "doks_st") from (PRIVPATH + "struct")
+
+//create_index("1","idfirma+idvd+brdok", PRIVPATH+"pript")
+
+return
+*}
+
+
+function brisi_pd_st()
+*{
+close all
+FErase(PRIVPATH + "DOKS_ST.DBF")
+FErase(PRIVPATH + "POS_ST.DBF")
+
+return
+*}
+
+
+function RnPresort()
+*{
+local _IdPos
+local cPrviBroj
+local bDatum
+local nTTRec 
+local nTTTRec
+local lImaNezakRN
+
+cNajstariji:=UzmiIzIni(PRIVPATH+"fmk.ini",'POS','XPM',"-",'READ')
+
+if cNajstariji == "-"
+	return
+endif
+
+if gVrstaRS=="S"
+	cIdPos:=SPACE(LEN(gIdPos))
+	closeret // !! nisam implementirao ne sortiranje na serveru !!
+else
+	cIdPos:=gIdPos
+endif
+
+// kreiraj pomocne tabele
+cre_pdtbl_st()
+
+O_KASE
+O_POS
+O_DOKS
+
+select 0
+usex (PRIVPATH+"POS_ST.DBF") alias POS_ST
+select 0
+usex (PRIVPATH+"DOKS_ST.DBF") alias DOKS_ST
+
+if cNajstariji != "-" .and. (!IsPlanika()) .and. Pitanje(,"Izvrsiti sortiranje racuna ?","N")=="D"
+
+	_IdPos:=cIdPos
+
+	if gSezonaTip=="M"
+		cNewSeason:=Godina_2(gDatum)+padl(month(gDatum),2,"0")
+		bDatum:={|| Godina_2(Datum)+padl(month(Datum),2,"0")}
+	else
+		cNewSeason:=Str(Year(gDatum), 4)
+		bDatum:={||str(year(datum),4) }
+	endif
+
+	cFilter:="idpos ==" + Cm2Str(_idPos) + " .and. idvd ==" + Cm2Str(VD_RN)
+	// dodaj godinu
+	cFilter+=" .and. ALLTRIM(STR(YEAR(datum))) ==" + Cm2Str( ALLTRIM(STR(Year(gDatum))) )
+	// ako je tip sezone M dodaj i mjesec
+	if gSezonaTip == "M"
+		cFilter += " .and. ALLTRIM(STR(MONTH(datum))) ==" + Cm2Str( ALLTRIM(STR(Month(gDatum))) )
+	endif
+
+	MsgO("Sortiram racune ...")
+
+	select pos
+	set filter to &cFilter
+	go top
+	
+	select doks 
+	set filter to &cFilter
+	go top
+
+	cNBrDok := PADL("1", LEN(doks->brdok))
+
+	do while !EOF() .and. DOKS->IdPos == _IdPos .and. DOKS->IdVd == VD_RN .and. DOKS->IdPos < "X" .and. Eval(bDatum)
+
+		// ako je tip sezone M - mjesec
+		if gSezonaTip=="M"
+			cDokSez := Godina_2(datum) + padl(month(datum),2,"0")
+		else
+			cDokSez := Str(Year(datum), 4)
+		endif
+			
+		// provjeri datum
+		if cDokSez <> cNewSeason 
+			skip
+			loop
+		endif
+		
+		@ m_x+2,m_y+15 SAY "1/" + doks->brdok
+		
+		select doks
+		Scatter()
+		_brdok := cNBrDok
+		select doks_st
+		append blank
+		Gather()
+					
+		select pos
+		seek DOKS->(IdPos+IdVd+dtos(datum)+BrDok)  
+		do while !EOF() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok) == DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
+						
+			Scatter()
+			_brdok := cNBrDok
+			select pos_st
+			append blank
+			Gather()
+					
+			select pos
+			skip 1
+		enddo
+				
+		select doks
+		
+		// uvecaj brdok
+		cNBrDok := IncId(cNBrDok)
+		
+		skip					
+	enddo
+
+	select doks
+
+	MsgC()
+	
+	MsgO("Brisem POS i DOKS...")
+	
+	// izbrisi iz DOKS
+	select DOKS
+	go top
+	do while !EOF()
+		delete
+		skip
+	enddo
+	// ponisti filter
+	set filter to
+
+	// izbrisi iz POS
+	select POS
+	go top
+	do while !EOF()
+		delete
+		skip
+	enddo
+	// ponisti filter
+	set filter to
+	MsgC()
+	
+	// prebaci stavke iz pos_st i doks_st
+	MsgO("Sortiram DOKS...")
+	select doks_st
+	go top
+	do while !EOF()
+		Scatter()
+		@ m_x+2,m_y+15 SAY "2/" + _doks_st->brdok
+		select doks
+		append blank
+		Gather()
+	
+		select doks_st
+		skip
+	enddo
+	MsgC()
+
+	MsgO("Sortiram POS...")
+	select pos_st
+	go top
+	do while !EOF()
+		Scatter()
+		@ m_x+2,m_y+15 SAY "3/" + _pos_st->brdok
+		select pos
+		append blank
+		Gather()
+	
+		select pos_st
+		skip
+	enddo
+
+	__dbpack()
+
+	// upisi u INI XPM=- / gotova operacija
+	
+	cNajstariji:=UzmiIzIni(PRIVPATH+"fmk.ini",'POS','XPM',"-", 'WRITE')
+
+endif
+
+CLOSERET
+return
+*}
+
+
 
