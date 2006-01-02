@@ -384,7 +384,7 @@ endif
 
 O_ROBA
 
-Box(,3,30)
+Box(,3,60)
 
 cTRobaNew:="c:\tops\sif1\2005\roba"
 cUvijekIzSez := "N"
@@ -395,6 +395,9 @@ cTRobaNew:=PADR(cTRobaNew,60)
 
 @ m_x+3,m_y+2 SAY "Uvijek preuzmi barkod iz sezone ?" GET cUvijekIzSez "@!" 
 read
+
+BoxC()
+
 
 SELECT NEW
 use (cTabela) shared alias RobaSez
