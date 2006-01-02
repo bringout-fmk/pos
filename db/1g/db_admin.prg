@@ -3,41 +3,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/db/1g/db_admin.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.9 $
- * $Log: db_admin.prg,v $
- * Revision 1.9  2004/01/05 14:19:47  sasavranic
- * Brisane duplih sifara
- *
- * Revision 1.8  2003/04/23 15:26:32  mirsad
- * prenos tops->fakt
- *
- * Revision 1.7  2003/01/19 23:44:18  ernad
- * test network speed (sa), korekcija bl.lnk
- *
- * Revision 1.6  2002/07/03 07:31:12  ernad
- *
- *
- * planika, debug na terenu
- *
- * Revision 1.5  2002/06/30 11:08:53  ernad
- *
- *
- * razrada: kalk/specif/planika/rpt_ppp.prg; pos/prikaz privatnog direktorija na vrhu; doxy
- *
- * Revision 1.4  2002/06/24 07:01:38  ernad
- *
- *
- * meniji, u oDatabase:scan ubacen GwDiskFree ..., debug...
- *
- * Revision 1.3  2002/06/17 13:53:13  sasa
- * no message
- *
- * Revision 1.2  2002/06/15 12:04:51  sasa
- * no message
- *
- *
  */
 
 /*! \file fmk/pos/db/1g/db_admin.prg
@@ -403,6 +368,68 @@ next
 
 END PRINT
 
+return
+*}
+
+
+function UzmiBkIzSez()
+*{
+local nTekRec
+
+nCounter:=0
+
+if !SigmaSif("BKIZSEZ")
+	return
+endif
+
+O_ROBA
+
+Box(,3,30)
+
+cTRobaNew:="c:\tops\sif1\2005\roba"
+cUvijekIzSez := "N"
+
+cTRobaNew:=PADR(cTRobaNew,60)
+@ m_x+1,m_y+2 SAY "Lokacija Roba/Sezona ?"
+@ m_x+2,m_y+2 GET cTabela PICT @S40
+
+@ m_x+3,m_y+2 SAY "Uvijek preuzmi barkod iz sezone ?" GET cUvijekIzSez "@!" 
+read
+
+SELECT NEW
+use (cTabela) shared alias RobaSez
+set order to tag "ID"
+
+select roba
+
+set order to tag ID
+go top
+
+
+Box(,3,60)
+aPom:={}
+do while !eof()
+	
+	cIdRoba := id
+	
+	SELECT RobaSez
+	SEEK cIdRoba
+	cBkSez := barkod
+	
+	@ m_x+1,m_y+2 SAY "Roba : " + cIdRoba
+	if (EMPTY( roba->barkod ) .and. !empty(cBkSez)) .or. ;
+	   ((cUvijekIzSez == "D") .and. !empty(cBkSez))
+		SELECT roba
+		REPLACE barkod with cBkSez
+		@ m_x+2, m_y+2 SAY "set Barkod " + cBkSez
+	endif
+	
+	SELECT ROBA
+	skip
+	
+enddo										BoxC()
+
+MsgBeep("Setovao barkodovo iz sezonskog podrucja")
 return
 *}
 
