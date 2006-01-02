@@ -916,11 +916,7 @@ return
 function RnPresort()
 *{
 local _IdPos
-local cPrviBroj
 local bDatum
-local nTTRec 
-local nTTTRec
-local lImaNezakRN
 
 cNajstariji:=UzmiIzIni(PRIVPATH+"fmk.ini",'POS','XPM',"-",'READ')
 
@@ -952,8 +948,8 @@ if cNajstariji != "-" .and. (!IsPlanika()) .and. Pitanje(,"Izvrsiti sortiranje r
 	_IdPos:=cIdPos
 
 	if gSezonaTip=="M"
-		cNewSeason:=Godina_2(gDatum)+padl(month(gDatum),2,"0")
-		bDatum:={|| Godina_2(Datum)+padl(month(Datum),2,"0")}
+		cNewSeason:=Godina_2(gDatum) + PadL(month(gDatum),2,"0")
+		bDatum:={|| Godina_2(datum) + PadL(month(datum),2,"0")}
 	else
 		cNewSeason:=Str(Year(gDatum), 4)
 		bDatum:={||str(year(datum),4) }
@@ -977,22 +973,23 @@ if cNajstariji != "-" .and. (!IsPlanika()) .and. Pitanje(,"Izvrsiti sortiranje r
 	set filter to &cFilter
 	go top
 
+	// prvi broj racuna je "    1" u obje varijante i M i G
 	cNBrDok := PADL("1", LEN(doks->brdok))
 
-	do while !EOF() .and. DOKS->IdPos == _IdPos .and. DOKS->IdVd == VD_RN .and. DOKS->IdPos < "X" .and. Eval(bDatum)
+	do while !EOF() .and. DOKS->IdPos == _IdPos .and. DOKS->IdVd == VD_RN .and. DOKS->IdPos < "X" .and. cNewSeason == Eval(bDatum)
 
 		// ako je tip sezone M - mjesec
-		if gSezonaTip=="M"
-			cDokSez := Godina_2(datum) + padl(month(datum),2,"0")
-		else
-			cDokSez := Str(Year(datum), 4)
-		endif
+		//if gSezonaTip=="M"
+		//	cDokSez := Godina_2(datum) + padl(month(datum),2,"0")
+		//else
+		//	cDokSez := Str(Year(datum), 4)
+		//endif
 			
 		// provjeri datum
-		if cDokSez <> cNewSeason 
-			skip
-			loop
-		endif
+		//if cDokSez <> cNewSeason 
+		//	skip
+		//	loop
+		//endif
 		
 		@ m_x+2,m_y+15 SAY "1/" + doks->brdok
 		
@@ -1028,7 +1025,13 @@ if cNajstariji != "-" .and. (!IsPlanika()) .and. Pitanje(,"Izvrsiti sortiranje r
 	select doks
 
 	MsgC()
-	
+
+	select doks_st
+	if RecCount() == 0
+		// nemam sta raditi izadji
+		return
+	endif
+
 	MsgO("Brisem POS i DOKS...")
 	
 	// izbrisi iz DOKS
