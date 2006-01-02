@@ -215,13 +215,14 @@ if integ_sez_radp(cSezona)
    zap_all_promet(cSezona)
 endif
 
-altd()
+cNewSezona := STR(YEAR(DATE()),4)
 
-goModul:oDatabase:saveSezona(cSezona)
+// u KPARAMS - "se" mora biti nova sezona
+goModul:oDatabase:saveSezona(cNewSezona)
 goModul:oDatabase:cRadimUSezona:="RADP"
 goModul:oDatabase:saveRadimUSezona("RADP")
 
-? DATE(), TIME(), "Setujem goModul:oDatabase:saveSezona", cSezona 
+? DATE(), TIME(), "Setujem goModul:oDatabase:saveSezona", cNewSezona 
 ? DATE(), TIME(), "Setujem goModul:oDatabase:saveRadimUSezona :", "RADP"
 
 END PRINT
