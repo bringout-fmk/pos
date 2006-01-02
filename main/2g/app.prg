@@ -405,7 +405,10 @@ WPar("PD",gPDV)
 if lSql
 	gSQL:="D"
 endif
-SetPDVBoje()
+
+if goModul:oDataBase:cRadimUSezona == "RADP"
+	SetPDVBoje()
+endif
 
 return
 *}
