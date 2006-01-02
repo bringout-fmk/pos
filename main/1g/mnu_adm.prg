@@ -128,6 +128,9 @@ AADD(opcexe, {|| GenDoks() })
 AADD(opc, "4. brisi duple sifre")
 AADD(opcexe, {|| BrisiDupleSifre()})
 
+AADD(opc, "5. uzmi BARKOD iz sezone ")
+AADD(opcexe, {|| UzmiBkIzSez()})
+
 if (gVrstaRs=="S")
 	AADD(opc, "S. azuriraj sifrarnik iz fmk")
 	AADD(opcexe, {|| AzurSifIzFmk() })
