@@ -372,67 +372,65 @@ return
 *}
 
 
+
 function UzmiBkIzSez()
 *{
-local nTekRec
-
-nCounter:=0
-
 if !SigmaSif("BKIZSEZ")
+	MsgBeep("Ne cackaj!")
 	return
 endif
 
-O_ROBA
-
-Box(,3,60)
-
-cTRobaNew:="c:\tops\sif1\2005\roba"
-cUvijekIzSez := "N"
-
-cTRobaNew:=PADR(cTRobaNew,60)
-@ m_x+1,m_y+2 SAY "Lokacija Roba/Sezona ?"
-@ m_x+2,m_y+2 GET cTabela PICT @S40
-
-@ m_x+3,m_y+2 SAY "Uvijek preuzmi barkod iz sezone ?" GET cUvijekIzSez "@!" 
-read
-
+Box(,5,60)
+	cUvijekUzmi := "N"
+	@ 1+m_x, 2+m_y SAY "Uvijek uzmi BARKOD iz sezone (D/N)?" GET cUvijekUzmi PICT "@!" VALID cUvijekUzmi $ "DN"
+	
+	read
 BoxC()
 
-
-SELECT NEW
-use (cTabela) shared alias RobaSez
-set order to tag "ID"
+O_ROBA
+O_ROBASEZ
 
 select roba
 
-set order to tag ID
+set order to tag "ID"
 go top
 
-
 Box(,3,60)
-aPom:={}
+
 do while !eof()
 	
-	cIdRoba := id
+	cIdRoba := roba->id
 	
-	SELECT RobaSez
-	SEEK cIdRoba
-	cBkSez := barkod
+	SELECT robasez
+	set order to tag "ID"
+	hseek cIdRoba
+	
+	if !Found()
+		select roba
+		skip
+		loop
+	endif
+	
+	cBkSez := robasez->barkod
 	
 	@ m_x+1,m_y+2 SAY "Roba : " + cIdRoba
-	if (EMPTY( roba->barkod ) .and. !empty(cBkSez)) .or. ;
-	   ((cUvijekIzSez == "D") .and. !empty(cBkSez))
-		SELECT roba
-		REPLACE barkod with cBkSez
+	
+	if (EMPTY( roba->barkod ) .and. !empty(cBkSez)) .or. ((cUvijekUzmi == "D") .and. !empty(cBkSez))
+		
+		select roba
+		replace barkod with cBkSez
+		
 		@ m_x+2, m_y+2 SAY "set Barkod " + cBkSez
 	endif
 	
 	SELECT ROBA
 	skip
 	
-enddo										BoxC()
+enddo		
 
-MsgBeep("Setovao barkodovo iz sezonskog podrucja")
+BoxC()
+
+MsgBeep("Setovao barkodove iz sezonskog podrucja")
 return
 *}
 
