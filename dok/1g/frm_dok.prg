@@ -244,9 +244,9 @@ do case
 					START PRINT CRET
 					do while !eof() .and. IdPos+IdVd==ctIdPos+VD_RN
 		          			aVezani:={{IdPos, BrDok, IdVd, datum}}
-		          			StampaPrep(IdPos, dtos(datum)+BrDok, aVezani,.t.,.t.)
-		          			select POM
-						USE
+		          			StampaPrep(IdPos, dtos(datum)+BrDok, aVezani, .f.)
+		          			//select POM
+						//USE
 		          			select DOKS
 						skip 1
 					enddo

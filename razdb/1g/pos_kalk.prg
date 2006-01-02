@@ -214,7 +214,9 @@ if priprz->(RecCount2())==0 .and. Pitanje(,"Preuzeti dokumente iz KALK-a","N")==
        		aPom2 := IntegDbf(cKalkDBF)
        		if !(aPom1[1]==aPom2[1].and.aPom1[2]==aPom2[2])
           		MsgBeep("CRC se ne slaze")
-          		return .f.
+          		if Pitanje(,"Ipak zelite prenos (D/N)?", "N") == "N"
+				return .f.
+			endif
        		endif
 	endif
 

@@ -4,54 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/stela/1g/stela.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.14 $
- * $Log: stela.prg,v $
- * Revision 1.14  2003/11/21 15:07:35  sasavranic
- * poruka o kreiranju arhive
- *
- * Revision 1.13  2003/11/21 14:54:48  sasavranic
- * konacno ispravljeno sortiranje racuna
- *
- * Revision 1.12  2003/09/16 08:48:30  mirsad
- * ponovo promijenio algoritam za presortiranje racuna: uveo pomocne baze precno i drecno
- *
- * Revision 1.11  2003/08/27 14:50:14  mirsad
- * 1) debug:presortiranje racuna
- *
- * Revision 1.10  2003/07/08 18:34:20  mirsad
- * 1) uveo brisanje zaklj.RN iz _pos.dbf nakon presortiranja da bih postigao prihvatljiv broj radnog RN na maski za unos racuna
- * 2) debug presortiranja: dodjeljivao brojeve obrnutim redoslijedom
- *
- * Revision 1.9  2003/07/05 11:27:43  mirsad
- * uveo uslov za prodajno mjesto pri pozivu pregleda racuna
- *
- * Revision 1.8  2003/07/04 18:14:32  mirsad
- * promjena funkcije za presortiranje brojeva racuna
- *
- * Revision 1.7  2003/06/24 13:15:09  sasa
- * no message
- *
- * Revision 1.6  2002/07/08 23:03:55  ernad
- *
- *
- * trgomarket debug dok 80, 81, izvjestaj lager lista magacin po proizv. kriteriju
- *
- * Revision 1.5  2002/06/19 19:46:47  ernad
- *
- *
- * rad u sez.podr., debug., gateway
- *
- * Revision 1.4  2002/06/19 05:53:14  ernad
- *
- *
- * ciscenja, debug
- *
- * Revision 1.3  2002/06/17 12:34:24  sasa
- * no message
- *
- *
  */
  
 
@@ -122,7 +74,7 @@ PRacuni(,,,fScope,cFil0,qIdRoba)
 
 CLOSE ALL
 //Presort2()
-RnPresort()
+RnPresort(dDatOd)
 
 if gModul=="HOPS"
 
@@ -152,169 +104,6 @@ endif
 gIdPos:=cTekIdPos
 CLOSERET
 return
-*}
-
-
-/*! \fn Presort()
- *  \brief Presortirati racune - popuni "rupe"
- */
- 
-function Presort()
-*{
-local _IdPos
-local cPrviBroj
-local bDatum
-local nTTRec 
-local nTTTRec
-
-
-if gVrstaRS=="S"
-	cIdPos:=SPACE(LEN(gIdPos))
-  	closeret // !! nisam implementirao ne sortiranje na serveru !!
-else
-  	cIdPos:=gIdPos
-endif
-
-O_KASE
-O_POS
-O_DOKS
-
-altd()
-
-cNajstariji:=UzmiIzIni(PRIVPATH+"fmk.ini",'POS','XPM',"-",'READ')
-
-if cNajstariji!="-" .and. (!IsPlanika()) .and. Pitanje(,"Izvrsiti sortiranje racuna ?","N")=="D"
-	_IdPos:=cidpos
-  	if gSezonaTip=="M"
-    		cNewSeason:=Godina_2(gDatum)+padl(month(gDatum),2,"0")
-    		bDatum:={|| Godina_2(Datum)+padl(month(Datum),2,"0")}
-  	else
-    		cNewSeason:=Str(Year(gDatum), 4)
-    		bDatum:={||str(year(datum),4) }
-  	endif
-
-	fProlupalo:=.f.
-	MsgO("Sortiram racune ...")
- 	cPrvibroj:="999999"
-  	SELECT DOKS 
-	SET ORDER TO TAG "7"
-  	seek _IdPos+VD_RN+cPrviBroj
-  	// ("7", "IdPos+IdVD+BrDok", KUMPATH+"DOKS" )
-  	if found()
-    		fProlupalo:=.t. 
-		// ovo se moze desiti samo ako je sort prekinut!
-  	endif
-
-  	set order to tag "1"
-  	seek _IdPos+VD_RN+chr(250)
-  	skip -1
-
-  	// interesuje me najstariji racun
-  	cNajstariji:=UzmiIzIni(PRIVPATH+"fmk.ini",'POS','XPM',"-", 'READ')
-  	if cNajstariji="-" .or. cNajstariji="0000"
-    		cNajstariji:="0000"
-  	endif
-
-  	if fProlupalo
-     		MsgBeep("Prosli put je doslo do prekida prilikom sortiranja ???")
-  	endif
-
-  	if !fProlupalo  // prilikom proslog sortiranja doslo je do problema
-    		lExit:=.f.
-    		if cNewSeason!=EVAL(bDatum)
-       			MsgBeep("Posljednji racun pripada sezoni "+eval(bDatum)+" ????")
-       			MsgC()
-       			return
-    		endif
-    		do while !bof().and.DOKS->IdPos==_IdPos.and.cNewSeason==eval(bDatum).and.DOKS->IdVd==VD_RN.and.DOKS->IdPos<"X".and.(dtos(doks->Datum)+doks->BrDok)>cNajStariji
-      			skip -1
-      			if cNewSeason<>eval(bDatum)
-				exit
-			endif
-      			if bof() 
-				lExit:=.t. 
-			endif
-      			nTrec:=recno()
-      			@ m_x+2,m_y+15 SAY "1/"+doks->brdok
-     			if doks->(idpos+idvd)==_idpos+VD_RN
-        			skip
-        			IF DOKS->IdPos<"X"  .and. !empty(DOKS->IdPos) .and.DOKS->IdVd==VD_RN .and. cNewSeason==eval(bDatum)
-          				SELECT POS
-          				Seek DOKS->(IdPos+IdVd+dtos(datum)+BrDok)  // promjeni broj
-          				DO WHILE ! Eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
-            					skip
-						nTTTrec:=recno()
-						skip -1
-            					// POS
-            					replace BrDok with cPrviBroj
-            					REPLSQL BrDok with cPrviBroj
-            					go nTTTRec
-          				enddo
-          				select DOKS
-          				replace BrDok with cPrviBroj
-          				replSQL BrDok with cPrviBroj
-          				cPrviBroj:=DecId(cPrviBroj)
-        			ENDIF // IdPos<"X"
-      			else
-        			exit
-      			endif  // slijedeci slog je prvi zapis, koji ne zelim dirati
-      			go nTrec
-      			if lexit 
-				exit 
-			endif
-    		enddo
-  	endif
-
-SELECT DOKS
-
-if cNajStariji != "0000"
-	// pozicioniranje na prvi sljedeci racun
-    	seek _IdPos+VD_RN+ cNajStariji
-    	cPrviBroj:=SUBSTR(cNajstariji,9)
-else
-    	seek _IdPos+VD_RN
-    	do while !eof() .and. DOKS->IdPos==_IdPos .and. cNewSeason<>eval(bDatum) .and.DOKS->IdVd=="42" .and. DOKS->IdPos<"X"
-      		skip  // preskoci podatke iz stare sezone
-    	enddo
-    	cPrviBroj:=brdok
-endif
-altd()
-// dosli smo na prvi slog iz tekuce sezone
-i:=0
-do while !eof() .and. DOKS->IdPos==_IdPos .and. DOKS->IdVd=="42" .and. DOKS->IdPos<"X"
-	skip
-	nTTrec:=recno() 
-	skip -1
-    	@ m_x+2,m_y+15 SAY "2/"+str(++i,6)+brdok
-    	cOrig:=BrDok
-    	if DOKS->IdPos<"X" .and. DOKS->IdVd=="42"
-      		select POS
-      		seek DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
-      		do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
-        		skip
-			nTTTrec:=recno()
-			skip -1
-        		// POS
-        		replace BrDok with cPrviBroj
-        		replSQL BrDok with cPrviBroj
-        		go nTTTRec
-      		enddo
-      		select DOKS
-      		replace BrDok with cPrviBroj
-      		replSQL BrDok with cPrviBroj
-      		cPrviBroj:=IncId(cPrviBroj)
-    	endif // IdPos<"X"
-    	//if cOrig="999999"   // moras izaci nakon ovog broja
-    	//   exit
-    	//endif
-    	go nTTrec
-enddo
-MsgC()
-
-cNajstariji:=UzmiIzIni(PRIVPATH+"fmk.ini",'POS','XPM',"-", 'WRITE')
-
-endif
-CLOSERET
 *}
 
 
@@ -461,8 +250,6 @@ return DE_REFRESH
  
 function PromIdPM()
 *{
-MsgBeep("Prije pokretanja ove opcije obavezno##napraviti arhivu podataka !!!")
-
 if Pitanje(,"Promjeniti id prod mjesta ?","N")=="N"
 	return DE_CONT
 endif
@@ -491,7 +278,6 @@ else
 endif
 nTrec:=recno()
 
-//CREATE_INDEX ("1", "IdPos+IdVd+dtos(datum)+BrDok", KUMPATH+"DOKS")
 Seek cPmjesto+"42"+cDatum+cBrojR
 if found()
 	set cursor on
@@ -549,7 +335,7 @@ return (DE_REFRESH)
 
 
 /*! \fn BrisiRNVP()
- *  \brief Nesto se brise...
+ *  \brief Brisanje racuna za period
  */
  
 function BrisiRNVP()
@@ -659,233 +445,15 @@ return
 *}
 
 
-
-/*! \fn Presort2()
- *  \brief Presortirati racune - popuni "rupe"
- */
- 
-function Presort2()
-*{
-local _IdPos
-local cPrviBroj
-local bDatum
-local nTTRec 
-local nTTTRec
-local lImaNezakRN
-
-if gVrstaRS=="S"
-	cIdPos:=SPACE(LEN(gIdPos))
-	closeret // !! nisam implementirao ne sortiranje na serveru !!
-else
-	cIdPos:=gIdPos
-endif
-
-O_KASE
-O_POS
-O_DOKS
-
-//local aRecNo:={}
-aDbf:={ {"brdok","C",len(doks->brdok),0}, {"drn","N",8,0}, {"brst","N",4,0} }
-NaprPom(aDbf,"DRECNO")
-aDbf:={ {"prn","N",8,0} }
-NaprPom(aDbf,"PRECNO")
-select 0
-usex (PRIVPATH+"DRECNO.DBF") alias DRECNO
-select 0
-usex (PRIVPATH+"PRECNO.DBF") alias PRECNO
-
-cNajstariji:=UzmiIzIni(PRIVPATH+"fmk.ini",'POS','XPM',"-",'READ')
-
-if cNajStariji!="-"
-	MsgBeep("Prije pokretanja ove opcije napravite##arhivu podataka, ako niste napravili arhivu##na sljedece pitanje odgovorite sa N.")
-endif
-
-if cNajstariji!="-" .and. (!IsPlanika()) .and. Pitanje(,"Izvrsiti sortiranje racuna ?","N")=="D"
-
-	_IdPos:=cidpos
-
-	if gSezonaTip=="M"
-		cNewSeason:=Godina_2(gDatum)+padl(month(gDatum),2,"0")
-		bDatum:={|| Godina_2(Datum)+padl(month(Datum),2,"0")}
-	else
-		cNewSeason:=Str(Year(gDatum), 4)
-		bDatum:={||str(year(datum),4) }
-	endif
-
-	fProlupalo:=.f.
-
-	MsgO("Sortiram racune ...")
-
-	cPrvibroj:="999999"
-
-	SELECT DOKS 
-	SET ORDER TO TAG "7"
-	seek _IdPos+VD_RN+cPrviBroj
-	// ("7", "IdPos+IdVD+BrDok", KUMPATH+"DOKS" )
-
-	if found()
-		fProlupalo:=.t. 
-		// ovo se moze desiti samo ako je sort prekinut!
-	endif
-
-	set order to tag "1"
-	seek _IdPos+VD_RN+chr(250)
-	skip -1
-	// DOKS pozicioniran na posljednjem racunu
-
-	if fProlupalo
-		MsgBeep("Prosli put je doslo do prekida prilikom sortiranja ???")
-	endif
-
-	if !fProlupalo  // prilikom proslog sortiranja doslo je do problema
-
-		lExit:=.f.
-
-		if cNewSeason!=EVAL(bDatum)
-			MsgBeep("Posljednji racun pripada sezoni "+eval(bDatum)+" ????")
-			MsgC()
-			return
-		endif
-		
-		altd()
-
-		do while !bof().and.DOKS->IdPos==_IdPos.and.cNewSeason==eval(bDatum).and.DOKS->IdVd==VD_RN.and.DOKS->IdPos<"X"
-
-			skip -1
-			if bof() 
-				lExit:=.t. // nema vise starijih racuna
-			endif
-
-			@ m_x+2,m_y+15 SAY "1/"+doks->brdok
-			if doks->(idpos+idvd)==_idpos+VD_RN
-				if !lExit
-					skip 1
-				endif
-				IF DOKS->IdPos<"X"  .and. !empty(DOKS->IdPos) .and.DOKS->IdVd==VD_RN .and. cNewSeason==eval(bDatum)
-					select drecno
-					append blank
-					replace brdok with doks->brDok, drn with doks->(recno())
-					select pos
-					seek DOKS->(IdPos+IdVd+dtos(datum)+BrDok)  // promjeni broj
-					nStavka:=0
-
-					do while ! eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
-						// POS
-						//AADD(aRecNo[LEN(aRecNo),2],RECNO())
-						select precno
-						append blank
-						++nStavka
-						replace prn with pos->(recno())
-						select pos
-						skip 1
-					enddo
-
-					select drecno
-					replace brst with nStavka
-					select DOKS
-				ENDIF // IdPos<"X"
-			else
-				exit
-			endif
-
-			skip -1
-
-			if lexit 
-				exit 
-			endif
-		enddo
-	endif
-
-	select doks
-
-#ifdef PROBA
-	altd()
-#endif
-
-	cNoviBroj:=PADL("1",LEN(doks->brDok))
-	altd()
-	select precno
-	go bottom
-
-	select drecno
-	if reccount()>0
-		go bottom
-		do while !bof()
-			if drecno->brdok<>cNoviBroj
-				select doks
-				go (drecno->drn)
-				replace brDok with cNoviBroj
-				replSQL brDok with cNoviBroj
-				// ovo nista nevalja
-				
-				for j:=1 to drecno->brst
-					select pos
-					go (precno->prn)
-					replace brDok with cNoviBroj
-					replSQL brDok with cNoviBroj
-					
-					select precno
-					skip 1
-				next
-				select precno
-				go nTRecNo
-			endif
-			// novi broj dokumenta
-			cNoviBroj:=IncId(cNoviBroj)
-			
-			// uzmi vrijednost koliko skipova treba 
-			// odraditi za precno
-			
-			nSkip:=drecno->brst
-			
-			select drecno
-			skip -1
-		
-			select precno
-			skip -nSkip
-			
-			nTRecNo:=RecNo()
-			
-		enddo
-	endif
-
-	MsgC()
-
-	cNajstariji:=UzmiIzIni(PRIVPATH+"fmk.ini",'POS','XPM',"-", 'WRITE')
-
-	O__POS
-	go top
-	lImaNezakRN:=.f.
-	do while !eof()
-		if m1<>"Z"
-			lImaNezakRN:=.t.
-			skip 1
-			loop
-		endif
-		skip 1
-		nRec:=RECNO()
-		skip -1
-		delete
-		go (nRec)
-	enddo
-
-	__dbpack()
-	if lImaNezakRN
-		MsgBeep("Ima nezakljucenih racuna! Obradite ih!")
-	endif
-
-endif
-CLOSERET
-return
-*}
-
-
+// kreiranje tabela pomocnih doks_st i pos_st
 function cre_pdtbl_st()
 *{
 
 close all
 FErase(PRIVPATH + "POS_ST.DBF")
+FErase(PRIVPATH + "POS_ST.CDX")
 FErase(PRIVPATH + "DOKS_ST.DBF")
+FErase(PRIVPATH + "DOKS_ST.CDX")
 
 O_POS
 select pos
@@ -897,23 +465,28 @@ select doks
 copy structure to (PRIVPATH+"struct")
 create (PRIVPATH + "doks_st") from (PRIVPATH + "struct")
 
-//create_index("1","idfirma+idvd+brdok", PRIVPATH+"pript")
+create_index("1","idpos+idvd+DToS(datum)+brdok", PRIVPATH+"pos_st")
+create_index("1","idpos+idvd+DToS(datum)+brdok", PRIVPATH+"doks_st")
 
 return
 *}
 
-
+// brisanje pomocnih tabela pos_st i doks_st
 function brisi_pd_st()
 *{
 close all
-FErase(PRIVPATH + "DOKS_ST.DBF")
-FErase(PRIVPATH + "POS_ST.DBF")
 
-return
+FErase(PRIVPATH + "DOKS_ST.DBF")
+FErase(PRIVPATH + "DOKS_ST.CDX")
+FErase(PRIVPATH + "POS_ST.DBF")
+FErase(PRIVPATH + "POS_ST.CDX")
+
+return .t.
 *}
 
 
-function RnPresort()
+// nova funkcija presortiranja racuna
+function RnPresort(dDatOd)
 *{
 local _IdPos
 local bDatum
@@ -921,6 +494,12 @@ local bDatum
 cNajstariji:=UzmiIzIni(PRIVPATH+"fmk.ini",'POS','XPM',"-",'READ')
 
 if cNajstariji == "-"
+	// nemas sta sortirati
+	return
+endif
+
+if Empty(dDatOd)
+	MsgBeep("Datum ne smije biti prazan !!!!")
 	return
 endif
 
@@ -947,143 +526,136 @@ if cNajstariji != "-" .and. (!IsPlanika()) .and. Pitanje(,"Izvrsiti sortiranje r
 
 	_IdPos:=cIdPos
 
-	if gSezonaTip=="M"
-		cNewSeason:=Godina_2(gDatum) + PadL(month(gDatum),2,"0")
-		bDatum:={|| Godina_2(datum) + PadL(month(datum),2,"0")}
-	else
-		cNewSeason:=Str(Year(gDatum), 4)
-		bDatum:={||str(year(datum),4) }
-	endif
-
+	// postavi filter na period od datod >= pa do kraja tabele za "42"
 	cFilter:="idpos ==" + Cm2Str(_idPos) + " .and. idvd ==" + Cm2Str(VD_RN)
 	// dodaj godinu
-	cFilter+=" .and. ALLTRIM(STR(YEAR(datum))) ==" + Cm2Str( ALLTRIM(STR(Year(gDatum))) )
-	// ako je tip sezone M dodaj i mjesec
-	if gSezonaTip == "M"
-		cFilter += " .and. ALLTRIM(STR(MONTH(datum))) ==" + Cm2Str( ALLTRIM(STR(Month(gDatum))) )
-	endif
+	cFilter+=" .and. DToS(datum) >= " + Cm2Str(DToS(dDatOd))
 
-	MsgO("Sortiram racune ...")
+	// otvori box
+	Box(,5,60)
+	
+	@ 1+m_x, 2+m_y SAY "Sortiranje racuna u toku..." COLOR "I"
+	@ 2+m_x, 2+m_y SAY "Sort od datuma " + DToC(dDatOd)
 
 	select pos
 	set filter to &cFilter
+	set order to tag "1"
 	go top
 	
 	select doks 
 	set filter to &cFilter
+	set order to tag "1"
 	go top
 
-	// prvi broj racuna je "    1" u obje varijante i M i G
-	cNBrDok := PADL("1", LEN(doks->brdok))
+	// brojac sklanjanja u pomocne tabele
+	nSkCnt := 0
+	
+	do while !EOF() .and. DOKS->IdPos == _IdPos .and. DOKS->IdVd == VD_RN .and. DOKS->IdPos < "X"
 
-	do while !EOF() .and. DOKS->IdPos == _IdPos .and. DOKS->IdVd == VD_RN .and. DOKS->IdPos < "X" .and. cNewSeason == Eval(bDatum)
-
-		// ako je tip sezone M - mjesec
-		//if gSezonaTip=="M"
-		//	cDokSez := Godina_2(datum) + padl(month(datum),2,"0")
-		//else
-		//	cDokSez := Str(Year(datum), 4)
-		//endif
-			
-		// provjeri datum
-		//if cDokSez <> cNewSeason 
-		//	skip
-		//	loop
-		//endif
-		
-		@ m_x+2,m_y+15 SAY "1/" + doks->brdok
+		++ nSkCnt
+		@ m_x+3,m_y+2 SAY "Sklanjam rn.br: 42-" + ALLTRIM(doks->brdok)
+		@ m_x+4,m_y+2 SAY "Obradio: " + ALLTRIM(STR(nSkCnt))
 		
 		select doks
 		Scatter()
-		_brdok := cNBrDok
 		select doks_st
 		append blank
 		Gather()
 					
 		select pos
-		seek DOKS->(IdPos+IdVd+dtos(datum)+BrDok)  
+		hseek DOKS->(IdPos+IdVd+dtos(datum)+BrDok)  
 		do while !EOF() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok) == DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
 						
 			Scatter()
-			_brdok := cNBrDok
 			select pos_st
 			append blank
 			Gather()
 					
 			select pos
-			skip 1
+			skip
 		enddo
 				
 		select doks
+		skip	
 		
-		// uvecaj brdok
-		cNBrDok := IncId(cNBrDok)
-		
-		skip					
 	enddo
-
-	select doks
-
-	MsgC()
-
+	
+	// ako je doks_st prazna nemam sta raditi
 	select doks_st
 	if RecCount() == 0
 		// nemam sta raditi izadji
 		return
 	endif
 
-	MsgO("Brisem POS i DOKS...")
+	// ako je pak puna tabela brisi dokumente za period koji zelimo srediti
 	
-	// izbrisi iz DOKS
-	select DOKS
-	go top
-	do while !EOF()
-		delete
-		skip
-	enddo
-	// ponisti filter
+	@ 3+m_x, 2+m_y SAY SPACE(60)
+	@ 4+m_x, 2+m_y SAY SPACE(60)
+	
+	@ 3+m_x, 2+m_y SAY "Brisem stavke u POS i DOKS..."
+	
+	filt_br_doks()
+	filt_br_pos()
+	
+	// ukini filtere
+	select pos
 	set filter to
+	select doks
+	set filter to
+	
+	@ 3+m_x, 2+m_y SAY SPACE(60)
+	@ 4+m_x, 2+m_y SAY SPACE(60)
 
-	// izbrisi iz POS
-	select POS
-	go top
-	do while !EOF()
-		delete
-		skip
-	enddo
-	// ponisti filter
-	set filter to
-	MsgC()
+	// nadji novi broj dokumenta
+	cNBrDok := NarBrDok(gIdPos, VD_RN)
 	
 	// prebaci stavke iz pos_st i doks_st
-	MsgO("Sortiram DOKS...")
+	
+	@ 3+m_x, 2+m_y SAY "Generisem novi sort racuna..."
+	
 	select doks_st
+	set order to tag "1"
 	go top
+
 	do while !EOF()
+		
+		@ 4+m_x, 2+m_y SAY "Racun broj: 42-" + ALLTRIM(cNBrDok)
+		// uzmi postojeci broj radi seek-a na pos_st
+		cStBroj := doks_st->brdok
+		cIdFir := doks_st->idpos
+		dDDok := doks_st->datum
+		
 		Scatter()
-		@ m_x+2,m_y+15 SAY "2/" + _doks_st->brdok
+		_brdok := cNBrDok
 		select doks
 		append blank
 		Gather()
+		
+		// predji na pos
+		select pos_st
+		set order to tag "1"
+		hseek  cIdFir + VD_RN + DTOS(dDDok) + cStBroj
+		
+		do while !EOF() .and. pos_st->(idpos+idvd+DToS(datum)+brdok) == cIdFir + VD_RN + DToS(dDDok) + cStBroj
+			
+			Scatter()
+			_brdok := cNBrDok
+			select pos
+			append blank
+			Gather()
+			
+			select pos_st
+			skip
+		enddo
 	
+		select doks
+		cNBrDok := NarBrDok(gIdPos, VD_RN)
+		
 		select doks_st
 		skip
 	enddo
-	MsgC()
 
-	MsgO("Sortiram POS...")
-	select pos_st
-	go top
-	do while !EOF()
-		Scatter()
-		@ m_x+2,m_y+15 SAY "3/" + _pos_st->brdok
-		select pos
-		append blank
-		Gather()
-	
-		select pos_st
-		skip
-	enddo
+	BoxC()
 
 	__dbpack()
 
@@ -1091,11 +663,39 @@ if cNajstariji != "-" .and. (!IsPlanika()) .and. Pitanje(,"Izvrsiti sortiranje r
 	
 	cNajstariji:=UzmiIzIni(PRIVPATH+"fmk.ini",'POS','XPM',"-", 'WRITE')
 
+	if !brisi_pd_st()
+		MsgBeep("Nisam izbrisao pomocne tabele !!!")
+	endif
+
 endif
 
 CLOSERET
 return
 *}
 
+
+// brisi doks po filteru
+function filt_br_doks()
+*{
+select doks
+go top
+do while !EOF()
+	delete
+	skip
+enddo
+return
+*}
+
+// brisi pos po filteru
+function filt_br_pos()
+*{
+select pos
+go top
+do while !EOF()
+	delete
+	skip
+enddo
+return
+*}
 
 

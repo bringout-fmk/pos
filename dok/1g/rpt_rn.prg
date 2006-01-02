@@ -1020,6 +1020,7 @@ O_Nar()
 O_ROBA
 O_OSOB
 O_POS
+O_VRSTEP
 O_DOKS
 O_DOKSPF
 O_TARIFA
@@ -1045,6 +1046,7 @@ for i:=1 to LEN(aRacuni)
 
 	dDatRn := aRacuni[i, 4]
 	cBrDok := aRacuni[i, 2]
+	
 	if lPrepis
 		cStalRac := cBrDok
 	endif
@@ -1056,6 +1058,7 @@ for i:=1 to LEN(aRacuni)
 		cIdRadnik := &cPosDB->idradnik
 		cSmjena := &cPosDB->smjena
 		cTime := LEFT(TIME(), 5)
+		cVrstaP := &cPosDB->idvrstep
 	else
 		// nadji parametre kupca
 		select dokspf
@@ -1068,13 +1071,24 @@ for i:=1 to LEN(aRacuni)
 		cIdRadnik := doks->idRadnik
 		cSmjena := doks->smjena
 		cTime := doks->vrijeme
+		cVrstaP := doks->idvrstep
 	endif
 	
 	select osob
 	set order to tag "NAZ"
 	hseek cIdRadnik
 	cRdnkNaz := osob->naz
-
+	
+	select vrstep
+	set order to tag "ID"
+	hseek cVrstaP
+	
+	if !Found()
+		cNazVrstaP := "GOTOVINA"
+	else
+		cNazVrstaP := ALLTRIM(vrstep->naz)
+	endif
+	
 	select &cPosDB
 
 	nUkupno := 0
@@ -1189,7 +1203,8 @@ for i:=1 to LEN(aRacuni)
 	add_drntext("R02", cRdnkNaz)
 	// dodaj podatak o smjeni
 	add_drntext("R03", cSmjena)
-	
+	// vrsta placanja
+	add_drntext("R05", cNazVrstaP)
 	// Broj linija potrebnih da se ocjepi traka
 	add_drntext("P12", ALLTRIM(STR(nFeedLines)))
 	

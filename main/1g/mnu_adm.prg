@@ -59,8 +59,6 @@ if gVrstaRS == "S"
 	AADD(opc, "Y. ponovo prenesi sa kasa ")
 	AADD(opcexe, {|| PobPaPren() })
 endif
-AADD(opc, "T. postavi datum i vrijeme kase")
-AADD(opcexe, {|| PDatMMenu()})
 
 if IsPlanika()
 	AADD(opc, "M. poruke")
