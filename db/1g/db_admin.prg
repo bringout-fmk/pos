@@ -488,8 +488,8 @@ do while !eof()
 	endif
 
 	cIdTarifa:=robasez->idtarifa
-	nMpcSaP1 := roba->cijena1
-	nMpcSaP2 := roba->cijena2
+	nMpcSaP1 := robasez->cijena1
+	nMpcSaP2 := robasez->cijena2
 	
 	
 	if !empty(cZaTarifu) .and. (cIdTarifa <> cZaTarifu)
