@@ -441,23 +441,28 @@ if !SigmaSif("SETPDVC")
 	return
 endif
 
-
+//ppp tarifa
 cIdTarifa:=SPACE(6)
-nZaokruzenje:=2
-cPdvTarifa:=PADR(cPdvTarifa, 6)
 
-Box(,5,60)
-	cUvijekUzmi := "N"
-	@ 1+m_x, 2+m_y SAY "Set cijene za tarifu  (prazno sve tarife)?" GET cZaTarifu PICT "@!"
-	@ 2+m_x, 2+m_y SAY "Zaokruzenje cijene na koliko decimala "  get PICT "9"
-	@ 3,m_x, 2+m_y SAY "PDV tarifa " GET cPdvTarifa P_Tarifa(cPdvTarifa)
-	READ
-	
-BoxC()
+cZaTarifu:=SPACE(6)
+nZaokruzenje:=2
+cPdvTarifa:=PADR("PDV17", 6)
 
 O_ROBA
 O_ROBASEZ
 O_TARIFA
+
+
+SET CURSOR ON
+Box(,5,60)
+	cUvijekUzmi := "N"
+	@ 1+m_x, 2+m_y SAY "Set cijene za tarifu  (prazno sve tarife)?" GET cZaTarifu PICT "@!" VALID  EMPTY(cZaTarifu) .or. P_Tarifa(@cZaTarifu)
+	@ 2+m_x, 2+m_y SAY "Zaokruzenje cijene na koliko decimala "  get nZaokruzenje PICT "9"
+	@ 3+m_x, 3+m_y SAY "PDV tarifa " GET cPdvTarifa VALID P_Tarifa(@cPdvTarifa)
+	READ
+	
+BoxC()
+
 
 select roba
 
@@ -483,7 +488,8 @@ do while !eof()
 	endif
 
 	cIdTarifa:=robasez->idtarifa
-	nMpcSaPor := roba->cijena
+	nMpcSaP1 := roba->cijena1
+	nMpcSaP2 := roba->cijena2
 	
 	
 	if !empty(cZaTarifu) .and. (cIdTarifa <> cZaTarifu)
@@ -499,17 +505,21 @@ do while !eof()
 	
 	
 	// nc = 99999 jer je ne trebamo
-	nMpcBezPor := MpcBezPor( nMpcSaPor, aPorezi, , 99999)
+	nMpcBP1 := MpcBezPor( nMpcSaP1, aPorezi, , 99999)
+	nMpcBP2 := MpcBezPor( nMpcSaP2, aPorezi, , 99999)
 
 	SELECT tarifa
 	SEEK cPdvTarifa
 	nPdvTarifa := tarifa->opp
 	
-	nPdvCijena := nMpcBezPor * ( 1 + nPdvTarifa/100 )
-	nPdvCijena := ROUND( nPdvCijena, nZaokruzenje)
-	
+	nPdvC1 := nMpcBP1 * ( 1 + nPdvTarifa/100 )
+	nPdvC1 := ROUND( nPdvC1, nZaokruzenje)
+		
+	nPdvC2 := nMpcBP2 * ( 1 + nPdvTarifa/100 )
+	nPdvC2 := ROUND( nPdvC2, nZaokruzenje)
+
 	SELECT ROBA
-	replace Cijena with nPdvCijena, ;
+	replace Cijena1 with nPdvC1, Cijena2 with nPdvC2, ;
 	        IdTarifa with cPdvTarifa
 		
  	
