@@ -131,6 +131,9 @@ AADD(opcexe, {|| BrisiDupleSifre()})
 AADD(opc, "5. uzmi BARKOD iz sezone ")
 AADD(opcexe, {|| UzmiBkIzSez()})
 
+AADD(opc, "5. set pdv cijene na osnovu tarifa iz sezone ")
+AADD(opcexe, {|| SetPdvCijene()})
+
 if (gVrstaRs=="S")
 	AADD(opc, "S. azuriraj sifrarnik iz fmk")
 	AADD(opcexe, {|| AzurSifIzFmk() })

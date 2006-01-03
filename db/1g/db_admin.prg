@@ -434,4 +434,93 @@ MsgBeep("Setovao barkodove iz sezonskog podrucja")
 return
 *}
 
+function SetPdvCijene()
+*{
+if !SigmaSif("SETPDVC")
+	MsgBeep("Ne cackaj!")
+	return
+endif
+
+
+cIdTarifa:=SPACE(6)
+nZaokruzenje:=2
+cPdvTarifa:=PADR(cPdvTarifa, 6)
+
+Box(,5,60)
+	cUvijekUzmi := "N"
+	@ 1+m_x, 2+m_y SAY "Set cijene za tarifu  (prazno sve tarife)?" GET cZaTarifu PICT "@!"
+	@ 2+m_x, 2+m_y SAY "Zaokruzenje cijene na koliko decimala "  get PICT "9"
+	@ 3,m_x, 2+m_y SAY "PDV tarifa " GET cPdvTarifa P_Tarifa(cPdvTarifa)
+	READ
+	
+BoxC()
+
+O_ROBA
+O_ROBASEZ
+O_TARIFA
+
+select roba
+
+set order to tag "ID"
+go top
+
+Box(,3,60)
+
+aPorezi := {}
+
+do while !eof()
+	
+	cIdRoba := roba->id
+	
+	SELECT robasez
+	set order to tag "ID"
+	hseek cIdRoba
+	
+	if !Found()
+		select roba
+		skip
+		loop
+	endif
+
+	cIdTarifa:=robasez->idtarifa
+	nMpcSaPor := roba->cijena
+	
+	
+	if !empty(cZaTarifu) .and. (cIdTarifa <> cZaTarifu)
+		select roba
+		skip
+		loop	
+	endif
+	
+	@ m_x+1,m_y+2 SAY "Roba / Tarifa : " + cIdRoba + "/" + cIdTarifa
+
+	// ako je konto prazan, onda gledaj samo sifrarnik
+	Tarifa( "", cIdRoba, @aPorezi, cIdTarifa)
+	
+	
+	// nc = 99999 jer je ne trebamo
+	nMpcBezPor := MpcBezPor( nMpcSaPor, aPorezi, , 99999)
+
+	SELECT tarifa
+	SEEK cPdvTarifa
+	nPdvTarifa := tarifa->opp
+	
+	nPdvCijena := nMpcBezPor * ( 1 + nPdvTarifa/100 )
+	nPdvCijena := ROUND( nPdvCijena, nZaokruzenje)
+	
+	SELECT ROBA
+	replace Cijena with nPdvCijena, ;
+	        IdTarifa with cPdvTarifa
+		
+ 	
+	skip
+	
+enddo		
+
+BoxC()
+
+MsgBeep("Formirao PDV cijene u sifrarniku TOPS")
+return
+*}
+
 
