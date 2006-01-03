@@ -861,7 +861,13 @@ endif
 // azuriraj sifrarnik robe
 SmReplace("naz", katops->naziv)
 SmReplace("jmj", katops->jmj)
-SmReplace("cijena1", katops->mpc)
+
+if !IsPDV() .and. katops->idtarifa <> "PDV17"
+	SmReplace("cijena1", katops->mpc)
+endif
+if IsPDV()
+	SmReplace("cijena1", katops->mpc)
+endif
 if lNovi
 	SmReplace("idtarifa", katops->idtarifa)
 endif
