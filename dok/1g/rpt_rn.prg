@@ -1179,11 +1179,11 @@ for i:=1 to LEN(aRacuni)
 
 		if Round(nCjen2BPDV,2)<>0
 			// ukupno popust
-			nUPopust += nCjenBPDV - nCjen2BPDV
+			nUPopust += (nCjenBPDV - nCjen2BPDV) * nKolicina
 		endif
 		
 		// ukupno bez pdv-a - popust
-		nUBPDVPopust := nUBPDV - nUPopust	
+		nUBPDVPopust := nUBPDV - nUPopust
 
 		++ nCSum
 
