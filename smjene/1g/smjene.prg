@@ -3,20 +3,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/smjene/1g/smjene.prg,v $
- * $Author: ernad $ 
- * $Revision: 1.4 $
- * $Log: smjene.prg,v $
- * Revision 1.4  2003/01/14 10:32:18  ernad
- * pripreme za tigru ...
- *
- * Revision 1.3  2002/11/21 13:27:20  mirsad
- * ispravka bug-a: varijabla Ch nedefinisana
- *
- * Revision 1.2  2002/06/17 10:55:02  sasa
- * no message
- *
- *
  */
  
 

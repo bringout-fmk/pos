@@ -149,7 +149,7 @@ endif
 
 // gPDV := "N"
 // ako je 2006 i nije razdvojena sezona
-if STR(YEAR(dCurDate),4) == "2006"
+if STR( YEAR(dCurDate), 4 ) == "2006"
 	if ( YEAR(dLastDokDatum) < 2006 )
 		gPDV:="N"
 		SetPDVBoje()
@@ -246,7 +246,6 @@ return
 function integ_sez_radp(cSezona)
 local lRet
 
-altd()
 // provjeri doks
 lRet := integ_doks(cSezona)
 if lRet == .f.

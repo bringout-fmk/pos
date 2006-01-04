@@ -10,18 +10,18 @@
  *  \brief Izvjestaj: realizacija radnika
  */
 
-/*! \fn RealRadnik(fTekuci,fPrik,fZaklj)
- *  \param fTekuci
+/*! \fn RealRadnik(lTekuci,fPrik,fZaklj)
+ *  \param lTekuci
  *  \param fPrik
  *  \param fZaklj
  *  \brief Izvjestaj: realizacija radnika
  *  \return .t. 
  */
 
-*function RealRadnik(fTekuci,fPrik,fZaklj)
+*function RealRadnik(lTekuci,fPrik,fZaklj)
 *{
 function RealRadnik
-PARAMETERS fTekuci, fPrik, fZaklj
+PARAMETERS lTekuci, fPrik, fZaklj
 
 PRIVATE cIdRadnik:=SPACE(4)
 PRIVATE cVrsteP:=SPACE(60)
@@ -34,16 +34,12 @@ PRIVATE dDatDo:=gDatum
 PRIVATE aNiz
 private cGotZir:=" "
 
-//? "SC:", gDatum, dDatOd, dDatDo
-//sleep(10)
 
 fPrik := IIF (fPrik==NIL, "P", fPrik)
 fZaklj := IIF (fZaklj==NIL, .F., fZaklj)
 
-if gSifK=="D"
-	O_SIFK
-	O_SIFV
-endif
+O_SIFK
+O_SIFV
 
 O_DIO
 O_KASE
@@ -66,10 +62,11 @@ if roba->(fieldpos("K7"))<>0
 endif
 
 
-IF fTekuci
+IF lTekuci
   cIdRadnik := gIdRadnik
   IF gRadniRac == "D"
-    cSmjena   := ""             // ako radnik prelazi u narednu smjenu
+    cSmjena   := ""             
+    // ako radnik prelazi u narednu smjenu
   Else
     cSmjena := gSmjena
   EndIF
@@ -127,7 +124,7 @@ INDEX ON IdRoba+IdCijena TAG ("2") TO (PRIVPATH+"POM")
 index ON BRISANO TAG "BRISAN"
 set order to 1
 
-if ftekuci
+if lTekuci
   IF fZaklj
     START PRINT2 CRET gLocPort, .F.
   Else
@@ -143,13 +140,13 @@ if ftekuci
     ?? PADC ("REALIZACIJA RADNIKA PO ROBAMA", 40)
   EndIF
   ? PADC (gPosNaz)
-  IF !Empty (gIdDio)       // ???
+  IF !Empty (gIdDio)     
     ? PADC (gDioNaz, 40)
   EndIF
   ?
   SELECT OSOB
   HSEEK gIdRadnik
-  ? PADC (AllTrim (OSOB->Naz), 40)
+  ? gIdRadnik, "-", PADC (AllTrim (OSOB->Naz), 40)
   cTxt := "Na dan: "+FormDat1 (gDatum)
   IF gRadniRac == "N"
     cTxt += " u smjeni " + gSmjena
@@ -180,7 +177,7 @@ else
   ?
   ? "SIFRA PREZIME I IME RADNIKA"
   ? "-----", REPLICATE ("-", 30)
-endif // fTekuci
+endif // lTekuci
 
 SELECT DOKS
 set order to 2       // "DOKSi2", "IdVd+DTOS (Datum)+Smjena"
@@ -189,7 +186,7 @@ IF !(aUsl1==".t.")
 ENDIF
 
 // formiram pomocnu datoteku sa podacima o realizaciji
-IF !fTekuci
+IF !lTekuci
   RadnIzvuci (VD_PRR)
 EndIF
 RadnIzvuci (VD_RN)
@@ -207,7 +204,7 @@ IF fPrik $ "PO"
     nTotRadn := 0
     nTotRadn2:=0
     nTotRadn3:=0
-    IF ! fTekuci
+    IF ! lTekuci
       SELECT OSOB
       HSEEK _IdRadnik
       ? OSOB->ID + "  " + PADR (OSOB->Naz, 30)
@@ -294,7 +291,7 @@ IF fPrik $ "PO"
 EndIF
 
 IF fPrik $ "RO"
-  IF ! fTekuci
+  IF ! lTekuci
     ?
     ?
     ? PADC ("REALIZACIJA PO ROBAMA", 40)
@@ -354,7 +351,7 @@ IF fPrik $ "RO"
   endif
   ? REPL ("=", 40)
 ENDIF
-IF fTekuci
+IF lTekuci
   PaperFeed()
   IF fZaklj
     END PRN2
