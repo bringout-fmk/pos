@@ -4,44 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/main/1g/params.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.14 $
- * $Log: params.prg,v $
- * Revision 1.14  2004/05/21 11:25:02  sasavranic
- * Uvedena opcija popusta preko odredjenog iznosa
- *
- * Revision 1.13  2004/05/19 12:16:44  sasavranic
- * no message
- *
- * Revision 1.12  2003/06/28 15:05:36  mirsad
- * omogucen ispis naziva firme na izvjestajima
- *
- * Revision 1.11  2002/07/09 13:05:41  ernad
- *
- *
- * debug planika - sitnice
- *
- * Revision 1.10  2002/06/27 08:13:00  sasa
- * no message
- *
- * Revision 1.8  2002/06/27 07:35:33  sasa
- * no message
- *
- * Revision 1.7  2002/06/24 16:11:53  ernad
- *
- *
- * planika - uvodjenje izvjestaja 98-reklamacija, izvjestaj planika/promet po vrstama placanja, debug
- *
- * Revision 1.6  2002/06/15 08:35:10  sasa
- * no message
- *
- *
- */
- 
-
-/*! \file fmk/pos/main/1g/params.prg
- *  \brief Podesavanje parametara
  */
  
 
@@ -533,15 +495,20 @@ local cVrij:=TIME()
 Box(,3,60)
 set cursor on
 set date format to "DD.MM.YYYY"
+
 @ m_x+1, m_y+2 SAY  "Datum:  " GET dSDat
 @ m_x+2, m_y+2 SAY  "Vrijeme:" GET cVrij
+
 read
+
 set date format to "DD.MM.YY"
 BoxC()
 
 if Pitanje(,"Postaviti vrijeme i datum racunara ??","N")=="D"
 	SetDate(dSDat)
 	SetTime(cVrij)
+	// setuj i gDatum
+	gDatum := dSDat
 	return .t.
 endif
 

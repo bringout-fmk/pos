@@ -531,7 +531,7 @@ RETURN
 /*! \fn StampaPrep(cIdPos,cDatBrDok,aVezani,fEkran)
  */
  
-function StampaPrep(cIdPos,cDatBrDok,aVezani,fEkran,lViseOdjednom)
+function StampaPrep(cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom)
 *{
 local cDbf
 local cIdRadnik
@@ -559,8 +559,6 @@ if lViseOdjednom==nil
 	lViseOdjednom:=.f.
 endif
 
-//CreateTmpTblForDocReview()
-
 select doks
 set order to tag "1"
 
@@ -578,7 +576,6 @@ endif
 
 select pos
 
-altd()
 nIznos := 0
 nNeplaca:=0
 
@@ -606,7 +603,8 @@ for nCnt:=1 to LEN(aVezani)
               	//	replace datum WITH pos->datum
     		//endif
    		//select pos
-    		nIznos+=pos->(kolicina*cijena)
+    		
+		nIznos+=pos->(kolicina*cijena)
     		select odj
 		seek pos->idodj
 		select POS
@@ -632,7 +630,7 @@ select pos
 
 if !gStariObrPor
 	if IsPDV()
-		PDVStampaRac(cIdPos, doks->brdok, .t., doks->idvrstep, doks->datum, aVezani)
+		PDVStampaRac(cIdPos, doks->brdok, .t., doks->idvrstep, doks->datum, aVezani, lViseOdjednom)
 	else
 		StampaRac(cIdPos, doks->brdok, .t., doks->idvrstep, doks->datum, aVezani)
 	endif
@@ -1228,7 +1226,7 @@ return
 
 
 
-function PDVStampaRac(cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aRacuni)
+function PDVStampaRac(cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aRacuni, lViseOdjednom)
 *{
 local cTime
 
@@ -1247,8 +1245,13 @@ endif
 // napuni tabele podacima
 fill_rb_traka(cIdPos, cBrDok, dDatumRn, lPrepis, aRacuni, @cTime)
 
+lStartPrint := .t.
+if lViseOdjednom == .t.
+	lStartPrint := .f.
+endif
+
 // ispisi racun
-rb_print()
+rb_print(lStartPrint)
 
 return cTime
 *}

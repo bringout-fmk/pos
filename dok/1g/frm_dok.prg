@@ -244,9 +244,7 @@ do case
 					START PRINT CRET
 					do while !eof() .and. IdPos+IdVd==ctIdPos+VD_RN
 		          			aVezani:={{IdPos, BrDok, IdVd, datum}}
-		          			StampaPrep(IdPos, dtos(datum)+BrDok, aVezani, .f.)
-		          			//select POM
-						//USE
+		          			StampaPrep(IdPos, dtos(datum)+BrDok, aVezani, .f., glRetroakt)
 		          			select DOKS
 						skip 1
 					enddo
@@ -254,9 +252,7 @@ do case
 					go (nRecNo)
 				elseif cOdg=="D"
 	          			aVezani:={{IdPos, BrDok, IdVd, datum}}
-	          			StampaPrep(IdPos, dtos(datum)+BrDok, aVezani,.t.)
-					//select POM
-					//USE
+	          			StampaPrep(IdPos, dtos(datum)+BrDok, aVezani, .t.)
 	          			select DOKS
 				endif
         		case DOKS->IdVd=="16"

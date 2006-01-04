@@ -116,6 +116,7 @@ private opc:={}
 private opcexe:={}
 private Izbor:=1
 
+
 AADD(opc,"1. parametri rada programa            ")
 AADD(opcexe, {|| Parametri() })
 

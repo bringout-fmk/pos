@@ -164,6 +164,7 @@ if IsPlNS()
 endif
 
 SETKEY(K_SH_F1,{|| Calc()})
+
 O_DOKS
 select DOKS
 

@@ -6,37 +6,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/main/1g/ut.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.14 $
- * $Log: ut.prg,v $
- * Revision 1.14  2003/11/03 15:45:21  sasavranic
- * Ispis i dom.i str.valute na racunu
- *
- * Revision 1.13  2002/11/21 13:25:25  mirsad
- * ispravka bug-a: umjesto ZakljuciRadnika() sada se poziva Zakljuci() za zakljucenje radnika
- *
- * Revision 1.12  2002/06/24 07:01:38  ernad
- *
- *
- * meniji, u oDatabase:scan ubacen GwDiskFree ..., debug...
- *
- * Revision 1.11  2002/06/17 12:53:55  sasa
- * no message
- *
- * Revision 1.10  2002/06/15 13:18:17  sasa
- * no message
- *
- * Revision 1.9  2002/06/15 12:23:29  sasa
- * no message
- *
- * Revision 1.8  2002/06/15 08:40:38  sasa
- * no message
- *
- * Revision 1.7  2002/06/15 08:35:02  sasa
- * no message
- *
- *
  */
  
 
@@ -800,11 +769,12 @@ function SetBoje(gVrstaRS)
 
 // postavljanje boja (samo C/B kombinacija dolazi u obzir, ako nije server)
 IF gVrstaRS <> "S"
-  Invert := "N/W,W/N,,,W/N"
-  Normal := "W/N,N/W,,,N/W"
-  Blink  := "N****/W,W/N,,,W/N"
-  Nevid  := "W/W,N/N"
+	Invert := "N/W,W/N,,,W/N"
+  	Normal := "W/N,N/W,,,N/W"
+  	Blink  := "N****/W,W/N,,,W/N"
+  	Nevid  := "W/W,N/N"
 ENDIF
+
 return
 *}
 
