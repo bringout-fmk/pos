@@ -5,51 +5,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/sql/1g/sql.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.11 $
- * $Log: sql.prg,v $
- * Revision 1.11  2003/10/27 13:01:24  sasavranic
- * Dorade
- *
- * Revision 1.10  2003/01/19 23:44:18  ernad
- * test network speed (sa), korekcija bl.lnk
- *
- * Revision 1.9  2002/08/19 10:01:12  ernad
- *
- *
- * sql synchro cijena1, idtarifa za tabelu roba
- *
- * Revision 1.8  2002/07/30 17:40:59  ernad
- * SqlLog funkcije - Fin modul
- *
- * Revision 1.7  2002/06/24 16:11:53  ernad
- *
- *
- * planika - uvodjenje izvjestaja 98-reklamacija, izvjestaj planika/promet po vrstama placanja, debug
- *
- * Revision 1.6  2002/06/24 07:01:38  ernad
- *
- *
- * meniji, u oDatabase:scan ubacen GwDiskFree ..., debug...
- *
- * Revision 1.5  2002/06/23 11:57:23  ernad
- * ciscenja sql - planika
- *
- * Revision 1.4  2002/06/21 14:18:12  ernad
- *
- *
- * pos - planika, import sql
- *
- * Revision 1.3  2002/06/19 19:46:47  ernad
- *
- *
- * rad u sez.podr., debug., gateway
- *
- * Revision 1.2  2002/06/17 12:19:51  sasa
- * no message
- *
- *
  */
  
 
@@ -132,8 +87,8 @@ nStartSec:=SECONDS()
 Gw("SET POCSTANJE ON")
 
 // ove tabele se nalaze u direktoriju sifrarnika
-GW("SET TABLE_DIRSIF  #ROBA#SIFK#SIFV#OSOB#TARIFA#VALUTE#VRSTEP#ODJ#UREDJ#STRAD")
-GW("SET TABLE_DIRKUM  #POS#DOKS#DOKSPF")
+GW("SET TABLE_DIRSIF  #ROBA#SIFK#SIFV#OSOB#TARIFA#VALUTE#VRSTEP#ODJ#UREDJ#STRAD#")
+GW("SET TABLE_DIRKUM  #POS#DOKS#DOKSPF#")
 
 Gw("ZAP ROBA")
 Gw("ZAP SIFK")
@@ -295,7 +250,7 @@ Box(,3,60)
 
 @ m_x+1,m_y+2 SAY "Vrsim importovanje podataka"
 Gw("SET TABLE_DIRSIF  #ROBA#SIFK#SIFV#OSOB#TARIFA#VALUTE#VRSTEP#ODJ#UREDJ#STRAD#")
-Gw("SET TABLE_DIRKUM  #POS#DOKS#KPARAMS#PROMVP#MESSAGE#DINTEG1#DINTEG2#INTEG1#INTEG2#DOKSPF")
+Gw("SET TABLE_DIRKUM  #POS#DOKS#KPARAMS#PROMVP#MESSAGE#DINTEG1#DINTEG2#INTEG1#INTEG2#DOKSPF#")
 Gw("SET TABLE_DIRPRIV #PARAMS#")
 Gw("SET DIRKUM "+KUMPATH)
 Gw("SET DIRSIF "+SIFPATH)
