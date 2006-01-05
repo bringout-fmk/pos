@@ -1186,14 +1186,14 @@ for i:=1 to LEN(aRacuni)
 		++ nCSum
 
 		// dodaj stavku u rn.dbf
-		add_rn(cStalRac, STR(nCSum, 3), "", cIdRoba, cRobaNaz, cJmj, nKolicina, Round(nCjenPDV,3), Round(nCjenBPDV,3), Round(nCjen2PDV,3), Round(nCjen2BPDV,3), Round(nPopust,2), Round(nPPDV,2), Round(nVPDV,3), Round(nUkupno,3))
+		add_rn(cStalRac, STR(nCSum, 3), "", cIdRoba, cRobaNaz, cJmj, nKolicina, Round(nCjenPDV,3), Round(nCjenBPDV,3), Round(nCjen2PDV,3), Round(nCjen2BPDV,3), Round(nPopust,2), Round(nPPDV,2), Round(nVPDV,3), Round(nUkupno,3), 0, 0)
 
 		select &cPosDB
   		skip
 	enddo
 
 	// dodaj zapis u drn.dbf
-	add_drn(cStalRac, dDatRn, nil, nil, cTime, Round(nUBPDV,2), Round(nUPopust,2), Round(nUBPDVPopust,2), Round(nUPDV,2), Round(nUTotal,2), nCSum)
+	add_drn(cStalRac, dDatRn, nil, nil, cTime, Round(nUBPDV,2), Round(nUPopust,2), Round(nUBPDVPopust,2), Round(nUPDV,2), Round(nUTotal,2), nCSum, 0)
 	
 	// mjesto nastanka racuna
 	add_drntext("R01", gRnMjesto)
