@@ -863,10 +863,10 @@ SmReplace("naz", katops->naziv)
 SmReplace("jmj", katops->jmj)
 
 if !IsPDV() .and. katops->idtarifa <> "PDV17"
-	SmReplace("cijena1", katops->mpc)
+	SmReplace("cijena1", ROUND(katops->mpc,3))
 endif
 if IsPDV()
-	SmReplace("cijena1", katops->mpc)
+	SmReplace("cijena1", ROUND(katops->mpc,3))
 endif
 if lNovi
 	SmReplace("idtarifa", katops->idtarifa)
