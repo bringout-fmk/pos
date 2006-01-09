@@ -136,7 +136,7 @@ if klevel<="1"
 	AADD( aOpc, "<F2> - promjena vrste placanja" )
 endif
 
-ObjDBedit( , 19, 77, {|| PrepDokProc () },"  STAMPA AZURIRANOG DOKUMENTA  ", "", .f., aOpc )
+ObjDBedit( , 19, 77, {|| PrepDokProc (dDatOd, dDatDo) },"  STAMPA AZURIRANOG DOKUMENTA  ", "", .f., aOpc )
 
 CLOSERET
 return
@@ -146,7 +146,7 @@ return
 /*! \fn PrepDokProc()
  *  \brief Stampa azuriranog dokumenta u edit modu
  */
-function PrepDokProc()
+function PrepDokProc(dDat0, dDat1)
 *{
 local cLevel
 local cOdg
@@ -243,9 +243,11 @@ do case
 					seek ctIdPos+VD_RN
 					START PRINT CRET
 					do while !eof() .and. IdPos+IdVd==ctIdPos+VD_RN
-		          			aVezani:={{IdPos, BrDok, IdVd, datum}}
-		          			StampaPrep(IdPos, dtos(datum)+BrDok, aVezani, .f., glRetroakt)
-		          			select DOKS
+		          			if (datum <= dDat1)
+							aVezani:={{IdPos, BrDok, IdVd, datum}}
+		          				StampaPrep(IdPos, dtos(datum)+BrDok, aVezani, .f., glRetroakt)
+		          			endif
+						select DOKS
 						skip 1
 					enddo
 					END PRINT

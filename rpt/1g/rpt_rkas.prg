@@ -6,9 +6,6 @@
  * ----------------------------------------------------------------
  */
 
-/*! \file fmk/pos/rpt/1g/rpt_rkas.prg
- *  \brief Izvjestaj: realizacija kase/prodajnog mjesta
- */
 
 /*! \fn RealKase(fZaklj,dDat0,dDat1,cVarijanta)
  *  \param fZaklj - True - izvjestaj se formira prilikom zakljucivanja radnika; False - uobicajen poziv (obicni izvjestaj)

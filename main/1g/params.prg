@@ -147,6 +147,10 @@ Rpar("F2",@gFirAdres)
 Rpar("F3",@gFirIdBroj)
 Rpar("F4",@gFirPM)
 Rpar("F5",@gRnMjesto)
+Rpar("F6",@gFirTel)
+Rpar("F7",@gRnPTxt1)
+Rpar("F8",@gRnPTxt2)
+Rpar("F9",@gRnPTxt3)
 
 gFirIdBroj := PADR(gFirIdBroj, 13)
 
@@ -155,10 +159,14 @@ set cursor on
 
 AADD(aNiz,{"Puni naziv firme", "gFirNaziv", , , })
 AADD(aNiz,{"Adresa firme", "gFirAdres", , , })
+AADD(aNiz,{"Telefoni", "gFirTel", , , })
 AADD(aNiz,{"ID broj", "gFirIdBroj", , , })
 AADD(aNiz,{"Prodajno mjesto" , "gFirPM", , , })
 AADD(aNiz,{"Mjesto nastanka racuna", "gRnMjesto" , , , })
-VarEdit(aNiz,7,2,24,78,"PODACI FIRME","B1")
+AADD(aNiz,{"Pomocni tekst racuna - linija 1:", "gRnPTxt1", , , })
+AADD(aNiz,{"Pomocni tekst racuna - linija 2:", "gRnPTxt2", , , })
+AADD(aNiz,{"Pomocni tekst racuna - linija 3:", "gRnPTxt3", , , })
+VarEdit(aNiz,7,2,24,78,"PODACI FIRME I RACUNA","B1")
 
 BosTipke()
 
@@ -170,6 +178,10 @@ if LASTKEY()<>K_ESC
     	Wpar("F3",gFirIdBroj, .t.,"D")
     	Wpar("F4",gFirPM, .t.,"D")
     	Wpar("F5",gRnMjesto, .t.,"D")
+    	Wpar("F6",gFirTel, .t.,"D")
+    	Wpar("F7",gRnPTxt1, .t.,"D")
+    	Wpar("F8",gRnPTxt2, .t.,"D")
+    	Wpar("F9",gRnPTxt3, .t.,"D")
     	MsgC()
 endif
 

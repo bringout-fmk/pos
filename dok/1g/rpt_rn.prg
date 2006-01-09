@@ -975,6 +975,7 @@ add_drntext("I01", gFirNaziv)
 add_drntext("I02", gFirAdres)
 add_drntext("I03", gFirIdBroj)
 add_drntext("I04", gFirPM)
+add_drntext("I05", gFirTel)
 
 return
 *}
@@ -1203,8 +1204,16 @@ for i:=1 to LEN(aRacuni)
 	add_drntext("R03", cSmjena)
 	// vrsta placanja
 	add_drntext("R05", cNazVrstaP)
+	// dodatni text na racunu 3 linije
+	add_drntext("R06", gRnPTxt1)
+	add_drntext("R07", gRnPTxt2)
+	add_drntext("R08", gRnPTxt3)
 	// Broj linija potrebnih da se ocjepi traka
 	add_drntext("P12", ALLTRIM(STR(nFeedLines)))
+	// sekv.za otvaranje ladice
+	add_drntext("P13", gOtvorStr)
+	// sekv.za cjepanje trake
+	add_drntext("P14", gSjeciStr)
 	
 	// ako je prepis
 	if lPrepis

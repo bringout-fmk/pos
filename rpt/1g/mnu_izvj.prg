@@ -27,6 +27,7 @@ private opcexe:={}
 
 AADD(opc,"1. realizacija                      ")
 AADD(opcexe,{|| RealMenu()})
+
 if gVrstaRS=="K"
 	AADD(opc,"----------------------------")
 	AADD(opcexe,nil)

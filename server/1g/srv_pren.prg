@@ -90,14 +90,17 @@ O_ROBA
 select ROBAFMK
 go top
 
+if !gAppSrv
+	Box(,2,70)
+	@ 1+m_x, 2+m_y SAY "Scan FMKROBA u toku..."
+endif
+
 do while !eof()
-	if gAppSrv
-		MsgO("Scan ROBAFMK: " + ALLTRIM(STR(RecCount())) + " - " + ALLTRIM(STR(RecNo())) )
-	endif
 	select roba
 	go top
   	seek robafmk->id
-  	if !Found()
+	@ 2+m_x, 2+m_y SAY "Dodajem artikal " + ALLTRIM(robafmk->id)
+	if !Found()
    		if lAddNewCode
 			append blank
    			Sql_Append()
@@ -136,6 +139,10 @@ select robafmk
 use
 select roba
 use
+
+if !gAppSrv
+	BoxC()
+endif
 
 if !gAppSrv
 	MsgC()
