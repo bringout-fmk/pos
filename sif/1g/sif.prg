@@ -111,7 +111,7 @@ for i:=1 to LEN(ImeKol)
 next
 
 
-if gSifK="D"
+//if gSifK="D"
 	PushWa()
 	select sifk
 	set order to tag "ID"
@@ -143,7 +143,7 @@ if gSifK="D"
  		skip
 	enddo
 	PopWa()
-endif
+//endif
 
 if KLevel="3"
 	aZabrane:={K_CTRL_T,K_CTRL_N,K_F4,K_F2,K_CTRL_F9}
@@ -252,7 +252,7 @@ for i:=1 to LEN(ImeKol)
 	AADD(Kol,i)
 next
 
-if gSifK="D"
+//if gSifK="D"
 	PushWa()
 	select sifk
 	set order to tag "ID"
@@ -285,7 +285,7 @@ if gSifK="D"
  		skip
 	enddo
 	PopWa()
-endif
+//endif
 
 return PostojiSifra(F_SIROV,I_ID,15,77,"Sifrarnik sirovina",@cId,dx,dy,)
 *}
