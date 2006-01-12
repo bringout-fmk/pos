@@ -1202,10 +1202,8 @@ O_UREDJ
 O_ODJ
 O_K2C
 O_ROBA
-if  gSifK=="D"
-   O_SIFK
-   O_SIFV
-endif
+O_SIFK
+O_SIFV
 O__PRIPR
 O__POS
 

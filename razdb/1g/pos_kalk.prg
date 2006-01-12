@@ -799,10 +799,8 @@ run &cKomLin
 
 restore screen from cScr
 
-if gSifK=="D"
-	O_SIFK
-  	O_SIFV
-endif
+O_SIFK
+O_SIFV
 
 if Pitanje(,"Osvjeziti sifrarnik iz arhive " + cDirZip + "ROBKNJ.ZIP"," ")=="D"
 	lAddNew:=(Pitanje(,"Dodati nepostojece sifre D/N ?"," ")=="D")

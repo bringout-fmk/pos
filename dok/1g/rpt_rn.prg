@@ -1194,7 +1194,7 @@ for i:=1 to LEN(aRacuni)
 	enddo
 
 	// dodaj zapis u drn.dbf
-	add_drn(cStalRac, dDatRn, nil, nil, cTime, Round(nUBPDV,2), Round(nUPopust,2), Round(nUBPDVPopust,2), Round(nUPDV,2), Round(nUTotal,2), nCSum, 0)
+	add_drn(cStalRac, dDatRn, nil, nil, cTime, Round(nUBPDV,2), Round(nUPopust,2), Round(nUBPDVPopust,2), Round(nUPDV,2), Round(nUTotal,2), nCSum, 0, 0)
 	
 	// mjesto nastanka racuna
 	add_drntext("R01", gRnMjesto)

@@ -51,12 +51,8 @@ endif
 MsgO("SACEKAJTE ... GENERISEM UTROSAK SIROVINA ...")
 
 O_PRIPRG
-
-if gSifK=="D"
-	O_SIFK
-	O_SIFV
-endif
-
+O_SIFK
+O_SIFV
 O_SAST
 O_ROBA
 O_SIROV

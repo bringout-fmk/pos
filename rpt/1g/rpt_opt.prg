@@ -113,10 +113,8 @@ endif
 O_TARIFA
 
 if fSolo
-	if gSifK=="D"
-		O_SIFK
-		O_SIFV
-	endif
+	O_SIFK
+	O_SIFV
 	O_KASE
 	O_ROBA
 	O_ODJ

@@ -531,11 +531,8 @@ local aOpc[3]
 
 aOpc:={"Izmjeni","Ukini","Ostavi"}
 
-if gSifK=="D"
-	O_SIFK
-	O_SIFV
-endif
-
+O_SIFK
+O_SIFV
 O_ROBA
 O_K2C
 

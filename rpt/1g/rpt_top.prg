@@ -40,17 +40,18 @@ function TopN()
 LOCAL   aNiz := {}, cPor, cZaduz, aVrsteP
 PRIVATE cIdPos, cRoba:=SPACE(60), dDat0, dDat1, nTop := 10, cSta := "I"
 dDat0 := dDat1 := DATE ()
+
 if IsPlanika()
 	cPrikOnlyPar:="D"
 endif
-// otvaranje potrebnih baza
-///////////////////////////
+
 O_ODJ
 O_KASE
-if gSifK=="D"
- O_SIFK;O_SIFV
-endif
-O_ROBA; O_POS; O_DOKS
+O_SIFK
+O_SIFV
+O_ROBA
+O_POS
+O_DOKS
 
 aDbf := {}
 AADD (aDbf, {"IdRoba",   "C", 10, 0})

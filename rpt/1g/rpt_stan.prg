@@ -91,12 +91,8 @@ endif
 O_KASE
 O_ODJ
 O_DIO
-
-if gSifK=="D"
- O_SIFK
- O_SIFV
-endif
-
+O_SIFK
+O_SIFV
 O_ROBA
 O_SIROV
 O_POS

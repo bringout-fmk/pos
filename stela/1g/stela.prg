@@ -23,11 +23,8 @@ private dMinDatProm:=ctod("")
 // datum kada je napravljena promjena na racunima
 // unutar PRacuni, odnosno P_SRproc setuje se ovaj datum
 
-if gSifK=="D"
-	O_SIFK
-	O_SIFV
-endif
-
+O_SIFK
+O_SIFV
 O_KASE
 O_ROBA
 O__PRIPR

@@ -372,12 +372,8 @@ O_OSOB
 Set order to tag ("NAZ")
 O_VRSTEP
 O_KASE
-
-if gSifK=="D"
-	O_SIFK
-	O_SIFV
-endif
-
+O_SIFK
+O_SIFV
 O_ROBA
 O_POS
 O_DOKS
