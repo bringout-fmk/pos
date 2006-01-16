@@ -4,94 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/dok/1g/rpt_rn.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.28 $
- * $Log: rpt_rn.prg,v $
- * Revision 1.28  2004/06/08 07:32:34  sasavranic
- * Unificirane funkcije rabata
- *
- * Revision 1.27  2004/06/03 14:16:58  sasavranic
- * no message
- *
- * Revision 1.26  2004/06/03 08:09:29  sasavranic
- * Popust preko odredjenog iznosa se odnosi samo na gotovinsko placanje
- *
- * Revision 1.25  2004/05/21 11:25:02  sasavranic
- * Uvedena opcija popusta preko odredjenog iznosa
- *
- * Revision 1.24  2004/05/19 12:16:44  sasavranic
- * no message
- *
- * Revision 1.23  2004/05/15 12:15:28  sasavranic
- * U varijanti ugostiteljstva za prepis racuna iskoristena funkcija StampaRac()
- *
- * Revision 1.22  2004/03/18 13:38:09  sasavranic
- * Popust za partnere
- *
- * Revision 1.21  2003/12/24 09:54:35  sasavranic
- * Nova varijanta poreza, uvrstene standardne funkcije za poreze iz FMK
- *
- * Revision 1.20  2003/11/10 09:51:13  sasavranic
- * planika->messaging
- *
- * Revision 1.19  2003/08/20 13:37:30  mirsad
- * omogucio ispis poreza na svakoj stavci i na prepisu racuna, kao i na realizaciji kase po robama
- *
- * Revision 1.18  2003/08/07 15:35:20  sasa
- * bug kada je kolicina 0 na racunu
- *
- * Revision 1.17  2003/07/26 08:29:11  sasa
- * ispis poreskih stopa na svaku stavku
- *
- * Revision 1.16  2003/07/08 18:35:14  mirsad
- * uveo mogucnost stampe svih racuna jednog dana odjednom za parametar Retroaktivno=D
- *
- * Revision 1.15  2003/07/08 10:58:29  mirsad
- * uveo fmk.ini/kumpath/[POS]/Retroaktivno=D za mogucnost ispisa azur.racuna bez teksta "PREPIS" i za ispis "datuma do" na realizaciji umjesto tekuceg datuma
- *
- * Revision 1.14  2003/07/07 11:16:26  sasa
- * no message
- *
- * Revision 1.13  2003/07/04 12:59:44  sasa
- * ispis poreza ispod svake stavke na racunu
- *
- * Revision 1.12  2003/07/04 12:43:00  sasa
- * ispis poreza ispod svake stavke na racunu
- *
- * Revision 1.11  2003/07/01 06:02:54  mirsad
- * 1) uveo public gCijDec za format prikaza decimala cijene na racunu
- * 2) prosirio format za kolicinu za jos jedan znak
- * 3) uveo puni ispis naziva robe na racunu (lomljenje u dva reda)
- *
- * Revision 1.10  2003/06/30 08:08:48  mirsad
- * 1) prosirio format prikaza kolicine na racunu sa 6 na 8 znakova i uveo public gKolDec za definisanje broja decimala
- *
- * Revision 1.9  2003/06/24 13:15:09  sasa
- * no message
- *
- * Revision 1.8  2003/06/23 09:03:38  sasa
- * nver - zakljucivanje nezakljucenih racuna
- *
- * Revision 1.7  2003/06/21 12:23:38  sasa
- * nver - zakljucivanje nezakljucenih racuna
- *
- * Revision 1.6  2003/06/16 17:30:26  sasa
- * generacija zbirnog racuna
- *
- * Revision 1.5  2003/06/14 03:03:50  mirsad
- * debug-hops
- *
- * Revision 1.4  2002/06/30 20:28:44  ernad
- *
- *
- *
- * pos meni za odabir firme /MNU_INI
- *
- * Revision 1.3  2002/06/15 08:17:46  sasa
- * no message
- *
- *
  */
  
 
@@ -144,7 +56,6 @@ SELECT &cPosDB
 //
 cCmnBrDok := cBrDok
 
-altd()
 
 nIznos:=0
 nNeplaca:=0
@@ -179,7 +90,6 @@ if VarPopPrekoOdrIzn()
 	gIsPopust:=.f.
 endif
 
-altd()
 do while !eof().and. &cPosDB->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+VD_RN+dtos(dDatumRn)+cBrDok)
 	if (gRadniRac="D" .and. gVodiTreb=="D" .and. GT=OBR_NIJE)
       		// vodi se po trebovanjima, a za ovu stavku trebovanje 
@@ -1010,6 +920,7 @@ local nUBPDVPopust
 local nUTotal
 local nCSum
 local cRdnkNaz := ""
+local aPPs
 
 drn_create()
 drn_open()
@@ -1097,6 +1008,14 @@ for i:=1 to LEN(aRacuni)
 	nUBPDVPopust := 0
 	nUTotal := 0
 
+
+	if glUgost
+           // nStopaPP1, nUkPP1, nStopaPP2, nUkPP2 ....
+	   aStPP:={}
+	   aUkPP:={}
+	endif
+	
+	
 	do while !eof() .and. &cPosDB->(idpos + idvd + DToS(datum) + brdok) == (cIdPos + VD_RN + DToS(dDatRn) + cBrDok)
 		
 		
@@ -1129,15 +1048,35 @@ for i:=1 to LEN(aRacuni)
 		// seek-uj tarifu
 		select tarifa
 		hseek cIdTarifa
-		nPPDV := tarifa->opp	
+		nPPDV := tarifa->opp
 
-		
+		if glUgost
+			nStPP := tarifa->zpp
+		else
+			nStPP := 0
+		endif
+
 		select &cPosDB
 
-		nKolicina := field->kolicina
- 		nCjenPDV := field->cijena
-		nCjenBPDV := nCjenPDV / (1 + nPPDV/100)	
-		
+		nKolicina := kolicina
+ 		nCjenPDV :=  cijena
+		nCjenBPDV := nCjenPDV / ( 1 + (nPPDV + nStPP)/100)	
+
+
+		if glUgost
+		        // kantonalni porez na potrosnju
+		        // stopa poreza na potr <> 0
+			if ROUND(nStPP,0) <> 0
+			   nPos := ASCAN(aStPP, ROUND(nStPP, 0))
+			   if (nPos == 0)
+			        AADD(aStPP, ROUND(nStPP, 0) )
+				AADD(aUkPP, 0 )
+				nPos := LEN (aStPP)
+			   endif
+			   aUkPP[nPos] += nStPP / 100 * nCjenBPDV * nKolicina
+		        endif
+		endif
+
 		// popust - ovo treba jos dobro pregledati
 		do case
 			case gPopVar="P" .and. gClanPopust 
@@ -1193,8 +1132,13 @@ for i:=1 to LEN(aRacuni)
   		skip
 	enddo
 
+	if glUgost
+		aPPs := { aStPP, aUkPP }
+	else
+		aPPs := nil
+	endif
 	// dodaj zapis u drn.dbf
-	add_drn(cStalRac, dDatRn, nil, nil, cTime, Round(nUBPDV,2), Round(nUPopust,2), Round(nUBPDVPopust,2), Round(nUPDV,2), Round(nUTotal,2), nCSum, 0, 0)
+	add_drn(cStalRac, dDatRn, nil, nil, cTime, Round(nUBPDV,2), Round(nUPopust,2), Round(nUBPDVPopust,2), Round(nUPDV,2), Round(nUTotal,2), nCSum, 0, 0, aPPs )
 	
 	// mjesto nastanka racuna
 	add_drntext("R01", gRnMjesto)

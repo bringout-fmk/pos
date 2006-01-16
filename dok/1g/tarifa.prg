@@ -4,20 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/dok/1g/tarifa.prg,v $
- * $Author: sasa $ 
- * $Revision: 1.4 $
- * $Log: tarifa.prg,v $
- * Revision 1.4  2003/07/25 15:56:22  sasa
- * ispadanje programa, nisu bile otvorene tabele ROBA i TARIFA
- *
- * Revision 1.3  2002/11/21 10:10:45  mirsad
- * debugiranje - pri štampi ruèno unešenog zaduženja ispadao zbog nedefinisane var. nPPP
- *
- * Revision 1.2  2002/06/15 08:17:46  sasa
- * no message
- *
- *
  */
  
 /*! \fn WhileaTarife(cIdRoba,nIzn,aTarife,nPPP,nPPU,nOsn,nPP)

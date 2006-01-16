@@ -10,8 +10,8 @@
 #endif
 
 
-#define D_PO_VERZIJA "02.18"
-#define D_PO_PERIOD  "09.97-12.01.06"
+#define D_PO_VERZIJA "02.14"
+#define D_PO_PERIOD  "09.97-16.01.06"
 
 #define SC_HEADER
 
