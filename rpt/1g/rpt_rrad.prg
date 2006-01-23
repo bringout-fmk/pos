@@ -18,7 +18,7 @@
  *  \return .t. 
  */
 
-*function RealRadnik(lTekuci,fPrik,fZaklj)
+*function RealRadnik(lTekuci, fPrik, fZaklj)
 *{
 function RealRadnik
 PARAMETERS lTekuci, fPrik, fZaklj
@@ -366,6 +366,12 @@ IF fZaklj
 Else
   CLOSE ALL
 Endif
+
+if IsPdv()
+	MsgBeep("Ako trebate izvjestaj realizacije sa prikazom PDV-a#"+;
+	    "koristite izvjestaje korisnika nivoa 'upravnik'")
+endif
+
 return .t.
 *}
 

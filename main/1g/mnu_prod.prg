@@ -30,7 +30,7 @@ if gRadniRac=="D"
     	AADD(opcexe,{|| ZakljuciRacun() })
 else
 	private aRabat:={}
-    	AADD(opc,"1. priprema racuna                 ")
+    	AADD(opc,"1. priprema racuna                        ")
     	AADD(opcexe,{|| Narudzba(), ZakljuciRacun() })
 endif
 
@@ -44,6 +44,7 @@ if gBrojSto=="D"
 endif
 AADD(opc,"T. trenutni pazar smjene")
 AADD(opcexe,{|| RealRadnik(.t., "P", .f.) })
+
 AADD(opc,"R. trenutna realizacija po robama")
 AADD(opcexe,{|| RealRadnik(.t.,"R",.f.) })
 
@@ -64,6 +65,12 @@ if gnDebug==5
 	AADD(opcexe,{|| NotImp() })
 endif
 
+if IsPdv()
+	AADD(opc,"P. porezna faktura za posljednji racun")
+	AADD(opcexe, {|| f7_pf_traka()})
+endif
+	 
+
 Menu_SC("prod")
 
 if gRadniRac=="N" .and. gVodiTreb=="D"
@@ -72,6 +79,7 @@ if gRadniRac=="N" .and. gVodiTreb=="D"
     	O__POS
     	Trebovanja()
 endif
+
 CLOSERET
 return
 *}
