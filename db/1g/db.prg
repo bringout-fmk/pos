@@ -373,12 +373,16 @@ return (cRet)
  *  \brief
  */
  
-function _Pripr2_POS()
+function _Pripr2_POS(cIdVrsteP)
 *{
 local cBrdok
 local nTrec:=0
 
 // prebacit ce u _POS sadrzaj _PRIPR
+
+if cIdVrsteP == nil
+	cIdVrsteP := ""
+endif
 
 select _pripr
 go top
@@ -391,6 +395,8 @@ do while !eof()
    		// u _PRIPR mora biti samo jedan dokument!!!
 		_brdok:=cBrDok   
   	endif
+	
+	_IdVrsteP := cIdVrsteP
   	gather()
   	select _pripr
   	skip
@@ -1236,6 +1242,7 @@ function Pos2_Pripr()
 SELECT _PRIPR
 Zapp()
 Scatter()
+
 SELECT POS
 seek DOKS->(IdPos+IdVd+dtos(datum)+BrDok)
 do while !eof() .and. POS->(IdPos+IdVd+dtos(datum)+BrDok)==DOKS->(IdPos+IdVd+dtos(datum)+BrDok)

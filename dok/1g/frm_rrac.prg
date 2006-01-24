@@ -4,23 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/dok/1g/frm_rrac.prg,v $
- * $Author: mirsad $ 
- * $Revision: 1.5 $
- * $Log: frm_rrac.prg,v $
- * Revision 1.5  2003/06/13 14:05:58  mirsad
- * debug: pritisak na programiranu tipku
- *
- * Revision 1.4  2002/07/06 08:13:34  ernad
- *
- *
- * - uveden parametar PrivPath/POS/Slave koji se stavi D za kasu kod koje ne zelimo ScanDb
- * Takodje je za gVrstaRs="S" ukinuto scaniranje baza
- *
- * - debug ispravke racuna (ukinute funkcije PostaviSpec, SiniSpec, zamjenjene sa SetSpec*, UnSetSpec*)
- *
- * Revision 1.3  2002/06/15 08:17:46  sasa
- * no message
  *
  *
  */

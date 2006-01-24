@@ -426,6 +426,7 @@ endif
 select _pripr
 go top
 do while !EOF()
+	_IdVrsteP := cIdVrsteP
 	nIznNar+=cijena*kolicina
 	nPopust+=ncijena*kolicina
 	skip

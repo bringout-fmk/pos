@@ -3,40 +3,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/dok/1g/frm_dok.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.12 $
- * $Log: frm_dok.prg,v $
- * Revision 1.12  2004/06/08 07:32:33  sasavranic
- * Unificirane funkcije rabata
- *
- * Revision 1.11  2004/06/03 14:16:58  sasavranic
- * no message
- *
- * Revision 1.10  2003/07/09 09:56:51  mirsad
- * umjesto stampe svih racuna jednog dana odjednom za parametar Retroaktivno=D uveo stampu svih racuna u zadanom periodu
- *
- * Revision 1.9  2003/07/08 18:35:36  mirsad
- * uveo mogucnost stampe svih racuna jednog dana odjednom za parametar Retroaktivno=D
- *
- * Revision 1.8  2003/01/04 14:34:19  ernad
- * PartnSt - ispravke izvjestaja (umjesto I_RnGostiju staviti StanjePartnera)
- *
- * Revision 1.7  2002/12/27 12:43:02  sasa
- * promjenjen redosljed pregleda azuriranih dokumenata
- *
- * Revision 1.6  2002/06/25 10:52:09  sasa
- * no message
- *
- * Revision 1.5  2002/06/24 16:11:53  ernad
- *
- *
- * planika - uvodjenje izvjestaja 98-reklamacija, izvjestaj planika/promet po vrstama placanja, debug
- *
- * Revision 1.4  2002/06/15 08:17:46  sasa
- * no message
- *
- *
  */
 
 /*! \file fmk/pos/dok/1g/frm_dok.prg

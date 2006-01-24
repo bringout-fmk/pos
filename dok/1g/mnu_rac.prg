@@ -4,74 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/dok/1g/mnu_rac.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.21 $
- * $Log: mnu_rac.prg,v $
- * Revision 1.21  2004/06/10 13:06:18  sasavranic
- * no message
- *
- * Revision 1.20  2004/06/08 08:35:40  sasavranic
- * no message
- *
- * Revision 1.19  2004/06/08 07:32:33  sasavranic
- * Unificirane funkcije rabata
- *
- * Revision 1.18  2004/06/03 08:09:29  sasavranic
- * Popust preko odredjenog iznosa se odnosi samo na gotovinsko placanje
- *
- * Revision 1.17  2004/05/28 14:52:18  sasavranic
- * no message
- *
- * Revision 1.16  2004/05/21 11:25:02  sasavranic
- * Uvedena opcija popusta preko odredjenog iznosa
- *
- * Revision 1.15  2004/05/15 12:15:28  sasavranic
- * U varijanti ugostiteljstva za prepis racuna iskoristena funkcija StampaRac()
- *
- * Revision 1.14  2004/05/06 10:19:22  sasavranic
- * Implementacija f-je Send2ComPort(cText)
- *
- * Revision 1.13  2004/04/05 09:40:59  sasavranic
- * Uvedeno ispitivanje da li se TOPS treba registrovati ili ne
- *
- * Revision 1.12  2004/03/18 13:38:10  sasavranic
- * Popust za partnere
- *
- * Revision 1.11  2003/06/21 12:23:38  sasa
- * nver - zakljucivanje nezakljucenih racuna
- *
- * Revision 1.10  2003/06/16 17:30:26  sasa
- * generacija zbirnog racuna
- *
- * Revision 1.9  2002/11/21 13:23:22  mirsad
- * ispravka bug-a - ispadao prije unosa sifre partnera (ziralno placanje)
- *
- * Revision 1.8  2002/11/21 10:09:44  mirsad
- * debugiranje - pri štampi raèuna ispadao prije unosa vrste plaæanja
- *
- * Revision 1.7  2002/07/22 16:01:58  ernad
- *
- *
- * ciscenja, doxy
- *
- * Revision 1.6  2002/07/06 08:13:34  ernad
- *
- *
- * - uveden parametar PrivPath/POS/Slave koji se stavi D za kasu kod koje ne zelimo ScanDb
- * Takodje je za gVrstaRs="S" ukinuto scaniranje baza
- *
- * - debug ispravke racuna (ukinute funkcije PostaviSpec, SiniSpec, zamjenjene sa SetSpec*, UnSetSpec*)
- *
- * Revision 1.5  2002/06/19 19:46:47  ernad
- *
- *
- * rad u sez.podr., debug., gateway
- *
- * Revision 1.4  2002/06/15 08:17:46  sasa
- * no message
- *
- *
  */
  
 
@@ -465,29 +397,35 @@ if gRadniRac=="D"
   	READ
 	ESC_BCR
   	BoxC()
-else
-	if IsPlNS() 
-		if gFissta=="D" 
-			// provjeri o kakvom se racunu radi
-			nRnType:=ChkRnType()
-			// broj obrasca NI
-			private cObrNiNr:=""
-		
-			if gnDebug == 5
-				MsgBeep(STR(nRnType))
-			endif
+endif
+
+if (gRadniRac<>"D")
+
+// standardni racun
+if IsPlNS() 
+	if gFissta=="D" 
+	// provjeri o kakvom se racunu radi
+		nRnType:=ChkRnType()
+		// broj obrasca NI
+		private cObrNiNr:=""
+	
+		if gnDebug == 5
+			MsgBeep(STR(nRnType))
+		endif
 			
-			if (nRnType == 0)
-				MsgBeep("Na racunu se pojavljuju +/- kolicine#Racun nije azuriran!")
-				CLOSERET
-			endif
-			// ako se radi o cistom racunu a postoji formiran dn.izvjestaj ne moze se izdavati FISSTA racun
-			if (nRnType==1 .and. ReadLastFisRpt("1", Date()) .and. gFisRptEvid=="D")
-				MsgBeep("Postoji formiran dnevni izvjestaj!#Izdavanje racuna nije moguce!")
-				CLOSERET
-			endif
-			// ako se radi o cistom racunu onda izdaj rn->FISSTA
-			if (nRnType==1 .or. (nRnType==-1 .and. gFisStorno=="D"))
+		if (nRnType == 0)
+			MsgBeep("Na racunu se pojavljuju +/- kolicine#Racun nije azuriran!")
+			CLOSERET
+		endif
+		
+		// ako se radi o cistom racunu a postoji formiran dn.izvjestaj ne moze se izdavati FISSTA racun
+		if (nRnType==1 .and. ReadLastFisRpt("1", Date()) .and. gFisRptEvid=="D")
+			MsgBeep("Postoji formiran dnevni izvjestaj!#Izdavanje racuna nije moguce!")
+			CLOSERET
+		endif
+		
+		// ako se radi o cistom racunu onda izdaj rn->FISSTA
+		if (nRnType==1 .or. (nRnType==-1 .and. gFisStorno=="D"))
 				aArtikli:={}
 	  			aArtRacun:={}
 	  			nUkupno:=0 //ukupan iznos racuna
@@ -502,18 +440,20 @@ else
 	     					CLOSERET 	
 	  				endif
 				endif
-			endif
-			if (nRnType==-1 .and. gFisStorno=="N")
+		endif
+		if (nRnType==-1 .and. gFisStorno=="N")
 				cObrNiNr:=GetFormNiNr()	
-			endif
 		endif
 	endif
+endif
 	
-	// prebaci iz prip u pos
-	if (LEN(aRabat) > 0)
-		ReCalcRabat(cIdVrsteP)
-	endif
-	_Pripr2_Pos()   
+// prebaci iz prip u pos
+if (LEN(aRabat) > 0)
+	ReCalcRabat(cIdVrsteP)
+endif
+
+_Pripr2_Pos(cIdVrsteP)
+
 endif
 
 StampAzur(gIdPos, cRacBroj)
@@ -606,17 +546,24 @@ return
  
 function UpitNP(cIdPos, cIdVrsteP, cRadRac, cIdGost)
 *{
+local lGetPartner
 
 SELECT _POS
 seek cIdPos+"42"+DTOS(gDatum)+cRadRac
-if (_pos->idroba='PLDUG ')
-	cIdVrstep:=gDugPlac
-endif
 
 Box(,4,60)
+
+// vecina korisnika ne treba unos partnera
+lGetPartner:= .f.
+
+if cIdVrstep<>gGotPlac .and. IzFMKINI("POS","PartnerPlacanje","N")=="D"
+	lGetPartner:=.t.
+endif
+
 cDn:="D"
 do while .t.
 	set cursor on
+	
    	@ m_x+1,m_y+2 SAY "Nacin placanja " GET cIdVrsteP pict "@!" valid p_Vrstep(@cIdVrstep)
    	read
    	
@@ -625,12 +572,13 @@ do while .t.
 		FrmVPGetData(cIdVrsteP, aCKData, aSKData, aGPData)
 	endif
 	
-	if (cIdVrstep<>gGotPlac .or. cIdVrsteP=="01" .and. IzFMKINI("Tigra","Partner01","N")=="D")
+	if lGetPartner
     		@ m_x+2,m_y+2 SAY "Partner:" GET cIdGost PICT "@!" VALID P_Gosti (@cIdGost)
     		read
    	else
     		cIdGost:=space(8)
    	endif
+	
    	@ m_x+4,m_y+2 SAY "Ispravno D/N:" GET cDN PICT "@!" valid cDn $"DN"
    	read
    	if (cDN=="D")
