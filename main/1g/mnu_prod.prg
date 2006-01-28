@@ -38,7 +38,7 @@ AADD(opc,"3. promijeni nacin placanja")
 AADD(opcexe,{|| PromNacPlac() })
 AADD(opc,"4. prepis racuna           ")
 AADD(opcexe,{|| PrepisRacuna() })
-if gBrojSto=="D"
+if gBrojSto=="D" .and. gRadniRac=="N"
 	AADD(opc,"5. zakljucivanje racuna    ")
 	AADD(opcexe,{|| MnuZakljRacuna() })
 endif
