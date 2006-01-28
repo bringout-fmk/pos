@@ -109,9 +109,9 @@ if gModul=="HOPS"
 				SELECT _POS
         			Del_Skip()
       			else
-        			//SKIP
+        			SKIP
 				//sasa, brisi iz pos sve sto je "Z" zakljuceno
-				Del_Skip()
+				//Del_Skip()
       			endif
     		enddo
     		set order to 1
