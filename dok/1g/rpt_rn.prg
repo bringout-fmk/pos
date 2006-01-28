@@ -1029,12 +1029,14 @@ for i:=1 to LEN(aRacuni)
 		nIznPop := 0
 			
 		// trebovanja - da li ovo i dalje treba
-		if (gRadniRac="D" .and. gVodiTreb=="D" .and. GT=OBR_NIJE)
+		if gRadniRac="D" .and. gVodiTreb=="D" 
+		    if !lPrepis .and. GT=OBR_NIJE
       			// vodi se po trebovanjima, a za ovu stavku trebovanje 
 			// nije izgenerisano
       			// s obzirom da se nalazimo u procesu zakljucenja, 
 			//nuliramo kolicinu
       			replace kolicina with 0 // nuliraj kolicinu
+		    endif
   		endif
 		
 		cIdRoba := field->idroba
