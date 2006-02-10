@@ -157,8 +157,13 @@ SELECT DOKS
 cStalRac := NarBrDok (gIdPos, VD_RN)
 
 if fZakPol
-	cTime:=StampaRac(gIdPos, cRadRac)
-    	if !EMPTY(cTime)
+	if IsPDV()
+		aVezani:={{gIdPos, _pos->brdok, VD_RN, _pos->datum}}
+	 	cTime:=PDVStampaRac(gIdPos, cRadRac, nil, nil, _pos->datum, aVezani )
+	else
+		cTime:=StampaRac(gIdPos, cRadRac)
+    	endif
+	if !EMPTY(cTime)
       		AzurRacuna (gIdPos, cStalRac, cRadRac, cTime)
     	else
       		SkloniIznRac()
