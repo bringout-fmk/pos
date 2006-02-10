@@ -142,7 +142,11 @@ IF RecCount2()>0
     TRANS (nFinZad, "999,999.99")
   ? "-------- ----------------- --- --------"
 
-  RekTarife(aTarife)
+  if IsPDV()
+  	PDVRekTarife(aTarife)
+  else
+  	RekTarife(aTarife)
+  endif
 
   ? " Primio " + PADL ("Predao", 31)
   ?

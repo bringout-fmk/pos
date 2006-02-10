@@ -73,6 +73,7 @@ return NIL
 
 function PDVRekTarife(aTarife)
 *{
+local nArr
 
 ?
 ?
@@ -82,24 +83,34 @@ nTotOsn := 0
 nTotPPP := 0
 nTotPPU := 0
 nTotPP:=0
+nPDV:=0
 
-m:= REPLICATE ("-", 6)+" "+REPLICATE ("-", 12)+" "+REPLICATE ("-", 12)+" "+REPLICATE ("-", 12)
+m:= REPLICATE ("-", 12)+" "+REPLICATE ("-", 12)+" "+REPLICATE ("-", 12)
 
 ASORT (aTarife,,, {|x, y| x[1] < y[1]})
 
 ? m
 
-? "Tarifa"
+? "Tarifa (Stopa %)"
 ? PADC ("PV bez PDV", 12), PADC ("PDV", 12), padC ("PV sa PDV",12)
 
 ? m
 
-for nCnt := 1 TO LEN(aTarife)
-  	? aTarife [nCnt][1]
+nArr:=SELECT()
+
+for nCnt:=1 TO LEN(aTarife)
+	
+	select tarifa
+	hseek aTarife[nCnt][1]
+	nPDV:=tarifa->opp
+		
+	? aTarife[nCnt][1], "(" + STR(nPDV) + "%)"
 	? STR(aTarife [nCnt][2], 12, 2), STR (aTarife [nCnt][3], 12, 2), STR( round(aTarife[nCnt][2],2)+round(aTarife[nCnt][3],2), 12,2)
 	nTotOsn += round(aTarife [nCnt][2],2)
   	nTotPPP += round(aTarife [nCnt][3],2)
 next
+
+select (nArr)
 
 ? m
 
