@@ -218,6 +218,7 @@ endif
 Rpar("vO",@gVodiOdj)
 Rpar("RR",@gRadniRac)
 Rpar("Dz",@gDirZaklj)
+Rpar("sO",@gRnSpecOpc)
 Rpar("BS",@gBrojSto)
 Rpar("n5",@gDupliArt)
 Rpar("Nu",@gDupliUpoz)
@@ -244,6 +245,7 @@ if gModul=="HOPS"
   	AADD (aNiz, {"Da li se koriste radni racuni(D/N)" , "gRadniRac", "gRadniRac$'DN'", "@!", })
   	AADD (aNiz, {"Ako se ne koriste, da li se racun zakljucuje direktno (D/N)" , "gDirZaklj", "gDirZaklj$'DN'", "@!", })
   	AADD (aNiz, {"Da li je broj stola obavezan (D/N/0)", "gBrojSto", "gBrojSto$'DN0'", "@!", })
+  	AADD (aNiz, {"Dijeljenje racuna, spec.opcije nad racunom (D/N)", "gRnSpecOpc", "gRnSpecOpc$'DN'", "@!", })
 else
   	aNiz:={}
   	AADD (aNiz, {"Da li se racun zakljucuje direktno (D/N)" , "gDirZaklj", "gDirZaklj$'DN'", "@!", })
@@ -301,7 +303,8 @@ if LASTKEY()<>K_ESC
     	endif
 	Wpar("vO",gVodiOdj, .t., "D")
     	Wpar("Dz",@gDirZaklj, .t., "D")
-    	Wpar("RR",@gRadniRac, .t., "D")
+    	Wpar("sO",@gRnSpecOpc, .t., "D")
+	Wpar("RR",@gRadniRac, .t., "D")
     	Wpar("BS",@gBrojSto, .t., "D")
     	Wpar("n5",@gDupliArt, .t., "D")
     	Wpar("Nu",@gDupliUpoz, .t., "Z")

@@ -503,6 +503,8 @@ public gStamPazSmj      // da li se automatski stampa pazar smjene
                         // na kasi
 public gStamStaPun      // da li se automatski stampa stanje
                         // nedijeljenih punktova koje kasa pokriva
+
+public gRnSpecOpc  // HOPS - rn specificne opcije
 public gSjeciStr:=""
 public gOtvorStr:=""
 public gVSmjene:="N"
@@ -583,6 +585,7 @@ if (gModul=="HOPS")
 	gVodiTreb:="D"
 	gVodiOdj:="D"
 	gBrojSto:="0"
+	gRnSpecOpc:="N"
 	gRadniRac:="D"
 	gDirZaklj:="N"
 	gDupliArt:="N"
@@ -592,6 +595,7 @@ else
 	gVodiTreb:="N"
 	gVodiOdj:="N"
 	gBrojSto:="0"
+	gRnSpecOpc:="N"
 	gRadniRac:="N"
 	gDirZaklj:="D"
 	gDupliArt:="D"
@@ -683,6 +687,7 @@ Rpar("zc",@gZadCij)
 Rpar("vO",@gVodiOdj)
 Rpar("RR",@gRadniRac)
 Rpar("Dz",@gDirZaklj)
+Rpar("sO",@gRnSpecOpc)
 Rpar("BS",@gBrojSto)
 Rpar("n5",@gDupliArt)
 Rpar("Nu",@gDupliUpoz)

@@ -315,10 +315,12 @@ private Izbor:=1
 if gRadniRac=="D"
 	AADD(opc,"1. sve na jedan           ")
 	AADD(opcexe,{|| SveNaJedan()})
-	AADD(opc,"2. zakljuci dio racuna    ")
-	AADD(opcexe,{|| ZakljuciDio()})
-	AADD(opc,"3. razdijeli racun        ")
-   	AADD(opcexe,{|| RazdijeliRacun()})
+	if (gRnSpecOpc == "D")
+		AADD(opc,"2. zakljuci dio racuna    ")
+		AADD(opcexe,{|| ZakljuciDio()})
+		AADD(opc,"3. razdijeli racun        ")
+   		AADD(opcexe,{|| RazdijeliRacun()})
+	endif
 	Menu_SC("zrac")
 	return .f.
 else
