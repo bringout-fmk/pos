@@ -4,36 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/dok/1g/frm_inni.prg,v $
- * $Author: mirsad $ 
- * $Revision: 1.12 $
- * $Log: frm_inni.prg,v $
- * Revision 1.12  2003/06/28 15:05:16  mirsad
- * ispravljen bug na generisanju knjizne kolicine za inventuru
- *
- * Revision 1.11  2003/05/20 07:29:50  mirsad
- * Pri nivelaciji i inventuri generisao utrosak sirovina i za TOPS umjesto samo za HOPS
- *
- * Revision 1.10  2002/06/25 10:56:11  sasa
- * no message
- *
- * Revision 1.9  2002/06/24 16:11:53  ernad
- *
- *
- * planika - uvodjenje izvjestaja 98-reklamacija, izvjestaj planika/promet po vrstama placanja, debug
- *
- * Revision 1.8  2002/06/19 19:46:47  ernad
- *
- *
- * rad u sez.podr., debug., gateway
- *
- * Revision 1.7  2002/06/17 07:32:24  sasa
- * ispravka greske inicijalizovanja fInvent varijable
- *
- * Revision 1.6  2002/06/15 08:17:46  sasa
- * no message
- *
- *
  */
  
 /*! \file fmk/pos/dok/1g/frm_inni.prg
@@ -113,7 +83,6 @@ O_InvNiv()
 
 set cursor on
 
-altd()
 
 if !fIzZad
 	// 0) izbor mjesta trebovanja za koje se radi inventura/nivelacija
@@ -174,7 +143,7 @@ if fPocInv
 		endif
 		O_InvNiv()
   	endif
-	if fPocInv.and.!fPreuzeo.and.cIdVd==VD_INV
+	if fPocInv .and. !fPreuzeo .and. cIdVd==VD_INV
     		// generisi stavke SAMO ZA INVENTURU (nemoj za NIVELACIJU)
     		MsgO("GENERISEM DATOTEKU "+cNazDok+"E")
     		SELECT PRIPRZ 

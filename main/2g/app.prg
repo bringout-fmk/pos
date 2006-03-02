@@ -134,7 +134,6 @@ gPrevPos:=gIdPos
 Fx:=4
 Fy:=8
 
-altd()
 
 if gSql=="D"
 	O_Log()
@@ -143,9 +142,9 @@ endif
 
 self:oDatabase:scan()
 
-if IsPDV()
-	dokspf_create()
-endif
+
+/// fill init db podatke
+f_init_db()
 
 close all
 

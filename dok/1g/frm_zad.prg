@@ -5,49 +5,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/dok/1g/frm_zad.prg,v $
- * $Author: ernad $ 
- * $Revision: 1.12 $
- * $Log: frm_zad.prg,v $
- * Revision 1.12  2003/01/19 23:44:18  ernad
- * test network speed (sa), korekcija bl.lnk
- *
- * Revision 1.11  2002/07/12 14:07:44  ernad
- *
- *
- * todo FmkIni
- *
- * Revision 1.10  2002/07/06 08:13:34  ernad
- *
- *
- * - uveden parametar PrivPath/POS/Slave koji se stavi D za kasu kod koje ne zelimo ScanDb
- * Takodje je za gVrstaRs="S" ukinuto scaniranje baza
- *
- * - debug ispravke racuna (ukinute funkcije PostaviSpec, SiniSpec, zamjenjene sa SetSpec*, UnSetSpec*)
- *
- * Revision 1.9  2002/07/01 13:58:56  ernad
- *
- *
- * izvjestaj StanjePm nije valjao za gVrstaRs=="S" (prebacen da je isti kao za kasu "A")
- *
- * Revision 1.8  2002/06/24 16:11:53  ernad
- *
- *
- * planika - uvodjenje izvjestaja 98-reklamacija, izvjestaj planika/promet po vrstama placanja, debug
- *
- * Revision 1.7  2002/06/17 13:07:21  sasa
- * no message
- *
- * Revision 1.6  2002/06/15 13:18:31  sasa
- * no message
- *
- * Revision 1.5  2002/06/15 10:26:12  sasa
- * no message
- *
- * Revision 1.4  2002/06/15 08:17:46  sasa
- * no message
- *
- *
  */
  
 *string IzFmkIni_ExePath_SifRoba_DuzSifra;
@@ -193,11 +150,12 @@ endif
 
 fSadAz:=.f.
 if (cIdVd<>VD_REK) .and. Kalk2Pos(@cIdVd, @cBrDok, @cRsDBF)
+
 	if priprz->(RecCount2())>0
     		if cBrDok<>nil.and.Pitanje(,"Odstampati prenesni dokument na stampac ?","D")=="D"
-        		if cIdVd$"16#96#95#98"
+        		if cIdVd $ "16#96#95#98"
           			StampZaduz(cIdVd, cBrDok)
-        		elseif cIdVd$"IN#NI"
+        		elseif cIdVd $ "IN#NI"
           			StampaInv()
         		endif
 
@@ -211,13 +169,13 @@ endif
 if cIdVD=="NI"
 	// cidodj, ciddio - prosljedjujem ove priv varijable u InventNivel
   	close all
-  	InventNivel(.f.,.t.,fSadaz,dDatRada)  
+  	InventNivel(.f., .t., fSadaz, dDatRada)  
 	// drugi parametar - poziv iz zaduzenja
         // treci odmah podatke azurirati
   	return
 elseif cIdVD=="IN"
   	close all
-  	InventNivel(.t.,.t.,fSadAz,dDatRada)
+  	InventNivel(.t., .t., fSadAz, dDatRada)
   	return
 endif
 

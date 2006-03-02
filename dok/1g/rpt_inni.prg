@@ -4,21 +4,19 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/dok/1g/rpt_inni.prg,v $
- * $Author: sasa $ 
- * $Revision: 1.2 $
- * $Log: rpt_inni.prg,v $
- * Revision 1.2  2002/06/15 08:17:46  sasa
- * no message
- *
  *
  */
  
-/*! \fn StampaInv(fLista,fAzurirana)
- */
- 
-function StampaInv(fLista,fAzurirana)
+// --------------------------------------------------------------------
+// Ova funkcija se koristi i za Stampu zaduzenja i za stampu inventure
+// -------------------------------------------------------------------- 
+function StampaInv(fLista, lAzurirana)
 *{
+local cRobaNaz
+local cJmj
+local cIdRoba
+local nCij
+local nCij2
 
 // koristi privatne vars:
 // Ako je  cIdvD = NI - nivelacija
@@ -31,8 +29,12 @@ local aTarife:={}
 
 PRIVATE fInvent := .T.
 
-if flista==NIL; flista:=.f.; endif
-if fAzurirana==NIL; fAzurirana:=.f.; endif
+if flista==NIL
+	flista:=.f.
+endif
+if lAzurirana==NIL
+	lAzurirana:=.f.
+endif
 
 IF gVrstaRS <> "S"
   nSir := 40
@@ -49,7 +51,9 @@ Else
   fInvent := .F.
 EndIF
 
-if !fazurirana; GO TOP; endif
+if !lAzurirana
+	GO TOP
+endif
 
 START PRINT CRET
 
@@ -71,13 +75,16 @@ HSEEK PRIPRZ->IdOdj
 if gvodiodj=="D"
   ? PADC ("Odjeljenje: "+AllTrim (ODJ->Naz), nSir)
 endif
+
 SELECT PRIPRZ
+
 IF gPostDO=="D" .and. ! Empty (PRIPRZ->IdDio)
   SELECT DIO
   HSEEK PRIPRZ->IdDio
   ? PADC ("Dio objekta: "+AllTrim (DIO->Naz), nSir)
   SELECT PRIPRZ
 EndIF
+
 ?
 IF gVrstaRS == "S"
   P_10CPI
@@ -116,27 +123,16 @@ endif
 
 ? m
 
-/*
- inventura ...
- Sifra    Artikal                         Stanje   Popis.kol. Cijena    +/-
- -------- ----------------------------- ---------- ---------- ------- --------
- 01234567 01234567890123456789012345678 999999.999 999999.999 9999.99 99999.99
-
- nivelacija ...
- Sifra    Artikal                         Stanje   Cijena  Nova c.
- -------- ----------------------------- ---------- ------- -------
- 01234567 01234567890123456789012345678 999999.999 9999.99 9999.99
-*/
-
 nCij:=0
 nKVr:=nPopVr:=0
 nStVr:=nNVR:=0
 
+SELECT PRIPRZ
 cBroj:=dtos(datum)+brdok   // stampaj broj
 
 DO WHILE !EOF() .and. idvd==cidvd .and.  cBroj==dtos(datum)+brdok
   if fLista .or. ;
-     (cNiv=="N" .or. (cNiv=="D" .and. PRIPRZ->cijena<>PRIPRZ->ncijena)) .and. ;
+     (cNiv=="N" .or. (cNiv=="D" .and. PRIPRZ->cijena <> PRIPRZ->ncijena)) .and. ;
      (cNule=="D" .or. (cNule=="N" .and. Kol2<>0)) ;
      .and.  (Kolicina<>0 .or. Kol2<>0)
 
@@ -144,55 +140,71 @@ DO WHILE !EOF() .and. idvd==cidvd .and.  cBroj==dtos(datum)+brdok
      IF Prow() > 63-gPstranica-IIF (fLista, 2, 1);  FF; EndIF
    EndIF
 
-   if fazurirana
-     select (cRSdbf); hseek priprz->idroba
-     RobaNaz:=naz  ; select priprz
-     jmj:= &cRsDbf.->jmj
+   
+   cIdRoba := priprz->idroba
+   nCij:= PRIPRZ->cijena
+   nCij2:= priprz->ncijena
+  
+   if lAzurirana
+   	select (cRSdbf)
+   	hseek cIdRoba
+   	cRobaNaz:= naz  
+   	cJmj:= jmj
+   	SELECT priprz
+   else
+	cJmj := priprz->jmj
+   	cRobaNaz := priprz->robanaz
    endif
-   ? " " + IdRoba, PADR (RobaNaz, 23), PADR ("("+jmj+")", 5)
+   
+   ? " " + cIdRoba
+   ?? " " + PADR (cRobaNaz, 23)
+   ?? " " + PADR ( "(" + cJmj + ")", 5)
 
-   nCij:= PRIPRZ->CIJENA
+
    IF gVrstaRS <> "S"
     ?
     IF fLista
-      ?? " " + "________.___", "_________.___", STR (PRIPRZ->cijena, 8, 2)
+      ?? " " + "________.___", "_________.___", STR (nCij, 8, 2)
     Else
       if finvent
        ? str(kolicina,9,1), str(kol2,9,1), ;
-       STR (PRIPRZ->cijena, 8, 1), STR (kolicina-kol2, 12, 2)
+       STR (nCij, 8, 1), STR (kolicina-kol2, 12, 2)
        ? m
       else
-       ? str(kolicina,14,3), STR (PRIPRZ->cijena, 12, 2), STR (PRIPRZ->ncijena, 12, 2)
+       // nivelacija
+       ? str(kolicina,14,3), STR (nCij, 12, 2), STR (nCij2, 12, 2)
        ? m
       endif
      endif // flista
    else  // idemo na server
     IF fLista
-      ?? " " + "______.___", "______.___", STR (PRIPRZ->cijena, 7, 2)
+      ?? " " + "______.___", "______.___", STR (nCij, 7, 2)
     Else
      ?? " " + STR (Kolicina, 10, 3), ""
      IF fInvent
        ?? STR (Kol2, 10, 3), ;
           STR (PRIPRZ->cijena, 7, 2), TRANS (Kolicina-Kol2, "9999.99")
      Else
-       ?? STR (PRIPRZ->cijena, 9, 2), STR (PRIPRZ->ncijena, 9, 2)
+       // nivelacija
+       ?? STR (nCij, 9, 2), STR (nCij2, 9, 2)
      EndIF
     endif // flista
    EndIF // server
 
    nIzn:=0
    IF fInvent
-     nKVr+=ncij * Kolicina
+     nKVr+=nCij * Kolicina
      nPopVr+=nCij* Kol2        // po starim cijenama
      nIzn:=nCij* Kol2
    Else
-     nStVr += cijena*Kolicina
-     nNVr  += ncijena*Kolicina
-     nIzn:= (ncijena-cijena)*Kolicina
+     // nivelacija
+     nStVr += nCij*Kolicina
+     nNVr  += nCij2*Kolicina
+     nIzn:= (nCij2-nCij)*Kolicina
    EndIF
 
    if gModul=="TOPS"
-     WhileaTarifa(PRIPRZ->IdRoba,nIzn,@aTarife )
+     WhileaTarifa(PRIPRZ->IdRoba, nIzn, @aTarife )
    endif
 
 
@@ -277,8 +289,6 @@ endif
   ? "Sifra    Naziv robe"
   ? "            Stanje    Popisana kolicina"
   ? "----------------------------------------"
-//               999999.999  ____________,_____
-
   DO WHILE ! EOF ()
     ? IdRoba + " "+ RobaNaz
     ? SPACE (10) + STR (Kolicina, 10, 3) + "  " + "____________,_____"

@@ -1,9 +1,8 @@
 #include "\dev\fmk\pos\pos.ch"
 
-/* Copyright (C) 1997-2002, Sigma-com Zenica BiH
+/* Copyright (C) 1997-2006, Sigma-com Zenica
  * 
  */
- 
 
 /*! \fn PosPrijava(Fx,Fy)
  *  \brief
@@ -21,8 +20,6 @@ local nPrevKorRec
 
 close all
 
-*kreiram inicijalne podatke u sifrarnicima ako nema nista
-CrePosISifData()
 
 
 nSifLen:=6

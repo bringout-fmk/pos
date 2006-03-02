@@ -1304,38 +1304,37 @@ SELECT PRIPRZ
 GO TOP
 
 Scatter()
+
 SELECT DOKS
 APPEND BLANK
 sql_append()
 Gather()
+
 sql_azur(.t.)
 GathSQL()
 
 MsgO("prenos priprema->stanje")
 // upis inventure/nivelacije
 SELECT PRIPRZ  
-// napuni sifrarnik robe/sirovina sa novim cjenama
 do while !eof()
 	Scatter()
+
+	// dodaj stavku u pos
   	SELECT POS
+	
 	APPEND BLANK
 	sql_append()
+	
   	Gather()
   	sql_azur(.t.)
   	GathSQL()
+	
   	SELECT PRIPRZ
-	// samo dokumente nivelacije !!!!!!!
-  	if (field->idVd=="NI") 
-		if (ROUND(_cijena,3) <> ROUND(_ncijena, 3))
-    			SELECT (cRSDbf)
-			HSEEK _idroba
-			if (field->id == _idroba)
-				SmReplace("cijena1", _ncijena)
-    			endif
-			lNivel:=.t.
-    			SELECT PRIPRZ
-		endif
-  	endif
+
+	// azur sifrarnik robe na osnovu priprz
+	AzurRoba()
+
+	SELECT PRIPRZ
   	SKIP
 enddo
 MsgC()
@@ -1543,4 +1542,75 @@ set order to 1
 
 return
 *}
+
+// ------------------------------------------
+// azuriraj sifrarnik robe
+// priprz -> roba
+// ------------------------------------------
+static function AzurRoba()
+
+// u jednom dbf-u moze biti vise IdPos
+// ROBA ili SIROV
+select (cRSDbf)     
+hseek priprz->idroba  // pozicioniran sam na robi
+
+lNovi:=.f.
+if (!FOUND())
+	// novi artikal
+	// roba (ili sirov)
+	append blank
+	sql_append()
+	sql_azur(.t.)
+
+	SmReplace("id", priprz->idroba)
+	SmReplace("idodj", priprz->idodj)
+	
+endif
+
+// azuriraj sifrarnik robe
+SmReplace("naz", priprz->RobaNaz)
+SmReplace("jmj", priprz->jmj)
+
+if !IsPDV() 
+	// u ne-pdv rezimu je bilo bitno da preknjizenje na pdv ne pokvari
+	// star cijene
+	if katops->idtarifa <> "PDV17"
+		SmReplace("cijena1", ROUND(priprz->cijena, 3))
+	endif
+else
+
+	if cIdVd == "NI"
+	  // nivelacija - u sifrarnik stavi novu cijenu
+	  SmReplace("cijena1", ROUND(priprz->ncijena, 3))
+	else
+	  SmReplace("cijena1", ROUND(priprz->cijena, 3))
+	endif
+	
+endif
+
+
+SmReplace("idtarifa", priprz->idtarifa)
+
+if roba->(FIELDPOS("K1"))<>0  .and. priprz->(FIELDPOS("K2"))<>0
+	SmReplace("k1", priprz->k1)
+	SmReplace("k2", priprz->k2)
+endif
+if roba->(fieldpos("K7"))<>0  .and. priprz->(FIELDPOS("K9"))<>0
+	SmReplace("k7", priprz->k7)
+	SmReplace("k8", priprz->k8)
+	SmReplace("k9", priprz->k9)
+endif
+
+if roba->(FIELDPOS("N1"))<>0  .and. priprz->(FIELDPOS("N2"))<>0
+	SmReplace("n1", priprz->n1)
+	SmReplace("n2", priprz->n2)
+endif
+
+if (roba->(FIELDPOS("BARKOD"))<>0 .and. priprz->(FIELDPOS("BARKOD"))<>0)
+	SmReplace("barkod", priprz->barkod)
+endif
+
+sql_azur(.t.)
+
+return
 

@@ -154,16 +154,16 @@ endif
   ?
   // privatne datoteke
   fnul:=.f.
-  Skloni(PRIVPATH,"PARAMS.DBF",cSezona,finverse,fda,fnul)
-  Skloni(PRIVPATH,"K2C.DBF",cSezona,finverse,fda,fnul)
-  Skloni(PRIVPATH,"MJTRUR.DBF",cSezona,finverse,fda,fnul)
+  Skloni(PRIVPATH,"PARAMS.DBF", cSezona, finverse,fda,fnul)
+  Skloni(PRIVPATH,"K2C.DBF", cSezona, finverse,fda,fnul)
+  Skloni(PRIVPATH,"MJTRUR.DBF", cSezona, finverse,fda,fnul)
 
   // radne (pomocne) datoteke
-  Skloni(PRIVPATH,"_POS.DBF",cSezona,finverse,fda,fnul)
-  Skloni(PRIVPATH,"_PRIPR.DBF", cSezona,finverse,fda,fnul)
-  Skloni(PRIVPATH,"PRIPRZ.DBF", cSezona,finverse,fda,fnul)
-  Skloni(PRIVPATH,"PRIPRG.DBF", cSezona,finverse,fda,fnul)
-  Skloni(PRIVPATH,"FMK.INI", cSezona,finverse,fda,fnul)
+  Skloni(PRIVPATH,"_POS.DBF", cSezona, finverse,fda,fnul)
+  Skloni(PRIVPATH,"_PRIPR.DBF", cSezona, finverse,fda,fnul)
+  Skloni(PRIVPATH,"PRIPRZ.DBF", cSezona, finverse,fda,fnul)
+  Skloni(PRIVPATH,"PRIPRG.DBF", cSezona, finverse,fda,fnul)
+  Skloni(PRIVPATH,"FMK.INI", cSezona, finverse,fda,fnul)
 
 
   if fRS
@@ -448,45 +448,18 @@ endif
 
 
 // _POS, _PRIPR, PRIPRZ, PRIPRG, _POSP
-
-aDbf := {}
-AADD ( aDbf, { "BRDOK",     "C",  6, 0} )
-AADD ( aDbf, { "CIJENA",    "N", 10, 3} )
-AADD ( aDbf, { "DATUM",     "D",  8, 0} )
-AADD ( aDbf, { "GT",        "C",  1, 0} )
-AADD ( aDbf, { "IDCIJENA",  "C",  1, 0} )
-AADD ( aDbf, { "IDDIO",     "C",  2, 0} )
-AADD ( aDbf, { "IDGOST",    "C",  8, 0} )
-AADD ( aDbf, { "IDODJ",     "C",  2, 0} )
-AADD ( aDbf, { "IDPOS",     "C",  2, 0} )
-AADD ( aDbf, { "IDRADNIK",  "C",  4, 0} )
-AADD ( aDbf, { "IDROBA",    "C", 10, 0} )
-AADD ( aDbf, { "IDTARIFA",  "C",  6, 0} )
-AADD ( aDbf, { "IDVD",      "C",  2, 0} )
-AADD ( aDbf, { "IDVRSTEP",  "C",  2, 0} )
-AADD ( aDbf, { "JMJ",       "C",  3, 0} )
-// za inventuru, nivelaciju
-AADD ( aDbf, { "KOL2",      "N", 18, 3} )       
-AADD ( aDbf, { "KOLICINA",  "N", 18, 3} )
-AADD ( aDbf, { "M1",        "C",  1, 0} )
-AADD ( aDbf, { "MU_I",      "C",  1, 0} )
-AADD ( aDbf, { "NCIJENA",   "N", 10, 3} )
-AADD ( aDbf, { "PLACEN",    "C",  1, 0} )
-AADD ( aDbf, { "PREBACEN",  "C",  1, 0} )
-AADD ( aDbf, { "ROBANAZ",   "C", 40, 0} )
-AADD ( aDbf, { "SMJENA",    "C",  1, 0} )
-AADD ( aDbf, { "STO",       "C",  3, 0} )
-AADD ( aDbf, { "VRIJEME",   "C",  5, 0} )
-
+aDbf := g_prip_fields()
 
 if (nArea==-1 .or. nArea==(F__POS))
 	IF !FILE (PRIVPATH+"_POS.DBF")
 	   DBcreate2 (PRIVPATH+"_POS", aDbf)
 	ENDIF
 
-	// dodavanje roba na racun; inventura, nivelacija; prebacivanje u DOKS/POS
+	// dodavanje roba na racun; inventura, nivelacija
+	// prebacivanje u DOKS/POS
 	CREATE_INDEX ("1", "IdPos+IdVd+dtos(datum)+BrDok+IdRoba+IdCijena+STR(Cijena,10,3)", ;
 		      PRIVPATH+"_POS")
+		      
 	// povrat pripreme zaduzenja, inventure, nivelacije
 	CREATE_INDEX ("2", "IdVd+IdOdj+IdDio", PRIVPATH+"_POS")
 	// generisanje trebovanja
@@ -509,10 +482,10 @@ endif
 
 if (nArea==-1 .or. nArea==(F_PRIPRZ))
 	// priprema inventure, nivelacije, zaduzenja
-	IF ! FILE ( PRIVPATH + "PRIPRZ.DBF" )
+	IF !FILE (PRIVPATH + "PRIPRZ.DBF" )
 	   DBcreate2 (PRIVPATH + "PRIPRZ", aDbf )
 	ENDIF
-	CREATE_INDEX ("1", "IdRoba", PRIVPATH+"PRIPRZ")
+	CREATE_INDEX ("1", "IdRoba", PRIVPATH + "PRIPRZ")
 endif
 
 if (nArea==-1 .or. nArea==(F_PRIPRG))
@@ -1302,4 +1275,63 @@ else
 	return
 endif
 *}
+
+
+// --------------------------------
+// pripremne tabele polja
+// --------------------------------
+function g_prip_fields()
+local aDbf
+
+// _POS, _PRIPR, PRIPRZ, PRIPRG, _POSP
+aDbf := {}
+AADD ( aDbf, { "BRDOK",     "C",  6, 0} )
+AADD ( aDbf, { "CIJENA",    "N", 10, 3} )
+AADD ( aDbf, { "DATUM",     "D",  8, 0} )
+AADD ( aDbf, { "GT",        "C",  1, 0} )
+AADD ( aDbf, { "IDCIJENA",  "C",  1, 0} )
+AADD ( aDbf, { "IDDIO",     "C",  2, 0} )
+AADD ( aDbf, { "IDGOST",    "C",  8, 0} )
+AADD ( aDbf, { "IDODJ",     "C",  2, 0} )
+AADD ( aDbf, { "IDPOS",     "C",  2, 0} )
+AADD ( aDbf, { "IDRADNIK",  "C",  4, 0} )
+AADD ( aDbf, { "IDROBA",    "C", 10, 0} )
+
+AADD ( aDbf, { "IDTARIFA",  "C",  6, 0} )
+AADD ( aDbf, { "IDVD",      "C",  2, 0} )
+AADD ( aDbf, { "IDVRSTEP",  "C",  2, 0} )
+AADD ( aDbf, { "JMJ",       "C",  3, 0} )
+
+// za inventuru, nivelaciju
+AADD ( aDbf, { "KOL2",      "N", 18, 3} )       
+AADD ( aDbf, { "KOLICINA",  "N", 18, 3} )
+AADD ( aDbf, { "M1",        "C",  1, 0} )
+AADD ( aDbf, { "MU_I",      "C",  1, 0} )
+AADD ( aDbf, { "NCIJENA",   "N", 10, 3} )
+AADD ( aDbf, { "PLACEN",    "C",  1, 0} )
+AADD ( aDbf, { "PREBACEN",  "C",  1, 0} )
+AADD ( aDbf, { "ROBANAZ",   "C", 40, 0} )
+AADD ( aDbf, { "SMJENA",    "C",  1, 0} )
+AADD ( aDbf, { "STO",       "C",  3, 0} )
+AADD ( aDbf, { "VRIJEME",   "C",  5, 0} )
+
+AADD( aDBf, { 'K1'                  , 'C' ,   4 ,  0 })
+// planika: dobavljac   - grupe artikala
+AADD( aDBf, { 'K2'                  , 'C' ,   4 ,  0 })
+// planika: stavljaju se oznake za velicinu obuce
+//          X - ne broji se parovno
+
+AADD( aDBf, { 'K7'                  , 'C' ,   1 ,  0 })
+AADD( aDBf, { 'K8'                  , 'C' ,   2 ,  0 })
+AADD( aDBf, { 'K9'                  , 'C' ,   3 ,  0 })
+// planika: stavljaju se oznake za velicinu obuce
+//          X - ne broji se parovno
+
+AADD( aDBf, { 'N1'     , 'N' ,  12 ,  2 })
+AADD( aDBf, { 'N2'     , 'N' ,  12 ,  2 })
+
+AADD( aDBf, { 'BARKOD' , 'C' ,  13 ,  0 })
+AADD( aDBf, { 'KATBR'  , 'C' ,  14 ,  0 })
+
+return aDbf
 

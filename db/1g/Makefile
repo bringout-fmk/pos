@@ -6,7 +6,7 @@ include /sclib/Makefile_clipper
 SRCDOSROOT=c:\\dev\\fmk\\pos\\db\\1g\\
 
 
-PRGS=db.prg db_admin.prg sezone.prg
+PRGS=db.prg db_admin.prg sezone.prg fill.prg
 CS=
 ASMS=
 
