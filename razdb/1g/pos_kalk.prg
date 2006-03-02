@@ -39,6 +39,7 @@ local cOtpValid
 local cKalkDestinacija
 local fRet:=.f.
 local cPM
+local cKalkDBF:=""
 private H
 
 cIdPos:=gIdPos
