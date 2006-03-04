@@ -745,6 +745,11 @@ GathSQL()
 SELECT PRIPRZ
 // dodaj u datoteku POS
 do while !eof()   
+	
+	SELECT PRIPRZ
+	AzurRoba()
+	SELECT PRIPRZ 
+
 	Scatter ()
       	SELECT POS
       	APPEND BLANK
@@ -778,19 +783,8 @@ do while !eof()
         	Gather()
         	sql_azur(.t.)
         	GathSQL()
-      	elseif IzFmkIni('CROBA','GledajTops','N',KUMPATH)=='D'
-        	if cIdVd $ "16"
-          		if fCRoba
-             			ASQLCroba(@nH,"#CONT",_idroba,"M","1",_kolicina)
-          		endif
-          		//AzurCRoba(_idroba,"M","1",_kolicina)
-        	elseif cIDVD $ "95#96"
-          		if fCRoba
-             			ASQLCroba(@nH,"#CONT",_idroba,"M","1",-_kolicina)
-          		endif
-          		//AzurCRoba(_idroba,"M","1",-_kolicina)
-        	endif
-      	endif
+	endif
+
       	SELECT PRIPRZ
       	Del_Skip()
 enddo
@@ -798,11 +792,6 @@ enddo
 SELECT PRIPRZ
 __dbPack()
 
-if fCRoba
-	MsgO("Azuriram SQL-CROBA")
-    	ASQLCRoba(@nH,"#END#"+cSQLFile)
-  	MsgC()
-endif
 return
 *}
 
@@ -1299,7 +1288,13 @@ function Priprz2Pos()
 *{
 local lNivel
 
+altd()
 lNivel:=.f.
+
+SELECT (cRsDbf)
+SET ORDER TO TAG "ID"
+
+
 SELECT PRIPRZ
 GO TOP
 
@@ -1312,6 +1307,7 @@ Gather()
 
 sql_azur(.t.)
 GathSQL()
+
 
 MsgO("prenos priprema->stanje")
 // upis inventure/nivelacije
@@ -1549,10 +1545,13 @@ return
 // ------------------------------------------
 static function AzurRoba()
 
+altd()
 // u jednom dbf-u moze biti vise IdPos
 // ROBA ili SIROV
-select (cRSDbf)     
-hseek priprz->idroba  // pozicioniran sam na robi
+select (cRSDbf)  
+
+// pozicioniran sam na robi
+hseek priprz->idroba  
 
 lNovi:=.f.
 if (!FOUND())

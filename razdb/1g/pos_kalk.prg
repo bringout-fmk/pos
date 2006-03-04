@@ -71,7 +71,7 @@ cBrDok:=SPACE(LEN(field->brdok))
 
 if priprz->(RecCount2())==0 .and. Pitanje( ,"Preuzeti dokumente iz KALK-a","N")=="D"
 	
-	SelectKalkDbf(cBrDok, @cKalkDbf)
+	SelectKalkDbf(cBrDok, @cKalkDestinacija, @cKalkDbf)
 
 
 	USEX (cKalkDbf) NEW alias KATOPS
@@ -677,6 +677,9 @@ return
 // ----------------------------------------------	
 static function AzurRow(cIdVd, cBrDok, cRsDbf)
 *{
+
+altd()
+
 // tabela PRIPRZ = "priprema zaduzenja"
 select priprz
 APPEND BLANK
@@ -730,7 +733,7 @@ return 1
 // -----------------------------------------------
 // odaberi - setuj ime kalk dbf-a
 // -----------------------------------------------
-static function SelectKalkDbf (cBrDok, cKalkDbf)
+static function SelectKalkDbf (cBrDok, cKalkDestinacija, cKalkDbf)
 
 if gModemVeza=="D"
        	// modemska veza ide u odabir dokumenta
@@ -778,7 +781,7 @@ if gModemVeza=="D"
  	Izb3:=1
        	fPrenesi:=.f.
        	do while .t.
-        	Izb3:=Menu("k2p",opcF,Izb3,.f.)
+        	Izb3:=Menu("k2p", opcF, Izb3, .f.)
 		if Izb3==0
           		exit
         	else

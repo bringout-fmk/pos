@@ -286,16 +286,6 @@ if !fSadAz
 	
 endif // fSadAz
 
-//parametri croba
-fCroba:=(IzFmkIni('CROBA','GledajTops','N',KUMPATH)=='D')
-
-if fCROBA
-	nH:=0
-  	// zapocni sql
-  	cSQLFile:='c:\sigma\sql'
-  	ASQLCRoba(@nH,cSQLFile)
-endif
-
 SELECT PRIPRZ      
 // ZADRP
 if RecCount2()>0

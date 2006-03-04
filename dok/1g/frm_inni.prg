@@ -79,6 +79,7 @@ else
 	private cIdDio:=SPACE(2)
 endif
 
+altd()
 O_InvNiv()
 
 set cursor on
@@ -309,8 +310,6 @@ if !fSadAz  // azuriraj odmah
 
 	enddo  // browse while petlja
 endif // fsadaz
-
-//  DONJE LINIJE DEFINISU PROCES AZURIRANJA
 
 Priprz2Pos()
 CLOSERET
