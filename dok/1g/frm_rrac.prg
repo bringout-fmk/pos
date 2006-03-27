@@ -78,12 +78,23 @@ function P_RRproc()
 if M->Ch==0
 	return (DE_CONT)
 endif
+
+if (CHR(LastKey())=="B" .or. CHR(LastKey())=="b") 
+	if Pitanje(,"Izbrisati stavku racuna (D/N)?","D") == "N"
+		return (DE_CONT)
+	endif
+	delete
+	return (DE_REFRESH)
+endif
+
 if LASTKEY()==K_ESC.or.LASTKEY()==K_ENTER
 	return (DE_ABORT)
 endif
+
 if CHR(LASTKEY())=="/"
 	Msg("Tekuci iznos racuna je: " +STR(RR_iznos(_POS->IdPos, _POS->BrDok), 10,2),20)
 endif
+
 return (DE_CONT)
 *}
 
