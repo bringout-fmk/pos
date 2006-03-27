@@ -268,6 +268,7 @@ do case
           		MsgBeep("Na serveru ne mozete izdavati racune")
        		endif
 end case
+
 return
 *}
 
@@ -448,7 +449,8 @@ public gSTRAD
 
 // identifikator seta cijena koji se
 public gIdCijena:="1"   
-
+public glUgostOpc:=.f. // ugostiteljstvo 
+public gUgostOpc:="N" // ugostiteljstvo
 public gPopust:=0
 public gPopDec:=1
 public gPopZcj:="N"
@@ -580,27 +582,6 @@ else
 	gClanPopust:=.f.
 endif
 
-if (gModul=="HOPS")
-	gVodiTreb:="D"
-	gVodiOdj:="D"
-	gBrojSto:="0"
-	gRnSpecOpc:="N"
-	gRadniRac:="D"
-	gDirZaklj:="N"
-	gDupliArt:="N"
-	gDupliUpoz:="D"
-	gDisplay:="N"
-else
-	gVodiTreb:="N"
-	gVodiOdj:="N"
-	gBrojSto:="0"
-	gRnSpecOpc:="N"
-	gRadniRac:="N"
-	gDirZaklj:="D"
-	gDupliArt:="D"
-	gDupliUpoz:="N"
-	gDisplay:="N"
-endif
 
 public gPoreziRaster:="D"
 public gPratiStanje:="N"
@@ -649,6 +630,35 @@ public gRnPTxt1 := SPACE(35)
 public gRnPTxt2 := SPACE(35)
 public gRnPTxt3 := SPACE(35)
 public gFirTel := SPACE(20)
+
+Rpar("vU", @gUgostOpc)
+
+if gUgostOpc == "D"
+	glUgostOpc := .t.	
+endif
+
+if (gModul=="HOPS") .or. (glUgostOpc)
+	gVodiTreb:="D"
+	gVodiOdj:="D"
+	gBrojSto:="0"
+	gRnSpecOpc:="N"
+	gRadniRac:="D"
+	gDirZaklj:="N"
+	gDupliArt:="N"
+	gDupliUpoz:="D"
+	gDisplay:="N"
+else
+	gVodiTreb:="N"
+	gVodiOdj:="N"
+	gBrojSto:="0"
+	gRnSpecOpc:="N"
+	gRadniRac:="N"
+	gDirZaklj:="D"
+	gDupliArt:="D"
+	gDupliUpoz:="N"
+	gDisplay:="N"
+endif
+
 Rpar("F1",@gFirNaziv)
 Rpar("F2",@gFirAdres)
 Rpar("F3",@gFirIdBroj)

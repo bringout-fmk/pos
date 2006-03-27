@@ -745,14 +745,20 @@ return 0
 function PrikStatus()
 *{
 
- @ 1, 0 SAY "RADI:"+PADR(LTRIM(gKorIme),31)+" SMJENA:"+gSmjena+" CIJENE:"+gIdCijena+" DATUM:"+DTOC(gDatum)+IF(gVrstaRS=="S","   SERVER  "," KASA-PM:"+gIdPos)
- IF gIdPos=="X "
-   @ 23, 0 SAY PADC("$$$ --- PRODAJNO MJESTO X ! --- $$$",80,"±")
- ELSE
-   @ 23, 0 SAY REPLICATE("±",80)
- ENDIF
+@ 1, 0 SAY "RADI:"+PADR(LTRIM(gKorIme),31)+" SMJENA:"+gSmjena+" CIJENE:"+gIdCijena+" DATUM:"+DTOC(gDatum)+IF(gVrstaRS=="S","   SERVER  "," KASA-PM:"+gIdPos)
+
+IF gIdPos=="X "
+	@ 23, 0 SAY PADC("$$$ --- PRODAJNO MJESTO X ! --- $$$",80,"±")
+ELSE
+	@ 23, 0 SAY REPLICATE("±",80)
+ENDIF
 
 @ 22,1 SAY PADC ( Razrijedi (gKorIme), 78) COLOR INVERT
+
+if glUgostOpc
+	@ 24, 2 SAY "Ugostiteljska kasa" 
+endif
+
 return
 *}
 

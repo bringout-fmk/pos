@@ -16,7 +16,7 @@ function Narudzba()
 
 SETKXLAT("'","-") 
 
-if gModul=="HOPS"
+if (gModul=="HOPS" .or. glUgostOpc)
 	NarudzbaH()
 else
 	NarudzbaT()
@@ -111,7 +111,7 @@ else
 	cBrojRn:=cBrojRn
 endif
 
-if gModul=="HOPS"
+if (gModul=="HOPS" .or. glUgostOpc)
 	if gRadniRac=="D"
 		set cursor on
     		Box(, 2, 40)
@@ -147,7 +147,7 @@ SELECT _POS
 set cursor on
 cBrojRn:=_POS->(NarBrDok (gIdPos, VD_RN))
 
-if gModul="HOPS"
+if (gModul="HOPS" .or. glUgostOpc)
 	if gBrojSto $ "DN"
 		set cursor on
   		if gRadniRac=="D"
@@ -291,7 +291,7 @@ return Vrati
 function ZakljuciRacun()
 *{
 
-if gModul=="HOPS"
+if (gModul=="HOPS" .or. glUgostOpc)
 	ZakljuciRH()
 else
 	ZakljuciRT()
@@ -313,7 +313,7 @@ private opcexe:={}
 private Izbor:=1
 
 if gRadniRac=="D"
-	AADD(opc,"1. sve na jedan           ")
+	AADD(opc,"1. sve na jedan racun         ")
 	AADD(opcexe,{|| SveNaJedan()})
 	if (gRnSpecOpc == "D")
 		AADD(opc,"2. zakljuci dio racuna    ")

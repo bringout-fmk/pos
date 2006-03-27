@@ -4,27 +4,8 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/sif/1g/mnu_sif.prg,v $
- * $Author: sasa $ 
- * $Revision: 1.5 $
- * $Log: mnu_sif.prg,v $
- * Revision 1.5  2003/06/16 17:30:55  sasa
- * generacija zbirnog racuna
- *
- * Revision 1.4  2002/06/19 19:46:47  ernad
- *
- *
- * rad u sez.podr., debug., gateway
- *
- * Revision 1.3  2002/06/17 08:58:49  sasa
- * no message
- *
- *
  */
  
-/*! \fn MenuSifre()
- *  \brief 
- */
  
 function MenuSifre()
 *{
@@ -175,6 +156,17 @@ endif
 
 AADD(opc,"Z. promjena sifre PR")
 AADD(opcexe, {|| KL_PRacuna() })
+
+if glUgostOpc
+	AADD(opc, "---------------------")
+	AADD(opcexe, {|| nil })
+	AADD(opc, "S. sirovine")
+	AADD(opcexe, {|| P_Sirov() })
+	AADD(opc, "N. normativi")
+	AADD(opcexe, {|| P_Sast() })
+	AADD(opc, "X. stampa normativa")
+	AADD(opcexe, {|| ISast() })
+endif
 
 OSif()
 

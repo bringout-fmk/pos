@@ -77,7 +77,7 @@ set cursor on
 AADD(aNiz,{"Vrsta radne stanice (K-kasa, A-samostalna kasa, S-server)" , "gVrstaRS", "gVrstaRS$'KSA'", "@!", })
 AADD(aNiz,{"Oznaka/ID prodajnog mjesta" , "gIdPos", "NemaPrometa(cIdPosOld,gIdPos)", "@!", })
 
-if gModul=="HOPS"
+if gModul=="HOPS" .or. glUgostOpc
 	AADD(aNiz,{"Ima li objekat zasebne cjeline (dijelove) D/N", "gPostDO","gPostDO$'DN'", "@!", })
   	AADD(aNiz,{"Oznaka/ID dijela objekta", "gIdDio",, "@!", })
 endif
@@ -189,13 +189,80 @@ return
 *}
 
 
+// principi rada kase
+function ParPrRada()
+*{
+private opc:={}
+private opcexe:={}
+private Izbor:=1
+
+AADD(opc,"1. osnovna podesenja              ")
+AADD(opcexe,{|| ParPrBase()})
+
+if (gModul=="HOPS" .or. glUgostOpc)
+	AADD(opc,"2. podesenja - ugostiteljstvo   ")
+	AADD(opcexe,{|| ParPrUgost()})
+endif
+
+Menu_SC("prr")
+
+return .f.
+*}
 
 
-/*! \fn ParPrRada()
+/*! \fn ParPrBase()
  *  \brief Podesavanje parametara principa rada kase
  */
 
-function ParPrRada()
+function ParPrUgost()
+*{
+local aNiz:={}
+local cPrevPSS
+local cPom:=""
+private cSection:="1"
+private cIdPosOld:=gIdPos
+private cHistory:=" "
+private aHistory:={}
+
+cPrevPSS:=gPocStaSmjene
+
+O_PARAMS
+
+Rpar("n2",@gVodiTreb)
+Rpar("RR",@gRadniRac)
+Rpar("sO",@gRnSpecOpc)
+Rpar("BS",@gBrojSto)
+Rpar("nk",@gStamStaPun)
+Rpar("Dz",@gDirZaklj)
+
+UsTipke()
+set cursor on
+
+aNiz:={{"Da li se vode trebovanja (D/N)" , "gVodiTreb", "gVodiTreb$'DN'", "@!", }}
+AADD (aNiz, {"Da li se koriste radni racuni(D/N)" , "gRadniRac", "gRadniRac$'DN'", "@!", })
+AADD (aNiz, {"Ako se ne koriste, da li se racun zakljucuje direktno (D/N)" , "gDirZaklj", "gDirZaklj$'DN'", "@!", })
+AADD (aNiz, {"Da li je broj stola obavezan (D/N/0)", "gBrojSto", "gBrojSto$'DN0'", "@!", })
+AADD (aNiz, {"Dijeljenje racuna, spec.opcije nad racunom (D/N)", "gRnSpecOpc", "gRnSpecOpc$'DN'", "@!", })
+AADD (aNiz, {"Da li se po zakljucenju smjene stampa stanje puktova (D/N)" , "gStamStaPun", "gStamStaPun$'DN'", "@!", })
+
+VarEdit(aNiz,2,2,24,79,"PARAMETRI RADA PROGRAMA - UGOSTITELJSTVO","B1")
+BosTipke()
+
+if LASTKEY()<>K_ESC
+	MsgO("Azuriram parametre")
+    	Wpar("n2",gVodiTreb, .t., "P")
+    	Wpar("Dz",@gDirZaklj, .t., "D")
+    	Wpar("sO",@gRnSpecOpc, .t., "D")
+	Wpar("RR",@gRadniRac, .t., "D")
+    	Wpar("BS",@gBrojSto, .t., "D")
+    	Wpar("nk",@gStamStaPun, .t., "D")
+    	MsgC()
+endif
+return
+*}
+
+
+function ParPrBase()
 *{
 local aNiz:={}
 local cPrevPSS
@@ -216,6 +283,7 @@ if (!IsPlanika())
 endif
 
 Rpar("vO",@gVodiOdj)
+Rpar("vU",@gUgostOpc)
 Rpar("RR",@gRadniRac)
 Rpar("Dz",@gDirZaklj)
 Rpar("sO",@gRnSpecOpc)
@@ -240,59 +308,38 @@ endif
 UsTipke()
 set cursor on
 
-if gModul=="HOPS"
-	aNiz:={{"Da li se vode trebovanja (D/N)" , "gVodiTreb", "gVodiTreb$'DN'", "@!", }}
-  	AADD (aNiz, {"Da li se koriste radni racuni(D/N)" , "gRadniRac", "gRadniRac$'DN'", "@!", })
-  	AADD (aNiz, {"Ako se ne koriste, da li se racun zakljucuje direktno (D/N)" , "gDirZaklj", "gDirZaklj$'DN'", "@!", })
-  	AADD (aNiz, {"Da li je broj stola obavezan (D/N/0)", "gBrojSto", "gBrojSto$'DN0'", "@!", })
-  	AADD (aNiz, {"Dijeljenje racuna, spec.opcije nad racunom (D/N)", "gRnSpecOpc", "gRnSpecOpc$'DN'", "@!", })
-else
-  	aNiz:={}
-  	AADD (aNiz, {"Da li se racun zakljucuje direktno (D/N)" , "gDirZaklj", "gDirZaklj$'DN'", "@!", })
-  	AADD (aNiz, {"Da li u u objektu postoje odjeljenja (D/N)" , "gVodiodj", "gVodiOdj(@gVodiOdj)", "@!",})
-endif
-
+aNiz:={}
+AADD (aNiz, {"Da li se racun zakljucuje direktno (D/N)" , "gDirZaklj", "gDirZaklj$'DN'", "@!", })
 AADD (aNiz, {"Dopustiti dupli unos artikala na racunu (D/N)" , "gDupliArt", "gDupliArt$'DN'", "@!", })
 AADD (aNiz, {"Ako se dopusta dupli unos, da li se radnik upozorava(D/N)" , "gDupliUpoz", "gDupliUpoz$'DN'", "@!", })
+AADD (aNiz, {"Da li u u objektu postoje odjeljenja (D/N)" , "gVodiodj", "gVodiOdj(@gVodiOdj)", "@!",})
 AADD (aNiz, {"Da li se prati pocetno stanje smjene (D/N)" , "gPocStaSmjene", "gPocStaSmjene$'DN!'", "@!", })
 AADD (aNiz, {"Da li se po zakljucenju smjene stampa ukupni pazar (D/N)" , "gStamPazSmj", "gStamPazSmj$'DN'", "@!", })
 AADD (aNiz, {"Da li se prati stanje zaliha robe na prodajnim mjestima (D/N/!)" , "gPratiStanje", "gPratiStanje$'DN!'", "@!", })
-
-if gModul=="HOPS"
-	AADD (aNiz, {"Da li se po zakljucenju smjene stampa stanje puktova (D/N)" , "gStamStaPun", "gStamStaPun$'DN'", "@!", })
-else
-  	AADD (aNiz, {"Da li se po zakljucenju smjene stampa stanje odjeljenja (D/N)" , "gStamStaPun", "gStamStaPun$'DN'", "@!", })
-endif
-
+AADD (aNiz, {"Da li se po zakljucenju smjene stampa stanje odjeljenja (D/N)" , "gStamStaPun", "gStamStaPun$'DN'", "@!", })
 AADD (aNiz, {"Voditi po smjenama (D/N)" , "gVSmjene", "gVsmjene$'DN'", "@!", })
 AADD (aNiz, {"Tip sezona M-mjesec G-godina" , "gSezonaTip", "gSezonaTip$'MG'", "@!", })
-
 if KLevel=="0"
 	AADD (aNiz, {"Upravnik moze ispravljati cijene" , "gSifUpravn", "gSifUpravn$'DN'", "@!", })
 endif
-
 AADD (aNiz, {"Ako je Bar Cod generisi <ENTER> " , "gEntBarCod", "gEntBarCod$'DN'", "@!", })
-
 If (!IsPlanika())
 	// generisao bug pri unosu reklamacije
 	AADD (aNiz, {"Pri unosu zaduzenja azurirati i cijene (D/N)? " , "gZadCij", "gZadCij$'DN'", "@!", })
 else
 	gZadCij:="N"
 endif
-
 AADD (aNiz, {"Pri azuriranju pitati za nacin placanja (D/N)? " , "gUpitNP", "gUpitNP$'DN'", "@!", })
-
 AADD (aNiz, {"Stampa na POS displej (D/N)? " , "gDisplay", "gDisplay$'DN'", "@!", })
-
 AADD (aNiz, {"Evidentiranje podataka o vrstama placanja (D/N)? " , "gEvidPl", "gEvidPl$'DN'", "@!", })
-
 AADD (aNiz, {"Provjera prostora na disku (D/N)? " , "gDiskFree", "gDiskFree$'DN'", "@!", })
 if IsPDV()
 	AADD (aNiz, {"Stampati poreske fakture (D/N)? " , "gPorFakt", "gPorFakt$'DN'", "@!", })
 
 endif
+AADD (aNiz, {"Ugostiteljska kasa (D/N)? " , "gUgostOpc", "gUgostOpc$'DN'", "@!", })
 
-VarEdit(aNiz,5,2,24,79,"PARAMETRI RADA PROGRAMA - PRINCIPI RADA","B1")
+VarEdit(aNiz,2,2,24,79,"PARAMETRI RADA PROGRAMA - PRINCIPI RADA","B1")
 BosTipke()
 
 if LASTKEY()<>K_ESC
@@ -302,6 +349,7 @@ if LASTKEY()<>K_ESC
 		Wpar("zc",gZadCij, .t., "D")
     	endif
 	Wpar("vO",gVodiOdj, .t., "D")
+	Wpar("vU",gUgostOpc, .t., "D")
     	Wpar("Dz",@gDirZaklj, .t., "D")
     	Wpar("sO",@gRnSpecOpc, .t., "D")
 	Wpar("RR",@gRadniRac, .t., "D")
@@ -326,6 +374,7 @@ if LASTKEY()<>K_ESC
 	endif
     	MsgC()
 endif
+
 return
 *}
 

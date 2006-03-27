@@ -571,7 +571,7 @@ if (nArea==-1 .or. nArea==(F_ROBAIZ))
 	CREATE_INDEX ("1", "IdRoba", PRIVPATH+"ROBAIZ")
 endif
 
-if gModul=="HOPS"
+if (gModul=="HOPS" .or. glUgostOpc)
 	// RAZDR.DBF
 	if (nArea==-1 .or. nArea==(F_RAZDR))
 		IF ! FILE (PRIVPATH + "RAZDR.DBF")
@@ -1165,7 +1165,7 @@ if gPratiStanje $ "D!"
   O_POS
 endif
 
-if gModul=="HOPS"
+if (gModul=="HOPS" .or. glUgostOpc)
   O_DIO
   O_ROBAIZ
 endif

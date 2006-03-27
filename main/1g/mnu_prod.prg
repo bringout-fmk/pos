@@ -24,7 +24,7 @@ if gRadnoPodr<>"RADP"
 endif
 
 if gRadniRac=="D"
-	AADD(opc,"1. narudzba                        ")
+	AADD(opc,"1. narudzba                           ")
     	AADD(opcexe,{|| Narudzba() })
     	AADD(opc,"2. zakljuci racun")
     	AADD(opcexe,{|| ZakljuciRacun() })

@@ -480,7 +480,7 @@ cSto:=DOKS->Sto
 cIdRadnik:=DOKS->IdRadnik
 cSmjena:=DOKS->Smjena
 
-if gBrojSto=="D"
+if gBrojSto=="D" .and. !glUgostOpc
 	cZakljucen:=DOKS->zakljucen
 endif
 

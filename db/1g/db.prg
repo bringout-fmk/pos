@@ -124,7 +124,7 @@ function OSif()
 
 O_KASE
 O_UREDJ
-if gModul=="HOPS"
+if (gModul=="HOPS" .or. glUgostOpc)
 	O_MJTRUR
   	O_ROBAIZ
   	O_SAST
@@ -231,10 +231,12 @@ function O_Nar()
 if gPratiStanje $ "D!"
 	O_POS
 endif
-if gModul=="HOPS"
+
+if (gModul=="HOPS" .or. glUgostOpc)
 	O_DIO 
 	O_ROBAIZ
 endif
+
 O_MJTRUR 
 O_UREDJ 
 O_ODJ 
@@ -244,6 +246,7 @@ O_SIFK
 O_SIFV
 O__PRIPR 
 O__POS
+
 return
 *}
 
