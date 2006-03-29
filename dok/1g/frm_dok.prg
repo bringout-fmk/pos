@@ -25,10 +25,8 @@ set order to tag "NAZ"
 
 O_TARIFA 
 O_VALUTE
-if IzFMKIni("Svi","Sifk")=="D"
-	O_SIFK
-	O_SIFV
-endif
+O_SIFK
+O_SIFV
 O_SIROV  
 O_ROBA
 O_DOKS   
@@ -60,7 +58,6 @@ AADD(ImeKol,{"Radnik",{||IdRadnik}})
 if gStolovi == "D"
 	AADD(ImeKol,{"Zaklj",{||zak_br}})
 endif
-
 
 Kol:={}
 for i:=1 to LEN(ImeKol)
@@ -226,7 +223,7 @@ do case
 				elseif cOdg=="D"
 	          			aVezani:={{IdPos, BrDok, IdVd, datum}}
 	          			StampaPrep(IdPos, dtos(datum)+BrDok, aVezani, .t.)
-	          			select DOKS
+					select DOKS
 				endif
         		case DOKS->IdVd=="16"
           			PrepisZad("ZADUZENJE ")
@@ -256,6 +253,13 @@ do case
 			case DOKS->IdVd==VD_ROP // reklamacija ostali podaci
 				StDokROP(.t.)
       		endcase
+	case gStolovi == "D" .and. (Ch==Asc("Z").or.Ch==Asc("z"))
+		if doks->idvd == "42"
+			print_zak_br(doks->zak_br)
+			select DOKS
+			return (DE_REFRESH)		
+		endif
+		return (DE_CONT)
     	Case Ch==Asc("T").or.Ch==Asc("t")
       		select doks
 		set cursor on

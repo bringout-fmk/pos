@@ -135,8 +135,6 @@ enddo
 
 skip -1
 
-altd()
-
 PDVStampaRac(gIdPos, doks->brdok, .t., doks->idvrstep, doks->datum, aRacuni, .f.)
 
 return
