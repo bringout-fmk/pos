@@ -55,7 +55,7 @@ endif
 cBroj:=RIGHT(cRacun,LEN(cRacun)-AT("-",cRacun))
 cBroj:=PADL(cBroj,6)
 
-ImeKol:={{ "Broj racuna",{|| padr(trim(IdPos)+"-"+alltrim(BrDok),9)}},{ "Iznos",{|| STR (SR_Iznos(), 13, 2)}},{ "Smj",{|| smjena}      },{ "Datum",{|| datum}},{ "Vr.Pl",      {|| idvrstep} },{ IIF(IsPlNs(), "Broj NI", "Partner"),    {|| idgost} },{ "Vrijeme",    {|| vrijeme} }}
+ImeKol:={{ "Broj racuna",{|| padr(trim(IdPos)+"-"+alltrim(BrDok),9)}},{ "Iznos",{|| STR (SR_Iznos(), 13, 2)}},{ IIF(gStolovi == "D", "Sto","Smj"),{|| IIF(gStolovi == "D", sto_br , smjena)}      },{ "Datum",{|| datum}},{ "Vr.Pl",      {|| idvrstep} },{ IIF(IsPlNs(), "Broj NI", "Partner"),    {|| idgost} },{ "Vrijeme",    {|| vrijeme} }}
 
 AADD(ImeKol,{ "Placen",     {|| IIF (Placen==PLAC_NIJE,"  NE","  DA")} })
 
@@ -189,6 +189,12 @@ endif
 if UPPER(CHR(LASTKEY()))=="P"
 	PreglSRacun(DOKS->IdPos,doks->datum,DOKS->BrDok)
   	return DE_REFRESH
+endif
+
+if UPPER(CHR(LASTKEY()))=="Z"
+  	print_zak_br(doks->zak_br)
+	select doks
+	return DE_REFRESH
 endif
 
 cLast:=UPPER(CHR(LASTKEY()))
