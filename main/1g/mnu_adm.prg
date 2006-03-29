@@ -117,7 +117,7 @@ private opcexe:={}
 private Izbor:=1
 
 
-AADD(opc,"1. parametri rada programa            ")
+AADD(opc,"1. parametri rada programa                        ")
 AADD(opcexe, {|| Parametri() })
 
 AADD(opc,"2. instalacija db-a")
@@ -132,12 +132,12 @@ AADD(opcexe, {|| BrisiDupleSifre()})
 AADD(opc, "5. uzmi BARKOD iz sezone ")
 AADD(opcexe, {|| UzmiBkIzSez()})
 
-AADD(opc, "5. set pdv cijene na osnovu tarifa iz sezone ")
+AADD(opc, "6. set pdv cijene na osnovu tarifa iz sezone ")
 AADD(opcexe, {|| SetPdvCijene()})
 
-if (gVrstaRs=="S")
-	AADD(opc, "S. azuriraj sifrarnik iz fmk")
-	AADD(opcexe, {|| AzurSifIzFmk() })
+if gStolovi == "D"
+	AADD(opc, "7. zakljucivanje postojecih racuna ")
+	AADD(opcexe, {|| zak_sve_stolove()})
 endif
 
 if gSQL=="D"

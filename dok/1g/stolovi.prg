@@ -25,11 +25,14 @@ return nRet
 // zakljuci sto broj
 function zak_sto(nStoBr)
 *{
+local nArr
 local nNext_zak
 local cNijeZaklj := "     0"
 local nCnt := 0
 local nTRec
 local nNRec
+
+nArr := SELECT()
 
 // vrati sljedeci broj zakljucenja
 nNext_zak := g_next_zak_br()
@@ -37,9 +40,9 @@ nNext_zak := g_next_zak_br()
 // postavi filter za nStoBr
 select doks
 set order to tag "STO"
-hseek gIdPos + gIdRadnik + "42" + STR(nStoBr) + cNijeZaklj
+hseek gIdPos + "42" + STR(nStoBr) + cNijeZaklj
 
-do while !EOF() .and. doks->idpos == gIdPos .and. doks->idradnik == gIdRadnik .and. doks->idvd == "42" .and. doks->sto_br == nStoBr .and. doks->zak_br == 0
+do while !EOF() .and. doks->idpos == gIdPos .and. doks->idvd == "42" .and. doks->sto_br == nStoBr .and. doks->zak_br == 0
 	++ nCnt
 	nTRec := RecNo()
 	skip
@@ -59,6 +62,8 @@ endif
 if Pitanje(,"Stampati zbirni racun (D/N)?","N") == "D"
 	print_zak_br(nNext_zak)
 endif
+
+select (nArr)
 
 return nCnt
 *}
@@ -88,8 +93,8 @@ do while !EOF() .and. doks->idpos == gIdPos .and. doks->idvd == "42" .and. doks-
 	nStoBr := doks->sto_br
 	++ nCnt
 	nTotal += VAL(DokIznos(.f.))
-	cBrDok := doks->brdok
-	cDokumenti += ALLTRIM(doks->brdok) + ","
+	cBrDok := ALLTRIM(doks->brdok)
+	cDokumenti += cBrDok + ","
 	skip
 enddo
 
@@ -100,7 +105,7 @@ aPom := SjeciStr(cDokumenti, 30)
 cText := "Zbirni racun " + cBrDok + "-" + ALLTRIM(STR(nZakBr)) + "#"
 cText += "Ukupan iznos po racunima "
 for i:=1 to LEN(aPom)
-	cText += aPom[i] + "," + "#"
+	cText += ALLTRIM(aPom[i]) + "#"
 next
 cText += " je " + ALLTRIM(STR(nTotal)) + " KM"
 
@@ -250,13 +255,13 @@ O_DOKS
 select doks
 set order to tag "ZAK"
 go top
-hseek gIdPos + "42" + STR(0)
+hseek gIdPos + "42" + STR(0,6)
 
 do while !EOF() .and. doks->idvd == "42" .and. doks->zak_br == 0
 	nStoBr := doks->sto_br
+	nNextZak := g_next_zak_br()
 	do while !EOF() .and. doks->idvd == "42" .and. doks->zak_br == 0 .and. doks->sto_br == nStoBr
 		
-		nNextZak := g_next_zak_br()
 		nTRec := RecNo()
 		skip
 		nNRec := RecNo()
@@ -268,7 +273,7 @@ do while !EOF() .and. doks->idvd == "42" .and. doks->zak_br == 0
 	enddo
 enddo
 
-MsgBeep("Izvrseno zakljucenje svih stolova !")
+MsgBeep("Izvrseno zakljucenje svih racuna !")
 
 return
 *}
@@ -284,23 +289,16 @@ O_POS
 O_DOKS
 select doks
 set order to tag "STO"
-hseek gIdPos + gIdRadnik + "42" + STR(nStoBr) + cNijeZaklj
+hseek gIdPos + "42" + STR(nStoBr) + cNijeZaklj
 
 nStanje := 0
 
-do while !EOF() .and. doks->idpos == gIdPos .and. doks->idradnik == gIdRadnik .and. doks->idvd == "42" .and. doks->sto_br == nStoBr
+do while !EOF() .and. doks->idpos == gIdPos .and. doks->idvd == "42" .and. doks->sto_br == nStoBr
 	if doks->zak_br == 0
 		nStanje += VAL(DokIznos(.f.))
 	endif
 	skip
 enddo
-
-//if nStanje > 0
-//	MsgBeep("Prethodno stanje stola broj " + ALLTRIM(STR(nStoBr)) + " je: " + ALLTRIM(STR(nStanje)) + " KM")
-//	if Pitanje(,"Zakljuciti prethodni promet (D/N)?","N") == "D"
-//		zak_sto(nStoBr)
-//	endif
-//endif
 
 select (nArr)
 

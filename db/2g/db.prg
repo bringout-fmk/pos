@@ -350,7 +350,7 @@ if (nArea==-1 .or. nArea==(F_DOKS))
 	endif
 	// indexi za vodjenje kase po stolovima
 	if gStolovi == "D"
-		CREATE_INDEX ("STO", "IdPos+IdRadnik+idvd+STR(STO_BR)+STR(ZAK_BR)+DTOS(datum)+brdok", KUMPATH+"DOKS" )
+		CREATE_INDEX ("STO", "IdPos+idvd+STR(STO_BR)+STR(ZAK_BR)+DTOS(datum)+brdok", KUMPATH+"DOKS" )
 		CREATE_INDEX ("ZAK", "IdPos+idvd+STR(ZAK_BR)+STR(STO_BR)+DTOS(datum)+brdok", KUMPATH+"DOKS" )
 	endif
 endif

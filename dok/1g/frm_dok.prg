@@ -5,10 +5,6 @@
  * ----------------------------------------------------------------
  */
 
-/*! \file fmk/pos/dok/1g/frm_dok.prg
- *  \brief Stampa azuriranog dokumenta
- */
-
 /*! \fn PrepisDok()
  *  \brief Stampa azuriranog dokumenta
  */
@@ -48,13 +44,22 @@ endif
 
 AADD(ImeKol,{"VP",{||IdVrsteP}})
 AADD(ImeKol,{"Datum",{||datum}})
-AADD(ImeKol,{"Smj",{||smjena}})
+if gStolovi == "D"
+	AADD(ImeKol,{"Sto",{||sto_br}})
+else
+	AADD(ImeKol,{"Smj",{||smjena}})
+endif
+
 AADD(ImeKol,{PADC("Iznos",10),{|| DokIznos(NIL)}})
 if IsPlanika()
   // reklamacije (R)ealizovane, (P)riprema
   AADD(ImeKol,{"Rekl",{||sto}})
 endif
 AADD(ImeKol,{"Radnik",{||IdRadnik}})
+
+if gStolovi == "D"
+	AADD(ImeKol,{"Zaklj",{||zak_br}})
+endif
 
 
 Kol:={}
