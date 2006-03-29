@@ -242,6 +242,7 @@ function zak_sve_stolove()
 *{
 local nNextZak := 0
 local nArr
+local cNijeZaklj := "     0"
 local nNRec
 nArr := SELECT()
 
@@ -250,31 +251,30 @@ if !SigmaSif("ZAKSVE")
 	return
 endif
 
-
 O_DOKS
+nNextZak := g_next_zak_br()
+
 select doks
 set order to tag "ZAK"
 go top
-hseek gIdPos + "42" + STR(0,6)
+seek gIdPos + "42" + cNijeZaklj
 
-do while !EOF() .and. doks->idvd == "42" .and. doks->zak_br == 0
+do while !EOF() .and. doks->idpos == gIdPos .and. doks->idvd == "42" .and. doks->zak_br == 0
 	nStoBr := doks->sto_br
-	nNextZak := g_next_zak_br()
-	do while !EOF() .and. doks->idvd == "42" .and. doks->zak_br == 0 .and. doks->sto_br == nStoBr
-		
+	do while !EOF() .and. doks->idpos == gIdPos .and. doks->idvd == "42" .and. doks->zak_br == 0 .and. doks->sto_br == nStoBr
 		nTRec := RecNo()
 		skip
 		nNRec := RecNo()
-		go (nTRec)
-		
-		replace doks->zak_br with nNextZak
-		
+		skip -1
+		replace zak_br with nNextZak
 		go (nNRec)
 	enddo
+	++ nNextZak 
 enddo
 
 MsgBeep("Izvrseno zakljucenje svih racuna !")
 
+select (nArr)
 return
 *}
 
