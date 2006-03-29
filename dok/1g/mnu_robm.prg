@@ -50,7 +50,7 @@ private Opc:={}
 private opcexe:={}
 private Izbor:=1
 
-if (gModul=="HOPS" .or. glUgostOpc) .and. gPosSirovine=="D"
+if gModul=="HOPS" .and. gPosSirovine=="D"
 	AADD(Opc,"6. generisi utrosak sirovina           ")
 	AADD(opcexe,{|| GenUtrSir()})
 endif

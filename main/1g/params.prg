@@ -77,7 +77,7 @@ set cursor on
 AADD(aNiz,{"Vrsta radne stanice (K-kasa, A-samostalna kasa, S-server)" , "gVrstaRS", "gVrstaRS$'KSA'", "@!", })
 AADD(aNiz,{"Oznaka/ID prodajnog mjesta" , "gIdPos", "NemaPrometa(cIdPosOld,gIdPos)", "@!", })
 
-if gModul=="HOPS" .or. glUgostOpc
+if gModul=="HOPS" 
 	AADD(aNiz,{"Ima li objekat zasebne cjeline (dijelove) D/N", "gPostDO","gPostDO$'DN'", "@!", })
   	AADD(aNiz,{"Oznaka/ID dijela objekta", "gIdDio",, "@!", })
 endif
@@ -199,7 +199,7 @@ private Izbor:=1
 AADD(opc,"1. osnovna podesenja              ")
 AADD(opcexe,{|| ParPrBase()})
 
-if (gModul=="HOPS" .or. glUgostOpc)
+if gModul=="HOPS"
 	AADD(opc,"2. podesenja - ugostiteljstvo   ")
 	AADD(opcexe,{|| ParPrUgost()})
 endif
@@ -283,7 +283,7 @@ if (!IsPlanika())
 endif
 
 Rpar("vO",@gVodiOdj)
-Rpar("vU",@gUgostOpc)
+Rpar("vS",@gStolovi)
 Rpar("RR",@gRadniRac)
 Rpar("Dz",@gDirZaklj)
 Rpar("sO",@gRnSpecOpc)
@@ -337,7 +337,9 @@ if IsPDV()
 	AADD (aNiz, {"Stampati poreske fakture (D/N)? " , "gPorFakt", "gPorFakt$'DN'", "@!", })
 
 endif
-AADD (aNiz, {"Ugostiteljska kasa (D/N)? " , "gUgostOpc", "gUgostOpc$'DN'", "@!", })
+
+AADD (aNiz, {"Voditi po stolovima (D/N)? " , "gStolovi", "gStolovi$'DN'", "@!", })
+
 
 VarEdit(aNiz,2,2,24,79,"PARAMETRI RADA PROGRAMA - PRINCIPI RADA","B1")
 BosTipke()
@@ -349,8 +351,8 @@ if LASTKEY()<>K_ESC
 		Wpar("zc",gZadCij, .t., "D")
     	endif
 	Wpar("vO",gVodiOdj, .t., "D")
-	Wpar("vU",gUgostOpc, .t., "D")
-    	Wpar("Dz",@gDirZaklj, .t., "D")
+	Wpar("vS",@gStolovi, .t., "D")
+	Wpar("Dz",@gDirZaklj, .t., "D")
     	Wpar("sO",@gRnSpecOpc, .t., "D")
 	Wpar("RR",@gRadniRac, .t., "D")
     	Wpar("BS",@gBrojSto, .t., "D")

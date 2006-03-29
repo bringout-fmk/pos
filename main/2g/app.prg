@@ -449,8 +449,6 @@ public gSTRAD
 
 // identifikator seta cijena koji se
 public gIdCijena:="1"   
-public glUgostOpc:=.f. // ugostiteljstvo 
-public gUgostOpc:="N" // ugostiteljstvo
 public gPopust:=0
 public gPopDec:=1
 public gPopZcj:="N"
@@ -461,7 +459,7 @@ public gPopIznP:=0
 public SC_Opisi[5]      // nazivi (opisi) setova cijena
 public gSmjena := " "   // identifikator smjene
 public gDatum           // datum
-
+public gStolovi := "N"
 public gVodiTreb        // da li se vode trebovanja (ako se vode, onda se i
                         // stampaju)
 public gVodiOdj
@@ -631,13 +629,7 @@ public gRnPTxt2 := SPACE(35)
 public gRnPTxt3 := SPACE(35)
 public gFirTel := SPACE(20)
 
-Rpar("vU", @gUgostOpc)
-
-if gUgostOpc == "D"
-	glUgostOpc := .t.	
-endif
-
-if (gModul=="HOPS") .or. (glUgostOpc)
+if gModul=="HOPS"
 	gVodiTreb:="D"
 	gVodiOdj:="D"
 	gBrojSto:="0"
@@ -694,6 +686,7 @@ cPrevPSS := gPocStaSmjene
 Rpar("n2",@gVodiTreb)
 Rpar("zc",@gZadCij)
 Rpar("vO",@gVodiOdj)
+Rpar("vS",@gStolovi)
 Rpar("RR",@gRadniRac)
 Rpar("Dz",@gDirZaklj)
 Rpar("sO",@gRnSpecOpc)

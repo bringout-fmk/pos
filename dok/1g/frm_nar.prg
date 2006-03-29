@@ -52,7 +52,7 @@ Kol:={1, 2, 3, 4, 5, 6}
 AADD(aUnosMsg, "<*> - Ispravka stavke")
 AADD(aUnosMsg, "Storno/povrat - negativna kolicina")
 
-if (gModul=="HOPS" .or. glUgostOpc)
+if gModul=="HOPS"
 	if gRadniRac=="D"
     		AADD(aUnosMsg, "</> - Pregled racuna")
   	endif
@@ -81,7 +81,7 @@ SetSpecNar()
 @ m_x+4,m_y+50 SAY "Popust:"
 @ m_x+5,m_y+50 SAY "UKUPNO:"
 
-if (gModul=="HOPS" .or. glUgostOpc)
+if gModul=="HOPS"
 	if (gRadniRac=="D")
     		SELECT _PRIPR
     		if RecCount2()>0
@@ -197,6 +197,10 @@ _IdCijena:=gIdCijena
 _Prebacen:=OBR_NIJE
 _MU_I:= R_I
 
+if gStolovi == "D"
+	_sto_br := VAL(cSto)
+endif
+
 do while .t.
 	@ m_x+3,m_y+70 SAY nIznNar pict "99999.99" COLOR Invert
 	@ m_x+4,m_y+70 SAY nPopust pict "99999.99" COLOR Invert
@@ -279,7 +283,7 @@ do while .t.
 				_IdOdj:=SPACE(2)
 			endif
 			
-			if (gModul=="HOPS" .or. glUgostOpc)
+			if gModul=="HOPS"
      				if gVodiTreb=="D".and.ROBA->Tip<>"I"
      					// I -inventar
        					_GT:=OBR_NIJE
@@ -313,7 +317,7 @@ do while .t.
  		else   
 			// nije nadjeno odjeljenje ??
    			SELECT _PRIPR
-   			if (gModul=="HOPS" .or. glUgostOpc)
+   			if gModul=="HOPS"
      				MsgBeep("Za robu "+ALLTRIM(_IdRoba)+" nije odredjeno odjeljenje!#"+"Narucivanje nije moguce!")
    			else
      				MsgBeep("Za robu "+ALLTRIM (_IdRoba)+" nije odredjeno odjeljenje!#"+"Izdavanje nije moguce!")
@@ -327,7 +331,7 @@ SETKEY(K_PGDN,bPrevDn)
 SETKEY(K_PGUP,bPrevUp)
 UnSetSpecNar()
 
-if (gModul=="HOPS" .or. glUgostOpc)
+if gModul=="HOPS"
 	if gRadniRac=="D"
   		SELECT _POS
   		AppFrom("_PRIPR",.f.)
@@ -491,7 +495,7 @@ function SetSpecNar()
 
 bPrevZv:=SETKEY(ASC("*"), {|| IspraviNarudzbu()})
 
-if (gModul=="HOPS" .or. glUgostOpc)
+if gModul=="HOPS"
 	// provjeriti parametar kako se vode racuni trgovacki ili hotelski
   	if (gRadniRac=="D")
     		bPrevKroz := SETKEY (ASC ("/"), { || PreglRadni (cBrojRn) })
@@ -511,7 +515,7 @@ function UnSetSpecNar()
 
 SETKEY(ASC ("*"), bPrevZv)
 
-if (gModul=="HOPS" .or. glUgostOpc)
+if gModul=="HOPS"
 	if gRadniRac=="D"
     		SETKEY (ASC ("/"), bPrevKroz)
   	endif

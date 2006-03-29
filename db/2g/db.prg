@@ -316,9 +316,16 @@ if (nArea==-1 .or. nArea==(F_DOKS))
 	AADD ( aDbf, { "SMJENA",    "C",  1, 0} )
 	AADD ( aDbf, { "STO",       "C",  3, 0} )
 	AADD ( aDbf, { "VRIJEME",   "C",  5, 0} )
-	if gBrojSto=="D"
+	
+	if gStolovi == "D"
+		AADD ( aDbf, { "ZAK_BR",   "N",  6, 0} )
+		AADD ( aDbf, { "STO_BR",   "N",  3, 0} )
+	endif
+	
+	if gModul == "HOPS" .and. gBrojSto=="D"
 		AADD ( aDbf, { "ZAKLJUCEN", "C",  1, 0} )
 	endif
+	
 	// M1 ? cemu sluzi Z - zakljucen, S-odstampan
 	IF !FILE(KUMPATH+"DOKS.DBF")
 	  DBcreate2(KUMPATH+"DOKS.DBF", aDbf)
@@ -338,8 +345,13 @@ if (nArea==-1 .or. nArea==(F_DOKS))
 	CREATE_INDEX ("7", "IdPos+IdVD+BrDok", KUMPATH+"DOKS" )
 	CREATE_INDEX ("TK", "IdPos+DTOS(Datum)+IdVd", KUMPATH+"DOKS" )
 	CREATE_INDEX ("GOSTDAT", "IdPos+IdGost+DTOS(Datum)+IdVd+Brdok", KUMPATH+"DOKS")
-	if gBrojSto=="D"
+	if gModul == "HOPS" .and. gBrojSto=="D"
 		CREATE_INDEX ("8", "IdPos+IdRadnik+Zakljucen+BrDok", KUMPATH+"DOKS" )
+	endif
+	// indexi za vodjenje kase po stolovima
+	if gStolovi == "D"
+		CREATE_INDEX ("STO", "IdPos+IdRadnik+idvd+STR(STO_BR)+STR(ZAK_BR)+DTOS(datum)+brdok", KUMPATH+"DOKS" )
+		CREATE_INDEX ("ZAK", "IdPos+idvd+STR(ZAK_BR)+STR(STO_BR)+DTOS(datum)+brdok", KUMPATH+"DOKS" )
 	endif
 endif
 
@@ -571,7 +583,7 @@ if (nArea==-1 .or. nArea==(F_ROBAIZ))
 	CREATE_INDEX ("1", "IdRoba", PRIVPATH+"ROBAIZ")
 endif
 
-if (gModul=="HOPS" .or. glUgostOpc)
+if gModul=="HOPS"
 	// RAZDR.DBF
 	if (nArea==-1 .or. nArea==(F_RAZDR))
 		IF ! FILE (PRIVPATH + "RAZDR.DBF")
@@ -1165,7 +1177,7 @@ if gPratiStanje $ "D!"
   O_POS
 endif
 
-if (gModul=="HOPS" .or. glUgostOpc)
+if gModul=="HOPS"
   O_DIO
   O_ROBAIZ
 endif

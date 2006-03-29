@@ -921,6 +921,7 @@ local nUTotal
 local nCSum
 local cRdnkNaz := ""
 local aPPs
+local nZakBr:=0
 
 drn_create()
 drn_open()
@@ -952,6 +953,13 @@ nCSum := 0
 // matrica aRacuni moze da sadrzi vise racuna, u svakom slucaju sadrzi 1 racun
 // aRacuni : {DOKS->IdPos, DOKS->(BrDok), DOKS->IdVrsteP, DOKS->Datum})
 
+nUkupno := 0
+nUBPDV := 0
+nUPDV := 0
+nUPopust := 0
+nUBPDVPopust := 0
+nUTotal := 0
+
 for i:=1 to LEN(aRacuni)
 
 	dDatRn := aRacuni[i, 4]
@@ -982,6 +990,9 @@ for i:=1 to LEN(aRacuni)
 		cSmjena := doks->smjena
 		cTime := doks->vrijeme
 		cVrstaP := doks->idvrstep
+		if gStolovi == "D" .and. doks->zak_br <> 0
+			nZakBr := doks->zak_br
+		endif
 	endif
 	
 	select osob
@@ -1001,24 +1012,14 @@ for i:=1 to LEN(aRacuni)
 	
 	select &cPosDB
 
-	nUkupno := 0
-	nUBPDV := 0
-	nUPDV := 0
-	nUPopust := 0
-	nUBPDVPopust := 0
-	nUTotal := 0
-
-
 	if glUgost
            // nStopaPP1, nUkPP1, nStopaPP2, nUkPP2 ....
 	   aStPP:={}
 	   aUkPP:={}
 	endif
-	
-	
+		
 	do while !eof() .and. &cPosDB->(idpos + idvd + DToS(datum) + brdok) == (cIdPos + VD_RN + DToS(dDatRn) + cBrDok)
-		
-		
+			
 		nCjenBPDV := 0
 		nCjenPDV := 0
 		nKolicina := 0
@@ -1134,48 +1135,51 @@ for i:=1 to LEN(aRacuni)
   		skip
 	enddo
 
-	if glUgost
-		aPPs := { aStPP, aUkPP }
-	else
-		aPPs := nil
-	endif
-	
-	// dodaj zapis u drn.dbf
-	add_drn(cStalRac, dDatRn, nil, nil, cTime, Round(nUBPDV,2), Round(nUPopust,2), Round(nUBPDVPopust,2), Round(nUPDV,2), Round(nUTotal,2), nCSum, 0, 0, 0)
-	
-	// mjesto nastanka racuna
-	add_drntext("R01", gRnMjesto)
-	// dodaj naziv radnika
-	add_drntext("R02", cRdnkNaz)
-	// dodaj podatak o smjeni
-	add_drntext("R03", cSmjena)
-	// vrsta placanja
-	add_drntext("R05", cNazVrstaP)
-	// dodatni text na racunu 3 linije
-	add_drntext("R06", gRnPTxt1)
-	add_drntext("R07", gRnPTxt2)
-	add_drntext("R08", gRnPTxt3)
-	// Broj linija potrebnih da se ocjepi traka
-	add_drntext("P12", ALLTRIM(STR(nFeedLines)))
-	// sekv.za otvaranje ladice
-	add_drntext("P13", gOtvorStr)
-	// sekv.za cjepanje trake
-	add_drntext("P14", gSjeciStr)
-	
-	// ako je prepis
-	if lPrepis
-		// podaci o kupcu
-		add_drntext("K01", dokspf->knaz)
-		add_drntext("K02", dokspf->kadr)
-		add_drntext("K03", dokspf->kidbr)
-		// dodaj D01 - A - azuriran dokument
-		add_drntext("D01", "A")
-	else
-		// dodaj D01 - P - priprema
-		add_drntext("D01", "P")
-	endif
-
 next
+
+if glUgost
+	aPPs := { aStPP, aUkPP }
+else
+	aPPs := nil
+endif
+	
+// dodaj zapis u drn.dbf
+add_drn(cStalRac, dDatRn, nil, nil, cTime, Round(nUBPDV,2), Round(nUPopust,2), Round(nUBPDVPopust,2), Round(nUPDV,2), Round(nUTotal,2), nCSum, 0, 0, 0)
+	
+// mjesto nastanka racuna
+add_drntext("R01", gRnMjesto)
+// dodaj naziv radnika
+add_drntext("R02", cRdnkNaz)
+// dodaj podatak o smjeni
+add_drntext("R03", cSmjena)
+// vrsta placanja
+add_drntext("R05", cNazVrstaP)
+// dodatni text na racunu 3 linije
+add_drntext("R06", gRnPTxt1)
+add_drntext("R07", gRnPTxt2)
+add_drntext("R08", gRnPTxt3)
+// Broj linija potrebnih da se ocjepi traka
+add_drntext("P12", ALLTRIM(STR(nFeedLines)))
+// sekv.za otvaranje ladice
+add_drntext("P13", gOtvorStr)
+// sekv.za cjepanje trake
+add_drntext("P14", gSjeciStr)
+
+// ako je prepis
+if lPrepis
+	// podaci o kupcu
+	add_drntext("K01", dokspf->knaz)
+	add_drntext("K02", dokspf->kadr)
+	add_drntext("K03", dokspf->kidbr)
+	// dodaj D01 - A - azuriran dokument
+	if (gStolovi == "D" .and. doks->zak_br <> 0)
+		add_drntext("R11", ALLTRIM(STR(nZakBr)))
+	endif
+	add_drntext("D01", "A")
+else
+	// dodaj D01 - P - priprema
+	add_drntext("D01", "P")
+endif
 
 return
 *}

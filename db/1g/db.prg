@@ -124,7 +124,7 @@ function OSif()
 
 O_KASE
 O_UREDJ
-if (gModul=="HOPS" .or. glUgostOpc)
+if gModul=="HOPS"
 	O_MJTRUR
   	O_ROBAIZ
   	O_SAST
@@ -232,7 +232,7 @@ if gPratiStanje $ "D!"
 	O_POS
 endif
 
-if (gModul=="HOPS" .or. glUgostOpc)
+if gModul=="HOPS"
 	O_DIO 
 	O_ROBAIZ
 endif
@@ -593,7 +593,7 @@ _IdGost:=cIdGost
 _IdOdj:=SPACE(LEN(_IdOdj))
 _M1:=OBR_NIJE
 
-if gBrojSto=="D"
+if gModul == "HOPS" .and. gBrojSto=="D"
 	_Zakljucen:="N"
 endif
 

@@ -32,13 +32,17 @@ else
 	private aRabat:={}
     	AADD(opc,"1. priprema racuna                        ")
     	AADD(opcexe,{|| Narudzba(), ZakljuciRacun() })
+	if gStolovi == "D"
+		AADD(opc,"2. zakljucenje - placanje stola ")
+    		AADD(opcexe,{|| g_zak_sto() })
+	endif
 endif
 
 AADD(opc,"3. promijeni nacin placanja")
 AADD(opcexe,{|| PromNacPlac() })
 AADD(opc,"4. prepis racuna           ")
 AADD(opcexe,{|| PrepisRacuna() })
-if gBrojSto=="D" .and. gRadniRac=="N"
+if (gModul == "HOPS" .and. gBrojSto=="D") .and. gRadniRac=="N"
 	AADD(opc,"5. zakljucivanje racuna    ")
 	AADD(opcexe,{|| MnuZakljRacuna() })
 endif

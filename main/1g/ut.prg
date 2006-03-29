@@ -755,10 +755,6 @@ ENDIF
 
 @ 22,1 SAY PADC ( Razrijedi (gKorIme), 78) COLOR INVERT
 
-if glUgostOpc
-	@ 24, 2 SAY "Ugostiteljska kasa" 
-endif
-
 return
 *}
 

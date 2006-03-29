@@ -39,7 +39,7 @@ ImeKol:={ { "Datum",       {|| Datum }, },;
           { "Iznos stavke",{|| STR (Kolicina*Cijena, 12, 2) }, },;
           { "G.T.",        {|| IIF (GT=="1"," NE "," DA ")},};
         }
-if (gModul=="HOPS" .or. glUgostOpc)
+if gModul=="HOPS"
 	Kol:={1, 2, 3, 4, 5, 6, 7,8}
 else
   	Kol:={1, 3, 4, 5, 6, 7 }

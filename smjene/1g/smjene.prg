@@ -442,7 +442,7 @@ else
     		MsgBeep ("#Stampanje pazara smjene nije uspjelo!#")
     		CLOSERET 0
   	endif
-  	if gModul=="HOPS" .or. glUgostOpc
+  	if gModul=="HOPS"
     		// generisi utrosak sirovina za smjenu
     		GenUtrSir(gDatum,gDatum,gSmjena)
   	endif

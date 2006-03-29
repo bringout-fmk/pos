@@ -16,7 +16,7 @@ function Narudzba()
 
 SETKXLAT("'","-") 
 
-if (gModul=="HOPS" .or. glUgostOpc)
+if gModul=="HOPS"
 	NarudzbaH()
 else
 	NarudzbaT()
@@ -69,18 +69,6 @@ return
  */
 function NarudzbaT()
 *{
-// Ovo ogranicenje prebaceno u samo izdavanje racuna
-/*
-if IsPlNS() .and. gFissta=="D"
-	// provjeri da li postoji formiran dnevni izvjestaj
-	// ako postoji NEMA UNOSA NOVIH RACUNA
-	if gFisRptEvid=="D" .and.  ReadLastFisRpt("1", DATE())
-		MsgBeep("Postoji formiran dnevni izvjestaj! #Unos novih racuna nije moguc! # Prekidam operaciju !")
-		CLOSERET
-	endif
-endif
-*/
-
 O_Nar()
 
 SELECT _PRIPR
@@ -111,7 +99,7 @@ else
 	cBrojRn:=cBrojRn
 endif
 
-if (gModul=="HOPS" .or. glUgostOpc)
+if gModul=="HOPS"
 	if gRadniRac=="D"
 		set cursor on
     		Box(, 2, 40)
@@ -147,7 +135,7 @@ SELECT _POS
 set cursor on
 cBrojRn:=_POS->(NarBrDok (gIdPos, VD_RN))
 
-if (gModul="HOPS" .or. glUgostOpc)
+if gModul="HOPS"
 	if gBrojSto $ "DN"
 		set cursor on
   		if gRadniRac=="D"
@@ -164,6 +152,36 @@ if (gModul="HOPS" .or. glUgostOpc)
   		if LASTKEY()==K_ESC
     			return
  		endif
+	endif
+else
+	if gStolovi == "D"
+		set cursor on
+		Box(, 6, 40)
+			cStZak := "N"
+			@ m_x+2, m_y+10 SAY "Unesi broj stola:" GET cSto VALID (!Empty(cSto) .and. VAL(cSto) > 0) PICT "999"
+  			read
+			if LastKey()==K_ESC
+				MsgBeep("Unos stola obavezan !")
+				return
+			endif
+			// daj mi info o trenutnom stanju stola
+			nStStanje := g_stanje_stola(VAL(cSto))
+			@ m_x+4, m_y+2 SAY "Prethodno stanje stola:   " + ALLTRIM(STR(nStStanje)) + " KM"
+  			if nStStanje > 0
+				@ m_x+6, m_y+2 SAY "Zakljuciti prethodno stanje (D/N)?" GET cStZak VALID cStZak$"DN" PICT "@!"
+			endif
+			read
+		BoxC()
+		
+		if LastKey() == K_ESC
+			MsgBeep("Unos novih stavki prekinut !")
+			return
+		endif
+		
+		if cStZak == "D"
+			zak_sto(VAL(cSto))
+		endif
+		
 	endif
 endif 
 
@@ -291,7 +309,7 @@ return Vrati
 function ZakljuciRacun()
 *{
 
-if (gModul=="HOPS" .or. glUgostOpc)
+if gModul=="HOPS"
 	ZakljuciRH()
 else
 	ZakljuciRT()

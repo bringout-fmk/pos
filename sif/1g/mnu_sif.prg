@@ -157,17 +157,6 @@ endif
 AADD(opc,"Z. promjena sifre PR")
 AADD(opcexe, {|| KL_PRacuna() })
 
-if glUgostOpc
-	AADD(opc, "---------------------")
-	AADD(opcexe, {|| nil })
-	AADD(opc, "S. sirovine")
-	AADD(opcexe, {|| P_Sirov() })
-	AADD(opc, "N. normativi")
-	AADD(opcexe, {|| P_Sast() })
-	AADD(opc, "X. stampa normativa")
-	AADD(opcexe, {|| ISast() })
-endif
-
 OSif()
 
 Izbor:=1

@@ -139,7 +139,7 @@ if fPocInv
 	cBrDok:=DOKS->(NarBrDok(gIdPos,cIdVd))
 	fPreuzeo:=.f.
 	if !fPreuzeo
-		if (gModul=="HOPS" .or. glUgostOpc)
+		if gModul=="HOPS"
 			GenUtrSir(gDatum,gDatum,gSmjena)
 		endif
 		O_InvNiv()
