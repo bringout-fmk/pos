@@ -30,6 +30,10 @@ private aUnosMsg:={}
 private bPrevUp
 private bPrevDn
 
+o_edit_rn()
+
+SELECT _POS
+
 aRabat:={}
 
 if cBrojRn==nil
@@ -44,6 +48,7 @@ if gDisplay=="D"
 	Send2ComPort(CHR(30)+"PRIPREMA RACUNA"+CHR(22)+CHR(13))
 	Send2ComPort("Sigma-com software")
 endif
+
 
 ImeKol:={{"Sifra",{|| IdRoba             }},{ "Naziv",      {|| Left (RobaNaz, 30) }},{ "JMJ",        {|| JMJ                }},{ "Kolicina  ", {|| STR (kolicina,8,2) }},{ "Cijena    ", {|| STR (Cijena,8,2)   }},{ "Iznos     ", {|| STR (Kolicina * Cijena,10,2)}}}
 

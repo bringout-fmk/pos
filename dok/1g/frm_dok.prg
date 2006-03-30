@@ -42,6 +42,7 @@ endif
 
 AADD(ImeKol,{"VP",{||IdVrsteP}})
 AADD(ImeKol,{"Datum",{||datum}})
+
 if gStolovi == "D"
 	AADD(ImeKol,{"Sto",{||sto_br}})
 else
@@ -198,7 +199,6 @@ do case
         	return DE_CONT
 
     	case Ch==K_ENTER
-		altd()
       		do case
         		case DOKS->IdVd==VD_RN
 				cOdg:="D"
@@ -255,7 +255,10 @@ do case
       		endcase
 	case gStolovi == "D" .and. (Ch==Asc("Z").or.Ch==Asc("z"))
 		if doks->idvd == "42"
+			PushWa()
 			print_zak_br(doks->zak_br)
+			o_pregled()
+			PopWa()
 			select DOKS
 			return (DE_REFRESH)		
 		endif
@@ -319,6 +322,10 @@ private ImeKol
 private Kol
 
 cPrevCol:=SETCOLOR(INVERT)
+SELECT F__PRIPR
+if !used()
+	O__PRIPR
+endif
 SELECT _PRIPR
 Zapp()
 Scatter()

@@ -881,7 +881,7 @@ Box (,2,60)
 BoxC()
 
 if Pitanje(,"Odstampati zbirni racun (D/N) ?","D")=="D"
-	StampaRekapitulacije(gIdRadnik,cBrojStola,dDatOd,dDatDo,.t.)
+	StampaRekapitulacije(gIdRadnik, cBrojStola, dDatOd, dDatDo, .t.)
 endif
 
 return

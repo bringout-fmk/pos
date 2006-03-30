@@ -192,8 +192,10 @@ if UPPER(CHR(LASTKEY()))=="P"
 endif
 
 if UPPER(CHR(LASTKEY()))=="Z"
-  	print_zak_br(doks->zak_br)
-	select doks
+  	PushWa()
+	print_zak_br(doks->zak_br)
+	o_pregled()
+	PopWa()
 	return DE_REFRESH
 endif
 

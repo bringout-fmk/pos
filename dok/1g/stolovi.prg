@@ -68,7 +68,8 @@ select (nArr)
 return nCnt
 *}
 
-
+// ------------------------------
+// ------------------------------
 function show_zak_info(nZakBr)
 *{
 local nArr
@@ -115,32 +116,241 @@ select (nArr)
 return
 *}
 
-
+// -------------------------------------------------------
 // printanje zbirnog racuna na osnovu broja zakljucenja
+// -------------------------------------------------------
 function print_zak_br(nZakBr)
-*{
+local nCSum
+local cIdPos
+local cIdVd
+local cBrDok
+local cTime
+local cIdRoba
+local cIdTarifa
+local cRobaNaz
+local nPPDV
+local nKolicina
+local nCjenBPdv
+local nCjen2BPDV
+local nCjen2PDV
+local nCjenPDV
+local nIznPop
+local nUBPDV
+local nUPDV
+local nUTotal
+local nUPopust
+local nUBPdvPopust
+local dDatRn
+local cVrstaP
+local cNazVrstaP
+local cIdRadnik
+local cRdnkNaz
+local cBrZDok
 local nArr
+
 nArr:=SELECT()
+
+drn_create()
+drn_open()
+drn_empty()
+
+o_pregled()
+
+select pos
+SET ORDER TO TAG "1"
 
 select doks
 set order to tag "ZAK"
-hseek gIdPos + "42" + STR(nZakBr,6)
+hseek gIdPos + "42" + STR(nZakBr, 6)
 
-aRacuni:={}
+if !found()
+	MsgBeep("racun ZAK.STO=" + STR(nZakBr, 6) + " ne postoji !?")
+	close all
+	return
+endif
+	
 
+cZBrDok := ALLTRIM(doks->brdok) + "-" + ALLTRIM(STR(nZakBr,6))
+
+
+nCSUm := 0
+nUBPDV:=0
+nUPDV:=0
+nUTotal:=0
+nUPopust:=0
+nUBPdvPopust:=0
+		
 do while !EOF() .and. doks->idvd == "42" .and. doks->zak_br == nZakBr
-	AADD(aRacuni, {doks->idpos, doks->brdok, doks->idvrstep, doks->datum})
+
+	cIdPos := doks->idpos
+	cIdVD := doks->idvd
+	cBrDok := doks->brdok
+	dDatRn := doks->datum
+	
+	cSto := doks->sto
+	cIdRadnik := doks->idRadnik
+	cSmjena := doks->smjena
+	cTime := doks->vrijeme
+	cVrstaP := doks->idvrstep
+	
+	select osob
+	set order to tag "NAZ"
+	hseek cIdRadnik
+	cRdnkNaz := osob->naz
+	
+	select vrstep
+	set order to tag "ID"
+	hseek cVrstaP
+	
+	if !Found()
+		cNazVrstaP := "GOTOVINA"
+	else
+		cNazVrstaP := ALLTRIM(vrstep->naz)
+	endif
+	
+
+	select pos
+	hseek doks->(cIdPos+cIdVd+DTOS(dDatRn)+cBrDok)
+	// -------- vrti kroz pos -------------------------
+	do while !eof() .and. (pos->idpos == cIdpos) .and. (pos->idvd == cIdVd) .and.  (pos->datum == dDatRn) .and. (pos->brdok == cBrDok)
+
+		nCjenBPDV := 0
+		nCjenPDV := 0
+		nKolicina := 0
+ 		nPopust := 0
+		nCjen2BPDV := 0
+		nCjen2PDV := 0
+ 		nPDV := 0
+		nIznPop := 0
+
+
+		cIdRoba := pos->idroba
+		cIdTarifa := pos->idtarifa
+
+		select roba
+		hseek cIdRoba
+		cJmj := roba->jmj
+		cRobaNaz := roba->naz	
+		
+		// seek-uj tarifu
+		select tarifa
+		hseek cIdTarifa
+		nPPDV := tarifa->opp
+
+
+		nKolicina := pos->kolicina
+ 		nCjenPDV :=  pos->cijena
+		dDatDok := pos->datum
+
+		nCjenBPDV := nCjenPDV / ( 1 + nPPDV/100)	
+		do case
+			case gPopVar="P" .and. gClanPopust 
+				if !EMPTY(cPartner)
+					nIznPop := pos->ncijena
+				endif
+			case gPopVar="P" .and. !gClanPopust
+				nIznPop := pos->ncijena
+		endcase
+
+		nPopust := 0
+		
+		if Round(nIznPop, 4) <> 0
+		
+			// cjena 2 : cjena sa pdv - iznos popusta
+			nCjen2PDV := nCjenPDV - nIznPop
+			
+			// cjena 2 : cjena bez pdv - iznos popusta bez pdv
+			nCjen2BPDV := nCjenBPDV - (nIznPop / (1 + nPPDV/100))
+			
+			// procenat popusta
+			nPopust := ((nIznPop / (1 + nPPDV/100)) / nCjenBPDV) * 100
+			
+		endif
+	
+		// izracunaj ukupno za stavku
+		nUkupno :=  (nKolicina * nCjenPDV) - (nKolicina * nIznPop)
+		// izracunaj ukupnu vrijednost pdv-a
+		nVPDV := ((nKolicina * nCjenBPDV) - (nKolicina * (nIznPop / (1 + nPPDV/100)))) * (nPPDV/100)
+
+		// ukupno bez pdv-a
+		nUBPDV += nKolicina * nCjenBPDV
+		// ukupno pdv
+		nUPDV += nVPDV
+		// total racuna
+		nUTotal += nUkupno
+
+		if Round(nCjen2BPDV, 2)<>0
+			// ukupno popust
+			nUPopust += (nCjenBPDV - nCjen2BPDV) * nKolicina
+		endif
+		
+		// ukupno bez pdv-a - popust
+		nUBPDVPopust := nUBPDV - nUPopust
+
+
+		++ nCSum
+
+		// dodaj stavku u rn.dbf
+		add_rn( cZBrDok, STR(nCSum, 3), "", cIdRoba, cRobaNaz, cJmj, nKolicina, Round(nCjenPDV,3), Round(nCjenBPDV,3), Round(nCjen2PDV,3), Round(nCjen2BPDV,3), Round(nPopust,2), Round(nPPDV,2), Round(nVPDV,3), Round(nUkupno,3), 0, 0)
+		SELECT POS
+		skip
+	enddo
+	// --- zavrsio sa prolaskom kroz pos stavke --
+		
+	select doks
 	skip
 enddo
 
-skip -1
 
-PDVStampaRac(gIdPos, doks->brdok, .t., doks->idvrstep, doks->datum, aRacuni, .f.)
+// dodaj zapis u drn.dbf
+add_drn( cZBrDok, dDatRn, nil, nil, cTime, ;
+         Round(nUBPDV,2), Round(nUPopust,2), Round(nUBPDVPopust,2), ;
+	 Round(nUPDV,2), Round(nUTotal,2), ;
+	 nCSum, 0, 0, 0)
+	
+// mjesto nastanka racuna
+add_drntext("R01", gRnMjesto)
+// dodaj naziv radnika
+add_drntext("R02", cRdnkNaz)
 
+// dodaj podatak o smjeni
+add_drntext("R03", cSmjena)
+
+// vrsta placanja
+add_drntext("R05", cNazVrstaP)
+
+// dodatni text na racunu 3 linije
+add_drntext("R06", gRnPTxt1)
+add_drntext("R07", gRnPTxt2)
+add_drntext("R08", gRnPTxt3)
+
+// Broj linija potrebnih da se ocjepi traka
+add_drntext("P12", ALLTRIM(STR(nFeedLines)))
+// sekv.za otvaranje ladice
+add_drntext("P13", gOtvorStr)
+// sekv.za cjepanje trake
+add_drntext("P14", gSjeciStr)
+
+select dokspf
+set order to tag "1"
+hseek cIdPos + VD_RN + DToS(dDatRn) + cBrDok
+
+add_drntext("K01", dokspf->knaz)
+add_drntext("K02", dokspf->kadr)
+add_drntext("K03", dokspf->kidbr)
+// dodaj D01 - A - azuriran dokument
+add_drntext("R11", ALLTRIM(STR(nZakBr)))
+add_drntext("D01", "A")
+
+// ispisi racun
+rb_print(.t.)
+
+close all
 return
-*}
 
 
+// -------------------------------
+// -------------------------------
 function g_otv_stolovi()
 *{
 local nArr
@@ -170,23 +380,33 @@ select (nArr)
 return aStolovi
 *}
 
-
+// ---------------------------
+// ---------------------------
 function g_zak_sto()
 *{
-local cStoBr:=SPACE(3)
+local nSelected := 0
+local nStoBr:=0
 local aStolovi := {}
 local nZakBr
 
 // daj listu otvorenih stolova
 aStolovi := g_otv_stolovi()
-if !pr_otv_stolovi(aStolovi)
-	return
+
+nSelected := mnu_otv_stolovi(aStolovi) 
+if nSelected == 0
+	return .f.
 endif
 
+// ovo je sto odabran u meniju
+nStoBr := aStolovi[nSelected, 1]
+
+
 // postavi upit za broj stola
-Box(,3,30)
+Box(, 3, 30)
 	set cursor on
-	@ m_x+2, m_y+6 SAY "Unesi broj stola:" GET cStoBr VALID (!EMPTY(cStoBr) .and. VAL(cStoBr) > 0) PICT "999"
+	@ m_x+2, m_y+6 SAY "Unesi broj stola:" GET nStoBr ;
+	     VALID (nStoBr > 0) ;
+	     PICT "999"
 	read
 BoxC()
 
@@ -196,17 +416,18 @@ if LastKey()==K_ESC
 endif
 
 // provjeri da nije ukucan broj stola koji nema racuna
-if ASCAN(aStolovi, {|aVal| aVal[1] == VAL(cStoBr)}) == 0
+if ASCAN(aStolovi, {|aVal| aVal[1] == nStoBr}) == 0
 	MsgBeep("Za ovaj sto ne postoje otvoreni racuni !#Prekidam operaciju !")
 	return
 endif
 
-zak_sto(VAL(cStoBr))
+zak_sto(nStoBr)
 
 return
 *}
 
-
+// --------------------------------
+// --------------------------------
 function pr_otv_stolovi(aStol)
 *{
 
@@ -236,6 +457,39 @@ return .t.
 *}
 
 
+// --------------------------------
+// --------------------------------
+function mnu_otv_stolovi(aStol)
+local i
+local nSelected
+private Opc:={}
+private opcexe:={}
+private Izbor
+
+if LEN(aStol) == 0
+	MsgBeep("Nema nezakljucenih stolova !")
+	return 0
+endif
+
+
+for i:=1 to LEN(aStol)
+	cPom := STR(aStol[i,1],3) + " - stanje : " + STR(aStol[i,2], 7, 2)
+	cPom := PADR(cPom, 30)
+	
+	AADD(opc, cPom )
+	AADD(opcexe, {|| nSelected:=Izbor, Izbor:=0  } )
+next
+
+Izbor := 1
+// 0 - ako se kaze <ESC>
+Menu_SC("o_s")
+
+
+return nSelected
+
+
+// --------------------------------
+// --------------------------------
 function zak_sve_stolove()
 *{
 local nNextZak := 0
