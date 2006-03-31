@@ -331,6 +331,9 @@ add_drntext("P13", gOtvorStr)
 // sekv.za cjepanje trake
 add_drntext("P14", gSjeciStr)
 
+// napuni podatke o maticnoj firmi - zaglavlje
+firma_params_fill()
+
 select dokspf
 set order to tag "1"
 hseek cIdPos + VD_RN + DToS(dDatRn) + cBrDok
