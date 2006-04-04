@@ -148,6 +148,7 @@ local cRdnkNaz
 local cBrZDok
 local nArr
 local cBrStola
+local cVezRacuni
 
 nArr:=SELECT()
 
@@ -170,9 +171,7 @@ if !found()
 	return
 endif
 	
-
 cZBrDok := ALLTRIM(doks->brdok) + "-" + ALLTRIM(STR(nZakBr,6))
-
 
 nCSUm := 0
 nUBPDV:=0
@@ -180,6 +179,8 @@ nUPDV:=0
 nUTotal:=0
 nUPopust:=0
 nUBPdvPopust:=0
+
+cVezRacuni := ""
 		
 do while !EOF() .and. doks->idvd == "42" .and. doks->zak_br == nZakBr
 
@@ -193,6 +194,8 @@ do while !EOF() .and. doks->idvd == "42" .and. doks->zak_br == nZakBr
 	cSmjena := doks->smjena
 	cTime := doks->vrijeme
 	cVrstaP := doks->idvrstep
+	
+	cVezRacuni += ALLTRIM(cBrDok) + ","
 	
 	select osob
 	set order to tag "NAZ"
@@ -328,6 +331,8 @@ add_drntext("R08", gRnPTxt3)
 if gStolovi == "D"
 	// broj stola
 	add_drntext("R11", cBrStola)
+	// vezni racuni
+	add_drntext("R12", cVezRacuni)
 endif
 
 // Broj linija potrebnih da se ocjepi traka
@@ -348,7 +353,7 @@ add_drntext("K01", dokspf->knaz)
 add_drntext("K02", dokspf->kadr)
 add_drntext("K03", dokspf->kidbr)
 // dodaj D01 - A - azuriran dokument
-add_drntext("R11", ALLTRIM(STR(nZakBr)))
+//add_drntext("R11", ALLTRIM(STR(nZakBr)))
 add_drntext("D01", "A")
 
 // ispisi racun
