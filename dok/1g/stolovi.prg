@@ -353,7 +353,6 @@ add_drntext("K01", dokspf->knaz)
 add_drntext("K02", dokspf->kadr)
 add_drntext("K03", dokspf->kidbr)
 // dodaj D01 - A - azuriran dokument
-//add_drntext("R11", ALLTRIM(STR(nZakBr)))
 add_drntext("D01", "A")
 
 // ispisi racun
