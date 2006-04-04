@@ -147,6 +147,7 @@ local cIdRadnik
 local cRdnkNaz
 local cBrZDok
 local nArr
+local cBrStola
 
 nArr:=SELECT()
 
@@ -187,7 +188,7 @@ do while !EOF() .and. doks->idvd == "42" .and. doks->zak_br == nZakBr
 	cBrDok := doks->brdok
 	dDatRn := doks->datum
 	
-	cSto := doks->sto
+	cBrStola := ALLTRIM(STR(doks->sto_br))
 	cIdRadnik := doks->idRadnik
 	cSmjena := doks->smjena
 	cTime := doks->vrijeme
@@ -323,6 +324,11 @@ add_drntext("R05", cNazVrstaP)
 add_drntext("R06", gRnPTxt1)
 add_drntext("R07", gRnPTxt2)
 add_drntext("R08", gRnPTxt3)
+
+if gStolovi == "D"
+	// broj stola
+	add_drntext("R11", cBrStola)
+endif
 
 // Broj linija potrebnih da se ocjepi traka
 add_drntext("P12", ALLTRIM(STR(nFeedLines)))

@@ -921,6 +921,7 @@ local nUTotal
 local nCSum
 local cRdnkNaz := ""
 local aPPs
+local cBrStola
 local nZakBr:=0
 
 drn_create()
@@ -977,6 +978,9 @@ for i:=1 to LEN(aRacuni)
 		cSmjena := &cPosDB->smjena
 		cTime := LEFT(TIME(), 5)
 		cVrstaP := &cPosDB->idvrstep
+		if gStolovi == "D"
+			cBrStola := ALLTRIM(STR(&cPosDB->sto_br))
+		endif
 	else
 		// nadji parametre kupca
 		select dokspf
@@ -990,8 +994,8 @@ for i:=1 to LEN(aRacuni)
 		cSmjena := doks->smjena
 		cTime := doks->vrijeme
 		cVrstaP := doks->idvrstep
-		if gStolovi == "D" .and. doks->zak_br <> 0
-			nZakBr := doks->zak_br
+		if gStolovi == "D"
+			cBrStola := ALLTRIM(STR(doks->sto_br))
 		endif
 	endif
 	
@@ -1165,16 +1169,16 @@ add_drntext("P13", gOtvorStr)
 // sekv.za cjepanje trake
 add_drntext("P14", gSjeciStr)
 
+if gStolovi == "D"
+	add_drntext("R11", cBrStola)
+endif
+
 // ako je prepis
 if lPrepis
 	// podaci o kupcu
 	add_drntext("K01", dokspf->knaz)
 	add_drntext("K02", dokspf->kadr)
 	add_drntext("K03", dokspf->kidbr)
-	// dodaj D01 - A - azuriran dokument
-	if (gStolovi == "D" .and. doks->zak_br <> 0)
-		add_drntext("R11", ALLTRIM(STR(nZakBr)))
-	endif
 	add_drntext("D01", "A")
 else
 	// dodaj D01 - P - priprema
