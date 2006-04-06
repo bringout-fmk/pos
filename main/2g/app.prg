@@ -510,6 +510,7 @@ public gVSmjene:="N"
 public gSezonaTip:="M"
 public gSifUpravn:="D"
 public gEntBarCod:="D"
+public gSifUvPoNaz:="N" // sifra uvijek po nazivu
 
 public gPosNaz
 public gDioNaz
@@ -703,6 +704,7 @@ Rpar("Si",@gSifUpravn)
 Rpar("Sx",@gDisplay)
 Rpar("Bc",@gEntBarCod)
 Rpar("Ep",@gEvidPl)
+Rpar("UN",@gSifUvPoNaz)
 Rpar("dF",@gDiskFree)
 
 altd()

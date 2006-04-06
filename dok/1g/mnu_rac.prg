@@ -220,6 +220,39 @@ return
 *}
 
 
+// pretraga sifre po nazivu uvijek
+function sif_uv_naziv(cId)
+*{
+local nIdLen
+// prvo prekontrolisati uslove
+
+// parametar
+if gSifUvPoNaz == "N"
+	return
+endif
+// ako je uneseno prazno
+if Empty(cId)
+	return
+endif
+
+// ako je unesena puna duzina polja
+if LEN(ALLTRIM(cID)) == 10
+	return
+endif
+
+// ako postoji tacka na kraju
+if RIGHT(ALLTRIM(cID),1) == "."
+	return
+endif
+
+// dodaj tacku
+cId := PADR( ALLTRIM(cId) + "." , 10)
+
+return
+*}
+
+
+
 /*! \fn PostRoba(cId,dx,dy,lFlag)
  *  \brief
  *  \param cId
@@ -235,6 +268,9 @@ local aZabrane
 local i
 private ImeKol
 private Kol
+
+altd()
+sif_uv_naziv(@cId)
 
 UnSetSpecNar()
 SETKEY(K_PGDN, bPrevDn)

@@ -301,6 +301,7 @@ Rpar("Sx",@gDisplay)
 Rpar("Bc",@gEntBarCod)
 Rpar("Ep",@gEvidPl)
 Rpar("dF",@gDiskFree)
+Rpar("UN",@gSifUvPoNaz)
 if IsPDV()
 	Rpar("pF",@gPorFakt)
 endif
@@ -339,6 +340,7 @@ if IsPDV()
 endif
 
 AADD (aNiz, {"Voditi po stolovima (D/N)? " , "gStolovi", "gStolovi$'DN'", "@!", })
+AADD (aNiz, {"Kod unosa racuna uvijek pretraga art.po nazivu (D/N)? " , "gSifUvPoNaz", "gSifUvPoNaz$'DN'", "@!", })
 
 
 VarEdit(aNiz,2,2,24,79,"PARAMETRI RADA PROGRAMA - PRINCIPI RADA","B1")
@@ -371,6 +373,7 @@ if LASTKEY()<>K_ESC
     	Wpar("np",@gUpitNP, .t., "Z")
     	Wpar("Ep",@gEvidPl, .t., "Z")
     	Wpar("dF",@gDiskFree, .t., "Z")
+    	Wpar("UN",@gSifUvPoNaz, .t., "Z")
 	if IsPDV()
     		Wpar("pF",@gPorFakt, .t., "Z")
 	endif
