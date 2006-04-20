@@ -878,6 +878,20 @@ return
 *}
 
 
+function gvars_fill()
+*{
+// snimanje defaultnih postavki
+
+// prikaz cijene sa pdv, bez pdv
+add_drntext("P20", ALLTRIM(STR(grbCjen)) )
+// stampa id robe na racunu
+add_drntext("P21", grbStId )
+// redukcija trake
+add_drntext("P22", ALLTRIM(STR(grbReduk)) )
+
+return
+*}
+
 function firma_params_fill()
 *{
 // podaci firme
@@ -939,6 +953,7 @@ O_TARIFA
 O__POS
 
 firma_params_fill()
+gvars_fill()
 
 cPosDB := "_POS"
 
@@ -955,6 +970,7 @@ nCSum := 0
 // aRacuni : {DOKS->IdPos, DOKS->(BrDok), DOKS->IdVrsteP, DOKS->Datum})
 
 nUkupno := 0
+nUkStavka := 0
 nUBPDV := 0
 nUPDV := 0
 nUPopust := 0
@@ -1109,9 +1125,9 @@ for i:=1 to LEN(aRacuni)
 			
 		endif
 		
-	
 		// izracunaj ukupno za stavku
-		nUkupno :=  (nKolicina * nCjenPDV) - (nKolicina * nIznPop)
+		nUkupno := (nKolicina * nCjenPDV) - (nKolicina * nIznPop)
+		
 		// izracunaj ukupnu vrijednost pdv-a
 		nVPDV := ((nKolicina * nCjenBPDV) - (nKolicina * (nIznPop / (1 + nPPDV/100)))) * (nPPDV/100)
 
@@ -1130,10 +1146,16 @@ for i:=1 to LEN(aRacuni)
 		// ukupno bez pdv-a - popust
 		nUBPDVPopust := nUBPDV - nUPopust
 
+		if grbCjen == 2
+			nUkStavka := nUkupno
+		else
+			nUkStavka := nUBPDVPopust
+		endif
+		
 		++ nCSum
 
 		// dodaj stavku u rn.dbf
-		add_rn(cStalRac, STR(nCSum, 3), "", cIdRoba, cRobaNaz, cJmj, nKolicina, Round(nCjenPDV,3), Round(nCjenBPDV,3), Round(nCjen2PDV,3), Round(nCjen2BPDV,3), Round(nPopust,2), Round(nPPDV,2), Round(nVPDV,3), Round(nUkupno,3), 0, 0)
+		add_rn(cStalRac, STR(nCSum, 3), "", cIdRoba, cRobaNaz, cJmj, nKolicina, Round(nCjenPDV,3), Round(nCjenBPDV,3), Round(nCjen2PDV,3), Round(nCjen2BPDV,3), Round(nPopust,2), Round(nPPDV,2), Round(nVPDV,3), Round(nUkStavka,3), 0, 0)
 
 		select &cPosDB
   		skip

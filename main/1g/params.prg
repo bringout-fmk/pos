@@ -449,6 +449,9 @@ Rpar("oS",@gOtvorStr)
 Rpar("zI",@gZagIz)
 Rpar("RH",@gRnHeder)
 Rpar("RF",@gRnFuter)
+Rpar("Ra",@grbCjen) // cijena sa pdv ili cijena bez pdv
+Rpar("Rb",@grbStId) // prikaz id robe na racunu
+Rpar("Rc",@grbReduk) // redukcija papira pri izdavanju racuna
 
 UsTipke()
 set cursor on
@@ -461,9 +464,13 @@ AADD(aNiz, {"Stampa poreza pojedinacno (D-pojedinacno,N-zbirno)" , "gPoreziRaste
 AADD(aNiz, {"Broj redova potrebnih da se racun otcijepi" , "nFeedLines", "nFeedLines>=0", "99", })
 AADD(aNiz, {"Sekvenca za cijepanje trake" , "gSjeciStr", , "@S20", })
 AADD(aNiz, {"Sekvenca za otvaranje kase " , "gOtvorStr", , "@S20", })
-AADD(aNiz, {"Redovi zaglavlja racuna za prikaz u zagl.izvjestaja (npr.1;2;5)" , "gZagIz", ,"@S10", })
-AADD(aNiz, {"Naziv fajla zaglavlja racuna" , "gRnHeder", "V_File(@gRnHeder,'zaglavlja')","@!", })
-AADD(aNiz, {"Naziv fajla podnozja racuna" , "gRnFuter", "V_File(@gRnFuter,'podnozja')","@!", })
+//AADD(aNiz, {"Redovi zaglavlja racuna za prikaz u zagl.izvjestaja (npr.1;2;5)" , "gZagIz", ,"@S10", })
+//AADD(aNiz, {"Naziv fajla zaglavlja racuna" , "gRnHeder", "V_File(@gRnHeder,'zaglavlja')","@!", })
+//AADD(aNiz, {"Naziv fajla podnozja racuna" , "gRnFuter", "V_File(@gRnFuter,'podnozja')","@!", })
+AADD(aNiz, {"Racun, prikaz cijene bez PDV (1) ili sa PDV (2) ?" , "grbCjen", , "9", })
+AADD(aNiz, {"Racun, prikaz id artikla na racunu (D/N)" , "grbStId", "grbStId$'DN'", "@!", })
+AADD(aNiz, {"Redukcija potrosnje trake kod izdavanja racuna (0/1/2)" , "grbReduk", "grbReduk>=0 .and. grbReduk<=2", "9", })
+
 VarEdit(aNiz,9,1,19,78,"PARAMETRI RADA PROGRAMA - IZGLED RACUNA","B1")
 
 BosTipke()
@@ -475,10 +482,13 @@ if LASTKEY()<>K_ESC
   	// pohrani u formi 07\32\ ...
   	Wpar("sS",gSjeciStr, .t., "D")
   	Wpar("oS",gOtvorStr, .t., "D")
+  	Wpar("Ra",grbCjen, .t., "D")
+	Wpar("Rb",grbStId, .t., "D")
+	Wpar("Rc",grbReduk, .t., "D")
   	Wpar("RH",gRnHeder, .t., "D")
   	Wpar("zI",gZagIz, .t., "D")
   	Wpar("RF",gRnFuter, .t., "Z")
-  	MsgC()
+	MsgC()
 endif
 
 gSjeciStr:=Odsj(gSjeciStr)

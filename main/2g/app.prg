@@ -527,6 +527,9 @@ public gLocPort:="LPT1"
 public gIdCijena:="1"
 public gsOsInfo:="win98"
 public gDiskFree:="N"
+public grbCjen:=2
+public grbStId:="D"
+public grbReduk:=0
 
 #ifdef CLIP
 	return
@@ -721,6 +724,12 @@ gOtvorStr:=Odsj(@gOtvorStr)
 Rpar("zI",@gZagIz)
 Rpar("RH",@gRnHeder)
 Rpar("RF",@gRnFuter)
+
+// izgled racuna
+Rpar("Ra",@grbCjen)
+Rpar("Rb",@grbStId)
+Rpar("Rc",@grbReduk)
+
 // cijene
 Rpar("nb",@gIdCijena)
 Rpar("pP",@gPopust)
