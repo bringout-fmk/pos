@@ -469,7 +469,7 @@ AADD(aNiz, {"Sekvenca za otvaranje kase " , "gOtvorStr", , "@S20", })
 //AADD(aNiz, {"Naziv fajla podnozja racuna" , "gRnFuter", "V_File(@gRnFuter,'podnozja')","@!", })
 AADD(aNiz, {"Racun, prikaz cijene bez PDV (1) ili sa PDV (2) ?" , "grbCjen", , "9", })
 AADD(aNiz, {"Racun, prikaz id artikla na racunu (D/N)" , "grbStId", "grbStId$'DN'", "@!", })
-AADD(aNiz, {"Redukcija potrosnje trake kod izdavanja racuna (0/1/2)" , "grbReduk", "grbReduk>=0 .and. grbReduk<=2", "9", })
+AADD(aNiz, {"Redukcija potrosnje trake kod stampe racuna i izvjestaja (0/1/2)" , "grbReduk", "grbReduk>=0 .and. grbReduk<=2", "9", })
 
 VarEdit(aNiz,9,1,19,78,"PARAMETRI RADA PROGRAMA - IZGLED RACUNA","B1")
 

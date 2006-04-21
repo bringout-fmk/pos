@@ -1,11 +1,6 @@
 #include "\dev\fmk\pos\pos.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
-
+static LEN_TRAKA:=40
 
 /*! \fn RealKase(fZaklj,dDat0,dDat1,cVarijanta)
  *  \param fZaklj - True - izvjestaj se formira prilikom zakljucivanja radnika; False - uobicajen poziv (obicni izvjestaj)

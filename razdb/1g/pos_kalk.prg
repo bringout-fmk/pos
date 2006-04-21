@@ -71,8 +71,9 @@ cBrDok:=SPACE(LEN(field->brdok))
 
 if priprz->(RecCount2())==0 .and. Pitanje( ,"Preuzeti dokumente iz KALK-a","N")=="D"
 	
-	SelectKalkDbf(cBrDok, @cKalkDestinacija, @cKalkDbf)
-
+	if !SelectKalkDbf(cBrDok, @cKalkDestinacija, @cKalkDbf)
+		return .f.
+	endif
 
 	USEX (cKalkDbf) NEW alias KATOPS
 
@@ -748,12 +749,15 @@ if gModemVeza=="D"
 	endif
 	
         cKalkDestinacija:=TRIM(gKalkDest)+cPrefix
+	
+	// pobrisi fajlove starije od 7 dana
+	BrisiSFajlove(cKalkDestinacija)
+        BrisiSFajlove(strtran(cKalkDestinacija,":"+SLASH,":"+SLASH+"chk"+SLASH))
+
 	aFiles:=DIRECTORY(cKalkDestinacija+"KT*.dbf")
 
         ASORT(aFiles,,,{|x,y| x[3]>y[3] })   // datum
-        BrisiSFajlove(cKalkDestinacija)
-        BrisiSFajlove(strtran(cKalkDestinacija,":"+SLASH,":"+SLASH+"chk"+SLASH))
-
+        
         //  KT0512.DBF = elem[1]
         AEVAL(aFiles,{|elem| AADD(OpcF,PADR(elem[1],15)+iif(UChkPostoji(trim(cKalkDestinacija)+trim(elem[1])),"R","X") + " "+ dtos(elem[3]))},1)
        	ASORT(OpcF,,,{|x,y| RIGHT(x,10)>RIGHT(y,10)})  // datumi
