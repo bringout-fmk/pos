@@ -230,36 +230,6 @@ else
 endif
 *}
 
-// provjeri 
-function set_file_marker(cPath, cName)
-local cPrnPath
-local cChkPath
-
-// osnovni path
-cPrnPath := cPath
-// chk path
-cChkPath := STRTRAN(cPath, ":" + SLASH, ":" + SLASH + "CHK" + SLASH)
-
-// provjeri prvo da li postoji fajl
-if !FILE(cChkPath + cName)
-	return .f.
-endif
-
-// fajl postoji provjeri broj stavki
-close all
-usex (cPrnPath + cName) new alias ntops
-usex (cChkPath + cName) new alias otops
-
-if ntops->(RecCount()) == otops->(RecCount())
-	return .t.
-endif
-
-close all
-
-return .f.
-
-
-
 
 /*! \fn BrisiSFajlove(cDir)
  *  \brief
@@ -770,8 +740,8 @@ if gModemVeza=="D"
 	nFilter := 2
 	Box(,4,40)
 		@ 1+m_x, 2+m_y SAY "Listu sortirati po:"
-		@ 2+m_x, 2+m_y SAY "1. procitane/neprocitane"
-		@ 3+m_x, 2+m_y SAY "2. datum kreiranja"
+		@ 2+m_x, 2+m_y SAY "1. neprocitane/procitane"
+		@ 3+m_x, 2+m_y SAY "2. datum kreiranja fajla"
 		@ 4+m_x, 2+m_y SAY "sort ->" GET nFilter PICT "9" VALID nFilter >= 1 .and. nFilter <= 2
 		read
 	BoxC()
