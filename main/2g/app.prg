@@ -134,6 +134,7 @@ gPrevPos:=gIdPos
 Fx:=4
 Fy:=8
 
+say_fmk_ver()
 
 if gSql=="D"
 	O_Log()
