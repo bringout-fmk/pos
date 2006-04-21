@@ -230,6 +230,36 @@ else
 endif
 *}
 
+// provjeri 
+function set_file_marker(cPath, cName)
+local cPrnPath
+local cChkPath
+
+// osnovni path
+cPrnPath := cPath
+// chk path
+cChkPath := STRTRAN(cPath, ":" + SLASH, ":" + SLASH + "CHK" + SLASH)
+
+// provjeri prvo da li postoji fajl
+if !FILE(cChkPath + cName)
+	return .f.
+endif
+
+// fajl postoji provjeri broj stavki
+close all
+usex (cPrnPath + cName) new alias ntops
+usex (cChkPath + cName) new alias otops
+
+if ntops->(RecCount()) == otops->(RecCount())
+	return .t.
+endif
+
+close all
+
+return .f.
+
+
+
 
 /*! \fn BrisiSFajlove(cDir)
  *  \brief
@@ -734,9 +764,17 @@ return 1
 // -----------------------------------------------
 // odaberi - setuj ime kalk dbf-a
 // -----------------------------------------------
-static function SelectKalkDbf (cBrDok, cKalkDestinacija, cKalkDbf)
-
+static function SelectKalkDbf(cBrDok, cKalkDestinacija, cKalkDbf)
+local nFilter
 if gModemVeza=="D"
+	nFilter := 2
+	Box(,4,40)
+		@ 1+m_x, 2+m_y SAY "Listu sortirati po:"
+		@ 2+m_x, 2+m_y SAY "1. procitane/neprocitane"
+		@ 3+m_x, 2+m_y SAY "2. datum kreiranja"
+		@ 4+m_x, 2+m_y SAY "sort ->" GET nFilter PICT "9" VALID nFilter >= 1 .and. nFilter <= 2
+		read
+	BoxC()
        	// modemska veza ide u odabir dokumenta
        	OpcF:={}
 		
@@ -752,16 +790,23 @@ if gModemVeza=="D"
 	
 	// pobrisi fajlove starije od 7 dana
 	BrisiSFajlove(cKalkDestinacija)
-        BrisiSFajlove(strtran(cKalkDestinacija,":"+SLASH,":"+SLASH+"chk"+SLASH))
+        BrisiSFajlove(STRTRAN(cKalkDestinacija, ":" + SLASH, ":" + SLASH + "chk" + SLASH))
 
 	aFiles:=DIRECTORY(cKalkDestinacija+"KT*.dbf")
 
-        ASORT(aFiles,,,{|x,y| x[3]>y[3] })   // datum
-        
+        ASORT(aFiles,,,{|x,y| DTOS(x[3]) + x[4] > DTOS(y[3]) + y[4] })   // datum + vrijeme
         //  KT0512.DBF = elem[1]
-        AEVAL(aFiles,{|elem| AADD(OpcF,PADR(elem[1],15)+iif(UChkPostoji(trim(cKalkDestinacija)+trim(elem[1])),"R","X") + " "+ dtos(elem[3]))},1)
-       	ASORT(OpcF,,,{|x,y| RIGHT(x,10)>RIGHT(y,10)})  // datumi
-
+        AEVAL(aFiles,{|elem| AADD(OpcF,PADR(elem[1],15)+iif(UChkPostoji(trim(cKalkDestinacija)+trim(elem[1])),"R","X") + " "+ dtoc(elem[3]) + " " + elem[4])},1)
+	
+	// sortiraj po X, R
+	if nFilter == 1
+		ASORT(OpcF,,,{|x,y| RIGHT(x,19) > RIGHT(y,19)})  // R,X + datum + vrijeme
+	endif
+	
+	if nFilter == 2
+		ASORT(OpcF,,,{|x,y| RIGHT(x,17) > RIGHT(y,17)})  // datum + vrijeme
+	endif
+	
        	h:=ARRAY(LEN(OpcF))
        	for i:=1 to len(h)
            		h[i]:=""
