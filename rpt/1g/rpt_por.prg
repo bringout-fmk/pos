@@ -1,5 +1,7 @@
 #include "\dev\fmk\pos\pos.ch"
 
+static LEN_TRAKA := 40
+
 /*
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
@@ -125,11 +127,11 @@ do while .t.
 		?? gP12cpi
 		
 		if cNaplaceno=="3"
-			? PADC("**** OBRACUN ZA NAPLACENI IZNOS ****",40)
+			? PADC("**** OBRACUN ZA NAPLACENI IZNOS ****", LEN_TRAKA)
 		endif
 		
-		? PADC("POREZI PO TARIFAMA NA DAN "+FormDat1(gDatum),40)
-		? PADC("-------------------------------------",40)
+		? PADC("POREZI PO TARIFAMA NA DAN "+FormDat1(gDatum), LEN_TRAKA)
+		? PADC("-------------------------------------", LEN_TRAKA)
 		?
 		? "PROD.MJESTO: "
 		
@@ -153,12 +155,16 @@ do while .t.
 		?
 		
 	else // fsolo
-		?
-		if cNaplaceno=="3"
-			? PADC("**** OBRACUN ZA NAPLACENI IZNOS ****",40)
+		if ( grbReduk < 1 )
+			?
 		endif
-		? PADC ("REKAPITULACIJA POREZA PO TARIFAMA", 40)
-		? PADC ("---------------------------------", 40)
+		if cNaplaceno=="3"
+			? PADC("**** OBRACUN ZA NAPLACENI IZNOS ****", LEN_TRAKA)
+		endif
+		? PADC ("REKAPITULACIJA POREZA PO TARIFAMA", LEN_TRAKA)
+		if ( grbReduk < 1 )
+			? PADC ("---------------------------------", LEN_TRAKA)
+		endif
 		?
 	endif // fsolo
 

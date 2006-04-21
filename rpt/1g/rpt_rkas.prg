@@ -241,47 +241,62 @@ static function Zagl(dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP, c
 *{
 
 ?? gP12CPI
+
 if glRetroakt
-	? PADC("REALIZACIJA NA DAN "+FormDat1(dDat1),40)
+	? PADC("REALIZACIJA NA DAN "+FormDat1(dDat1), LEN_TRAKA)
 else
-	? PADC("REALIZACIJA NA DAN "+FormDat1(gDatum),40)
+	? PADC("REALIZACIJA NA DAN "+FormDat1(gDatum), LEN_TRAKA)
 endif
-? PADC("-------------------------------------",40)
+
+? PADC("-------------------------------------", LEN_TRAKA)
 
 O_KASE
+
 if EMPTY(cIdPos)
-	? "PRODAJNO MJESTO: SVA"
+	if ( grbReduk < 2 )
+		? "PRODAJNO MJESTO: SVA"
+	endif
 else
 	? "PRODAJNO MJESTO: "+cIdPos+"-"+Ocitaj(F_KASE,cIdPos,"NAZ")
 endif
 
 if EMPTY(cIdDio)
-	? "DIO OBJEKTA:  SVI"
+	if ( grbReduk < 2 )
+		? "DIO OBJEKTA:  SVI"
+	endif
 else
-	? "DIO OBJEKTA: "+Ocitaj(F_DIO,cIdDio,"NAZ")	
+	? "DIO OBJEKTA: "+Ocitaj(F_DIO,cIdDio,"NAZ")		
 endif
 
 if EMPTY(cRadnici)
-	? "RADNIK     :  SVI"
+	if ( grbReduk < 2 )
+		? "RADNIK     :  SVI"
+	endif
 else
 	? "RADNIK     : "+cRadnici+"-"+RTRIM(Ocitaj(F_OSOB,cRadnici,"NAZ"))
 endif
 
 if EMPTY(cVrsteP)
-	? "VR.PLACANJA: SVE"
+	if ( grbReduk < 2 ) 
+		? "VR.PLACANJA: SVE"
+	endif
 else
 	? "VR.PLACANJA: "+RTRIM(cVrsteP)
 endif
 
 if EMPTY(cGotZir)
-	? "PLACANJE: gotovinsko i ziralno"
+	if ( grbReduk < 2 )
+		? "PLACANJE: gotovinsko i ziralno"
+	endif
 else
 	? "PLACANJE: "+IF(cGotZir<>"Z","gotovinsko","ziralno")
 endif
 
 if gVodiOdj=="D"
 	if EMPTY(cIdOdj)
-		? "ODJELJENJE : SVA"
+		if ( grbReduk < 2 )
+			? "ODJELJENJE : SVA"
+		endif
 	else
 		? "ODJELJENJE : "+Ocitaj(F_ODJ,cIdOdj,"NAZ")
 	endif
@@ -290,7 +305,9 @@ endif
 ? "PERIOD     : "+FormDat1(dDat0)+" - "+FormDat1(dDat1)
 
 if EMPTY(cSmjena)
-	? "SMJENA     : SVE"
+	if ( grbReduk < 2 )
+		? "SMJENA     : SVE"
+	endif
 else
 	? "SMJENA     : "+cSmjena
 endif
@@ -339,17 +356,17 @@ return
 static function ZaglZ(dDat0, dDat1, cIdPos, cSmjena, cIdDio, cRadnici, cVrsteP, cIdOdj)
 *{
 ?
-?? PADC("ZAKLJUCENJE KASE",40)
+?? PADC("ZAKLJUCENJE KASE", LEN_TRAKA)
 ? PADC(gPosNaz)
 
 if !EMPTY(gIdDio)
-	? PADC(gDioNaz,40)
+	? PADC(gDioNaz, LEN_TRAKA)
 endif
 
 if gVSmjene=="D"
-	? PADC(FormDat1(gDatum)+" Smjena: "+gSmjena,40)
+	? PADC(FormDat1(gDatum)+" Smjena: "+gSmjena, LEN_TRAKA)
 else
-	? PADC(FormDat1(gDatum),40)
+	? PADC(FormDat1(gDatum), LEN_TRAKA)
 endif
 ?
 return
@@ -376,8 +393,8 @@ local nTotVP2
 local nTotVP3
 
 ?
-? PADC("REKAPITULACIJA PO VRSTAMA PLACANJA",40)
-? PADC("------------------------------------",40)
+? PADC("REKAPITULACIJA PO VRSTAMA PLACANJA", LEN_TRAKA)
+? PADC("------------------------------------", LEN_TRAKA)
 ?
 ? SPACE(5)+PADR("Naziv vrste p.",20),PADC("Iznos",14)
 ? SPACE(5)+REPLICATE("-",20),REPLICATE("-",14)
@@ -396,9 +413,9 @@ do while !eof()
 		SELECT kase
 		HSEEK _IdPos
 		?
-		? REPLICATE("-",40)
+		? REPLICATE("-", LEN_TRAKA)
 		? SPACE(1)+_IdPos+":",+kase->Naz
-		? REPLICATE("-",40)
+		? REPLICATE("-", LEN_TRAKA)
 	endif
 	
 	nTotPos:=0
@@ -433,9 +450,9 @@ do while !eof()
 enddo
 
 if empty(cIdPos)
-	? REPL ("=", 40)
+	? REPL ("=", LEN_TRAKA)
 	? PADC ("SVE KASE", 20) + STR (nTotal, 20, 2)
-	? REPL ("=", 40)
+	? REPL ("=", LEN_TRAKA)
 endif
 
 return
@@ -506,6 +523,7 @@ do while !eof()
 		nTotRadn3:=0
 		_IdRadnik:=pom->IdRadnik
 		SELECT osob
+		set order to tag "NAZ"
 		HSEEK _IdRadnik
 		SELECT pom
 		? IdRadnik+"  "+PADR(osob->Naz,34)
@@ -572,17 +590,13 @@ endif
  
 if !fZaklj.and.fPrik$"RO"
 // ako je zakljucenje NE realizacija po robama
-	?
-	? REPL("-", 40)
-	? PADC("REALIZACIJA PO ROBAMA", 40)
-	? REPL("-", 40)
-	?
-	? "SIFRA    NAZIV", Space (18), "(JMJ)"
-	? SPACE (10) + "Set c.  Kolicina    Vrijednost"
-	? REPLICATE ("-", 40)
+	
+	set_zagl()
+	
 	nTotal:=0
 	nTotal2:=0
 	nTotal3:=0
+	
 	SELECT POM
 	set order to 3
 	go top
@@ -594,21 +608,34 @@ if !fZaklj.and.fPrik$"RO"
 		if empty(cIdPos)
 			SELECT KASE
 			hseek _IdPos
-			? REPL ("-", 40)
+			? REPL ("-", LEN_TRAKA)
 			? space(1)+_idpos+":", + KASE->Naz
-			? REPL ("-", 40)
+			? REPL ("-", LEN_TRAKA)
 		endif
 		SELECT POM
 		do while !eof() .and. pom->idPos==_IdPos
 			SELECT ROBA
 			HSEEK pom->idRoba
-			if len(trim(pom->idroba))<9
-				? left(pom->idRoba,8)
-			else
-				? pom->idRoba
+			
+			cLRoba := ""
+			
+			if grbStId == "D"
+				if len(trim(pom->idroba))<9
+					cLRoba += left(pom->idRoba,8)
+				else
+					cLRoba += pom->idRoba
+				endif
 			endif
-			?? " "+LEFT(ROBA->Naz, 25), "("+ROBA->Jmj+")"
+			
+			cLRoba += SPACE(1)
+			cLRoba += LEFT(roba->naz, 25)
+			cLRoba += SPACE(1)
+			cLRoba += "(" + roba->jmj + ")"
+			
+			? cLRoba
+			
 			SELECT POM
+			
 			_IdRoba:=POM->idRoba
 			nRobaIzn:=0
 			nRobaKol:=0
@@ -654,13 +681,50 @@ if !fZaklj.and.fPrik$"RO"
 		nTotal3+=nTotPos3
 	enddo
 	if empty(cIdPos)
-		? REPL("-",40)
+		? REPL("-",LEN_TRAKA)
 		? PADC("SVE KASE UKUPNO:",25),TRANSFORM(nTotal,"999,999,999.99")
-		? REPL("-",40)
+		? REPL("-",LEN_TRAKA)
 	endif
 endif
 return
 *}
+
+static function set_zagl()
+local cLinija
+
+cLinija := REPLICATE("-", LEN_TRAKA)
+
+?
+
+if ( grbReduk < 2 )
+	? cLinija
+endif
+
+? PADC("REALIZACIJA PO ROBAMA", LEN_TRAKA)
+
+if ( grbReduk < 2 )
+	? cLinija
+endif
+
+?
+
+cHead1:=""
+cHead2:="Set c.  Kolicina  Vrijednost"
+
+if grbStId == "D"
+	cHead1 += "SIFRA, NAZIV"
+	cHead1 += PADL("(JMJ)", LEN_TRAKA - 12)
+else
+	cHead1 += "NAZIV"
+	cHead1 += PADL("(JMJ)", LEN_TRAKA - 5)
+endif
+
+? PADL(cHead1, LEN_TRAKA)
+? PADL(cHead2, LEN_TRAKA)
+
+? cLinija
+
+return
 
 
 /*! \fn RealPoOdj(fPrik, nTotal2, nTotal3)
@@ -673,11 +737,11 @@ if (fPrik $ "PO")
 	// daj mi pazar
 	?
 	if cK1=="D"
-		? PADC("PROMET PO GRUPAMA",40)
+		? PADC("PROMET PO GRUPAMA",LEN_TRAKA)
 	else
-		? PADC("PROMET PO ODJELJENJIMA",40)
+		? PADC("PROMET PO ODJELJENJIMA",LEN_TRAKA)
 	endif
-	? PADC("------------------------------------",40)
+	? PADC("------------------------------------",LEN_TRAKA)
 	?
 	? "Sifra Naziv odjeljenja          IZNOS"
 	? "----- ----------------------- ----------"
@@ -693,9 +757,9 @@ if (fPrik $ "PO")
 		if empty(cIdPos)
 			SELECT kase
 			hseek _IdPos
-			? REPL("-",40)
+			? REPL("-",LEN_TRAKA)
 			? space(1)+_idpos+":", KASE->Naz
-			? REPL("-",40)
+			? REPL("-",LEN_TRAKA)
 			SELECT POM
 		endif
 		nTotPos:=0
@@ -727,9 +791,9 @@ if (fPrik $ "PO")
 		nTotal3+=nTotPos3
 	enddo
 	if empty(cIdPos)
-		? REPL("=",40)
+		? REPL("=",LEN_TRAKA)
 		? PADC("SVE KASE UKUPNO", 25)+TRANSFORM(nTotal,"999,999,999.99")
-		? REPL("=",40)
+		? REPL("=",LEN_TRAKA)
 	endif
 endif
 
@@ -748,9 +812,9 @@ if (fPrik $ "RO").or.cK1=="D"
 		if empty(cIdPos)
 			SELECT KASE
 			HSEEK _IdPos
-			? REPL("-",40)
+			? REPL("-",LEN_TRAKA)
 			? space(1)+_idpos+":", KASE->Naz
-			? REPL("-",40)
+			? REPL("-",LEN_TRAKA)
 			SELECT POM
 		endif
 		nTotPos:=0
@@ -768,10 +832,10 @@ if (fPrik $ "RO").or.cK1=="D"
 				bOdj:={|| pom->idodj}
 				? " ", _IdOdj, ODJ->Naz
 			endif
-			? REPLICATE ("-", 40)
+			? REPLICATE ("-", LEN_TRAKA)
 			? "SIFRA    NAZIV", Space (19), "(JMJ)"
 			? SPACE(10)+"Set c.  Kolicina    Vrijednost"
-			? REPLICATE("-",40)
+			? REPLICATE("-", LEN_TRAKA)
 			nTotOdj:=0
 			nTotOdj2:=0
 			nTotOdj3:=0
@@ -827,7 +891,7 @@ if (fPrik $ "RO").or.cK1=="D"
 					nTotOdjk+=nRobaKol
 				endif
 			enddo
-			? REPL("-",40)
+			? REPL("-",LEN_TRAKA)
 			if cK1=="D"
 				? PADC("UKUPNO "+_idodj,16)
 				?? STR(nTotOdjk,10,2)
@@ -835,7 +899,7 @@ if (fPrik $ "RO").or.cK1=="D"
 				? PADC("UKUPNO ODJELJENJE",26)
 			endif
 			?? TRANSFORM(nTotOdj,"999,999,999.99")
-			? REPL("-",40)
+			? REPL("-",LEN_TRAKA)
 			?
 			nTotPos+=nTotOdj
 			nTotPosK+=nTotOdjk
@@ -847,9 +911,9 @@ if (fPrik $ "RO").or.cK1=="D"
 		nTotal3+=nTotPos3
 	enddo
 	if empty(cIdPos)
-		? REPL("*",40)
+		? REPL("*",LEN_TRAKA)
 		? PADC("SVE KASE UKUPNO",25), TRANSFORM(nTotal,"999,999,999.99")
-		? REPL("*",40)
+		? REPL("*",LEN_TRAKA)
 	endif
 endif
 return
@@ -858,7 +922,7 @@ return
 static function TotalKasa(cIdPos, nTotPos, nTotPos2, nTotPos3, nTotPosk, cK1, cPodvuci)
 *{
 
-? REPL(cPodvuci,40)
+? REPL(cPodvuci, LEN_TRAKA)
 if cK1=="D"
 	? PADC("UKUPNO KASA "+_idpos, 16),STR(nTotPosK,10,2)
 	?? TRANSFORM(nTotPos,"999,999,999.99")
@@ -872,7 +936,7 @@ if nTotPos3<>0
 	? PADL(NenapPop(),25)+STR(nTotPos3,15,2)
 	? PADL("UKUPNO NAPLATA:",25)+STR(nTotPos-nTotPos3+nTotPos2,15,2)
 endif
-? REPL(cPodvuci,40)
+? REPL(cPodvuci, LEN_TRAKA)
 ?
 
 return
