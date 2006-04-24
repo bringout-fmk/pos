@@ -119,23 +119,22 @@ set_rang(12, 35, 0.5, @aPom)
 return get_rang(nSelRang, aPom)
 
 
-// dodaje u matricu aRang velicine
+// dodaje u matricu aRang velicine od nMin do nMax po koraku nStep
 static function set_rang(nMin, nMax, nStep, aRang)
 for i:=nMin to nMax step nStep
 	AADD(aRang, {i})
 next
 return
 
-// provjerava rang u matrici
+// provjerava vrijednost nRang u matrici
 static function get_rang(nRang, aRang)
-
 if ASCAN(aRang, {|xVal| xVal[1] == nRang}) > 0
 	return .t.
 else
 	return .f.
 endif
-
 return
+
 
 // ispravka velicine
 function ed_velicina()
