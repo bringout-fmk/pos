@@ -669,9 +669,7 @@ if !fZaklj.and.fPrik$"RO"
 				
 				aReal2 := SjeciStr(cStr1, LEN_TRAKA)
 				
-				nRazmak := LEN_TRAKA - (LEN(cStr2) + LEN(cNum) + 2)
-				
-				SjeciStr( SPACE(nRazmak) + cStr2, LEN_TRAKA, @aReal2)
+				SjeciStr( cStr2, LEN_TRAKA - LEN_RAZMAK, @aReal2)
 				
 				nRedova2 := LEN(aReal2)
 				
