@@ -629,7 +629,8 @@ if !fZaklj.and.fPrik$"RO"
 			endif
 			
 			cStr1 += ALLTRIM(roba->naz)
-			cStr1 += " (" + roba->jmj + ") "
+			cStr1 += " (" + ALLTRIM(roba->jmj) + ") "
+			nLen1 := LEN(cStr1)
 			
 			SELECT POM
 			
@@ -656,49 +657,24 @@ if !fZaklj.and.fPrik$"RO"
 				enddo
 				
 				cStr2 := ""
-				cStr2 += ALLTRIM(show_number(nKol, nil, -10))
+				cStr2 += show_number(nKol, nil, -8)
+				nLen2 := LEN(cStr2)
 				
-				cNum := ALLTRIM(show_number(nIzn, PIC_UKUPNO))
+				cStr3 := show_number(nIzn, PIC_UKUPNO)
+				nLen3 := LEN(cStr3)
 				
-				aReal1 := SjeciStr(cStr1 + cStr2, LEN_TRAKA)
-				nRedova1 := LEN(aReal1)
-				
-				if LEN(TRIM(aReal1[nRedova1])) + LEN_RAZMAK + LEN(cNum) > LEN_TRAKA
-					++ nRedova1
-				endif
-				
-				aReal2 := SjeciStr(cStr1, LEN_TRAKA)
-				
-				SjeciStr( cStr2, LEN_TRAKA - LEN_RAZMAK, @aReal2)
-				
-				nRedova2 := LEN(aReal2)
-				
-				if LEN(TRIM(aReal2[nRedova2])) + LEN_RAZMAK + LEN(cNum) > LEN_TRAKA
-					++ nRedova2
-				endif
-
-				if nRedova2 > nRedova1
-					aReal := aReal1
-				else
-					aReal := aReal2
-				endif
+				aReal := SjeciStr(cStr1, LEN_TRAKA)
 				
 				for i:=1 to LEN(aReal)
 					? RTRIM(aReal[i])
 					nLenRow := LEN(RTRIM(aReal[i]))
 				next
 				
-				cPom := RTRIM(aReal[LEN(aReal)])
-				nLen := LEN(cPom)
-				
-				if nLen + LEN_RAZMAK + LEN(cNum) > LEN_TRAKA
-					? cPom
-					cPom := ""
-					nLen := 0
-				endif 
-				
-				cPom := PADL( cNum, LEN_TRAKA - nLen)
-				?? cPom
+				if  nLen2 + 1 + nLen3 > LEN_TRAKA - nLenRow
+					? PADL(cStr2 + SPACE(LEN_RAZMAK) + cStr3, LEN_TRAKA)
+				else
+					?? PADL(cStr2 + SPACE(LEN_RAZMAK) + cStr3, LEN_TRAKA - nLenRow)
+				endif
 				
 				if glPorNaSvStRKas
 					PrikaziPorez(nIzn,roba->idTarifa)
