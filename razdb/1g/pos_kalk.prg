@@ -115,13 +115,19 @@ if priprz->(RecCount2())==0 .and. Pitanje( ,"Preuzeti dokumente iz KALK-a","N")=
 
 endif // prenos sa disketa
 
-if gModemVeza=="D" .and. fPrenesi
-	select katops
-	use
-    	DirMak2(strtran(trim(cKalkDestinacija),":"+SLASH,":"+SLASH+"chk"+SLASH))
-    	copy file (cKalkDbf) TO (strtran(cKalkDbf,":"+SLASH,":"+SLASH+"chk"+SLASH))
-    	// odradjeno-postavi kopiraj u chk direktorij
-    	// npr c:\tops\prenos\2\x.dbf  -> npr c:\CHK\tops\prenos\2\x.dbf
+// kopiraj u chk
+if ( gModemVeza=="D" .and. fPrenesi )
+	if ( gUseChkDir == "D" )
+		select katops
+		use
+    		DirMak2(strtran(trim(cKalkDestinacija),":"+SLASH,":"+SLASH+"chk"+SLASH))
+    		copy file (cKalkDbf) TO (strtran(cKalkDbf,":"+SLASH,":"+SLASH+"chk"+SLASH))
+    		// odradjeno-postavi kopiraj u chk direktorij
+    		// npr c:\tops\prenos\2\x.dbf  -> npr c:\CHK\tops\prenos\2\x.dbf
+	else
+		// samo pobrisi fajl prenosa
+		FileDelete(cKalkDbf)
+	endif
 endif
 
 return .t.
@@ -222,11 +228,17 @@ function UChkPostoji(cFullFileName)
 // u chk direktoriju postoji fajl
 // npr: UChkPostoji(gKalkDest+"KT1105.DBF")
 
+// ako se ne koristi chk direktorij svi su X
+if gUseChkDir == "N"
+	return "X"
+endif
 
-if FILE(strtran(cFullFileName,":"+SLASH,":"+SLASH+"chk"+SLASH))
-	return .t.
+if FILE(strtran(cFullFileName, ":" + SLASH, ":" + SLASH + "chk" + SLASH))
+	// ako postoji fajl R - realizovan
+	return "R"
 else
-	return .f.
+	// ako ne postoji fajl X - nije realizovano
+	return "X"
 endif
 *}
 
@@ -735,16 +747,20 @@ return 1
 // odaberi - setuj ime kalk dbf-a
 // -----------------------------------------------
 static function SelectKalkDbf(cBrDok, cKalkDestinacija, cKalkDbf)
+
 local nFilter
+
 if gModemVeza=="D"
 	nFilter := 2
-	Box(,4,40)
+	if ( gUseChkDir == "D" )
+		Box(,4,40)
 		@ 1+m_x, 2+m_y SAY "Listu sortirati po:"
 		@ 2+m_x, 2+m_y SAY "1. neprocitane/procitane"
 		@ 3+m_x, 2+m_y SAY "2. datum kreiranja fajla"
 		@ 4+m_x, 2+m_y SAY "sort ->" GET nFilter PICT "9" VALID nFilter >= 1 .and. nFilter <= 2
 		read
-	BoxC()
+		BoxC()
+	endif
        	// modemska veza ide u odabir dokumenta
        	OpcF:={}
 		
@@ -766,7 +782,8 @@ if gModemVeza=="D"
 
         ASORT(aFiles,,,{|x,y| DTOS(x[3]) + x[4] > DTOS(y[3]) + y[4] })   // datum + vrijeme
         //  KT0512.DBF = elem[1]
-        AEVAL(aFiles,{|elem| AADD(OpcF,PADR(elem[1],15)+iif(UChkPostoji(trim(cKalkDestinacija)+trim(elem[1])),"R","X") + " "+ dtoc(elem[3]) + " " + elem[4])},1)
+        
+	AEVAL(aFiles,{|elem| AADD(OpcF, PADR(elem[1], 15) + UChkPostoji(trim(cKalkDestinacija) + trim(elem[1])) + " "+ dtoc(elem[3]) + " " + elem[4])},1)
 	
 	// sortiraj po X, R
 	if nFilter == 1

@@ -148,11 +148,11 @@ if !VratiPripr(cIdVd, gIdRadnik, cIdOdj, cIdDio)
 	CLOSERET
 endif
 
-fSadAz:=.f.
-if (cIdVd<>VD_REK) .and. Kalk2Pos(@cIdVd, @cBrDok, @cRsDBF)
+fSadAz := .f.
 
-	if priprz->(RecCount2())>0
-    		if cBrDok<>nil.and.Pitanje(,"Odstampati prenesni dokument na stampac ?","D")=="D"
+if (cIdVd<>VD_REK) .and. Kalk2Pos(@cIdVd, @cBrDok, @cRsDBF)
+	if priprz->(RecCount2()) > 0
+    		if cBrDok<>nil .and. Pitanje(,"Odstampati prenesni dokument na stampac ?","D")=="D"
         		if cIdVd $ "16#96#95#98"
           			StampZaduz(cIdVd, cBrDok)
         		elseif cIdVd $ "IN#NI"

@@ -60,6 +60,7 @@ Rpar("DO",@gIdDio)
 Rpar("n9",@gServerPath)
 Rpar("kT",@gKalkDest)
 Rpar("Mv",@gModemVeza)
+Rpar("Mc",@gUseChkDir)
 Rpar("sV",@gStrValuta)
 Rpar("n0",@gLocPort)
 Rpar("n7",@gGotPlac)
@@ -84,7 +85,8 @@ endif
 
 AADD(aNiz,{"Putanja korijenskog direktorija modula na serveru" , "gServerPath", , , })
 AADD(aNiz,{"Destinacija datoteke TOPSKA" , "gKALKDEST", , , })
-AADD(aNiz,{"Koristi se modemska veza D/N", "gModemVeza","gModemVeza$'DN'", "@!", })
+AADD(aNiz,{"Razmjena podataka, koristi se modemska veza D/N", "gModemVeza","gModemVeza$'DN'", "@!", })
+AADD(aNiz,{"Razmjena podataka, koristiti 'chk' direktorij D/N", "gUseChkDir","gUseChkDir$'DN'", "@!", })
 AADD(aNiz,{"Lokalni port za stampu racuna" , "gLocPort", , , })
 AADD(aNiz,{"Oznaka/ID gotovinskog placanja" , "gGotPlac",, "@!", })
 AADD(aNiz,{"Oznaka/ID placanja duga       " , "gDugPlac",, "@!", })
@@ -94,7 +96,7 @@ AADD(aNiz,{"Azuriraj u pomocnu bazu" , "gDuplo",, "@!", "gDuplo$'DN'"})
 AADD(aNiz,{"Direktorij kumulativa za pom bazu","gDuploKum",, "@!",})
 AADD(aNiz,{"Direktorij sifrarnika za pom bazu","gDuplosif",, "@!",})
 AADD(aNiz, {"Direktorij sifrarnika FMK        ","gFMKSif",, "@!",})
-VarEdit(aNiz,7,2,24,78,"PARAMETRI RADA PROGRAMA - PODACI KASE","B1")
+VarEdit(aNiz,5,2,24,78,"PARAMETRI RADA PROGRAMA - PODACI KASE","B1")
 
 BosTipke()
 
@@ -108,6 +110,7 @@ if LASTKEY()<>K_ESC
     	Wpar("n9",gServerPath,.f.)     // pathove ne diraj
     	Wpar("kT",gKalkDest,.f.)       // pathove ne diraj
     	Wpar("Mv",gModemVeza, .t.,"D")
+    	Wpar("Mc",gUseChkDir, .t.,"D") // koristi chk direktorij
     	Wpar("n0",gLocPort, .t.,"D")
     	Wpar("n7",gGotPlac, .t.,"D")
     	Wpar("nX",gDugPlac, .t.,"D")

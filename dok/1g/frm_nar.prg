@@ -577,7 +577,12 @@ else
       		seek _IdPos+_idroba
       		nStanje:=0
       		do while !eof() .and. POS->(IdPos+IdRoba)==(_IdPos+_IdRoba)
-        		if POS->idvd $ "16#00"
+        		// uzmi samo stavke do tekuceg datuma
+			if (pos->datum > gDatum )
+				skip
+				loop
+			endif
+			if POS->idvd $ "16#00"
           			nStanje += POS->Kolicina
         		elseif Pos->idvd $ "IN"
           			nStanje += POS->Kol2 - POS->Kolicina

@@ -613,6 +613,7 @@ public gKalkDEST
 gKalkDEST:=PADR(ToUnix("a:\",20))
 
 public gModemVeza:="N"
+public gUseChkDir:="N"
 public gStrValuta:=space(4)
 // upit o nacinu placanja
 public gUpitNp := "N"  
@@ -675,6 +676,7 @@ Rpar("DO",@gIdDio)
 Rpar("n9",@gServerPath)
 Rpar("kT",@gKalkDest)
 Rpar("Mv",@gModemVeza)
+Rpar("Mc",@gUseChkDir)
 Rpar("sV",@gStrValuta)
 Rpar("n0",@gLocPort)
 Rpar("n7",@gGotPlac)
