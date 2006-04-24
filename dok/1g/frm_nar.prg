@@ -223,10 +223,10 @@ do while .t.
 
 	cDSFINI:=IzFMKINI('SifRoba','DuzSifra','10')
 	
-	@ m_x+2,m_y+5 SAY " Artikal:" GET _idroba PICT "@!S10" when {|| _idroba:=padr(_idroba,VAL(cDSFINI)),.t.} VALID PostRoba(@_idroba, 2, 27).and. NarProvDuple (_idroba)
+	@ m_x+2,m_y+5 SAY " Artikal:" GET _idroba PICT "@!S10" when {|| _idroba:=padr(_idroba,VAL(cDSFINI)),.t.} VALID PostRoba(@_idroba, 2, 27).and. NarProvDuple (_idroba) 
 	@ m_x+3,m_y+5 SAY "  Cijena:" GET _Cijena  picture "99999.999" when (roba->tip=="T" .or. gPopZcj=="D")
 	
-	@ m_x+4,m_y+5 SAY "Kolicina:" GET _Kolicina PICTURE "999999.999" when {|| Popust(m_x+3,m_y+28), _kolicina:=iif(gOcitBarcod, 1, _kolicina), _kolicina:=iif(_idroba='PLDUG  ', 1, _kolicina), iif(_idroba='PLDUG  ', .f., .t.) } VALID KolicinaOK(_Kolicina).and.CheckQtty(_Kolicina) SEND READER:={|g| GetReader2(g)}
+	@ m_x+4,m_y+5 SAY "Kolicina:" GET _Kolicina PICTURE "999999.999" when {|| Popust(m_x+3,m_y+28), _kolicina:=iif(gOcitBarcod, 1, _kolicina), _kolicina:=iif(_idroba='PLDUG  ', 1, _kolicina), iif(_idroba='PLDUG  ', .f., .t.) } VALID KolicinaOK(_Kolicina).and.CheckQtty(_Kolicina).and.velicina(_idroba, roba->jmj) SEND READER:={|g| GetReader2(g)}
 
 	// ako je sifra ocitana po barcodu, onda ponudi kolicinu 1
 	read
@@ -686,6 +686,10 @@ nGetKol:=_Kolicina
 
 aConds:={{|Ch| Ch == ASC ("b") .OR. Ch == ASC ("B")},{|Ch| Ch == K_ENTER}}
 aProcs:={{|| BrisStavNar (oBrowse)},{|| EditStavNar (oBrowse)}}
+if IsPlanika() .and. gRobaVelicina == "D"
+	AADD(aConds, {|Ch| Ch == ASC("v") .or. Ch == ASC("V")})
+	AADD(aProcs, {|| ed_velicina(oBrowse)})
+endif
 ShowBrowse(oBrowse,aConds,aProcs)
 
 oBrowse:autolite:=.f.

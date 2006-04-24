@@ -1,6 +1,9 @@
 #include "\dev\fmk\pos\pos.ch"
 
-static LEN_TRAKA:=40
+static LEN_TRAKA := 40
+static LEN_RAZMAK := 1
+static PIC_UKUPNO := "9999999.99"
+
 
 /*! \fn RealKase(fZaklj,dDat0,dDat1,cVarijanta)
  *  \param fZaklj - True - izvjestaj se formira prilikom zakljucivanja radnika; False - uobicajen poziv (obicni izvjestaj)
@@ -613,26 +616,20 @@ if !fZaklj.and.fPrik$"RO"
 			? REPL ("-", LEN_TRAKA)
 		endif
 		SELECT POM
+		
 		do while !eof() .and. pom->idPos==_IdPos
 			SELECT ROBA
 			HSEEK pom->idRoba
-			
-			cLRoba := ""
+		
+			altd()
+			cStr1 := ""
 			
 			if grbStId == "D"
-				if len(trim(pom->idroba))<9
-					cLRoba += left(pom->idRoba,8)
-				else
-					cLRoba += pom->idRoba
-				endif
+				cStr1 += ALLTRIM(pom->idroba) + " "
 			endif
 			
-			cLRoba += SPACE(1)
-			cLRoba += LEFT(roba->naz, 25)
-			cLRoba += SPACE(1)
-			cLRoba += "(" + roba->jmj + ")"
-			
-			? cLRoba
+			cStr1 += ALLTRIM(roba->naz)
+			cStr1 += " (" + roba->jmj + ") "
 			
 			SELECT POM
 			
@@ -653,12 +650,62 @@ if !fZaklj.and.fPrik$"RO"
 					nIzn+=POM->Iznos
 					nIzn2+=POM->Iznos2
 					nIzn3+=POM->Iznos3
+					
 					skip
+				
 				enddo
-				? SPACE(10)+PADC(_IdCijena,6)+STR(nKol,10,3)+TRANSFORM(nIzn,"999,999,999.99")
+				
+				cStr2 := ""
+				cStr2 += ALLTRIM(show_number(nKol, nil, -10))
+				
+				cNum := ALLTRIM(show_number(nIzn, PIC_UKUPNO))
+				
+				aReal1 := SjeciStr(cStr1 + cStr2, LEN_TRAKA)
+				nRedova1 := LEN(aReal1)
+				
+				if LEN(TRIM(aReal1[nRedova1])) + LEN_RAZMAK + LEN(cNum) > LEN_TRAKA
+					++ nRedova1
+				endif
+				
+				aReal2 := SjeciStr(cStr1, LEN_TRAKA)
+				
+				nRazmak := LEN_TRAKA - (LEN(cStr2) + LEN(cNum) + 2)
+				
+				SjeciStr( SPACE(nRazmak) + cStr2, LEN_TRAKA, @aReal2)
+				
+				nRedova2 := LEN(aReal2)
+				
+				if LEN(TRIM(aReal2[nRedova2])) + LEN_RAZMAK + LEN(cNum) > LEN_TRAKA
+					++ nRedova2
+				endif
+
+				if nRedova2 > nRedova1
+					aReal := aReal1
+				else
+					aReal := aReal2
+				endif
+				
+				for i:=1 to LEN(aReal)
+					? RTRIM(aReal[i])
+					nLenRow := LEN(RTRIM(aReal[i]))
+				next
+				
+				cPom := RTRIM(aReal[LEN(aReal)])
+				nLen := LEN(cPom)
+				
+				if nLen + LEN_RAZMAK + LEN(cNum) > LEN_TRAKA
+					? cPom
+					cPom := ""
+					nLen := 0
+				endif 
+				
+				cPom := PADL( cNum, LEN_TRAKA - nLen)
+				?? cPom
+				
 				if glPorNaSvStRKas
 					PrikaziPorez(nIzn,roba->idTarifa)
 				endif
+
 				nRobaIzn+=nIzn
 				nRobaIzn2+=nIzn2
 				nRobaIzn3+=nIzn3
@@ -708,19 +755,17 @@ endif
 
 ?
 
-cHead1:=""
-cHead2:="Set c.  Kolicina  Vrijednost"
+cStr1:=""
 
 if grbStId == "D"
-	cHead1 += "SIFRA, NAZIV"
-	cHead1 += PADL("(JMJ)", LEN_TRAKA - 12)
+	cStr1 += "Sifra, naziv, jmj, kolicina"
 else
-	cHead1 += "NAZIV"
-	cHead1 += PADL("(JMJ)", LEN_TRAKA - 5)
+	cStr1 += "Naziv, jmj, kolicina"
 endif
 
-? PADL(cHead1, LEN_TRAKA)
-? PADL(cHead2, LEN_TRAKA)
+cHead := cStr1 + PADL("vrijednost", LEN_TRAKA - LEN(cStr1))
+
+? cHead
 
 ? cLinija
 

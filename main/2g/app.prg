@@ -614,6 +614,9 @@ gKalkDEST:=PADR(ToUnix("a:\",20))
 
 public gModemVeza:="N"
 public gUseChkDir:="N"
+if IsPlanika()
+	public gRobaVelicina := "N"
+endif
 public gStrValuta:=space(4)
 // upit o nacinu placanja
 public gUpitNp := "N"  
@@ -681,6 +684,10 @@ Rpar("sV",@gStrValuta)
 Rpar("n0",@gLocPort)
 Rpar("n7",@gGotPlac)
 Rpar("nX",@gDugPlac)
+
+if IsPlanika()
+	Rpar("Mi",@gRobaVelicina)
+endif
 
 gServerPath := AllTrim(gServerPath)
 if (RIGHT(gServerPath,1) <> SLASH)

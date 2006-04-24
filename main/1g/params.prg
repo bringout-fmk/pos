@@ -305,6 +305,9 @@ Rpar("Bc",@gEntBarCod)
 Rpar("Ep",@gEvidPl)
 Rpar("dF",@gDiskFree)
 Rpar("UN",@gSifUvPoNaz)
+if IsPlanika()
+	Rpar("Mi",@gRobaVelicina)
+endif
 if IsPDV()
 	Rpar("pF",@gPorFakt)
 endif
@@ -344,7 +347,9 @@ endif
 
 AADD (aNiz, {"Voditi po stolovima (D/N)? " , "gStolovi", "gStolovi$'DN'", "@!", })
 AADD (aNiz, {"Kod unosa racuna uvijek pretraga art.po nazivu (D/N)? " , "gSifUvPoNaz", "gSifUvPoNaz$'DN'", "@!", })
-
+if IsPlanika()
+	AADD (aNiz, {"Unos velicine robe (D/N)? " , "gRobaVelicina", "gRobaVelicina$'DN'", "@!", })
+endif
 
 VarEdit(aNiz,2,2,24,79,"PARAMETRI RADA PROGRAMA - PRINCIPI RADA","B1")
 BosTipke()
@@ -373,7 +378,10 @@ if LASTKEY()<>K_ESC
     	Wpar("Si",@gSifUpravn, .t., "D")
     	Wpar("Sx",@gDisplay, .t., "D")
     	Wpar("Bc",@gEntBarCod, .t., "D")
-    	Wpar("np",@gUpitNP, .t., "Z")
+    	if IsPlanika()
+		Wpar("Mi",@gRobaVelicina, .t., "D")
+    	endif
+	Wpar("np",@gUpitNP, .t., "Z")
     	Wpar("Ep",@gEvidPl, .t., "Z")
     	Wpar("dF",@gDiskFree, .t., "Z")
     	Wpar("UN",@gSifUvPoNaz, .t., "Z")
