@@ -561,7 +561,6 @@ do while !eof()
        			? SPACE(6)+PADL("UKUPNO NAPLATA:",20)+STR(nTotRadn-nTotRadn3+nTotRadn2,14,2)
        		endif
        		? SPACE(6)+REPLICATE("-",34)
-       		?
        		nTotPos+=nTotRadn
        		nTotPos2+=nTotRadn2
        		nTotPos3+=nTotRadn3

@@ -235,8 +235,7 @@ do while .t.
 	
 	@ m_x+2,m_y+5 SAY " Artikal:" GET _idroba PICT "@!S10" when {|| _idroba:=padr(_idroba,VAL(cDSFINI)),.t.} VALID PostRoba(@_idroba, 2, 27).and. NarProvDuple (_idroba) 
 	@ m_x+3,m_y+5 SAY "  Cijena:" GET _Cijena  picture "99999.999" when (roba->tip=="T" .or. gPopZcj=="D")
-	
-	@ m_x+4, m_y+5 SAY "Kolicina:" GET _Kolicina PICTURE "999999.999" when {|| Popust(m_x+3,m_y+28), _kolicina:=iif(gOcitBarcod, 1, _kolicina), _kolicina:=iif(_idroba='PLDUG  ', 1, _kolicina), iif(_idroba='PLDUG  ', .f., .t.) } VALID KolicinaOK(_Kolicina).and.CheckQtty(_Kolicina) SEND READER:={|g| GetReader2(g)}
+	@ m_x+4, m_y+5 SAY "Kolicina:" GET _Kolicina PICTURE "999999.999" when {|| Popust(m_x+4,m_y+28), _kolicina:=iif(gOcitBarcod, 1, _kolicina), _kolicina:=iif(_idroba='PLDUG  ', 1, _kolicina), iif(_idroba='PLDUG  ', .f., .t.) } VALID KolicinaOK(_Kolicina).and.CheckQtty(_Kolicina) SEND READER:={|g| GetReader2(g)}
 	
 	nRowPos := 5
 	
@@ -382,65 +381,11 @@ local nC1:=0
 local nC2:=0
 
 FrmGetRabat(aRabat, _cijena)
-
-/*
-if gPopZcj=="D"
-	// popust zadavanjem nove cijene
- 	if roba->tip<>"T"  
-		// finansijsko rasknjizenje
-  		_ncijena:=round(&("ROBA->Cijena"+gIdCijena)-_cijena,gPopDec)
-  		_cijena:=&("ROBA->Cijena"+gIdCijena)  // cijena iz sifrarnika
-  		nC1:=_cijena
-  		nC2:=_ncijena
- 	endif
-else
-	if !EMPTY(gPopust) .and. gPopust<>99 .and. Pitanje(,"Uracunati popust od " + STR(gPopust) + "% (D/N) ?","D")=="N"
-		//_ncijena:=round(_cijena, gPopDec)
-	else
-		if gPopProc=="D"
-			// Pitaj za procenat popusta
-			// ESC - nema popusta
-			nPopProc:=FrmPopProc()
-			_ncijena:=round(_cijena*nPopProc/100, gPopDec)
-		else
-			_ncijena:=round(_cijena*iif(gPopust=99,roba->n2,gPopust)/100, gPopDec)
-		endif
-	
-	endif	
-	nC1:=_cijena
- 	nC2:=_ncijena
-endif
-
-if gUpitNP=="D" .and. (gClanPopust .or. VarPopPrekoOdrIzn())
-	if VarPopPrekoOdrIzn()
-		_ncijena+=round(_cijena*gPopIznP/100, gPopDec)
-	else
-		_ncijena+=round(_cijena*roba->n1/100, gPopDec)
-	endif
-	nC1:=_cijena
-	nC2:=_ncijena
-endif
-
-
-nC1:=_cijena
-nC2:=CalcRabatForArticle(aRabat, _idRoba, .t., .t., .t., .t., .t., .t.)
-_ncijena:=nC2
-
-if (nC2<>0)
-	@ nx,ny SAY "Popust :"
-  	@ nx,col()+1 SAY _ncijena pict "99999.999"
-  	@ nx+1,ny SAY  "Cij-Pop:"
-  	@ nx+1,col()+1 SAY _cijena-_ncijena pict "99999.999"
-else
-  	@ nx,ny SAY space(20)
-  	@ nx+1,ny SAY space(20)
-endif
-*/
-
 ShowRabatOnForm(nx, ny)
 
 return
 *}
+
 
 
 function CheckQtty(nAmount)

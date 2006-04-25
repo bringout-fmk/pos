@@ -165,7 +165,6 @@ do while .t.
 		if ( grbReduk < 1 )
 			? PADC ("---------------------------------", LEN_TRAKA)
 		endif
-		?
 	endif // fsolo
 
 	SELECT POS
