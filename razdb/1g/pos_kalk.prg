@@ -127,6 +127,8 @@ if ( gModemVeza=="D" .and. fPrenesi )
 	else
 		// samo pobrisi fajl prenosa
 		FileDelete(cKalkDbf)
+		// i txt fajl
+		FileDelete(strtran(cKalkDbf, ".DBF", ".TXT"))
 	endif
 endif
 

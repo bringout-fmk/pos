@@ -1,43 +1,5 @@
 #include "\dev\fmk\pos\pos.ch"
 
-// unos velicine cipele
-function velicina(id_roba, roba_jmj)
-
-if !IsPlanika()
-	return .t.
-endif
-
-if gRobaVelicina == "N"
-	return .t.
-endif
-
-if roba_jmj <> "PAR"
-	return .t.
-endif
-
-nBroj := g_cip_broj(id_roba)
-
-_velicina := nBroj
-
-return .t.
-
-
-// vrati broj cipele
-function g_cip_broj(id_obuca)
-local nCBroj:=0
-private GetList:={}
-
-Box(,3, 40)
-	@ m_x+2, m_y+6 SAY "Unesi velicinu artikla:" GET nCBroj PICT "99.9" VALID {|| nCBroj == 0 .or. c_br_obuce(nCBroj, id_obuca) }
-	read
-BoxC()
-
-if LastKey()==K_ESC
-	nCBroj := 0
-endif
-
-return nCBroj
-
 
 // provjeri da li broj odgovara artiklu
 function c_br_obuce(nBroj, cIdObuca)

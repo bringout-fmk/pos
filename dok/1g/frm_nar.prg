@@ -21,6 +21,7 @@ parameters cBrojRn, cSto
 
 private ImeKol
 private Kol
+private nRowPos
 private oBrowse
 private aAutoKeys:={}
 private nIznNar:=0
@@ -29,6 +30,11 @@ private bPrevKroz
 private aUnosMsg:={}
 private bPrevUp
 private bPrevDn
+private lRVelicina := .f.
+
+if IsPlanika() .and. gRobaVelicina == "D"
+	lRVelicina := .t.
+endif
 
 o_edit_rn()
 
@@ -66,7 +72,7 @@ endif
 Box(,20,77,,aUnosMsg)
 
 @ m_x,m_y+23 SAY PADC ("RACUN BR: "+Alltrim (cBrojRn), 40) COLOR Invert
-oBrowse:=FormBrowse( m_x+6, m_y+1, m_x+19, m_y+77, ImeKol, Kol,{ "Í", "Ä", "³"}, 0)
+oBrowse:=FormBrowse( m_x+7, m_y+1, m_x+19, m_y+77, ImeKol, Kol,{ "Í", "Ä", "³"}, 0)
 oBrowse:autolite:=.f.
 aAutoKeys:=HangKeys ()
 bPrevDn:=SETKEY(K_PGDN, {|| DummyProc()})
@@ -217,8 +223,12 @@ do while .t.
 	enddo
 	_idroba:=SPACE(LEN(_idroba))
 	_Kolicina:=0
+	// resetuj i velicinu
+	if lRVelicina
+		_velicina := 0
+	endif
+	
 	@ m_x+2,m_y+25 SAY SPACE (40)
-
 	set cursor on
 
 	cDSFINI:=IzFMKINI('SifRoba','DuzSifra','10')
@@ -226,8 +236,15 @@ do while .t.
 	@ m_x+2,m_y+5 SAY " Artikal:" GET _idroba PICT "@!S10" when {|| _idroba:=padr(_idroba,VAL(cDSFINI)),.t.} VALID PostRoba(@_idroba, 2, 27).and. NarProvDuple (_idroba) 
 	@ m_x+3,m_y+5 SAY "  Cijena:" GET _Cijena  picture "99999.999" when (roba->tip=="T" .or. gPopZcj=="D")
 	
-	@ m_x+4,m_y+5 SAY "Kolicina:" GET _Kolicina PICTURE "999999.999" when {|| Popust(m_x+3,m_y+28), _kolicina:=iif(gOcitBarcod, 1, _kolicina), _kolicina:=iif(_idroba='PLDUG  ', 1, _kolicina), iif(_idroba='PLDUG  ', .f., .t.) } VALID KolicinaOK(_Kolicina).and.CheckQtty(_Kolicina).and.velicina(_idroba, roba->jmj) SEND READER:={|g| GetReader2(g)}
+	@ m_x+4, m_y+5 SAY "Kolicina:" GET _Kolicina PICTURE "999999.999" when {|| Popust(m_x+3,m_y+28), _kolicina:=iif(gOcitBarcod, 1, _kolicina), _kolicina:=iif(_idroba='PLDUG  ', 1, _kolicina), iif(_idroba='PLDUG  ', .f., .t.) } VALID KolicinaOK(_Kolicina).and.CheckQtty(_Kolicina) SEND READER:={|g| GetReader2(g)}
+	
+	nRowPos := 5
+	
+	if lRVelicina
+		@ m_x+nRowPos, m_y+5 SAY "Velicina:" GET _velicina PICT "99.9" when {|| roba->jmj=="PAR" } VALID ( _velicina == 0 .or. c_br_obuce(_velicina, _idroba))
 
+	endif
+	
 	// ako je sifra ocitana po barcodu, onda ponudi kolicinu 1
 	read
 	cParticip:="N"

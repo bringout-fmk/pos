@@ -1066,7 +1066,7 @@ for i:=1 to LEN(aRacuni)
 		select roba
 		hseek cIdRoba
 		cJmj := roba->jmj
-		cRobaNaz := roba->naz	
+		cRobaNaz := ALLTRIM(roba->naz)
 	
 		if IsPlanika() .and. gRobaVelicina == "D"
 			if &cPosDB->(FieldPos("velicina")) <> 0
