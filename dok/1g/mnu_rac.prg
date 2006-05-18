@@ -294,7 +294,7 @@ for i:=1 to LEN(ImeKol)
 	AADD(Kol,i)
 next
 
-if gStRad=="K"
+if KLEVEL == L_PRODAVAC
 	aZabrane:={K_CTRL_T,K_CTRL_N,K_F4,K_F2,K_CTRL_F9}
 else
   	aZabrane:={}
