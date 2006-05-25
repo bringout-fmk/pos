@@ -19,6 +19,14 @@ private cSmjena:=STR(VAL(gSmjena)+1,LEN(gSmjena))
 private d_Pos:=d_Doks:=CTOD("")
 private s_Pos:=s_Doks:=" "
 
+if gVSmjene=="N"
+	cSmjena:="1"
+  	gSmjena:=cSmjena
+	gDatum := dDatum
+  	PrikStatus()
+  	CLOSERET
+endif
+
 if lOdredi==nil
 	lOdredi:=.t.
 endif
@@ -62,13 +70,6 @@ if d_Pos > d_Doks
 	cSmjena := s_Pos
 endif
 
-if gVSmjene=="N"
-	cSmjena:="1"
-  	gSmjena:=cSmjena
-	gDatum := dDatum
-  	PrikStatus()
-  	CLOSERET
-endif
 
 Box(,8,50)
 @ m_x,m_y+1 SAY " DEFINISANJE DATUMA"+IIF (gVsmjene=="D"," I SMJENE "," ") COLOR INVERT
