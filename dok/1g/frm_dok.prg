@@ -253,6 +253,14 @@ do case
 			case DOKS->IdVd==VD_ROP // reklamacija ostali podaci
 				StDokROP(.t.)
       		endcase
+	case (Ch==ASC("F") .or. Ch==ASC("f"))
+		// stampa poreske fakture
+		aVezani:={{IdPos, BrDok, IdVd, datum}}
+	        StampaPrep(IdPos, dtos(datum)+BrDok, aVezani, .t., nil, .t.)
+		select DOKS
+		f7_pf_traka(.t.)
+		select DOKS
+		return (DE_REFRESH)
 	case gStolovi == "D" .and. (Ch==Asc("Z").or.Ch==Asc("z"))
 		if doks->idvd == "42"
 			PushWa()

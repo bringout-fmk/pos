@@ -438,10 +438,7 @@ RETURN
 *}
 
 
-/*! \fn StampaPrep(cIdPos,cDatBrDok,aVezani,fEkran)
- */
- 
-function StampaPrep(cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom)
+function StampaPrep(cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFill)
 *{
 local cDbf
 local cIdRadnik
@@ -463,6 +460,10 @@ if fEkran==NIL
 	fEkran:=.f.
 else
 	fEkran:=.t.
+endif
+
+if lOnlyFill == nil
+	lOnlyFill := .f.
 endif
 
 if lViseOdjednom==nil
@@ -540,7 +541,7 @@ select pos
 
 if !gStariObrPor
 	if IsPDV()
-		PDVStampaRac(cIdPos, doks->brdok, .t., doks->idvrstep, doks->datum, aVezani, lViseOdjednom)
+		PDVStampaRac(cIdPos, doks->brdok, .t., doks->idvrstep, doks->datum, aVezani, lViseOdjednom, lOnlyFill)
 	else
 		StampaRac(cIdPos, doks->brdok, .t., doks->idvrstep, doks->datum, aVezani)
 	endif
@@ -1221,9 +1222,13 @@ return
 
 
 
-function PDVStampaRac(cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aRacuni, lViseOdjednom)
+function PDVStampaRac(cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aRacuni, lViseOdjednom, lOnlyFill)
 *{
 local cTime
+
+if (lOnlyFill == nil)
+	lOnlyFill := .f.
+endif
 
 if (lPrepis == nil)
 	lPrepis := .f.
@@ -1243,6 +1248,11 @@ fill_rb_traka(cIdPos, cBrDok, dDatumRn, lPrepis, aRacuni, @cTime)
 lStartPrint := .t.
 if lViseOdjednom == .t.
 	lStartPrint := .f.
+endif
+
+// ako je samo punjenje tabela - ovdje se zaustavi
+if lOnlyFill
+	return 
 endif
 
 // ispisi racun

@@ -143,7 +143,6 @@ endif
 
 self:oDatabase:scan()
 
-
 /// fill init db podatke
 f_init_db()
 
@@ -180,39 +179,38 @@ endif
 
 MsgBeep("Ukoliko je predhodni put u toku rada#bilo problema  (nestanak struje, blokirao racunar...),## kucajte lozinku IB, pa <ENTER> !")
 
+altd()
 do while (.t.)
-      		m_x:=Fx
-      		m_y:=Fy
-      		KLevel:=PosPrijava(Fx, Fy)
-      		if (self:lTerminate)
-			return
-		endif
-		if !PPrenosPos()
-                    self:lTerminate := .t.
-                    return
-                endif
+	m_x:=Fx
+      	m_y:=Fy
+      	KLevel:=PosPrijava(Fx, Fy)
+      	if (self:lTerminate)
+		return
+	endif
+	if !PPrenosPos()
+        	self:lTerminate := .t.
+                return
+        endif
 
-
-		SETPOS (Fx, Fy)
-      		if (KLevel > L_UPRAVN  .and. gVSmjene=="D")
-      			Msg("NIJE ODREDJENA SMJENA!!#"+"POTREBNO JE DA SE PRIJAVI SEF OBJEKTA#ILI NEKO VISEG RANGA!!!", 20)
-        		loop
-      		endif
-      		if gVsmjene=="N"
-        		gSmjena:="1"
-        		OdrediSmjenu(.f.)
-      		else
-        		OdrediSmjenu(.t.) 
-      		endif
-      		exit
+	SETPOS (Fx, Fy)
+      	if (KLevel > L_UPRAVN  .and. gVSmjene=="D")
+      		Msg("NIJE ODREDJENA SMJENA!!#"+"POTREBNO JE DA SE PRIJAVI SEF OBJEKTA#ILI NEKO VISEG RANGA!!!", 20)
+        	loop
+      	endif
+      	if gVsmjene=="N"
+        	gSmjena:="1"
+        	OdrediSmjenu(.f.)
+      	else
+        	OdrediSmjenu(.t.) 
+      	endif
+      	exit
 enddo
+
 PrikStatus()
 SETPOS(Fx, Fy)
 fPrviPut:=.t.
 
-
 do while (.t.)
-
 
 	m_x:=Fx
 	m_y:=Fy
