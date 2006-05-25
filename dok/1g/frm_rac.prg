@@ -160,6 +160,9 @@ if (LASTKEY()==K_ESC).or.(LASTKEY()==K_ENTER )
 
 endif
 
+O_DIO
+O_ODJ
+
 O_STRAD
 select strad
 hseek gStrad
@@ -185,10 +188,20 @@ if fMark .and. (LastKey()==Asc("+"))
 	return DE_REFRESH
 endif
 
-
 if UPPER(CHR(LASTKEY()))=="P"
 	PreglSRacun(DOKS->IdPos,doks->datum,DOKS->BrDok)
   	return DE_REFRESH
+endif
+
+if UPPER(CHR(LASTKEY()))=="F"
+	// stampa poreske fakture
+	aVezani:={{IdPos, BrDok, IdVd, datum}}
+	StampaPrep(IdPos, dtos(datum)+BrDok, aVezani, .t., nil, .t.)
+	select DOKS
+	f7_pf_traka(.t.)
+	select DOKS
+  	
+	return DE_REFRESH
 endif
 
 if UPPER(CHR(LASTKEY()))=="Z"
