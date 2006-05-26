@@ -2,7 +2,7 @@ VERZIJA=CDX
 MODUL=POS
 EXENAME=TOPS.exe
 
-PRGS=../main/1g/e.prg
+PRGS=e.prg
 CS=
 ASMS=
 
