@@ -2,6 +2,7 @@ VERZIJA=CDX
 MODUL=POS
 EXENAME=TOPS.exe
 
+EOBJCOPY=echo nista za kopirati
 PRGS=e.prg
 CS=
 ASMS=
