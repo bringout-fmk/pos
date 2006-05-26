@@ -1,5 +1,6 @@
 VERZIJA=CDX
-MODUL=POS
+MODUL=TOPS
+EXENAMEL=TOPS.exe
 
 PRGS=../main/1g/e.prg
 CS=
