@@ -55,11 +55,6 @@ if gModul=="HOPS" .and. gPosSirovine=="D"
 	AADD(opcexe,{|| GenUtrSir()})
 endif
 
-if gPosPrimPak="D"
-	AADD(Opc, "P. gendok: svedi na primarno pakovanje")
-	AADD(opcexe, {|| SvediNaPrP() })
-endif
-
 if gPosKalk=="D"
 	AADD(Opc, "K. prenos sifrarnika iz KALK->TOPS")
 	AADD(opcexe, {|| SifKalkTops() })

@@ -303,7 +303,7 @@ endif
 // TODO
 BarKod(@cId)
 
-Vrati:=PostojiSifra(F_ROBA, "ID", 10, 77, "Roba(artikli)", @cId, NIL, NIL,{|Ch| RobaBlok(Ch)}, NIL, NIL, aZabrane)
+Vrati:=PostojiSifra(F_ROBA, "ID", 10, 77, "Roba(artikli)", @cId, NIL, NIL, NIL, NIL, NIL, aZabrane)
 
 if LASTKEY()==K_ESC
 	cId:=PrevID

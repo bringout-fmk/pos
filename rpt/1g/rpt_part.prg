@@ -193,11 +193,6 @@ do while !eof()
 		fPisi:=.t.
 		? REPL("-",80)
 		++ nBrojacPartnera	
-		if lGenPartnSt
-			if (RNGOST->HH == "D" .and. !Empty(RNGOST->IDN))
-				AzurTopsOstav(RNGOST->IDN, RNGOST->IDFMK, RNGOST->Naz, nStanje, nSldMinIzn)
-			endif
-		endif
 	endif
 	nSumaNije+=nPlacNije
 	nSumaJest+=nPlacJest
@@ -272,12 +267,6 @@ endif
 
 if gVrstaRS<>"S"
 	PaperFeed()
-endif
-
-if lGenPartnSt
-	AddPAzToParams(dDat)
-	AddSCnToParams()
-	AddPCnToParams()
 endif
 
 END PRINT

@@ -799,7 +799,6 @@ gSQLLogBase:=IzFmkIni("SQL","SQLLogBase","c:\sigma",EXEPATH)
 
 public gPosSirovine
 public gPosKalk
-public gPosPrimPak
 
 public gSQLSynchro
 public gPosModem
@@ -825,7 +824,6 @@ gFisConStr:=(IzFmkIni("FISSTA", "CmdKonekcija", "0_1", EXEPATH))
 
 gPosSirovine:="D"
 gPosKalk:="D"
-gPosPrimPak="D"
 
 gSQLSynchro:="D"
 gPosModem:="D"

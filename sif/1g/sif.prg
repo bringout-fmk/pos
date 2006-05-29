@@ -153,75 +153,10 @@ else
   	aZabrane:={}
 endif
 
-if IzFmkIni('CROBA','GledajTops','N',KUMPATH)=='N'
-	return PostojiSifra(F_ROBA,I_ID,15,77,"Sifrarnik robe/artikala",@cId,dx,dy,nil,nil,nil, aZabrane)
-else
-  	return PostojiSifra(F_ROBA,I_ID,15,77,"Sifrarnik robe/artikala",@cId,dx,dy,{|Ch| RobaBlok(Ch)},,,aZabrane)
-endif
+return PostojiSifra(F_ROBA,I_ID,15,77,"Sifrarnik robe/artikala",@cId,dx,dy,nil,nil,nil, aZabrane)
 
 return
 *}
-
-
-/*! \fn RobaBlok(ch)
- *  \brief
- *  \param ch
- */
- 
-function RobaBlok(Ch)
-*{
-local nArr:=SELECT()
-local cSif:=ROBA->id
-
-if IzFmkIni('CROBA','GledajTops','N',KUMPATH)=='D'
-	if UPPER(CHR(Ch))=="C"
-      		cIdRoba:=ID
-      		seek cSif
-      		TB:Stabilize()  // problem sa "S" - exlusive, htc
-
-      		CRobaNDan(cIdRoba)
-
-      		cSQL:="select  stanjem,stanjev,ulazm,ulazv,realm,realv from croba where idrobafmk="+sqlvalue(cIdroba)
-      		aRez:=sqlselect("c:\sigma\sql","sc",cSQL,{"N","N","N","N","N","N"})
-      		if aRez[1,1]='ERR'.or.aRez[1,2]=0
-       			_Stanjem:=0
-       			_Stanjev:=0
-       			_Ulazm:=0
-       			_Ulazv:=0
-       			_Realm:=0
-       			_Realv:=0
-      		else
-       			_Stanjem:=aRez[2,1]
-       			_Stanjev:=aRez[2,2]
-       			_Ulazm:=aRez[2,3]
-       			_Ulazv:=aRez[2,4]
-       			_Realm:=aRez[2,5]
-       			_Realv:=aRez[2,6]
-      		endif
-
-      		Box(,15,75)
-      			@ m_x+ 1,m_y+2 SAY "Artikal : "+cSif+"-"+TRIM(ROBA->NAZ) COLOR INVERT
-      			@ m_x+ 3,m_y+2 SAY "Pocetno stanje MP: "+STR(_StanjeM)
-      			@ m_x+ 4,m_y+2 SAY "Ulaz           MP: "+STR(_UlazM)
-      			@ m_x+ 5,m_y+2 SAY "Realizacija    MP: "+STR(_RealM)
-      			@ m_x+ 6,m_y+2 SAY "-------------------------------------"
-      			@ m_x+ 7,m_y+2 SAY "STANJE         MP: "+STR(_StanjeM+_UlazM-_RealM)
-      			@ m_x+ 8,m_y+2 SAY "-------------------------------------"
-      			@ m_x+ 9,m_y+2 SAY "Pocetno stanje VP: "+STR(_StanjeV)
-      			@ m_x+10,m_y+2 SAY "Ulaz           VP: "+STR(_UlazV)
-      			@ m_x+11,m_y+2 SAY "Realizacija    VP: "+STR(_RealV)
-      			@ m_x+12,m_y+2 SAY "-------------------------------------"
-      			@ m_x+13,m_y+2 SAY "STANJE         VP: "+STR(_StanjeV+_UlazV-_RealV)
-      			@ m_x+14,m_y+2 SAY "-------------------------------------"
-      			@ m_x+15,m_y+2 SAY "STANJE      MP+VP: "+STR(_StanjeM+_UlazM-_RealM+_StanjeV+_UlazV-_RealV)
-      			INKEY(0)
-      		BoxC()
-      		return 6  // DE_CONT2
-  	 endif
-endif
-RETURN DE_CONT
-*}
-
 
 
 /*! \fn LMarg()

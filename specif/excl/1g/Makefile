@@ -3,7 +3,7 @@ MODUL=pos_s1ex
 
 SRCDOSROOT=c:\\dev\\fmk\\pos\\specif\\excl\\1g\\
 
-PRGS=croba.prg
+PRGS=
 CS=
 ASMS=
 

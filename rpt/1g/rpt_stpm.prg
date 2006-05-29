@@ -114,8 +114,6 @@ if !fZaklj
 	private cSmjena:=" "
 endif
 
-private fCROBA:=.f.
-
 O_KASE
 O_ODJ
 O_DIO
@@ -172,15 +170,6 @@ else
 		if !VarEdit( aNiz, 10,5,13+LEN(aNiz),74,'USLOVI ZA IZVJESTAJ "STANJE ODJELJENJA"',"B1")
 			CLOSERET
 		endif
-		if IzFmkIni('CROBA','GledajTops','N',KUMPATH)=='D'
-			if cRoba='CROBA1284#'
-				if pitanje(,'Azurirati u CROBA (D/N)?','N')=='D'
-					fCROBA:=.t.
-				endif
-				cRoba:=""
-			endif
-		endif
-		altd()
 		aUsl1:=Parsiraj(cRoba,"IdRoba","C")
 		if aUsl1<>NIL
 			exit
@@ -255,11 +244,6 @@ endif
 go top
 
 nH:=0
-
-if fCRoba
-	cSQLFile:="c:\sigma\sql"
-	ASQLCRoba(@nH,cSQLFile)
-endif
 
 if ! fZaklj
 	Zagl(cIdOdj,cDat, cVrstaRs)
@@ -438,10 +422,6 @@ do while !eof()
 		endif
 	endif
 
-	if fCROBA
-		ASQLCRoba(@nH,"#CONT",cIdroba, 'M', '0',nStanje)
-	endif
-
 	SELECT POS
 	// preko zadanog datuma
 	do while !eof() .and. POS->IdRoba==cIdRoba
@@ -465,12 +445,6 @@ endif
 //
 if !fZaklj
 	END PRINT
-endif
-
-if fCRoba
-	MsgO("Azuriram SQL-CROBA")
-	ASQLCRoba(@nH,"#END#"+cSQLFile)
-	MsgC()
 endif
 
 CLOSERET

@@ -614,15 +614,6 @@ Gather()
 sql_azur(.t.)
 GathSQL()
 
-//parametri croba
-fCroba:=(IzFmkIni('CROBA','GledajTops','N',KUMPATH)=='D')
-
-if fCROBA
-	nH:=0
-  	cSQLFile:=ToUnix('c:\sigma\sql')
-  	ASQLCRoba(@nH,cSQLFile)
-endif
-
 SELECT _POS
 // uzmi gDatum za azuriranje
 cDatum:=dtos(gDatum)  
@@ -674,19 +665,10 @@ do while !eof() .and. _POS->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+"42"+cDatum+
 		Gather()
 		Sql_azur(.t.)
 		GathSQL()
-		if fCRoba
-			ASQLCroba(@nH,"#CONT",_idroba,"M","2",_kolicina)
-		endif
 		nIznRn+=POS->Kolicina * POS->cijena
   	endif
   	select _pos
 enddo
-
-if fCROba
-	 MsgO("Pokrecem SQL-croba update")
-	 ASQLCroba(@nH,"#END#"+cSQLFile)
-	 Msgc()
-endif 
 
 // ako se koristi varijanta evidentiranja podataka o nacinu placanja
 // nIznRn = iznos zakljucenog racuna
