@@ -14,8 +14,6 @@ liball:
 	make -C sirov/1g
 	make -C smjene/1g
 	make -C specif/planika/1g
-	make -C specif/tigra/1g
-	make -C specif/excl/1g
 	make -C sql/1g
 	make -C stela/1g
 	make -C rabat/1g
@@ -40,8 +38,6 @@ cleanall:
 	make -C sirov/1g clean
 	make -C smjene/1g clean
 	make -C specif/planika/1g clean
-	make -C specif/tigra/1g clean
-	make -C specif/excl/1g clean
 	make -C sql/1g clean
 	make -C stela/1g clean
 	make -C rabat/1g clean
