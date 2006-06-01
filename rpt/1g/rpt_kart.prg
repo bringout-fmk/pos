@@ -2,7 +2,7 @@
 
 /*
  * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
+ *                         Copyright Sigma-com software 1998-2006 
  * ----------------------------------------------------------------
  */
  
@@ -25,11 +25,9 @@
   */
 *string FmkIni_KumPath_KARTICA_SirokiPapir;
 
-
-/*! \fn Kartica()
-  * \brief Izvjestaj: kartica artikla
-  */
-
+// -------------------------------------
+// Izvjestaj: kartica artikla
+// --------------------------------------
 function Kartica()
 *{
 local nStanje

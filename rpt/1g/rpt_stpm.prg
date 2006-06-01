@@ -2,80 +2,21 @@
 
 /*
  * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
+ *                         Copyright Sigma-com software 1998-2006 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/rpt/1g/rpt_stpm.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.11 $
- * $Log: rpt_stpm.prg,v $
- * Revision 1.11  2003/11/14 08:46:39  sasavranic
- * Uslov po K9
- *
- * Revision 1.10  2003/06/28 15:05:36  mirsad
- * omogucen ispis naziva firme na izvjestajima
- *
- * Revision 1.9  2003/01/21 15:01:18  ernad
- * probelm excl stanje artikala - nema problema
- *
- * Revision 1.8  2002/08/05 11:03:58  ernad
- *
- *
- * Fin/SQLLog funkcije, debug bug RJ/KUMPATH
- *
- * Revision 1.7  2002/07/01 13:58:56  ernad
- *
- *
- * izvjestaj StanjePm nije valjao za gVrstaRs=="S" (prebacen da je isti kao za kasu "A")
- *
- * Revision 1.6  2002/06/24 16:11:53  ernad
- *
- *
- * planika - uvodjenje izvjestaja 98-reklamacija, izvjestaj planika/promet po vrstama placanja, debug
- *
- * Revision 1.5  2002/06/17 13:18:22  mirsad
- * dokumentovanje f-ja (priprema za doxy)
- *
- * Revision 1.4  2002/06/17 11:45:25  mirsad
- * dokumentovanje f-ja (priprema za doxy)
- *
- * Revision 1.3  2002/06/14 14:02:43  mirsad
- * prirpeme za doxy dokumenter
- *
- *
  */
 
 /*! \file fmk/pos/rpt/1g/rpt_stpm.prg
- *  \brief Izvjestaj: stanje prodajnog mjesta
+
  */
 
-
-/*! \var *string FmkIni_KumPath_CROBA_GledajTops
- *  \param D - gledaj i kumulativ TOPS-a
- *  \param N - ne gledaj, default vrijednost
- *  \brief Ovaj parametar odredjuje da li da se za utvrdjivanje ukupnog stanja robe gleda i kumulativ TOPS-a
- */
-*string FmkIni_KumPath_CROBA_GledajTops;
- 
-
-/*! \fn StanjePM(cDat,cSmjena)
- *  \param cDat
- *  \param cSmjena
- *  \brief Izvjestaj: stanje prodajnog mjesta
- */
-
-
-*string
 static cKontrolnaTabela:=""
-*;
-
-*bool
 static lCekaj:=.t.
-*;
 
-*function StanjePM(cDat,cSmjena)
-*{
-function StanjePM
-parameters cDat, cSmjena
+// ---------------------------------------------
+// Stanje prodajnog mjesta
+// ---------------------------------------------
+function StanjePM(cD, cS)
 local nStanje
 local nSign:=1
 local cSt
@@ -83,6 +24,11 @@ local nVrijednost
 local nCijena:=0
 local cRSdbf
 local cVrstaRs
+
+// ovo su ulazni parametri
+private cDat := cD
+private cSmjena := cS
+
 
 private cIdDio:=SPACE(2)
 private cIdOdj:=SPACE(2)
@@ -448,7 +394,6 @@ if !fZaklj
 endif
 
 CLOSERET
-*}
 
 
 /*! \fn Podvuci(cVrstaRs)
@@ -456,7 +401,6 @@ CLOSERET
  */
  
 function Podvuci(cVrstaRs)
-*{
 IF cVrstaRs=="S"
   ? cLM+REPL ("-", 10), REPL ("-", nRob) + " "
 Else
@@ -467,7 +411,6 @@ IF cVrstaRs == "S"
   ?? " "+REPLICATE ("-", 15)
 ENDIF
 return
-*}
 
 
 /*! \fn Zagl(cIdOdj,dDat, cVrstaRs)
@@ -475,7 +418,6 @@ return
  */
 
 static function Zagl(cIdOdj,dDat, cVrstaRs)
-*{
 if dDat==NIL
   dDat:=gDatum
 endif
@@ -515,11 +457,11 @@ Else
    ? cLM
 ENDIF
 return
-*}
 
 
+// -------------------------------------------------------------------
+// -------------------------------------------------------------------
 static function AnalizirajKontrolnuTabelu(cIdRoba, nStanje, nMpv)
-*{
 local nArea
 
 SELECT (F_KONTROLA)
@@ -547,4 +489,3 @@ endif
 
 SELECT(nArea)
 return
-*}

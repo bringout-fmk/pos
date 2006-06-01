@@ -4,44 +4,6 @@
  * ----------------------------------------------------------------
  *                                     Copyright Sigma-com software 
  * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/rpt/1g/rpt_stan.prg,v $
- * $Author: mirsad $ 
- * $Revision: 1.9 $
- * $Log: rpt_stan.prg,v $
- * Revision 1.9  2003/06/28 15:05:36  mirsad
- * omogucen ispis naziva firme na izvjestajima
- *
- * Revision 1.8  2002/08/05 11:03:58  ernad
- *
- *
- * Fin/SQLLog funkcije, debug bug RJ/KUMPATH
- *
- * Revision 1.7  2002/07/01 13:58:56  ernad
- *
- *
- * izvjestaj StanjePm nije valjao za gVrstaRs=="S" (prebacen da je isti kao za kasu "A")
- *
- * Revision 1.6  2002/06/30 20:28:44  ernad
- *
- *
- *
- * pos meni za odabir firme /MNU_INI
- *
- * Revision 1.5  2002/06/24 16:11:53  ernad
- *
- *
- * planika - uvodjenje izvjestaja 98-reklamacija, izvjestaj planika/promet po vrstama placanja, debug
- *
- * Revision 1.4  2002/06/17 13:18:22  mirsad
- * dokumentovanje f-ja (priprema za doxy)
- *
- * Revision 1.3  2002/06/17 11:45:25  mirsad
- * dokumentovanje f-ja (priprema za doxy)
- *
- * Revision 1.2  2002/06/14 14:02:43  mirsad
- * prirpeme za doxy dokumenter
- *
- *
  */
 
 /*! \file fmk/pos/rpt/1g/rpt_stan.prg
