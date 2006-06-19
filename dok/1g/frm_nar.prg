@@ -42,10 +42,12 @@ SELECT _POS
 
 aRabat:={}
 
-if cBrojRn==nil
+if ( cBrojRn == nil )
 	cBrojRn:=""
-else
-	cBrojRn:=cBrojRn
+endif
+
+if ( cSto == nil )
+	cSto := ""
 endif
 
 if gDisplay=="D"
