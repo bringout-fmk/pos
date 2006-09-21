@@ -377,9 +377,9 @@ return (cRet)
  */
  
 function _Pripr2_POS(cIdVrsteP)
-*{
 local cBrdok
-local nTrec:=0
+local nTrec := 0
+local nPopust
 
 // prebacit ce u _POS sadrzaj _PRIPR
 
@@ -387,21 +387,43 @@ if cIdVrsteP == nil
 	cIdVrsteP := ""
 endif
 
+nPopust := 0
+
+if IsPlanika() .and. !EMPTY(cIdVrsteP)
+	get_vrpl_popust(cIdVrsteP, @nPopust)
+endif
+
 select _pripr
 go top
+
 cBrdok:=brdok
+
 do while !eof()
+	
 	Scatter()
+	
 	select _pos
   	append blank
-  	if (gRadniRac=="N")
+  	
+	if (gRadniRac=="N")
    		// u _PRIPR mora biti samo jedan dokument!!!
 		_brdok:=cBrDok   
   	endif
+
+	altd()
 	
 	_IdVrsteP := cIdVrsteP
-  	gather()
-  	select _pripr
+  	
+	if ( IsPlanika() .and. nPopust > 0 ;
+		.and. gPopust == 0 .and. gPopIznP == 0 ;
+		.and. !gClanPopust )
+		
+		_ncijena := ROUND( _cijena * nPopust / 100, gPopDec )
+	endif
+	
+	gather()
+  	
+	select _pripr
   	skip
 enddo
 
@@ -409,7 +431,7 @@ SELECT _PRIPR
 Zapp () 
 __dbPack()
 return
-*}
+
 
   
 /*! \fn BrisiDok(cIdPos,cIdVD,dDatum,cBrojR)

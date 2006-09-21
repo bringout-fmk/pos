@@ -486,4 +486,46 @@ if (RecCount() > 0)
 endif
 
 return
-*}
+
+// -----------------------------------------
+// vraca popust po vrsti placanja
+// -----------------------------------------
+function get_vrpl_popust(cIdVrPlac, nPopust)
+local nTArea := SELECT()
+local cPom
+local nPos
+local cTmp
+local cPopust
+local i
+
+select vrstep
+set order to tag "ID"
+seek cIdVrPlac
+
+// naz #P#05#
+cPom := ALLTRIM(field->naz)
+nPos := AT("#P#", cPom)
+cPopust := ""
+
+if nPos > 0
+	
+	for i:=1 to LEN(cPom)
+		
+		cTmp := SUBSTR(cPom, nPos + 2 + i, 1)
+		
+		if cTmp == "#"
+			exit
+		endif
+		
+		cPopust += cTmp
+	next
+	
+	nPopust := VAL(cPopust)
+	
+endif
+
+select (nTArea)
+return
+
+
+
