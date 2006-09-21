@@ -188,6 +188,8 @@ for i:=1 to 12
 			cTitle:="Cekovi"
 		case i==7
 			cTitle:="Troskovi"
+		case i==8
+			cTitle:="Unikredit kartice"
 	endcase
 			
 	aPromet[i,1]:=IzFmkIni('POS','Polog'+ALLTRIM(STR(i)), cTitle, KUMPATH)
