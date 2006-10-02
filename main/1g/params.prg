@@ -305,9 +305,13 @@ Rpar("Bc",@gEntBarCod)
 Rpar("Ep",@gEvidPl)
 Rpar("dF",@gDiskFree)
 Rpar("UN",@gSifUvPoNaz)
+
 if IsPlanika()
+	// ako je planika prati stanje je uvijek "D"
+	gPratiStanje := "D"
 	Rpar("Mi",@gRobaVelicina)
 endif
+
 if IsPDV()
 	Rpar("pF",@gPorFakt)
 endif

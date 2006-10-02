@@ -583,7 +583,6 @@ else
 	gClanPopust:=.f.
 endif
 
-
 public gPoreziRaster:="D"
 public gPratiStanje:="N"
 public gIdPos:="1 "
@@ -718,7 +717,10 @@ Rpar("Ep",@gEvidPl)
 Rpar("UN",@gSifUvPoNaz)
 Rpar("dF",@gDiskFree)
 
-altd()
+if IsPlanika()
+	gPratiStanje := "D"
+endif
+
 // izgled racuna
 gSjecistr:=padr(GETPStr(gSjeciStr),20)
 gOtvorstr:=padr(GETPStr(gOtvorStr),20)
@@ -821,12 +823,13 @@ gFisRptEvid:=(IzFmkIni("FISSTA", "FisRptEvid", "N", EXEPATH))
 public gFisConStr
 gFisConStr:=(IzFmkIni("FISSTA", "CmdKonekcija", "0_1", EXEPATH))
 
-
 gPosSirovine:="D"
 gPosKalk:="D"
 
 gSQLSynchro:="D"
 gPosModem:="D"
+
+
 
 public glPorezNaSvakuStavku
 
