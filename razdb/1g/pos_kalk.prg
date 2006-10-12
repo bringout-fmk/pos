@@ -439,7 +439,9 @@ AADD(aDBF,{"IDTARIFA", "C",  6, 0})
 AADD(aDBF,{"IDCIJENA", "C",  1, 0})
 AADD(aDBF,{"IDPARTNER","C", 10, 0})
 AADD(aDBF,{"DATUM",    "D",  8, 0})
+AADD(aDBF,{"DATPOS",   "D",  8, 0})
 AADD(aDBF,{"IdVd",     "C",  2, 0})
+AADD(aDBF,{"BRDOK",    "C", 10, 0})
 AADD(aDBF,{"M1",       "C",  1, 0})
 
 select roba
@@ -511,6 +513,8 @@ do while !eof() .and. doks->IdVd==cIdVd .and. doks->Datum<=dDatDo
 			replace mpc With POS->Cijena
 			replace IdCijena WITH POS->IdCijena
 			replace Datum WITH dDatDo
+			replace DatPos with pos->datum
+			replace brdok with pos->brdok
 			
 			if gModul=="HOPS"	
 				replace IdVd With "47"
