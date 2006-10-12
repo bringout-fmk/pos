@@ -190,7 +190,15 @@ do case
              			sql_delete()
              			go nTTR
            		enddo
-           		select DOKS
+           		
+			// izbrisi i iz DOKSRC
+			if gSamoProdaja=="N"
+				if is_doksrc()
+					d_doksrc(doks->idpos, doks->idvd, doks->brdok, doks->datum)
+				endif
+			endif
+					
+			select DOKS
            		delete
            		sql_delete()
            		return DE_REFRESH

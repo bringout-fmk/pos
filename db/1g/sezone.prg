@@ -28,6 +28,8 @@ AADD(aFiles, "SECUR.CDX")
 
 AADD(aFiles, "MESSAGE.DBF")
 
+AADD(aFiles, "DOKSRC.DBF")
+
 AADD(aFiles, "FMK.INI")
 return aFiles
 

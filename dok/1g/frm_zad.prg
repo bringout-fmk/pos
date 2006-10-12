@@ -307,12 +307,21 @@ if RecCount2()>0
   		if (IsPlanika() .and. cIdVd==VD_REK)
 			AzurRekOpis(cBrDok, cIdVD)
 		endif
+		// azuriranje doksrc
+		p_to_doksrc()
 	else
     		SELECT _POS
     		AppFrom("PRIPRZ",.f.)
     		SELECT PRIPRZ
     		Zapp()
-    		__dbPack()
+		if gSamoProdaja=="N"
+			if is_doksrc()
+				select p_doksrc
+				zap
+			endif
+		endif
+    		select priprz
+		__dbPack()
     		MsgBeep("Dokument nije stavljen na stanje!#"+"Ostavljen je za doradu!",20)
   	endif
 endif

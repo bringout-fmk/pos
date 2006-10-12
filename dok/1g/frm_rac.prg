@@ -351,6 +351,5 @@ sql_azur(.t.)
 sql_delete()
 
 return (DE_REFRESH)
-*}
 
 

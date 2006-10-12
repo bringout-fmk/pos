@@ -47,7 +47,6 @@ cPm:=SPACE(2)
 
 cBrDok:=SPACE(LEN(field->brDok))
 
-
 fPrenesi:=.f.
 cOtpValid:="95"
 
@@ -90,7 +89,6 @@ if priprz->(RecCount2())==0 .and. Pitanje( ,"Preuzeti dokumente iz KALK-a","N")=
 	
     	SELECT doks
     	set order to 1
-		
 	
         cBrDok:=NarBrDok(cIdPos, cIdVd)
 	
@@ -108,7 +106,16 @@ if priprz->(RecCount2())==0 .and. Pitanje( ,"Preuzeti dokumente iz KALK-a","N")=
     	enddo
 	MsgC()
 
-    	if (gModemVeza=="N")
+    	// azuriraj i DOKSRC....
+	select katops
+	go top
+	
+	add_p_doksrc(gIdPos, cIdVd, cBrDok, gDatum, "KALK", ;
+		katops->idfirma, katops->idvd, katops->brdok, ;
+		katops->datdok, katops->idkonto, katops->idkonto2, ;
+		katops->idpartner, "Zaduzenje")
+	
+	if (gModemVeza=="N")
      		select katops
 		use
     	endif
@@ -134,6 +141,7 @@ endif
 
 return .t.
 *}
+
 
 /*! \ingroup ini
  *  \var FmkIni_ExePath_POS_PrenosGetPm
@@ -695,9 +703,6 @@ return
 // katops -> priprz
 // ----------------------------------------------	
 static function AzurRow(cIdVd, cBrDok, cRsDbf)
-*{
-
-altd()
 
 // tabela PRIPRZ = "priprema zaduzenja"
 select priprz

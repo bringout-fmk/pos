@@ -184,7 +184,11 @@ endif
   Skloni(KUMPATH,"DOKS.DBF",cSezona,finverse,fda,fnul)
   Skloni(KUMPATH,"POS.DBF",cSezona,finverse,fda,fnul)
   Skloni(KUMPATH,"FMK.INI",cSezona,finverse,fda,fnul)
-
+  
+  if is_doksrc()
+  	Skloni(KUMPATH,"DOKSRC.DBF",cSezona,finverse,fda,fnul)
+  endif
+  
   //sifrarnici
   fnul:=.f.
   Skloni(SIFPATH,"roba.dbf",cSezona,finverse,fda,fnul)
@@ -223,6 +227,7 @@ PUBLIC gaDBFs:={ ;
 {  F_DOKS      , "DOKS", P_KUMPATH },;
 {  F_POS       , "POS", P_KUMPATH },;
 {  F_RNGPLA    , "RNGPLA", P_KUMPATH },;
+{  F_DOKSRC    , "DOKSRC", P_KUMPATH },;
 {  F__POS      , "_POS", P_PRIVPATH },;
 {  F__PRIPR    , "_PRIPR", P_PRIVPATH },;
 {  F__POSP     , "_POSP",  P_PRIVPATH },;
@@ -231,6 +236,7 @@ PUBLIC gaDBFs:={ ;
 {  F_K2C       , "K2C", P_PRIVPATH},;
 {  F_MJTRUR    , "MJTRUR", P_PRIVPATH },;
 {  F_ROBAIZ    , "ROBAIZ", P_PRIVPATH },;
+{  F_P_DOKSRC  , "P_DOKSRC", P_PRIVPATH },;
 {  F_RAZDR     , "RAZDR",  P_SIFPATH },;
 {  F_ROBA      , "ROBA",   P_SIFPATH },;
 {  F_SIROV     , "SIROV",  P_SIFPATH },;
@@ -898,6 +904,10 @@ if (gSql == "D")
 	CreDIntDB()
 endif
 
+if gSamoProdaja == "N"
+	// kreiraj doksrc
+	cre_doksrc()
+endif
 
 return
 *}
@@ -946,6 +956,12 @@ endif
 
 if (IsPlanika() .and. i==F_MESSAGE .and. i==F_TMPMSG)
 	lIdiDalje:=.t.
+endif
+
+if is_doksrc()
+	if i==F_DOKSRC .or. i==F_P_DOKSRC
+		lIdiDalje := .t.
+	endif
 endif
 
 // integritet
