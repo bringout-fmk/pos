@@ -726,6 +726,9 @@ sql_append()
 
 _BrDok:=cBrDok 
 
+// ako je zaduzenje pitaj da li je roba na stanju...
+//g_roba_na_stanju(cIdVd)
+
 // zakljucene stavke
 if gBrojSto=="D"
 	if cIdVd<>VD_RN
@@ -801,6 +804,65 @@ __dbPack()
 
 return
 *}
+
+
+// -----------------------------------
+// da li je roba na stanju...
+// -----------------------------------
+function roba_na_stanju(cIdPos, cIdVd, cBrDok, dDatDok)
+local lRet := .t.
+local nTArea := SELECT()
+O_DOKS
+select doks
+set order to tag "1"
+seek cIdPos + cIdVd + DTOS(dDatDok) + cBrDok
+
+if FOUND()
+	if ALLTRIM(field->sto) == "N"
+		lRet := .f.
+	endif
+endif
+
+select (nTArea)
+return lRet
+
+
+
+// ---------------------------------------------------
+// funkcija koja poziva upit da li je roba na stanju
+// ---------------------------------------------------
+function g_roba_na_stanju(cIdVd)
+local cRobaNaStanju := "N"
+
+// ako je ovaj parametar aktivan... prekoci
+if gBrojSto == "D"
+	return
+endif
+
+// ako nije zaduzenje - prekoci
+if cIdVD <> VD_ZAD
+	return
+endif
+
+//box_roba_stanje(@cRobaNaStanju)
+
+// setuj robu na stanju pri importu zaduzenja na N
+_sto := cRobaNaStanju
+
+return
+
+// -------------------------------
+// box roba na stanju
+// -------------------------------
+function box_roba_stanje(cRStanje)
+private GetList:={}
+
+Box(,3, 50)
+	@ 2+m_x, 2+m_y SAY "Da li je roba zaprimljena u prodavnicu (D/N)?" GET cRStanje VALID cRStanje $ "DN" PICT "@!"
+	read
+BoxC()
+
+return cRStanje
 
 
 /*! \fn VratiPripr(cIdVd,cIdRadnik,cIdOdj,cIdDio)

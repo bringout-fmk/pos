@@ -165,9 +165,12 @@ if LEN(aUsl1)>0
   	endif
 endif
 
+MsgO("filterisem podatke ... sacekajte trenutak")
+
 index on IdPos+Robak1()+idroba+DTOS(Datum) to (KUMPATH+"k1pos") for &cFilt
 go top
 
+MsgC()
 
 // pravljenje izvjestaja
 
@@ -192,7 +195,14 @@ do while !eof()
  		nPstanje := 0
  		nUlaz := nIzlaz := 0
  		do while !eof().and.RobaK1()=ck1.and.POS->IdRoba==cIdRoba.and.(POS->Datum<cDat.or.(!Empty(cSmjena).and.POS->Datum==cDat.and.POS->Smjena<cSmjena))
-   			if !Empty(cIdDio).and.POS->IdDio<>cIdDio
+   			if pos->idvd == VD_ZAD
+				if !roba_na_stanju(pos->idpos, pos->idvd, pos->brdok, pos->datum)
+					skip
+					loop
+				endif
+			endif
+			
+			if !Empty(cIdDio).and.POS->IdDio<>cIdDio
      				SKIP
 				LOOP
    			endif
@@ -231,7 +241,14 @@ do while !eof()
  
  		do while !eof().and.POS->IdRoba==cIdRoba .and. Robak1()=ck1 .and.(POS->Datum == cDat .or.(!Empty (cSmjena) .and. POS->Datum==cDat .and. POS->Smjena<cSmjena))
 
-   			if !Empty(cIdDio).and.POS->IdDio<>cIdDio
+   			if pos->idvd == VD_ZAD
+				if !roba_na_stanju(pos->idpos, pos->idvd, pos->brdok, pos->datum)
+					skip
+					loop
+				endif
+			endif
+		
+			if !Empty(cIdDio).and.POS->IdDio<>cIdDio
      				SKIP
 				LOOP
    			endif
@@ -419,4 +436,5 @@ Else
    ? cLM
 ENDIF
 return
-*}
+
+

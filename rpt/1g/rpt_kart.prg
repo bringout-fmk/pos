@@ -38,6 +38,7 @@ local nCijena:=0
 local cRSdbf
 local cLM:=""
 local nSir:=40
+local cSiroki := "D"
 
 private cIdDio:=SPACE(2)
 private cIdOdj:=SPACE(2)
@@ -46,7 +47,10 @@ private cDat1:=gDatum
 private cPocSt:="D"
 
 nMDBrDok:=VAL(IzFMKINI("KARTICA","MaxDuzinaBrDok","4",KUMPATH))
-cSiroki:=IzFMKINI("KARTICA","SirokiPapir","N",KUMPATH)
+
+if !IsPlanika()
+	cSiroki:=IzFMKINI("KARTICA","SirokiPapir","N",KUMPATH)
+endif
 
 O_KASE
 O_ODJ
@@ -295,7 +299,14 @@ do while !eof() .and. POS->IdOdj==cIdOdj
     else
       // stanje do
       do while !eof() .and. POS->(IdOdj+IdRoba)==(cIdOdj+cIdRoba) .and. POS->Datum<cDat0
-      	if !empty(cIdDio) .and. POS->IdDio<>cIdDio
+      	if pos->idvd == VD_ZAD
+		if !roba_na_stanju(pos->idpos, pos->idvd, pos->brdok, pos->datum)
+			skip
+			loop
+		endif
+	endif	
+      
+	if !empty(cIdDio) .and. POS->IdDio<>cIdDio
 		skip
 		loop
       	endif
@@ -358,6 +369,13 @@ do while !eof() .and. POS->IdOdj==cIdOdj
     endif // cPocSt
 
     do while !eof().and.POS->(IdOdj+IdRoba)==(cIdOdj+cIdRoba).and.POS->Datum<=cDat1
+      	if pos->idvd == VD_ZAD
+		if !roba_na_stanju(pos->idpos, pos->idvd, pos->brdok, pos->datum)
+			skip
+			loop
+		endif
+	endif	
+      
       if !empty(cIdDio).and.POS->IdDio<>cIdDio
       	skip
 	loop
@@ -510,4 +528,4 @@ PaperFeed ()
 END PRINT
 CLOSERET
 
-*}
+

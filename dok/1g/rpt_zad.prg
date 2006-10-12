@@ -169,12 +169,30 @@ return
  */
  
 function PrepisZad(cNazDok)
-*{
-
 local fPred:=.f.
-LOCAL nSir := 80, nRobaSir := 40, cLm := SPACE (5), cPicKol := "999999.999"
+local nSir := 80
+local nRobaSir := 40
+local cLm := SPACE (5)
+local cPicKol := "999999.999"
 local aTarife:={}
+local cRobaNaStanju := "N"
 
+// ako je zaduzenje...
+if IsPlanika() .and. field->idvd == VD_ZAD .and. gSamoProdaja == "D"
+	if ALLTRIM(field->sto) == "N"
+		Scatter()
+		cRobaNaStanju := PADR(ALLTRIM(_sto), 1)
+		box_roba_stanje(@cRobaNaStanju)
+		if cRobaNaStanju == "D"
+			_sto := ""
+		else
+			_sto := cRobaNaStanju
+		endif
+		Gather()
+		sql_azur(.t.)
+		GathSQL()
+	endif
+endif
 
 START PRINT CRET
 IF gVrstaRS == "S"
@@ -316,5 +334,5 @@ EndIF
  END PRINT
  SELECT DOKS
 return
-*}
+
 

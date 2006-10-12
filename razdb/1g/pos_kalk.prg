@@ -715,6 +715,12 @@ if cIdVd=="NI"
 	replace ncijena with katops->mpc2
 endif
 
+if IsPlanika()
+	if katops->idvd == "80"
+		replace sto with "N"
+	endif
+endif
+
 replace idtarifa with katops->idtarifa
 replace kolicina with katops->kolicina
 replace jmj with katops->jmj

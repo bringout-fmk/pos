@@ -196,7 +196,9 @@ do while !eof()
     //
     //pocetno stanje - stanje do
     //
+    
     do While !Eof() .and. POS->IdOdj==_IdOdj .and. POS->IdRoba==cIdRoba.and.(POS->Datum < cDat.or.(!Empty (cSmjena) .and. POS->Datum==cDat .and. POS->Smjena<cSmjena))
+      
       IF !Empty (cIdDio) .and. POS->IdDio <> cIdDio
         SKIP
 	LOOP
@@ -233,6 +235,7 @@ do while !eof()
     //utrosak specificiranog datuma/smjene
     //
     DO While !eof() .and. POS->IdOdj==_IdOdj .and. POS->IdRoba==cIdRoba .and. (POS->Datum==cDat .or. (!empty(cSmjena) .and. POS->Datum==cDat .and. POS->Smjena<cSmjena))
+      
       IF !empty(cIdDio).and.POS->IdDio<>cIdDio
         SKIP
 	LOOP

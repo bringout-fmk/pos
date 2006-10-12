@@ -220,6 +220,13 @@ do while !eof()
 		endif
 		SELECT POS
 		
+		if IsPlanika() .and. pos->idvd == VD_ZAD
+     			if !roba_na_stanju(pos->idpos, pos->idvd, pos->brdok, pos->datum)
+				skip
+				loop
+			endif
+      		endif  
+		
 		if !Empty (cIdDio) .and. POS->IdDio <> cIdDio
 			skip
 			loop
@@ -273,6 +280,13 @@ do while !eof()
 			endif
 		endif
 		SELECT POS
+	
+		if IsPlanika() .and. pos->idvd == VD_ZAD
+     			if !roba_na_stanju(pos->idpos, pos->idvd, pos->brdok, pos->datum)
+				skip
+				loop
+			endif
+      		endif  
 		
 		if !Empty(cIdDio) .and. POS->IdDio<>cIdDio
 			skip

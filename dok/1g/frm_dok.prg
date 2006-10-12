@@ -50,10 +50,13 @@ else
 endif
 
 AADD(ImeKol,{PADC("Iznos",10),{|| DokIznos(NIL)}})
+
 if IsPlanika()
   // reklamacije (R)ealizovane, (P)riprema
-  AADD(ImeKol,{"Rekl",{||sto}})
+  AADD(ImeKol,{"Rekl",{||if(idvd == VD_REK, sto, "   ")}})
+  AADD(ImeKol,{"Na stanju",{||if(idvd == VD_ZAD, if(EMPTY(sto), "da ", "NE "), "   ")}})
 endif
+
 AADD(ImeKol,{"Radnik",{||IdRadnik}})
 
 if gStolovi == "D"
@@ -318,8 +321,35 @@ do case
         		TB:stabilize()
       		end
       		RETURN (DE_REFRESH)
-    	case Ch==K_CTRL_P
+    	
+	case Ch==K_CTRL_P
       		StDoks()
+		
+	case UPPER(CHR(Ch)) == "S"
+		// setovanje da li je roba na stanju...
+		if IsPlanika() .and. doks->idvd == VD_ZAD
+			// setuj stanje ....
+			Scatter()
+			cRobaNaStanju := PADR(ALLTRIM(_sto), 1)
+			box_roba_stanje(@cRobaNaStanju)
+			if cRobaNaStanju == "D"
+				_sto := ""
+			else
+				_sto := cRobaNaStanju
+			endif
+			Gather() 
+			sql_azur(.t.)
+      			GathSQL()
+			return DE_REFRESH
+		endif
+		
+		return DE_CONT
+	
+	case UPPER(CHR(Ch)) == "I"
+		// info o dokumentu...
+		
+		return DE_CONT
+		
   	endcase
 
 return (DE_CONT)
