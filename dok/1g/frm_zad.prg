@@ -152,7 +152,7 @@ fSadAz := .f.
 
 if (cIdVd<>VD_REK) .and. Kalk2Pos(@cIdVd, @cBrDok, @cRsDBF)
 	if priprz->(RecCount2()) > 0
-    		if cBrDok<>nil .and. Pitanje(,"Odstampati prenesni dokument na stampac ?","D")=="D"
+    		if cBrDok<>nil .and. Pitanje(,"Odstampati prenesni dokument na stampac ?","N")=="D"
         		if cIdVd $ "16#96#95#98"
           			StampZaduz(cIdVd, cBrDok)
         		elseif cIdVd $ "IN#NI"
@@ -298,7 +298,7 @@ if RecCount2()>0
 		RekOpis()
 	endif
   	Beep(4)
-	if !fSadAz.and.Pitanje(,"Zelite li odstampati dokument ?","D")=="D"
+	if !fSadAz.and.Pitanje(,"Zelite li odstampati dokument ?","N")=="D"
         	StampZaduz(cIdVd, cBrDok)
   	endif
   	if fSadAz.or.Pitanje(,"Zelite li staviti dokument na stanje? (D/N)", "D")=="D"

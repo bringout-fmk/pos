@@ -716,7 +716,10 @@ if cIdVd=="NI"
 endif
 
 if IsPlanika()
-	if katops->idvd == "80"
+	// setuj da nije na stanju samo zaduzenje kojem je
+	// idkonto2 = "XXX"
+	// to je prodavnica koja prima robu
+	if katops->idvd == "80" .and. ALLTRIM(katops->idkonto2) == "XXX"
 		replace sto with "N"
 	endif
 endif
