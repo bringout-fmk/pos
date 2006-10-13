@@ -857,12 +857,21 @@ return
 function box_roba_stanje(cRStanje)
 private GetList:={}
 
+if EMPTY(cRStanje)
+	cRStanje := "D"
+endif
+
 Box(,3, 50)
 	@ 2+m_x, 2+m_y SAY "Da li je roba zaprimljena u prodavnicu (D/N)?" GET cRStanje VALID cRStanje $ "DN" PICT "@!"
 	read
 BoxC()
 
-return cRStanje
+if LastKey() == K_ESC
+	cRStanje := cRStanje
+	return 0
+endif
+
+return 1
 
 
 /*! \fn VratiPripr(cIdVd,cIdRadnik,cIdOdj,cIdDio)

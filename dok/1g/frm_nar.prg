@@ -546,6 +546,16 @@ else
 				skip
 				loop
 			endif
+			
+			// provjeri da li je dokument na stanju...
+			if IsPlanika() .and. pos->idvd == VD_ZAD
+				if !roba_na_stanju(pos->idpos, pos->idvd, ;
+						pos->brdok, pos->datum)
+					skip
+					loop
+				endif
+			endif
+			
 			if POS->idvd $ "16#00"
           			nStanje += POS->Kolicina
         		elseif Pos->idvd $ "IN"

@@ -331,6 +331,9 @@ do case
 			// setuj stanje ....
 			Scatter()
 			cRobaNaStanju := PADR(ALLTRIM(_sto), 1)
+			if EMPTY(cRobaNaStanju)
+				MsgBeep("Ovo zaduzenje je na stanju u prodavnici#Promjena ce se automatski odraziti na stanje artikala!")
+			endif
 			box_roba_stanje(@cRobaNaStanju)
 			if cRobaNaStanju == "D"
 				_sto := ""
