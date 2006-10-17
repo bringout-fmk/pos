@@ -278,8 +278,11 @@ GW_STATUS="-"
 Boxc()
 
 ScanDb()
+
+// nafiluj p_update/KALK
+fill_p_update()
+
 return 1
-*}
 
 
 /*! \fn LogRecRoba(cIdRoba)

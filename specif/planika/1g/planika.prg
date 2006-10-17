@@ -437,4 +437,35 @@ Else
 ENDIF
 return
 
+// --------------------------------------------------------
+// filovanje tabele p_update iz TOPS-a nakon importa
+// --------------------------------------------------------
+function fill_p_update()
+local cModul := "TOPS"
+local nTArea := SELECT()
+local cKPath := ""
+local cKKonto := ""
+local cKFirma := ""
+
+if gSamoProdaja == "D"
+	return
+endif
+
+// daj specificne kalk varijable za prodavnicu...
+GetKalkVars(@cKFirma, @cKKonto, @cKPath)
+
+// ako su parametri prazni, nemoj nista dodavati
+if EMPTY(cKPath) .or. EMPTY(cKKonto)
+	return
+endif
+
+cKKonto := PADR(cKKonto, 7)
+
+// dodaj u p_update... p_updated = "N"
+add_p_update(cModul, cKKonto, "N", cKPath)
+
+select (nTArea)
+
+return
+
 
