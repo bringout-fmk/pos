@@ -1,29 +1,14 @@
 #include "\dev\fmk\pos\pos.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/dok/1g/rpt_tar.prg,v $
- * $Author: sasa $ 
- * $Revision: 1.2 $
- * $Log: rpt_tar.prg,v $
- * Revision 1.2  2002/06/15 08:17:46  sasa
- * no message
- *
- *
- */
- 
-/*! \fn RekTarife(aTarife)
- */
- 
+
+// --------------------------------------
+// rekapitulacija tarifa pos
+// --------------------------------------
 function RekTarife(aTarife)
-*{
 
 ?
-?
 ? "REKAPITULACIJA POREZA PO TARIFAMA"
-? "---------------------------------"
+
 nTotOsn := 0  ; nTotPPP := 0;  nTotPPU := 0; nTotPP:=0
 m:= REPLICATE ("-", 6)+" "+REPLICATE ("-", 10)+" "+REPLICATE ("-", 10)+" "+;
     REPLICATE ("-", 10)
@@ -67,34 +52,40 @@ endif
 ? m
 ?
 ?
+
 return NIL
-*}
 
 
+// -----------------------------------------
+// pdv rekapitulacija tarifa pos
+// -----------------------------------------
 function PDVRekTarife(aTarife)
-*{
 local nArr
+local cLine
 
-?
 ?
 ? "REKAPITULACIJA POREZA PO TARIFAMA"
-? "---------------------------------"
+
 nTotOsn := 0
 nTotPPP := 0
 nTotPPU := 0
 nTotPP:=0
 nPDV:=0
 
-m:= REPLICATE ("-", 12)+" "+REPLICATE ("-", 12)+" "+REPLICATE ("-", 12)
+cLine := REPLICATE("-", 12)
+cLine += " "
+cLine += REPLICATE("-", 12)
+cLine += " "
+cLine += REPLICATE("-", 12)
 
 ASORT (aTarife,,, {|x, y| x[1] < y[1]})
 
-? m
+? cLine
 
 ? "Tarifa (Stopa %)"
-? PADC ("PV bez PDV", 12), PADC ("PDV", 12), padC ("PV sa PDV",12)
+? PADC("PV bez PDV", 12), PADC("PDV", 12), padC("PV sa PDV",12)
 
-? m
+? cLine
 
 nArr:=SELECT()
 
@@ -112,14 +103,13 @@ next
 
 select (nArr)
 
-? m
-
+? cLine
 ? "UKUPNO"
-? STR (nTotOsn, 12, 2), STR (nTotPPP, 12, 2),str(nTotOsn+nTotPPP,12,2)
-? m
+? STR(nTotOsn, 12, 2), STR(nTotPPP, 12, 2), STR(nTotOsn + nTotPPP, 12, 2)
+? cLine
 ?
-?
+
 return NIL
-*}
+
 
 
