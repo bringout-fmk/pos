@@ -904,10 +904,10 @@ if (gSql == "D")
 	CreDIntDB()
 endif
 
-if gSamoProdaja == "N"
-	// kreiraj doksrc
-	cre_doksrc()
-endif
+//if gSamoProdaja == "N"
+//	// kreiraj doksrc
+//	cre_doksrc()
+//endif
 
 return
 *}

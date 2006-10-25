@@ -141,6 +141,10 @@ if gSql=="D"
 	CreDIntDB()
 endif
 
+if gSamoProdaja == "N"
+	cre_doksrc()
+endif
+
 self:oDatabase:scan()
 
 /// fill init db podatke
