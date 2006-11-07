@@ -40,6 +40,10 @@ local cKalkDestinacija
 local fRet:=.f.
 local cPM
 local cKalkDBF:=""
+local cKalkIdFirma := ""
+local cKalkBrDok := ""
+local cKalkTipDok := ""
+
 private H
 
 cIdPos:=gIdPos
@@ -109,9 +113,16 @@ if priprz->(RecCount2())==0 .and. Pitanje( ,"Preuzeti dokumente iz KALK-a","N")=
     	// azuriraj i DOKSRC....
 	select katops
 	go top
-	
+
+	// ako postoje polja IDFIRMA itd... onda ih setuj
+	if katops->(FIELDPOS("idfirma")) <> 0
+		cKalkIdFirma := katops->idfirma
+		cKalkTipDok := katops->idvd
+		cKalkBrDok := katops->brdok
+	endif
+
 	add_p_doksrc(gIdPos, cIdVd, cBrDok, gDatum, "KALK", ;
-		katops->idfirma, katops->idvd, katops->brdok, ;
+		cKalkIdFirma, cKalkTipDok, cKalkBrDok, ;
 		katops->datdok, katops->idkonto, katops->idkonto2, ;
 		katops->idpartner, "Zaduzenje")
 	

@@ -9,8 +9,8 @@
 	#include "sc.ch"
 #endif
 
-#define D_PO_VERZIJA "02.48"
-#define D_PO_PERIOD  "09.97-25.10.06"
+#define D_PO_VERZIJA "02.49"
+#define D_PO_PERIOD  "09.97-07.11.06"
 
 #define SC_HEADER
 
