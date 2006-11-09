@@ -42,7 +42,10 @@ local cPM
 local cKalkDBF:=""
 local cKalkIdFirma := ""
 local cKalkBrDok := ""
-local cKalkTipDok := ""
+local cKalkPartner := ""
+local cKalkKto := ""
+local cKalkKto2 := ""
+local dKalkDat := CTOD("")
 
 private H
 
@@ -117,14 +120,17 @@ if priprz->(RecCount2())==0 .and. Pitanje( ,"Preuzeti dokumente iz KALK-a","N")=
 	// ako postoje polja IDFIRMA itd... onda ih setuj
 	if katops->(FIELDPOS("idfirma")) <> 0
 		cKalkIdFirma := katops->idfirma
-		cKalkTipDok := katops->idvd
 		cKalkBrDok := katops->brdok
+		dKalkDat := katops->datdok
+		cKalkPartner := katops->idpartner
+		cKalkKto := katops->idkonto
+		cKalkKto2 := katops->idkonto2
 	endif
 
 	add_p_doksrc(gIdPos, cIdVd, cBrDok, gDatum, "KALK", ;
-		cKalkIdFirma, cKalkTipDok, cKalkBrDok, ;
-		katops->datdok, katops->idkonto, katops->idkonto2, ;
-		katops->idpartner, "Zaduzenje")
+		cKalkIdFirma, katops->idvd, cKalkBrDok, ;
+		dKalkDat, cKalkKto, cKalkKto2, ;
+		cKalkPartner, "Zaduzenje")
 	
 	if (gModemVeza=="N")
      		select katops
