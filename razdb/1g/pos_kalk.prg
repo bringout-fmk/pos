@@ -736,8 +736,10 @@ if IsPlanika()
 	// setuj da nije na stanju samo zaduzenje kojem je
 	// idkonto2 = "XXX"
 	// to je prodavnica koja prima robu
-	if katops->idvd == "80" .and. ALLTRIM(katops->idkonto2) == "XXX"
-		replace sto with "N"
+	if katops->(FIELDPOS("idkonto2")) <> 0
+		if katops->idvd == "80" .and. ALLTRIM(katops->idkonto2) == "XXX"
+			replace sto with "N"
+		endif
 	endif
 endif
 

@@ -316,6 +316,7 @@ if RecCount2()>0
     		Zapp()
 		if gSamoProdaja=="N"
 			if is_doksrc()
+				O_P_DOKSRC
 				select p_doksrc
 				zap
 			endif

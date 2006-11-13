@@ -787,7 +787,7 @@ do while !EOF()
 	if ( nCurrOid == nPrevOid )	
 		++ nPomCnt
 		? SPACE(10), field->&cField
-		if lFix .and. Pitanje(,"Izbrisati dupli zapis " + ALLTRIM(STR(field->&cField)), "D") == "D" 
+		if lFix 
 			delete
 		endif
 	endif
