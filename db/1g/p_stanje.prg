@@ -130,6 +130,7 @@ local cNDokBr := ""
 local nCount := 0
 local nRCijena := 0
 local cRTarifa := ""
+local cNazRoba := ""
 
 // otvori tabele u prethodnoj sezoni
 
@@ -159,6 +160,10 @@ go top
 
 seek cIdPos
 
+Box(, 3, 65 )
+
+@ m_x + 1, m_y + 2 SAY "generacija dokumenta u toku..." COLOR "BG+/B"
+
 do while !EOF() .and. field->idpos == cIdPos
 
 	cIdRoba := field->idroba
@@ -168,6 +173,7 @@ do while !EOF() .and. field->idpos == cIdPos
 	go top
 	seek cIdRoba
 
+	cNazRoba := ALLTRIM(field->naz)
 	nRCijena := field->cijena1
 	cRTarifa := field->idtarifa
 	
@@ -250,6 +256,10 @@ do while !EOF() .and. field->idpos == cIdPos
 		__stanje += nStanje
 		__vrijednost += nVrijednost
 		
+		@ m_x + 3, m_y + 2 SAY PADR("", 65)
+		@ m_x + 3, m_y + 2 SAY "artikal: " + ALLTRIM(cIdRoba) + ;
+				" " + PADR(cNazRoba, 30)
+		
 		select pos_sez
 		
 	endif
@@ -274,6 +284,8 @@ if nCount > 0
 	Gather()
 
 endif
+
+BoxC()
 
 return nCount
 
