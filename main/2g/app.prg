@@ -533,6 +533,7 @@ public gDiskFree:="N"
 public grbCjen:=2
 public grbStId:="D"
 public grbReduk:=0
+public gRnInfo:="N"
 
 #ifdef CLIP
 	return
@@ -685,6 +686,7 @@ Rpar("sV",@gStrValuta)
 Rpar("n0",@gLocPort)
 Rpar("n7",@gGotPlac)
 Rpar("nX",@gDugPlac)
+Rpar("rI",@gRnInfo)
 
 if IsPlanika()
 	Rpar("Mi",@gRobaVelicina)

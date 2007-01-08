@@ -91,6 +91,7 @@ if VarPopPrekoOdrIzn()
 endif
 
 do while !eof().and. &cPosDB->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+VD_RN+dtos(dDatumRn)+cBrDok)
+	
 	if (gRadniRac="D" .and. gVodiTreb=="D" .and. GT=OBR_NIJE)
       		// vodi se po trebovanjima, a za ovu stavku trebovanje 
 		// nije izgenerisano
@@ -99,7 +100,7 @@ do while !eof().and. &cPosDB->(IdPos+IdVd+dtos(Datum)+BrDok)==(cIdPos+VD_RN+dtos
       		replace kolicina with 0 // nuliraj kolicinu
   	endif
 	
-	nIznos+=Kolicina*Cijena
+	nIznos += Kolicina*Cijena
 	
 	select odj
 	seek &cPosDB->idodj
@@ -159,7 +160,8 @@ aPorezi:={}
 aRekPor:={}
 
 //do while !eof().and.(IdPos+IdVd+DTOS(datum)+BrDok)==(cIdPos+VD_RN+dtos(dDatumRn)+cBrDok)
-altd()
+
+
 do while !eof().and.(IdPos+IdVd+DTOS(datum))==(cIdPos+VD_RN+dtos(dDatumRn))
 	if ASCAN(aVezani, {|aVal| aVal[2] == &cPosDB->brdok}) == 0
 		skip
@@ -730,7 +732,17 @@ endif
 SELECT DOKS
 
 return
-*}
+
+
+// -------------------------------------------------
+// prikaz informacija o racunu
+// -------------------------------------------------
+function _sh_rn_info( cBrRn )
+
+MsgBeep("Formiran je racun broj: " + cBrRN )
+
+return
+
 
 
 /*! \fn StampaRekap(cIdRadnik, cBrojStola)
@@ -1259,7 +1271,7 @@ endif
 rb_print(lStartPrint)
 
 return cTime
-*}
+
 
 
 

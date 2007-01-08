@@ -556,18 +556,27 @@ endif
 
 if IsPDV()
 	cTime:=PDVStampaRac(cIdPos, cRadRac, .f., cIdVrsteP, nil, aVezani)
+	
+	
 else
 	cTime:=StampaRac(cIdPos,cRadRac,.f.,cIdVrsteP, nil, aVezani)
 endif
 
-altd()
 
 if (!EMPTY(cTime))
 	AzurRacuna(cIdPos, cStalRac, cRadRac, cTime, cIdVrsteP, cIdGost)
+	
+	
 	// azuriranje podataka o kupcu
 	if IsPDV()
 		AzurKupData(cIdPos)
 	endif
+
+	// prikaz info-a o racunu
+	if gRnInfo == "D"
+		_sh_rn_info( cStalRac )
+	endif
+
 else
   	SkloniIznRac()
 	MsgBeep("Radni racun <" + ALLTRIM (cRadRac) + "> nije zakljucen!#" + "ponovite proceduru stampanja !!!", 20)

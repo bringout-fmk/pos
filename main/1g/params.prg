@@ -262,11 +262,13 @@ if LASTKEY()<>K_ESC
     	MsgC()
 endif
 return
-*}
 
 
+
+// --------------------------------------------
+// osnovni prinicipi rada kase
+// --------------------------------------------
 function ParPrBase()
-*{
 local aNiz:={}
 local cPrevPSS
 local cPom:=""
@@ -305,6 +307,7 @@ Rpar("Bc",@gEntBarCod)
 Rpar("Ep",@gEvidPl)
 Rpar("dF",@gDiskFree)
 Rpar("UN",@gSifUvPoNaz)
+Rpar("rI",@gRnInfo)
 
 if IsPlanika()
 	// ako je planika prati stanje je uvijek "D"
@@ -354,6 +357,7 @@ AADD (aNiz, {"Kod unosa racuna uvijek pretraga art.po nazivu (D/N)? " , "gSifUvP
 if IsPlanika()
 	AADD (aNiz, {"Unos velicine robe (D/N)? " , "gRobaVelicina", "gRobaVelicina$'DN'", "@!", })
 endif
+AADD (aNiz, {"Nakon stampe ispis informacija o racunu (D/N)? " , "gRnInfo", "gRnInfo$'DN'", "@!", })
 
 VarEdit(aNiz,2,2,24,79,"PARAMETRI RADA PROGRAMA - PRINCIPI RADA","B1")
 BosTipke()
@@ -389,6 +393,7 @@ if LASTKEY()<>K_ESC
     	Wpar("Ep",@gEvidPl, .t., "Z")
     	Wpar("dF",@gDiskFree, .t., "Z")
     	Wpar("UN",@gSifUvPoNaz, .t., "Z")
+    	Wpar("rI",@gRnInfo, .t., "Z")
 	if IsPDV()
     		Wpar("pF",@gPorFakt, .t., "Z")
 	endif
@@ -396,7 +401,6 @@ if LASTKEY()<>K_ESC
 endif
 
 return
-*}
 
 
 
