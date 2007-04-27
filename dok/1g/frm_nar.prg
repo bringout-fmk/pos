@@ -129,14 +129,18 @@ if gModul=="HOPS"
     		enddo
     		set order to 1
   	else
-    		// gRadniRac == "N";
-    		// prije ulaska u pripremu vrati u _PRIPR sve iz _POS sto nije "Z"-zakljuceno
-    		SELECT _POS
+    		
+		// prije ulaska u pripremu vrati u _PRIPR 
+		// sve iz _POS sto nije "Z"-zakljuceno
+		
+		SELECT _POS
 		Set order to 3
     		//"3", "IdVd+IdRadnik+GT+IdDio+IdOdj+IdRoba", PRIVPATH+"_POS"
     		SEEK "42"+gIdRadnik
-    		do while !eof().and._POS->(IdVd+IdRadnik)==(VD_RN+gIdRadnik)
-      			if !(_POS->m1=="Z")
+    		
+		do while !eof().and._POS->(IdVd+IdRadnik)==(VD_RN+gIdRadnik)
+      			
+			if !(_POS->m1=="Z")
         			// mora biti Z, jer se odmah zakljucuje
         			Scatter()
         			SELECT _PRIPR
@@ -145,20 +149,25 @@ if gModul=="HOPS"
         			SELECT _POS
         			Del_Skip()
       			else
-        			Del_Skip()
+        			skip
+				//Del_Skip()
       			endif
+			
     		enddo
-    		set order to 1
+    		
+		set order to 1
+		
   	endif  // gradnirac
 else
-	// gRadniRac == "N";
-    	// prije ulaska u pripremu vrati u _PRIPR sve iz _POS sto nije "Z"-zakljuceno
+	
 	SELECT _POS
 	Set order to 3
     	//"3", "IdVd+IdRadnik+GT+IdDio+IdOdj+IdRoba", PRIVPATH+"_POS"
     	SEEK "42"+gIdRadnik
-    	do while !eof().and._POS->(IdVd+IdRadnik)==(VD_RN+gIdRadnik)
-      		if !(_POS->m1=="Z")
+    	
+	do while !eof().and._POS->(IdVd+IdRadnik)==(VD_RN+gIdRadnik)
+      		
+		if !(_POS->m1=="Z")
         		// mora biti Z, jer se odmah zakljucuje
         		Scatter()
         		SELECT _PRIPR
@@ -183,6 +192,7 @@ SELECT _PRIPR
 GO TOP
 
 do while !eof()
+	
 	if (idradnik+idpos+idvd+smjena)<>(gIdRadnik+gidpos+VD_RN+gSmjena)
     		// _PRIPR
 		delete  
@@ -190,7 +200,8 @@ do while !eof()
     		nIznNar+=_PRIPR->(Kolicina*Cijena)
     		nPopust+=_PRIPR->(Kolicina*NCijena)
   	endif
-  	SKIP
+  	
+	SKIP
 enddo
 
 SET ORDER TO
@@ -248,8 +259,10 @@ do while .t.
 	
 	// ako je sifra ocitana po barcodu, onda ponudi kolicinu 1
 	read
+	
 	cParticip:="N"
 	// apoteke !!!
+	
 	select odj
 	hseek roba->idodj 
 	select _pripr
@@ -278,18 +291,24 @@ do while .t.
 
 
 	if LASTKEY()==K_ESC
-  		//if LEN(aRabat) > 0
+  		
+		//if LEN(aRabat) > 0
 		//	ReCalcRabat()
 		//endif
+		
 		if gDisplay=="D"
 			Send2ComPort(CHR(10)+CHR(13))
 			Send2ComPort(CHR(10)+CHR(13))
 		endif
+		
 		EXIT
+		
 	else
- 		SELECT ODJ
+ 		
+		SELECT ODJ
 		HSEEK ROBA->IdOdj
- 		if gVodiOdj=="N" .or. FOUND()
+ 		
+		if gVodiOdj=="N" .or. FOUND()
    			
 			SELECT _PRIPR
 			append blank 
@@ -307,10 +326,13 @@ do while .t.
 			endif
 			
 			if gModul=="HOPS"
-     				if gVodiTreb=="D".and.ROBA->Tip<>"I"
-     					// I -inventar
+     				
+				if gVodiTreb=="D".and.ROBA->Tip<>"I"
+     					
+					// I -inventar
        					_GT:=OBR_NIJE
-       					if gRadniRac=="D"
+       					
+					if gRadniRac=="D"
 						_M1:="S"
 					else
 						_M1:=" "
@@ -319,14 +341,18 @@ do while .t.
        					// za inventar se ne pravi trebovanje, ni u kom slucaju
        					_GT := OBR_JEST
      				endif
+				
      				SELECT ROBAIZ
 				HSEEK (_IdRoba)
-     				if FOUND()
+     				
+				if FOUND()
        					_IdDio:=ROBAIZ->IdDio
      				else
        					_IdDio:=gIdDio
      				endif
-     				SELECT _PRIPR
+     				
+				SELECT _PRIPR
+				
    			endif
 
    			// _PRIPR
@@ -337,7 +363,9 @@ do while .t.
 			oBrowse:goBottom()
    			oBrowse:refreshAll()
    			oBrowse:dehilite()
+			
  		else   
+			
 			// nije nadjeno odjeljenje ??
    			SELECT _PRIPR
    			if gModul=="HOPS"

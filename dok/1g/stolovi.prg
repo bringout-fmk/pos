@@ -406,7 +406,8 @@ local nZakBr
 aStolovi := g_otv_stolovi()
 
 nSelected := mnu_otv_stolovi(aStolovi) 
-if nSelected == 0
+
+if ( nSelected == nil .or. nSelected == 0 )
 	return .f.
 endif
 

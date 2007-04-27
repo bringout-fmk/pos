@@ -1,28 +1,10 @@
 #include "\dev\fmk\pos\pos.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- * $Source: c:/cvsroot/cl/sigma/fmk/pos/dok/1g/rpt_treb.prg,v $
- * $Author: sasavranic $ 
- * $Revision: 1.3 $
- * $Log: rpt_treb.prg,v $
- * Revision 1.3  2003/12/27 09:00:24  sasavranic
- * Korekcije ispisa trebovanja
- *
- * Revision 1.2  2002/06/15 08:17:46  sasa
- * no message
- *
- *
- */
- 
-/*! \fn Trebovanja()
- *  \brief Na osnovu sadrzaja _POS ispise trebovanja, ako se ona vode
- */
- 
+
+// -----------------------------------------------
+// trebovanje - stampa listica
+// -----------------------------------------------
 function Trebovanja()
-*{
 local cNaz
 local cJmj
 
@@ -34,8 +16,10 @@ select _pos
 set order to 3   // "IdVd+IdRadnik+GT+IdDio+IdOdj+IdRoba"
 seek "42" + gIdRadnik + OBR_NIJE
 
-if gRadniRac=="N"  // gledaj samo kada nisu radni racuni
-	if !(_pos->M1 $ "ZS")  // zakljucen ili odstampan!!
+if gRadniRac=="N"  
+	// gledaj samo kada nisu radni racuni
+	if !(_pos->M1 $ "ZS")  
+		// zakljucen ili odstampan!!
   		return
  	endif
 endif
@@ -121,9 +105,10 @@ do while !EOF() .and. _POS->(IdVd+IdRadnik+GT)==("42"+gIdRadnik+OBR_NIJE)
 	? "----------------------------------"
 	PaperFeed()
 	END PRN2
-enddo   // ! EOF() .and. _POS->(IdVd+IdRadnik+GT)==(VD_RN+gIdRadnik+OBR_NIJE)
+enddo   
+
 MsgC()
+
 return
-*}
 
 

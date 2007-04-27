@@ -24,6 +24,7 @@ oObj:konvZn:=@konvZn()
 oObj:open:=@open()
 oObj:reindex:=@reindex()
 oObj:scan:=@scan()
+oObj:del_pos_z:=@del_pos_z()
 oObj:integ:=@integ()
 oObj:chkinteg:=@chkinteg()
 
@@ -72,6 +73,7 @@ class TDBPos: public TDB
 	  *bool open();
 	  *bool reindex();
 	  *bool scan();
+	  *void del_pos_z();
 	  *bool integ();
 	  *bool chkinteg();
 }
@@ -94,6 +96,7 @@ CREATE CLASS TDBPos INHERIT TDB
 	method open
 	method reindex
 	method scan
+	method del_pos_z
 	method integ
 	method chkinteg
 END CLASS
@@ -1247,6 +1250,31 @@ ScanDb()
 
 return
 *}
+
+
+// brisi iz _pos sve sto je "Z"
+method del_pos_z
+local nTArea := SELECT()
+
+O__POS
+select _pos
+go top
+
+msgo("....brisem iz pomocne tabele _POS zakljucene stavke....")
+
+do while !EOF()
+	if _pos->gt == OBR_JEST
+		del_skip()
+	else
+		skip
+	endif
+enddo
+
+msgc()
+
+select (nTArea)
+return
+
 
 /*! \fn *void TDBPos::integ()
  */

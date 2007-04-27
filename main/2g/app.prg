@@ -1,30 +1,13 @@
 #include "\dev\fmk\pos\pos.ch"
 
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
-
-/*! \file fmk/pos/main/2g/app.prg
- *  \brief TPosMod objekat - glavni objekat POS modula
- * 
- */
- 
-/*! \fn TPosModNew()
- *  \brief funkcija koja kreira TPosMod objekat
- */
 
 function PosTest()
-*{
 ? "Pos test (pos/main/2g/app.prg)"
 return
-*}
+
 
 function TPosModNew()
-*{
 local oObj
 
 oObj:=TPosMod():new()
@@ -32,7 +15,6 @@ oObj:=TPosMod():new()
 oObj:self:=oObj
 
 return oObj
-*}
 
 
 
@@ -146,6 +128,9 @@ if gSamoProdaja == "N"
 endif
 
 self:oDatabase:scan()
+
+// brisi sve iz _pos sto je zakljuceno....
+self:oDatabase:del_pos_z()
 
 /// fill init db podatke
 f_init_db()
