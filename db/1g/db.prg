@@ -726,6 +726,8 @@ sql_append()
 
 _BrDok:=cBrDok 
 
+altd()
+
 // ako je zaduzenje pitaj da li je roba na stanju...
 //g_roba_na_stanju(cIdVd)
 
@@ -1626,7 +1628,8 @@ static function AzurRoba()
 altd()
 // u jednom dbf-u moze biti vise IdPos
 // ROBA ili SIROV
-select (cRSDbf)  
+select (cRSDbf)
+set order to tag "ID"
 
 // pozicioniran sam na robi
 hseek priprz->idroba  
@@ -1665,13 +1668,13 @@ else
 	
 endif
 
-
 SmReplace("idtarifa", priprz->idtarifa)
 
 if roba->(FIELDPOS("K1"))<>0  .and. priprz->(FIELDPOS("K2"))<>0
 	SmReplace("k1", priprz->k1)
 	SmReplace("k2", priprz->k2)
 endif
+
 if roba->(fieldpos("K7"))<>0  .and. priprz->(FIELDPOS("K9"))<>0
 	SmReplace("k7", priprz->k7)
 	SmReplace("k8", priprz->k8)

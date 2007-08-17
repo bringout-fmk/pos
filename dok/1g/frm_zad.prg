@@ -255,7 +255,10 @@ if !fSadAz
   		endif
 
   		READ
-  		if (LASTKEY()==K_ESC)
+		
+  		altd()
+		
+		if (LASTKEY()==K_ESC)
     			EXIT
   		else
     			if (gnDebug == 5)
@@ -269,7 +272,25 @@ if !fSadAz
 			_Jmj:=_field->Jmj
     			_IdTarifa:=_field->IdTarifa
 			_Cijena:=if(EMPTY(_cijena),_field->Cijena1,_cijena)
-    			SELECT PRIPRZ
+    			if ROBA->(FIELDPOS("BARKOD"))<>0
+				_barkod := _field->barkod
+			endif
+			
+			_n1 := _field->n1
+			_n2 := _field->n2
+			_k1 := _field->k1
+			_k2 := _field->k2
+			
+			if ROBA->(FIELDPOS("K7")) <> 0
+				_k7 := _field->k7
+				_k9 := _field->k9
+			endif
+			
+			if ROBA->(FIELDPOS("KATBR")) <> 0
+				_katbr := _field->katbr
+			endif
+			
+			SELECT PRIPRZ
     			Gather() // PRIPRZ
     			// reci mu da ide na kraj
     			oBrowse:goBottom()
