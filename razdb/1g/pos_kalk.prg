@@ -402,7 +402,13 @@ return
  */
  
 function Real2Kalk(dDateOd, dDateDo, cIdVd)
-*{
+
+local cUslRoba := SPACE(150)
+local cUslRMark := "U"
+local aPom := {}
+local i
+
+private cTmp := ""
 
 // ako je nil onda se radi o realizaciji
 if (cIdVd == nil)
@@ -429,11 +435,14 @@ endif
 // ako nije APPSRV prikazi box za prenos
 if !gAppSrv
 	SET CURSOR ON
-	Box(,4,60,.f.,"PRENOS REALIZACIJE POS->KALK")
+	Box(,4,70,.f.,"PRENOS REALIZACIJE POS->KALK")
 		@ m_x+1,m_y+2 SAY "Prodajno mjesto " GET cIdPos pict "@!" Valid !EMPTY(cIdPos).or.P_Kase(@cIdPos,5,20)
 		@ m_x+2,m_y+2 SAY "Prenos za period" GET dDatOd
 		@ m_x+2,col()+2 SAY "-" GET dDatDo
+		@ m_x+3,m_y+2 SAY "Uslov po artiklima:" GET cUslRoba PICT "@S40"
+		@ m_x+4,m_y+2 SAY "Artikle (U)kljuci / (I)skljuci iz prenosa:" GET cUslRMark PICT "@!" VALID cUslRMark $ "UI"
 	read
+	
 	ESC_BCR
 	BoxC()
 endif
@@ -517,6 +526,37 @@ do while !eof() .and. doks->IdVd==cIdVd .and. doks->Datum<=dDatDo
   	
 	do while !eof().and.pos->(IdPos+IdVd+DTOS(datum)+BrDok)==doks->(IdPos+IdVd+DTOS(datum)+BrDok)
     			
+		// uslov po robi
+		if !EMPTY( cUslRoba )
+			
+			// parsiraj uslov...
+			cTmp := Parsiraj( cUslRoba, "idroba" )
+
+			// ako je tacno !
+			if &cTmp
+				
+				if cUslRMark == "I"
+				
+					// ako iskljucujes, onda preskoci
+					
+					skip
+					loop
+					
+				endif
+			
+			else
+				// ako treba da je ukljucena roba
+				if cUslRMark == "U"
+				
+					skip
+					loop
+				
+				endif
+				
+			endif
+		
+		endif
+		
 		Scatter()
     		// uzmi i barkod
 		if roba->(fieldpos("barkod"))<>0
@@ -527,7 +567,7 @@ do while !eof() .and. doks->IdVd==cIdVd .and. doks->Datum<=dDatDo
 		
 		select POM
     		HSEEK POS->(IdPos+IdRoba+STR(cijena,13,4)+STR(nCijena,13,4))
-    			// seekuj i cijenu i popust (koji je pohranjen u ncijena)
+    		// seekuj i cijenu i popust (koji je pohranjen u ncijena)
     		if !FOUND() .or. IdTarifa<>POS->IdTarifa .or. MPC<>POS->Cijena
      			append blank
       			
