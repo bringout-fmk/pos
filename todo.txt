@@ -1,8 +1,0 @@
-rpt_rn
-
-StampaRac i StampaPrep spojiti u jednu funkciju ...
-
-- Izbaciti Cijena1, Cijena2 -> usaglasiti strukturu tabele roba sa FMK
-
-- Izbaciti #ifdef HOPS => if gModul=="HOPS"
-
