@@ -1,4 +1,4 @@
-#include "\dev\fmk\pos\pos.ch"
+#include "pos.ch"
 
 /* Copyright (C) 1997-2006, Sigma-com Zenica
  * 

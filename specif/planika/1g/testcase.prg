@@ -1,5 +1,5 @@
-#include "\dev\fmk\pos\pos.ch"
-#include "\dev\fmk\af\cl-af\message\msg.ch"
+#include "pos.ch"
+#include "msg.ch"
 
 
 /*! \fn PlFlexTCases()

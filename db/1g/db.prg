@@ -1,11 +1,5 @@
-#include "\dev\fmk\pos\pos.ch"
+#include "pos.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
 
 /*! \file  fmk/pos/db/1g/db.prg
     \brief Funkcije nad bazom podataka POS

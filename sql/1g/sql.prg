@@ -1,12 +1,6 @@
-#include "\dev\fmk\pos\pos.ch"
-#include "\dev\fmk\AF\cl-AF\message\msg.ch"
+#include "pos.ch"
+#include "msg.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
- 
 
 /*! \fn MenuSQLLogs()
  *  \brief Funkcije za rad sa SQL logovima

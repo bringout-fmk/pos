@@ -1,4 +1,4 @@
-#include "\dev\fmk\pos\pos.ch"
+#include "pos.ch"
 
 /*! \fn Test_EvidPl()
  *  \brief Test case evidentiranje podataka o vrstama placanja

@@ -1,4 +1,4 @@
-#include "\dev\fmk\pos\pos.ch"
+#include "pos.ch"
 #include "\dev\fmk\pos\specif\tigra\1g\tigra.ch"
 
 

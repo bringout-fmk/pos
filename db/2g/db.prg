@@ -1,9 +1,4 @@
-#include "\dev\fmk\pos\pos.ch"
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
+#include "pos.ch"
  
 
 
@@ -11,27 +6,7 @@ function TDBPosNew()
 *{
 local oObj
 
-#ifdef CLIP
-	
-oObj:=TDbNew()
-oObj:skloniSezonu:=@skloniSezonu()
-oObj:install:=@install()
-oObj:setgaDbfs:=@setgaDbfs()
-oObj:ostalef:=@ostalef()	
-oObj:obaza:=@obaza()
-oObj:kreiraj:=@kreiraj()
-oObj:konvZn:=@konvZn()
-oObj:open:=@open()
-oObj:reindex:=@reindex()
-oObj:scan:=@scan()
-oObj:del_pos_z:=@del_pos_z()
-oObj:integ:=@integ()
-oObj:chkinteg:=@chkinteg()
-
-#else
-altd()
 oObj:=TDBPos():new()
-#endif
 
 oObj:self:=oObj
 oObj:cName:="POS"

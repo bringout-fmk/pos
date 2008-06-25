@@ -1,12 +1,7 @@
-#include "\dev\fmk\pos\pos.ch"
+#include "pos.ch"
 
 static error_no 
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
 
 // files kumulativ - tops/kum1
 function a_fi_kum()

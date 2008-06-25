@@ -1,4 +1,4 @@
-#include "\dev\fmk\pos\pos.ch"
+#include "pos.ch"
 
 // --------------------
 // otvori baze potrebne za 

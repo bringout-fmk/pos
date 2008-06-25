@@ -1,3 +1,0 @@
-funkcije koje se smatraju DEPRICIATED (koje treba ugasiti - napustiti) koje 
-se drze samo radi kompatibilnosti ...
-

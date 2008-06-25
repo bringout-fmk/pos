@@ -1,4 +1,4 @@
-#include "\dev\fmk\pos\pos.ch"
+#include "pos.ch"
 
 
 /*! \fn UpdInt2(lForce, lReindex)
