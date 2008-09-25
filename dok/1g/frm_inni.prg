@@ -79,7 +79,6 @@ else
 	private cIdDio:=SPACE(2)
 endif
 
-altd()
 O_InvNiv()
 
 set cursor on
@@ -120,6 +119,8 @@ else
   	cUI_U:=R_U
 	cUI_I:=R_I
 endif
+
+altd()
 
 if !VratiPripr(cIdVd,gIdRadnik,cIdOdj,cIdDio)
 	CLOSERET
@@ -267,6 +268,7 @@ if !fSadAz  // azuriraj odmah
 	if cIdVd==VD_NIV
   		AADD(ImeKol, { "Nova C.",     {|| str(ncijena,7,2)           }})
 	endif
+	AADD(ImeKol, { "Tarifa "    , {|| idtarifa            }})
 	Kol:={}
 	for nCnt:=1 TO LEN(ImeKol)
 		AADD(Kol,nCnt)
@@ -378,10 +380,11 @@ Box(,5,60,.t.)
 @ m_x+0,m_y+1 SAY " "+IF(nInd==0,"NOVA STAVKA","ISPRAVKA STAVKE")+" "
 SELECT priprz
 do while .t.
+	altd()
 	Scatter()
   	select (cRSdbf)
 	hseek _idroba
-  	@ m_x+0,m_y+1 SAY _idroba+" : "+naz
+  	@ m_x+0,m_y+1 SAY _idroba+" : "+ALLTRIM(naz)+ " (" + ALLTRIM(idtarifa) + ")"
   	select priprz
   	if nInd==0  // unosenje novih stavki
     		_IdOdj:=cIdOdj
@@ -428,8 +431,17 @@ do while .t.
   	if nInd==0
 		Append Blank 
 	endif
-  	Gather()
-  	if nInd==1
+	
+	select (cRSdbf)
+	hseek _idroba
+  	cTarifa := field->idtarifa
+
+	select priprz
+  	_idtarifa := cTarifa
+
+	Gather()
+  	
+	if nInd==1
 		nVrati:=1
 		EXIT
 	endif
