@@ -564,6 +564,7 @@ endif
 
 
 if (!EMPTY(cTime))
+	
 	AzurRacuna(cIdPos, cStalRac, cRadRac, cTime, cIdVrsteP, cIdGost)
 	
 	
@@ -575,6 +576,11 @@ if (!EMPTY(cTime))
 	// prikaz info-a o racunu
 	if gRnInfo == "D"
 		_sh_rn_info( cStalRac )
+	endif
+
+	// fiskalizacija, ispisi racun
+	if gFc_use == "D"
+		fisc_rn( cIdPos, gDatum, cStalRac )
 	endif
 
 else
