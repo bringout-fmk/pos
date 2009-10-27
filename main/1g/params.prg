@@ -29,6 +29,8 @@ AADD(opc,"5. postavi vrijeme i datum kase")
 AADD(opcexe,{|| PostaviDat()})
 AADD(opc,"6. podaci firme")
 AADD(opcexe,{|| ParFirma()})
+AADD(opc,"7. fiskalni parametri")
+AADD(opcexe,{|| FiscalPar()})
 
 Menu_SC("par")
 return .f.
@@ -131,6 +133,65 @@ endif
 
 return
 *}
+
+// parametri fiskalizacije
+function FiscalPar()
+local aNiz:={}
+local cPom:=""
+
+O_PARAMS
+private cHistory:=" "
+private aHistory:={}
+private cSection:="1"
+
+Rpar("f1",@gFc_type)
+Rpar("f2",@gFc_path)
+Rpar("f3",@gFc_name)
+Rpar("f4",@gFc_use)
+Rpar("f5",@gFc_cmd)
+Rpar("f6",@gFc_cp1)
+Rpar("f7",@gFc_cp2)
+Rpar("f8",@gFc_cp3)
+Rpar("f9",@gFc_cp4)
+Rpar("f0",@gFc_cp5)
+
+UsTipke()
+set cursor on
+
+AADD(aNiz,{"Tip fiskalne kase", "gFc_type", , "@S20", })
+AADD(aNiz,{"Putanja izl.fajla", "gFc_path", , "@S50", })
+AADD(aNiz,{"Naziv izl.fajla", "gFc_name", , "@S20", })
+
+AADD(aNiz,{"param ($1)", "gFc_cp1", , "@S50", })
+AADD(aNiz,{"param ($2)", "gFc_cp2", , "@S50", })
+AADD(aNiz,{"param ($3)", "gFc_cp3", , "@S50", })
+AADD(aNiz,{"param ($4)", "gFc_cp4", , "@S50", })
+AADD(aNiz,{"param ($5)", "gFc_cp5", , "@S50", })
+
+AADD(aNiz,{"Komandna linija", "gFc_cmd", , "@S50", })
+AADD(aNiz,{"Koristiti fiskalne funkcije", "gFc_use", ,"@!", })
+
+VarEdit(aNiz,7,2,24,78,"Fiskalni parametri","B1")
+
+BosTipke()
+
+// Upisujem nove parametre
+if LASTKEY()<>K_ESC
+	MsgO("Azuriram parametre PZ")
+    	Wpar("f1",gFc_type, .t.,"D")
+    	Wpar("f2",gFc_path, .t.,"D")
+    	Wpar("f3",gFc_name, .t.,"D")
+    	Wpar("f4",gFc_use, .t.,"D")
+    	Wpar("f5",gFc_cmd, .t.,"D")
+    	Wpar("f6",gFc_cp1, .t.,"D")
+    	Wpar("f7",gFc_cp2, .t.,"D")
+    	Wpar("f8",gFc_cp3, .t.,"D")
+    	Wpar("f9",gFc_cp4, .t.,"D")
+    	Wpar("f0",gFc_cp5, .t.,"D")
+    	MsgC()
+endif
+
+return
 
 
 // parametri - podaci firme

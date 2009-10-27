@@ -625,6 +625,18 @@ public gRnPTxt2 := SPACE(35)
 public gRnPTxt3 := SPACE(35)
 public gFirTel := SPACE(20)
 
+// fiskalni parametri
+public gFc_type := SPACE(20)
+public gFc_path := SPACE(100)
+public gFc_name := SPACE(11)
+public gFc_use := "N"
+public gFc_cmd := SPACE(100)
+public gFc_cp1 := SPACE(100)
+public gFc_cp2 := SPACE(100)
+public gFc_cp3 := SPACE(100)
+public gFc_cp4 := SPACE(100)
+public gFc_cp5 := SPACE(100)
+
 if gModul=="HOPS"
 	gVodiTreb:="D"
 	gVodiOdj:="D"
@@ -646,6 +658,17 @@ else
 	gDupliUpoz:="N"
 	gDisplay:="N"
 endif
+
+Rpar("f1",@gFc_type)
+Rpar("f2",@gFc_path)
+Rpar("f3",@gFc_name)
+Rpar("f4",@gFc_use)
+Rpar("f5",@gFc_cmd)
+Rpar("f6",@gFc_cp1)
+Rpar("f7",@gFc_cp2)
+Rpar("f8",@gFc_cp3)
+Rpar("f9",@gFc_cp4)
+Rpar("f0",@gFc_cp5)
 
 Rpar("F1",@gFirNaziv)
 Rpar("F2",@gFirAdres)
