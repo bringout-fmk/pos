@@ -64,6 +64,9 @@ endif
 // idemo sada na upis rn u fiskalni fajl
 fc_pos_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), aRn )
 
+// pokreni komandu ako postoji
+_fc_cmd()
+
 return
 
 
