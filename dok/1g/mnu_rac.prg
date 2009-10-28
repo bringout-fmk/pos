@@ -539,8 +539,6 @@ append blank
 replace idpos with gidpos, idvd with VD_RN, Brdok with cStalRac,idradnik with "////", datum with gdatum
 // namjerno divlji radnik!!!!  ////
 
-
-altd()
 aVezani:={}
 AADD(aVezani, {doks->idpos, cRadRac, cIdVrsteP, doks->datum})
 
@@ -575,12 +573,18 @@ if (!EMPTY(cTime))
 
 	// prikaz info-a o racunu
 	if gRnInfo == "D"
+		// prikazi info o racunu nakon stampe
 		_sh_rn_info( cStalRac )
 	endif
 
 	// fiskalizacija, ispisi racun
 	if gFc_use == "D"
 		fisc_rn( cIdPos, gDatum, cStalRac )
+	endif
+	
+	if !EMPTY( gRNALSif )
+		// setuj broj naloga iz rnal
+		get_rnal( cIdPos, gDatum, cStalRac )
 	endif
 
 else
@@ -604,8 +608,6 @@ else
 endif
 
 return
-*}
-
 
 
 /*! \fn UpitNP(cIdPos, cIdVrsteP, cRadRac, cIdGost)

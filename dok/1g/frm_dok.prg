@@ -1,15 +1,10 @@
 #include "pos.ch"
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
 
-/*! \fn PrepisDok()
- *  \brief Stampa azuriranog dokumenta
- */
+
+// -------------------------------------------
+// Stampa azuriranog dokumenta
+// -------------------------------------------
 function PrepisDok()
-*{
 
 local aOpc
 private cFilter:=".t."
@@ -31,6 +26,10 @@ O_SIROV
 O_ROBA
 O_DOKS   
 O_POS
+
+if !EMPTY(gRNALKum)
+	o_doksrc( KUMPATH )
+endif
 
 ImeKol:={{"Vrsta",{|| IdVd}},{"Broj ",{||PADR(IF(!Empty(IdPos),trim(IdPos)+"-","")+alltrim(BrDok),9)}}}
 
@@ -55,6 +54,11 @@ if IsPlanika()
   // reklamacije (R)ealizovane, (P)riprema
   AADD(ImeKol,{"Rekl",{||if(idvd == VD_REK, sto, "   ")}})
   AADD(ImeKol,{"Na stanju",{||if(idvd == VD_ZAD, if(EMPTY(sto), "da ", "NE "), "   ")}})
+endif
+
+if !EMPTY(gRNALKum)
+	// pregled radnih naloga - veza
+	AADD(ImeKol,{"RNAL",{|| sh_rnal(idpos, datum, idvd, brdok) }})
 endif
 
 AADD(ImeKol,{"Radnik",{||IdRadnik}})

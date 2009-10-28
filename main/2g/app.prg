@@ -510,6 +510,8 @@ public gDuplo:="N"
 public gDuploKum:=""
 public gDuploSif:=""
 public gFmkSif:=""
+public gRNALSif := ""
+public gRNALKum := ""
 // postavljanje globalnih varijabli
 public gLocPort:="LPT1"
 public gIdCijena:="1"
@@ -769,6 +771,8 @@ Rpar("Du",@gDuplo)
 Rpar("D7",@gDuploKum)
 Rpar("D8",@gDuploSif)
 Rpar("D9",@gFmkSif)
+Rpar("gS",@gRNALSif)
+Rpar("gK",@gRNALKum)
 
 cPom:=SC_Opisi[1]
 Rpar("nc",@cPom)

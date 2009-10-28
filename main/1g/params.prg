@@ -67,12 +67,16 @@ Rpar("sV",@gStrValuta)
 Rpar("n0",@gLocPort)
 Rpar("n7",@gGotPlac)
 Rpar("nX",@gDugPlac)
+Rpar("gS",@gRNALSif)
+Rpar("gK",@gRNALKum)
 
 gServerPath:=padr(gServerPath,40)
 gKalkDest:=padr(gKalkDest,40)
 gDuploKum:=padr(gDuploKum,30)
 gDuploSif:=padr(gDuploSif,30)
 gFMKSif:=padr(gFmkSif,30)
+gRNALSif:=padr(gRNALSif,100)
+gRNALKum:=padr(gRNALKum,100)
 
 UsTipke()
 set cursor on
@@ -98,6 +102,8 @@ AADD(aNiz,{"Azuriraj u pomocnu bazu" , "gDuplo",, "@!", "gDuplo$'DN'"})
 AADD(aNiz,{"Direktorij kumulativa za pom bazu","gDuploKum",, "@!",})
 AADD(aNiz,{"Direktorij sifrarnika za pom bazu","gDuplosif",, "@!",})
 AADD(aNiz, {"Direktorij sifrarnika FMK        ","gFMKSif",, "@!",})
+AADD(aNiz, {"RNAL sifrarnik","gRNALSif",, "@S50",})
+AADD(aNiz, {"RNAL kumulativ","gRNALKum",, "@S50",})
 VarEdit(aNiz,5,2,24,78,"PARAMETRI RADA PROGRAMA - PODACI KASE","B1")
 
 BosTipke()
@@ -122,6 +128,8 @@ if LASTKEY()<>K_ESC
     	Wpar("D7",trim(gDuploKum),.f.) // pathove ne diraj
     	Wpar("D8",trim(gDuploSif),.f.) // pathove ne diraj
     	Wpar("D9",trim(gFmkSif),.f.)   // pathove ne diraj
+    	Wpar("gS",trim(gRNALSif),.f.)   // pathove ne diraj
+    	Wpar("gK",trim(gRNALKum),.f.)   // pathove ne diraj
     	MsgC()
 endif
 
