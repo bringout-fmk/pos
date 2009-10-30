@@ -90,7 +90,6 @@ return
 // ------------------------------------------------
 static function _g_from_rnal( nNalog, cId, cNaz, dDatum )
 local nKupac
-
 // napravi link sa rnal
 xSif_path := ALLTRIM( gRNALSif )
 xKum_path := ALLTRIM( gRNALKum )
@@ -102,6 +101,7 @@ cId := ""
 cNaz := ""
 
 select r_docs
+set order to tag "1"
 go top
 seek STR( nNalog, 10 )
 
@@ -111,9 +111,10 @@ if FOUND()
 	dDatum := field->doc_date
 	
 	select r_cust
+	set order to tag "1"
 	go top
 	
-	seek STR(nKupac, 4)
+	seek STR(nKupac, 10)
 
 	cId := ALLTRIM( STR( nKupac ) )
 	cNaz := ALLTRIM( field->cust_desc )
