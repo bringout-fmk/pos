@@ -629,9 +629,6 @@ Box(,4,60)
 // vecina korisnika ne treba unos partnera
 lGetPartner:= .f.
 
-if cIdVrstep<>gGotPlac .and. IzFMKINI("POS","PartnerPlacanje","N")=="D"
-	lGetPartner:=.t.
-endif
 
 cDn:="D"
 do while .t.
@@ -639,7 +636,11 @@ do while .t.
 	
    	@ m_x+1,m_y+2 SAY "Nacin placanja " GET cIdVrsteP pict "@!" valid p_Vrstep(@cIdVrstep)
    	read
-   	
+	 
+	if cIdVrstep<>gGotPlac .and. IzFMKINI("POS","PartnerPlacanje","N")=="D"
+		lGetPartner:=.t.
+	endif  	
+	
 	// ako se koristi varijanta evidentiranja podataka o vp pozovi formu
 	if gEvidPl=="D"
 		FrmVPGetData(cIdVrsteP, aCKData, aSKData, aGPData)

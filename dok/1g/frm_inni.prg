@@ -435,9 +435,11 @@ do while .t.
 	select (cRSdbf)
 	hseek _idroba
   	cTarifa := field->idtarifa
+	cBarkod := field->barkod
 
 	select priprz
   	_idtarifa := cTarifa
+	_barkod := cBarkod
 
 	Gather()
   	
