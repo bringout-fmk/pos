@@ -27,6 +27,7 @@ local aRn := {}
 local nTArea := SELECT()
 local nRbr := 1
 local nCtrl := 0
+local lStorno := .t.
 
 // pronadji u bazi racun
 select pos
@@ -35,7 +36,19 @@ seek cIdPos + "42" + DTOS(dDat) + cBrRn
 do while !EOF() .and. field->idpos == cIdPos ;
 		.and. field->brdok == cBrRn
 	
+	if field->kolicina > 0
+		lStorno := .f.
+	endif
+
+	cT_c_1 := ""
+
+	if pos->(FIELDPOS("C_1")) <> 0
+		// ovo je broj racuna koji se stornira 
+		cT_c_1 := field->c_1
+	endif
+
 	cArtikal := field->idroba
+
 	select roba
 	seek cArtikal
 
@@ -43,13 +56,17 @@ do while !EOF() .and. field->idpos == cIdPos ;
 
 	++ nCtrl
 
+	// kolicina uvijek ide absolutna vrijednost
+	// storno racun fiskalni stampac tretira kao regularni unos
+
 	AADD( aRn, { cBrRn, ;
 		ALLTRIM(STR(++nRbr)), ;
 		field->idroba, ;
 		roba->naz, ;
 		field->cijena, ;
-		field->kolicina, ;
-		field->idtarifa } )
+		ABS( field->kolicina ), ;
+		_g_tar(field->idtarifa), ;
+		cT_c_1 } )
 
 	skip
 enddo
@@ -62,12 +79,24 @@ if nCtrl = 0
 endif
 
 // idemo sada na upis rn u fiskalni fajl
-fc_pos_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), aRn )
+fc_pos_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), aRn, lStorno )
 
 // pokreni komandu ako postoji
 _fc_cmd()
 
 return
+
+
+// ------------------------------------------
+// vraca tarifu za fiskalni stampac
+// ------------------------------------------
+static function _g_tar( cIdTar )
+cF_tar := "E"
+do case
+	case cIdTar = "PDV17"
+		cF_tar := "E"
+endcase
+return cF_tar
 
 
 

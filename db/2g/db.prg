@@ -300,7 +300,11 @@ if (nArea==-1 .or. nArea==(F_DOKS))
 	AADD ( aDbf, { "SMJENA",    "C",  1, 0} )
 	AADD ( aDbf, { "STO",       "C",  3, 0} )
 	AADD ( aDbf, { "VRIJEME",   "C",  5, 0} )
-	
+	AADD ( aDbf, { "C_1",        "C",  6, 0} )
+	AADD ( aDbf, { "C_2",        "C", 10, 0} )
+	AADD ( aDbf, { "C_3",        "C", 50, 0} )
+
+
 	if gStolovi == "D"
 		AADD ( aDbf, { "ZAK_BR",   "N",  6, 0} )
 		AADD ( aDbf, { "STO_BR",   "N",  3, 0} )
@@ -360,6 +364,11 @@ if (nArea==-1 .or. nArea==(F_POS))
 	AADD ( aDbf, { "NCIJENA",   "N", 10, 3} )
 	AADD ( aDbf, { "PREBACEN",  "C",  1, 0} )
 	AADD ( aDbf, { "SMJENA",    "C",  1, 0} )
+	AADD ( aDbf, { "C_1",        "C",  6, 0} )
+	AADD ( aDbf, { "C_2",        "C", 10, 0} )
+	AADD ( aDbf, { "C_3",        "C", 50, 0} )
+
+
 	// M1 ? cemu sluzi Z - zakljucen, S-odstampan
 	IF !FILE ( KUMPATH + "POS.DBF" )
 	  DBcreate2 ( KUMPATH + "POS.DBF", aDbf )
@@ -1363,6 +1372,10 @@ AADD( aDBf, { 'N2'     , 'N' ,  12 ,  2 })
 
 AADD( aDBf, { 'BARKOD' , 'C' ,  13 ,  0 })
 AADD( aDBf, { 'KATBR'  , 'C' ,  14 ,  0 })
+
+AADD( aDBf, { 'C_1'    , 'C' ,   6 ,  0 })
+AADD( aDBf, { 'C_2'    , 'C' ,  10 ,  0 })
+AADD( aDBf, { 'C_3'    , 'C' ,  50 ,  0 })
 
 return aDbf
 

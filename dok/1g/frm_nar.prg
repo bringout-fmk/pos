@@ -84,6 +84,9 @@ if IsPDV()
 	SETKEY(K_F7, {|| f7_pf_traka()})
 endif
 
+// storno racuna
+SETKEY( K_F8, {|| storno_rn() })
+
 // <*> - ispravka tekuce narudzbe
 //       (ukljucujuci brisanje i ispravku vrijednosti)
 // </> - pregled racuna - kod HOPSa

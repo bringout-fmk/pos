@@ -1688,3 +1688,80 @@ sql_azur(.t.)
 
 return
 
+
+// -------------------------------------
+// storniranje racuna
+// -------------------------------------
+function storno_rn()
+local cSt_rn := SPACE(6)
+local dSt_date := DATE()
+local cSt_fisc := SPACE(10)
+local nTArea := SELECT()
+private GetList := {}
+
+Box(,3,55)
+	@ m_x + 1, m_y + 2 SAY "stornirati pos racun broj:" GET cSt_rn 
+	@ m_x + 2, m_y + 2 SAY "od datuma:" GET dSt_date
+	@ m_x + 3, m_y + 2 SAY "broj fiskalnog isjecka:" GET cSt_fisc
+	read
+BoxC()
+
+if EMPTY( cSt_rn )
+	select ( nTArea )
+	return
+endif
+
+cSt_rn := PADL( ALLTRIM(cSt_rn), 6 )
+
+// napuni pripremu sa stavkama racuna za storno
+select pos
+seek gIdPos + "42" + DTOS(dSt_date) + cSt_rn
+
+do while !EOF() .and. field->idpos == gIdPos ;
+	.and. field->brdok == cSt_rn ;
+	.and. field->idvd == "42"
+
+	cT_roba := field->idroba
+	select roba
+	seek cT_roba
+	
+	select pos
+
+	scatter()
+	
+	select _pripr
+	append blank
+	
+	_brdok := ALLTRIM(_brdok) + "S"
+	_kolicina := ( _kolicina * -1 )
+	_robanaz := roba->naz
+
+	gather()
+
+	if _pripr->(FIELDPOS("C_1")) <> 0
+		if EMPTY( cSt_fisc )
+			replace field->c_1 with cSt_rn
+		else
+			replace field->c_1 with cSt_fisc
+		endif
+	endif
+
+	select pos
+	
+	skip
+
+enddo
+
+select ( nTArea )
+
+// ovo refreshira pripremu
+oBrowse:goBottom()
+oBrowse:refreshAll()
+oBrowse:dehilite()
+
+do while !oBrowse:Stabilize().and.((Ch:=INKEY())==0)
+enddo
+	
+return
+
+
