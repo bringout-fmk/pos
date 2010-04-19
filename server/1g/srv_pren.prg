@@ -58,8 +58,9 @@ return
  *  \param lAddNewCode - dodaj novu sifru ako je nema
  */
 function AzurSifIzFmk(cLocation, lAddNewCode, cSite)
-*{
 local cDir
+local nMPC1
+local nMPC2
 
 if (lAddNewCode == NIL)
 	lAddNewCode:=.t.
@@ -67,6 +68,20 @@ endif
 if (cSite == NIL)
 	cSite:=""
 endif
+
+Box(,5,60)
+	
+	nMPC1 := 1
+	nMPC2 := 3
+
+	@ m_x + 1, m_y + 2 SAY "setovanje cijena ****"
+	
+	@ m_x + 3, m_y + 2 SAY "Cijena 1 iz MPC" GET nMPC1 
+	@ m_x + 4, m_y + 2 SAY "Cijena 2 iz MPC" GET nMPC2
+	
+	read
+BoxC()
+
 
 if !gAppSrv
 	MsgO("Sifranik FMK -> POS")
@@ -113,7 +128,29 @@ do while !eof()
   	endif
 	SmReplace("naz", robafmk->naz, .t.)
 	SmReplace("idtarifa", robafmk->idtarifa, .t.)
-	SmReplace("cijena1", robafmk->mpc, .t.)
+	
+	// koju cijenu1 ubaciti ?
+	if nMPC1 = 1 
+		SmReplace("cijena1", robafmk->mpc, .t.)
+	elseif nMPC1 = 2
+		SmReplace("cijena1", robafmk->mpc2, .t.)
+	elseif nMPC1 = 3
+		SmReplace("cijena1", robafmk->mpc3, .t.)
+	else
+		SmReplace("cijena1", robafmk->mpc, .t.)
+	endif
+	
+	// koju cijenu2 ubaciti ?
+	if nMPC2 = 1
+		SmReplace("cijena2", robafmk->mpc, .t.)
+	elseif nMPC2 = 2
+		SmReplace("cijena2", robafmk->mpc2, .t.)
+	elseif nMPC2 = 3
+		SmReplace("cijena2", robafmk->mpc3, .t.)
+	else
+		SmReplace("cijena2", robafmk->mpc, .t.)
+	endif
+	
 	SmReplace("jmj", robafmk->jmj, .t.)
         if roba->(fieldpos("K1"))<>0  .and. robafmk->(fieldpos("K1"))<>0
         	SmReplace("K1", robafmk->k1, .t.)
