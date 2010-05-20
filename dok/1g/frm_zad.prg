@@ -256,8 +256,6 @@ if !fSadAz
 
   		READ
 		
-  		altd()
-		
 		if (LASTKEY()==K_ESC)
     			EXIT
   		else

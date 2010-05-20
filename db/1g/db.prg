@@ -720,8 +720,6 @@ sql_append()
 
 _BrDok:=cBrDok 
 
-altd()
-
 // ako je zaduzenje pitaj da li je roba na stanju...
 //g_roba_na_stanju(cIdVd)
 
