@@ -631,6 +631,7 @@ public gFirTel := SPACE(20)
 public gFc_type := SPACE(20)
 public gFc_path := SPACE(100)
 public gFc_name := SPACE(11)
+public gFc_error := "D"
 public gFc_use := "N"
 public gFc_cmd := SPACE(100)
 public gFc_cp1 := SPACE(100)
@@ -671,6 +672,7 @@ Rpar("f7",@gFc_cp2)
 Rpar("f8",@gFc_cp3)
 Rpar("f9",@gFc_cp4)
 Rpar("f0",@gFc_cp5)
+Rpar("fE",@gFc_error)
 
 Rpar("F1",@gFirNaziv)
 Rpar("F2",@gFirAdres)

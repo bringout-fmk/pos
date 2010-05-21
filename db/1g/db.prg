@@ -1763,3 +1763,75 @@ enddo
 return
 
 
+// -------------------------------------
+// povrat racuna u pripremu
+// -------------------------------------
+function povrat_rn( cSt_rn, dSt_date )
+local nTArea := SELECT()
+private GetList := {}
+
+if EMPTY( cSt_rn )
+	select ( nTArea )
+	return
+endif
+
+cSt_rn := PADL( ALLTRIM(cSt_rn), 6 )
+
+// napuni pripremu sa stavkama racuna za storno
+select pos
+seek gIdPos + "42" + DTOS(dSt_date) + cSt_rn
+
+do while !EOF() .and. field->idpos == gIdPos ;
+	.and. field->brdok == cSt_rn ;
+	.and. field->idvd == "42"
+
+	cT_roba := field->idroba
+	select roba
+	seek cT_roba
+	
+	select pos
+
+	scatter()
+	
+	select _pripr
+	append blank
+	
+	_robanaz := roba->naz
+
+	gather()
+
+	select pos
+
+	skip
+
+enddo
+
+// pobrisi racun iz POS i DOKS
+select pos
+go top
+seek gIdPos + "42" + DTOS(dSt_date) + cSt_rn
+
+do while !EOF() .and. field->idpos == gIdPos ;
+	.and. field->brdok == cSt_rn ;
+	.and. field->idvd == "42"
+	delete
+	sql_delete()
+	skip
+enddo
+
+select doks
+go top
+seek gIdPos + "42" + DTOS(dSt_date) + cSt_rn
+
+do while !EOF() .and. field->idpos == gIdPos ;
+	.and. field->brdok == cSt_rn ;
+	.and. field->idvd == "42"
+	delete
+	sql_delete()
+	skip
+enddo
+
+select ( nTArea )
+	
+return
+

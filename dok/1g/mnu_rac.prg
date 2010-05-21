@@ -529,6 +529,7 @@ function StampAzur(cIdPos, cRadRac)
 *{
 
 local cTime
+local nFis_err := 0
 private cPartner
 
 SELECT DOKS
@@ -546,10 +547,10 @@ sql_azur(.t.)
 sql_append()
 replsql idpos with gidpos, idvd with VD_RN, Brdok with cStalRac,idradnik with "////", datum with gdatum
 
-cPartner:=cIdGost
+cPartner := cIdGost
 
 if IsPlNs() .and. gFissta=="D"
-	cIdGost:=cObrNiNr
+	cIdGost := cObrNiNr
 endif
 
 if IsPDV()
@@ -560,11 +561,9 @@ else
 	cTime:=StampaRac(cIdPos,cRadRac,.f.,cIdVrsteP, nil, aVezani)
 endif
 
-
 if (!EMPTY(cTime))
 	
 	AzurRacuna(cIdPos, cStalRac, cRadRac, cTime, cIdVrsteP, cIdGost)
-	
 	
 	// azuriranje podataka o kupcu
 	if IsPDV()
@@ -579,16 +578,27 @@ if (!EMPTY(cTime))
 
 	// fiskalizacija, ispisi racun
 	if gFc_use == "D"
-		fisc_rn( cIdPos, gDatum, cStalRac )
-	endif
-	
-	if !EMPTY( gRNALSif )
-		// setuj broj naloga iz rnal
-		get_rnal( cIdPos, gDatum, cStalRac )
+		
+		// stampa fiskalnog racuna, vraca ERR
+		nErr := fisc_rn( cIdPos, gDatum, cStalRac )
+		
+		// ako postoji ERR vrati racun
+		if nErr > 0 .and. gFC_error == "D"
+			// vrati racun u pripremu...
+			povrat_rn( cStalRac, gDatum )
+		endif
+
 	endif
 
-else
-  	SkloniIznRac()
+endif
+
+// nema vremena, to je znak da nema racuna
+if EMPTY( cTime )
+  	
+	if gFC_use == "N"
+		SkloniIznRac()
+	endif
+	
 	MsgBeep("Radni racun <" + ALLTRIM (cRadRac) + "> nije zakljucen!#" + "ponovite proceduru stampanja !!!", 20)
   	
 	// ako nisam uspio azurirati racun izbrisi iz doks
@@ -599,12 +609,14 @@ else
 
 	SELECT doks
 	SEEK gIdPos+"42"+DTOS(gDatum)+cStalRac
+	
 	if (doks->idRadnik=="////")   
 		// divlji radnik
       		delete  
 		// DOKS
       		sql_delete()
 	endif
+
 endif
 
 return
