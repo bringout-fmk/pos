@@ -13,6 +13,8 @@ endif
 do case
 	case ALLTRIM(gFc_type) == "FLINK"
 		nErr := _flink_rn( cIdPos, dDat, cBrRn )
+	case ALLTRIM(gFc_type) == "TRING"
+		nErr := _tring_rn( cIdPos, dDat, cBrRn )
 
 endcase
 
@@ -70,7 +72,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 
 	++ nCtrl
 
-	// kolicina uvijek ide absolutna vrijednost
+	// kolicina uvijek ide apsolutna vrijednost
 	// storno racun fiskalni stampac tretira kao regularni unos
 
 	cRobaNaz := ""
@@ -105,27 +107,106 @@ _fc_cmd()
 return nErr
 
 
+
+// --------------------------------------------
+// stampa fiskalnog racuna TRING (www.kase.ba)
+// --------------------------------------------
+function _tring_rn( cIdPos, dDat, cBrRn )
+local aRn := {}
+local aKupac := nil
+local nTArea := SELECT()
+local nRbr := 1
+local nCtrl := 0
+local lStorno := .t.
+local nErr := 0
+
+// pronadji u bazi racun
+select pos
+set order to tag "1"
+go top
+seek cIdPos + "42" + DTOS(dDat) + cBrRn
+
+do while !EOF() .and. field->idpos == cIdPos ;
+		.and. field->brdok == cBrRn
+	
+	if field->kolicina > 0
+		lStorno := .f.
+	endif
+
+	cT_c_1 := ""
+
+	if pos->(FIELDPOS("C_1")) <> 0
+		// ovo je broj racuna koji se stornira 
+		cT_c_1 := field->c_1
+	endif
+
+	cArtikal := field->idroba
+
+	select roba
+	seek cArtikal
+
+	select pos
+
+	++ nCtrl
+
+	// kolicina uvijek ide apsolutna vrijednost
+	// storno racun fiskalni stampac tretira kao regularni unos
+
+	cRobaNaz := ""
+	_fix_naz( roba->naz, @cRobaNaz )
+	
+	AADD( aRn, { cBrRn, ;
+		ALLTRIM(STR( ++nRbr )), ;
+		field->idroba, ;
+		cRobaNaz, ;
+		field->cijena, ;
+		field->ncijena, ;
+		ABS( field->kolicina ), ;
+		_g_tar(field->idtarifa), ;
+		cT_c_1, ;
+		field->datum, ;
+		roba->jmj } )
+
+	skip
+enddo
+
+select (nTArea)
+
+if nCtrl = 0
+	msgbeep("fiskal: nema stavki za stampu !!!")
+	nErr := 1
+	return nErr
+endif
+
+// idemo sada na upis rn u fiskalni fajl
+nErr := fc_trng_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
+	aRn, aKupac, lStorno, gFc_error )
+
+return nErr
+
+
+
+
 // -------------------------------------------
 // popravlja naziv artikla
 // -------------------------------------------
 static function _fix_naz( cR_naz, cNaziv )
 
-// 1.
 // prvo ga srezi na LEN(30)
 cNaziv := PADR( cR_naz, 30 )
 
-// 2.
-// napravi konverziju karaktera 852 -> eng
-cNaziv := StrKzn( cNaziv, "8", "E" )
+if ALLTRIM(gFc_type) == "FLINK"
+	
+	// napravi konverziju karaktera 852 -> eng
+	cNaziv := StrKzn( cNaziv, "8", "E" )
 
-// 3.
-// konvertuj naziv na LOWERCASE()
-// time rjesavamo i veliko slovo "V" prvo
-cNaziv := LOWER( cNaziv )
+	// konvertuj naziv na LOWERCASE()
+	// time rjesavamo i veliko slovo "V" prvo
+	cNaziv := LOWER( cNaziv )
 
-// 4.
-// zamjeni sve zareze u nazivu sa tackom
-cNaziv := STRTRAN( cNaziv, ",", "." )
+	// zamjeni sve zareze u nazivu sa tackom
+	cNaziv := STRTRAN( cNaziv, ",", "." )
+endif
 
 return
 
