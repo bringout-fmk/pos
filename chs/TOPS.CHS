@@ -47,6 +47,7 @@ C   ID   C  8  0    ID   C  10  0
 A N1 N 12 2
 A N2 N 12 2
 A MINK N 12 2
+A FISC_PLU N 10 0
 
 *SAST
 C   ID   C  8  0    ID   C  10  0
@@ -57,7 +58,6 @@ C   ID2   C  8  0   ID2  C  10  0
 C   ID   C  8  0    ID   C  10  0
 A N1 N 12 2
 A N2 N 12 2
-
 
 *K2C
 C IDROBA C 8 0  IDROBA C 10 0

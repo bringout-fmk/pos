@@ -15,6 +15,8 @@ do case
 		nErr := _flink_rn( cIdPos, dDat, cBrRn )
 	case ALLTRIM(gFc_type) == "TRING"
 		nErr := _tring_rn( cIdPos, dDat, cBrRn )
+	case ALLTRIM(gFc_type) == "FPRINT"
+		nErr := _fprint_rn( cIdPos, dDat, cBrRn )
 
 endcase
 
@@ -31,6 +33,92 @@ endif
 return nErr
 
 
+// -------------------------------------
+// stampa fiskalnog racuna FLINK
+// -------------------------------------
+function _fprint_rn( cIdPos, dDat, cBrRn )
+local aRn := {}
+local nTArea := SELECT()
+local nRbr := 1
+local nCtrl := 0
+local lStorno := .t.
+local nErr := 0
+local nPLU := 0
+local nPopust := 0
+
+// pronadji u bazi racun
+select pos
+set order to tag "1"
+go top
+seek cIdPos + "42" + DTOS(dDat) + cBrRn
+
+do while !EOF() .and. field->idpos == cIdPos ;
+		.and. field->brdok == cBrRn
+	
+	if field->kolicina > 0
+		lStorno := .f.
+	endif
+
+	cT_c_1 := ""
+	nPopust := 0
+
+	if pos->(FIELDPOS("C_1")) <> 0
+		// ovo je broj racuna koji se stornira 
+		cT_c_1 := field->c_1
+	endif
+
+	cArtikal := field->idroba
+
+	select roba
+	seek cArtikal
+
+	nPLU := roba->fisc_plu
+
+	select pos
+
+	if field->ncijena > 0
+		nPopust := ( field->ncijena / field->cijena ) * 100
+	endif
+
+	++ nCtrl
+
+	// kolicina uvijek ide apsolutna vrijednost
+	// storno racun fiskalni stampac tretira kao regularni unos
+
+	cRobaNaz := ""
+	_fix_naz( roba->naz, @cRobaNaz )
+
+	AADD( aRn, { cBrRn, ;
+		ALLTRIM(STR(++nRbr)), ;
+		field->idroba, ;
+		cRobaNaz, ;
+		field->cijena, ;
+		ABS( field->kolicina ), ;
+		field->idtarifa, ;
+		cT_c_1, ;
+		nPLU, ;
+		nPopust } )
+
+	skip
+enddo
+
+select (nTArea)
+
+if nCtrl = 0
+	msgbeep("fiskal: nema stavki za stampu !!!")
+	nErr := 1
+	return nErr
+endif
+
+// idemo sada na upis rn u fiskalni fajl
+nErr := fp_pos_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), aRn, ;
+	lStorno, gFc_error )
+
+// pokreni komandu ako postoji
+_fc_cmd()
+
+return nErr
+
 
 // -------------------------------------
 // stampa fiskalnog racuna FLINK
@@ -42,6 +130,7 @@ local nRbr := 1
 local nCtrl := 0
 local lStorno := .t.
 local nErr := 0
+local nPLU := 0
 
 // pronadji u bazi racun
 select pos
@@ -67,6 +156,8 @@ do while !EOF() .and. field->idpos == cIdPos ;
 
 	select roba
 	seek cArtikal
+	
+	nPLU := roba->fisc_plu
 
 	select pos
 
@@ -85,7 +176,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 		field->cijena, ;
 		ABS( field->kolicina ), ;
 		_g_tar(field->idtarifa), ;
-		cT_c_1 } )
+		cT_c_1, nPLU } )
 
 	skip
 enddo
@@ -119,6 +210,7 @@ local nRbr := 1
 local nCtrl := 0
 local lStorno := .t.
 local nErr := 0
+local nPLU := 0
 
 // pronadji u bazi racun
 select pos
@@ -145,6 +237,8 @@ do while !EOF() .and. field->idpos == cIdPos ;
 	select roba
 	seek cArtikal
 
+	nPLU := roba->fisc_plu
+
 	select pos
 
 	++ nCtrl
@@ -165,7 +259,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 		_g_tar(field->idtarifa), ;
 		cT_c_1, ;
 		field->datum, ;
-		roba->jmj } )
+		roba->jmj, nPLU } )
 
 	skip
 enddo

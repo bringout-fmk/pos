@@ -66,7 +66,14 @@ private Kol:={}
 
 ImeKol:={}
 
-AADD(ImeKol, { padr("Sifra",10),  {|| id },     "id"   , {|| .t.}, {|| vpsifra(wId)} })
+AADD(ImeKol, { padr("Sifra",10), {|| id }, "id", {|| .t.}, {|| vpsifra(wId)} })
+
+// fiscal plu kod, sifra koja se koristi kod izdavanja racuna
+if roba->(fieldpos("FISC_PLU")) <> 0
+	AADD (ImeKol,{ padc("PLU KOD", 8 ), {|| fisc_plu }, "fisc_plu", ;
+		{|| gen_plu(@wfisc_plu), .f. }, {|| .t. }})
+endif
+
 AADD(ImeKol, { padr("Naziv",40), {|| naz},     "naz"      })
 
 AADD(ImeKol, { padr("JMJ",3),    {|| jmj},     "jmj"    })
@@ -153,20 +160,34 @@ else
   	aZabrane:={}
 endif
 
-return PostojiSifra(F_ROBA,I_ID,15,77,"Sifrarnik robe/artikala",@cId,dx,dy,nil,nil,nil, aZabrane)
+return PostojiSifra(F_ROBA,I_ID,15,77,"Sifrarnik robe/artikala",@cId,dx,dy,;
+	{|| ed_r_item(ch) },nil,nil, aZabrane)
 
 return
-*}
 
 
-/*! \fn LMarg()
- *  \brief
- */
+// -------------------------------------
+// edit roba item
+// -------------------------------------
+static function ed_r_item()
+local nRet := DE_CONT
+
+do case
+	case UPPER(CHR(ch)) == "P"
+		// generisi PLU
+		if gen_all_plu() == .t.
+			return DE_REFRESH		
+		endif
+
+endcase
+
+return nRet
+
+
+
  
 function LMarg()
-*{
 return "   "
-*}
 
 
 /*! \fn P_Sirov(cId,dx,dy)
@@ -414,6 +435,8 @@ endif
 go nRecNo
 return DE_CONT
 *}
+
+
 
 static function IncIDN(wId)
 *{

@@ -163,6 +163,7 @@ Rpar("f8",@gFc_cp3)
 Rpar("f9",@gFc_cp4)
 Rpar("f0",@gFc_cp5)
 Rpar("fE",@gFc_error)
+Rpar("fI",@gIOSA)
 
 UsTipke()
 set cursor on
@@ -171,7 +172,7 @@ AADD(aNiz,{"Tip fiskalne kase", "gFc_type", , "@S20", })
 AADD(aNiz,{"Putanja izl.fajla", "gFc_path", , "@S50", })
 AADD(aNiz,{"Naziv izl.fajla", "gFc_name", , "@S20", })
 AADD(aNiz,{"Provjera greske kod prodaje", "gFc_error", , "@!", })
-
+AADD(aNiz,{"IOSA broj", "gIOSA", , "@S16", })
 AADD(aNiz,{"param ($1)", "gFc_cp1", , "@S50", })
 AADD(aNiz,{"param ($2)", "gFc_cp2", , "@S50", })
 AADD(aNiz,{"param ($3)", "gFc_cp3", , "@S50", })
@@ -199,6 +200,7 @@ if LASTKEY()<>K_ESC
     	Wpar("f9",gFc_cp4, .t.,"D")
     	Wpar("f0",gFc_cp5, .t.,"D")
     	Wpar("fE",gFc_error, .t.,"D")
+    	Wpar("fI",gIOSA, .t.,"D")
     	MsgC()
 endif
 

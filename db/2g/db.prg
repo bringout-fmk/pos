@@ -618,8 +618,10 @@ if (nArea==-1 .or. nArea==(F_ROBA))
 	   AADD ( aDBf,{  'N1'   , 'N' ,  12 ,  2 })
 	   AADD ( aDBf,{  'N2'   , 'N' ,  12 ,  2 })
 	   AADD ( aDBf,{ 'MINK'   , 'N' ,  12 ,  2 })
+	   AADD ( aDBf,{ 'FISC_PLU'   , 'N' ,  10 , 0 })
 	   DBcreate2 ( SIFPATH + "ROBA.DBF", aDbf )
 	ENDIF
+
 	CREATE_INDEX ("ID", "ID", SIFPATH+"ROBA")
 	CREATE_INDEX ("NAZ", "Naz", SIFPATH+"ROBA")
 
@@ -627,9 +629,14 @@ if (nArea==-1 .or. nArea==(F_ROBA))
 	select (F_ROBA)
 	use (SIFPATH+"roba")
 
-	if fieldpos("BARKOD")<>0
+	if fieldpos("BARKOD") <> 0
 	  use
 	  CREATE_INDEX ("BARKOD", "BARKOD", SIFPATH+"ROBA")
+	endif
+
+	if fieldpos("FISC_PLU") <> 0
+	  use
+	  CREATE_INDEX ("PLU", "str(fisc_plu,10)", SIFPATH+"ROBA")
 	endif
 endif
 
