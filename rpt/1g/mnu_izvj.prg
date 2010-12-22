@@ -63,13 +63,16 @@ else
 	AADD(opcexe,{|| PrepisDok()})
 endif
 
-  	AADD(opc,"-------------------")
-  	AADD(opcexe,nil)
+AADD(opc,"-------------------")
+AADD(opcexe,nil)
 
 if gPVrsteP
   AADD(opc,"N. pregled prometa po v.placanja")
   AADD(opcexe,{|| PrometVPl()})
 endif
+
+AADD(opc,"F. fiskalni izvjestaji ")
+AADD(opcexe,{|| mnu_f_rpt() })
 
 Menu_SC("izvt")
 return .f.

@@ -45,6 +45,34 @@ local lStorno := .t.
 local nErr := 0
 local nPLU := 0
 local nPopust := 0
+local nPLU_price := 0
+local nFisc_no := 0
+local aKupac := {}
+local cPartner := ""
+
+
+select doks
+set order to tag "1"
+go top
+seek cIdPos + "42" + DTOS(dDat) + cBrRn
+// ovo je partner
+cPartner := field->idgost
+
+if !EMPTY( cPartner )
+	
+	// imamo partnera, moramo ga dodati u matricu za racun
+	
+	O_RNGOST
+	select rngost
+	go top
+	seek cPartner
+
+	if !EMPTY( rngost->jib )
+	   AADD( aKupac, { rngost->jib, rngost->naz, ;
+		rngost->adresa, rngost->ptt, rngost->mjesto } )
+	endif
+
+endif
 
 // pronadji u bazi racun
 select pos
@@ -61,6 +89,8 @@ do while !EOF() .and. field->idpos == cIdPos ;
 
 	cT_c_1 := ""
 	nPopust := 0
+	nPLU := 0
+	nPLU_price := 0
 
 	if pos->(FIELDPOS("C_1")) <> 0
 		// ovo je broj racuna koji se stornira 
@@ -73,6 +103,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 	seek cArtikal
 
 	nPLU := roba->fisc_plu
+	nPLU_price := roba->cijena1
 
 	select pos
 
@@ -97,6 +128,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 		field->idtarifa, ;
 		cT_c_1, ;
 		nPLU, ;
+		nPLU_price, ;
 		nPopust } )
 
 	skip
@@ -111,11 +143,22 @@ if nCtrl = 0
 endif
 
 // idemo sada na upis rn u fiskalni fajl
-nErr := fp_pos_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), aRn, ;
+fp_pos_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), aRn, aKupac, ;
 	lStorno, gFc_error )
 
 // pokreni komandu ako postoji
 _fc_cmd()
+
+// iscitaj error
+nErr := fp_r_error( ALLTRIM(gFc_path), gFc_tout, @nFisc_no )
+
+if nErr <> 0
+	
+	msgbeep("Postoji greska !!!")
+
+else
+	msgbeep("Kreiran fiskalni racun broj: " + ALLTRIM(STR(nFisc_no)) )
+endif
 
 return nErr
 
@@ -289,18 +332,26 @@ static function _fix_naz( cR_naz, cNaziv )
 // prvo ga srezi na LEN(30)
 cNaziv := PADR( cR_naz, 30 )
 
-if ALLTRIM(gFc_type) == "FLINK"
+do case
+
+	case ALLTRIM(gFc_type) == "FLINK"
 	
-	// napravi konverziju karaktera 852 -> eng
-	cNaziv := StrKzn( cNaziv, "8", "E" )
+		// napravi konverziju karaktera 852 -> eng
+		cNaziv := StrKzn( cNaziv, "8", "E" )
 
-	// konvertuj naziv na LOWERCASE()
-	// time rjesavamo i veliko slovo "V" prvo
-	cNaziv := LOWER( cNaziv )
+		// konvertuj naziv na LOWERCASE()
+		// time rjesavamo i veliko slovo "V" prvo
+		cNaziv := LOWER( cNaziv )
 
-	// zamjeni sve zareze u nazivu sa tackom
-	cNaziv := STRTRAN( cNaziv, ",", "." )
-endif
+		// zamjeni sve zareze u nazivu sa tackom
+		cNaziv := STRTRAN( cNaziv, ",", "." )
+
+	case ALLTRIM(gFc_type) == "FPRINT"
+		
+		// napravi konverziju karaktera 852 -> win
+		cNaziv := KonvZnWin( cNaziv, gFc_konv )
+		
+endcase
 
 return
 

@@ -164,22 +164,30 @@ Rpar("f9",@gFc_cp4)
 Rpar("f0",@gFc_cp5)
 Rpar("fE",@gFc_error)
 Rpar("fI",@gIOSA)
+Rpar("fK",@gFC_konv)
+Rpar("fT",@gFC_tout)
 
 UsTipke()
 set cursor on
 
 AADD(aNiz,{"Tip fiskalne kase", "gFc_type", , "@S20", })
+
 AADD(aNiz,{"Putanja izl.fajla", "gFc_path", , "@S50", })
 AADD(aNiz,{"Naziv izl.fajla", "gFc_name", , "@S20", })
+
 AADD(aNiz,{"Provjera greske kod prodaje", "gFc_error", , "@!", })
+AADD(aNiz,{"Timeout fiskalnih operacija", "gFc_tout", , "99", })
+
 AADD(aNiz,{"IOSA broj", "gIOSA", , "@S16", })
+
 AADD(aNiz,{"param ($1)", "gFc_cp1", , "@S50", })
 AADD(aNiz,{"param ($2)", "gFc_cp2", , "@S50", })
 AADD(aNiz,{"param ($3)", "gFc_cp3", , "@S50", })
 AADD(aNiz,{"param ($4)", "gFc_cp4", , "@S50", })
 AADD(aNiz,{"param ($5)", "gFc_cp5", , "@S50", })
-
 AADD(aNiz,{"Komandna linija", "gFc_cmd", , "@S50", })
+
+AADD(aNiz,{"Konverzija znakova", "gFc_konv", , "@!", })
 AADD(aNiz,{"Koristiti fiskalne funkcije", "gFc_use", ,"@!", })
 
 VarEdit(aNiz,7,2,24,78,"Fiskalni parametri","B1")
@@ -201,6 +209,8 @@ if LASTKEY()<>K_ESC
     	Wpar("f0",gFc_cp5, .t.,"D")
     	Wpar("fE",gFc_error, .t.,"D")
     	Wpar("fI",gIOSA, .t.,"D")
+    	Wpar("fK",gFc_konv, .t.,"D")
+    	Wpar("fT",gFc_tout, .t.,"D")
     	MsgC()
 endif
 

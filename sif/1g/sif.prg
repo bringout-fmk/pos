@@ -382,7 +382,15 @@ private Kol:={}
 O_RNGOST
 
 if gModul=="TOPS"
-	ImeKol:={{"ID ",{|| id },"id",{|| .t.},{|| vpsifra(wId)}},{PADC("Naziv",30),{|| naz},LEFT("naz",30)},{"Tip",{|| tip},"tip",{|| wTip:=iif(empty(wTip),"P",wTip),.T.},{|| wTip$"SP"}},{"Aktivan",{|| PADC(IIF(Status=="D","DA","NE"),7)},"Status",{|| wStatus:=iif(empty(wStatus),"D",wStatus), .t.},{|| wStatus $ "DN"}}}
+	ImeKol:={ {"ID ",{|| id }, "id", {|| .t.}, {|| vpsifra(wId)} },;
+	{PADC("Naziv",30),{|| naz},LEFT("naz",30)},;
+	{PADC("JIB", 13),{|| jib},"jib"},;
+	{PADC("Adresa", 40),{|| adresa},"adresa"},;
+	{PADC("PTT", 10),{|| ptt},"ptt"},;
+	{PADC("Mjesto", 30),{|| mjesto},"mjesto"},;
+	{"Tip",{|| tip},"tip",{|| wTip:=iif(empty(wTip),"P",wTip),.T.},{|| wTip$"SP"}},;
+	{"Aktivan",{|| PADC(IIF(Status=="D","DA","NE"),7)},;
+	"Status",{|| wStatus:=iif(empty(wStatus),"D",wStatus), .t.},{|| wStatus $ "DN"}}}
 	
 else
 	ImeKol:={{"ID ",{|| id },"id",{|| .t.},{|| vpsifra(wId)}},{ PADC("Naziv",30),{|| naz},LEFT("naz",30)},{"Tip",{|| tip},"tip",{|| wTip:=iif(empty(wTip),"P",wTip),.T.},{|| wTip$"SP"}},{"Vrsta placanja",{|| IdVrsteP},"IdVrsteP",{|| .T.},{|| P_VRSTEP(@wIdVrsteP)}},{"Aktivan",{|| PADC(IIF(Status=="D","DA","NE"),7)},"Status",{|| wStatus:=iif(empty(wStatus),"D",wStatus), .T.},{|| wStatus $ "DN"}}}

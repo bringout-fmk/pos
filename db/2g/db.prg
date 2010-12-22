@@ -813,6 +813,10 @@ if (nArea==-1 .or. nArea==(F_RNGOST))
 		aDbf := {}
 	  	AADD (aDbf, {"ID",       "C",  8, 0})
 	  	AADD (aDbf, {"NAZ",      "C", 40, 0})
+	  	AADD (aDbf, {"JIB",      "C", 13, 0})
+	  	AADD (aDbf, {"ADRESA",   "C", 40, 0})
+	  	AADD (aDbf, {"PTT",      "C", 10, 0})
+	  	AADD (aDbf, {"MJESTO",   "C", 30, 0})
 	  	AADD (aDbf, {"IDVRSTEP", "C",  2, 0})
 	  	AADD (aDbf, {"STATUS",   "C",  1, 0})
 	  	AADD (aDbf, {"TIP",      "C",  1, 0}) // P-partner, S-soba
