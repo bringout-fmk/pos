@@ -5,9 +5,10 @@
 // Stampa azuriranog dokumenta
 // -------------------------------------------
 function PrepisDok()
-
 local aOpc
 private cFilter:=".t."
+private ImeKol := {}
+private Kol := {}
 
 O_RNGOST
 O_VRSTEP
@@ -31,7 +32,12 @@ if !EMPTY(gRNALKum)
 	o_doksrc( KUMPATH )
 endif
 
-ImeKol:={{"Vrsta",{|| IdVd}},{"Broj ",{||PADR(IF(!Empty(IdPos),trim(IdPos)+"-","")+alltrim(BrDok),9)}}}
+AADD(ImeKol, {"Vrsta", {|| IdVd}})
+AADD(ImeKol, {"Broj ",{||PADR(IF(!Empty(IdPos),trim(IdPos)+"-","")+alltrim(BrDok),9)}} )
+
+if doks->(FIELDPOS("FISC_RN")) <> 0
+	AADD(ImeKol, {"Fisk.rn", {|| fisc_rn}})
+endif
 
 if IzFMKIni("TOPS","StAzurDok_PrikazKolonePartnera","N",EXEPATH)=="D"
 	select DOKS
@@ -67,7 +73,6 @@ if gStolovi == "D"
 	AADD(ImeKol,{"Zaklj",{||zak_br}})
 endif
 
-Kol:={}
 for i:=1 to LEN(ImeKol)
 	AADD(Kol,i)
 next

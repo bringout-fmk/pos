@@ -24,9 +24,11 @@
  */
 
 function PRacuni(dDat, cBroj, fPrep, fScope, cPrefixFilter, qIdRoba)
-*{
+local i
 private fMark:=.f.
 private cFilter
+private ImeKol := {}
+private Kol := {}
 
 if cPrefixFilter==NIL
 	cPrefixFilter:=""
@@ -55,15 +57,24 @@ endif
 cBroj:=RIGHT(cRacun,LEN(cRacun)-AT("-",cRacun))
 cBroj:=PADL(cBroj,6)
 
-ImeKol:={{ "Broj racuna",{|| padr(trim(IdPos)+"-"+alltrim(BrDok),9)}},{ "Iznos",{|| STR (SR_Iznos(), 13, 2)}},{ IIF(gStolovi == "D", "Sto","Smj"),{|| IIF(gStolovi == "D", sto_br , smjena)}      },{ "Datum",{|| datum}},{ "Vr.Pl",      {|| idvrstep} },{ IIF(IsPlNs(), "Broj NI", "Partner"),    {|| idgost} },{ "Vrijeme",    {|| vrijeme} }}
+AADD(ImeKol, { "Broj racuna", {|| padr(trim(IdPos)+"-"+alltrim(BrDok),9)}}) 
 
+if doks->(FIELDPOS("FISC_RN")) <> 0
+	AADD(ImeKol, { "Fisk.rn",{|| fisc_rn}} )
+endif
+
+AADD(ImeKol, { "Iznos", {|| STR (SR_Iznos(), 13, 2)}} )
+AADD(ImeKol, { IIF(gStolovi == "D", "Sto", "Smj"), ;
+	{|| IIF(gStolovi == "D", sto_br , smjena)}})
+AADD(ImeKol, { "Datum",{|| datum}} )
+AADD(ImeKol, { "Vr.Pl",{|| idvrstep} } )
+AADD(ImeKol, { IIF(IsPlNs(), "Broj NI", "Partner"),{|| idgost} })
+AADD(ImeKol, { "Vrijeme",{|| vrijeme} })
 AADD(ImeKol,{ "Placen",     {|| IIF (Placen==PLAC_NIJE,"  NE","  DA")} })
 
-if kLevel<=L_UPRAVN
-	Kol:={1,2,3,4,5,6,7,8}
-else
-	Kol:={1,2,3,4,5,6,7}
-endif
+for i:=1 to LEN(ImeKol)
+	AADD(kol,i)
+next
 
 SELECT DOKS
 
@@ -76,7 +87,6 @@ if fScope
 	SET SCOPEBOTTOM TO "W"
 endif
 
-altd()
 if gVrstaRS=="S".or.KLevel<L_UPRAVN
 	AADD(ImeKol,{"Radnik",{|| IdRadnik}})
 	AADD(Kol, LEN(ImeKol))

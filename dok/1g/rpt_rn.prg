@@ -950,6 +950,7 @@ local cRdnkNaz := ""
 local aPPs
 local cBrStola
 local nZakBr:=0
+local nFZaokr := 0
 
 drn_create()
 drn_open()
@@ -1190,9 +1191,12 @@ if glUgost
 else
 	aPPs := nil
 endif
-	
+
+// zaokruzenje
+nFZaokr := zaokr_5pf( nUTotal )
+
 // dodaj zapis u drn.dbf
-add_drn(cStalRac, dDatRn, nil, nil, cTime, Round(nUBPDV,2), Round(nUPopust,2), Round(nUBPDVPopust,2), Round(nUPDV,2), Round(nUTotal,2), nCSum, 0, 0, 0)
+add_drn(cStalRac, dDatRn, nil, nil, cTime, Round(nUBPDV,2), Round(nUPopust,2), Round(nUBPDVPopust,2), Round(nUPDV,2), Round(nUTotal - nFZaokr,2), nCSum, 0, nFZaokr, 0)
 	
 // mjesto nastanka racuna
 add_drntext("R01", gRnMjesto)

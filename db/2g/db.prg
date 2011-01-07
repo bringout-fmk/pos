@@ -303,7 +303,7 @@ if (nArea==-1 .or. nArea==(F_DOKS))
 	AADD ( aDbf, { "C_1",        "C",  6, 0} )
 	AADD ( aDbf, { "C_2",        "C", 10, 0} )
 	AADD ( aDbf, { "C_3",        "C", 50, 0} )
-
+	AADD ( aDbf, { "FISC_RN",    "N", 10, 0} )
 
 	if gStolovi == "D"
 		AADD ( aDbf, { "ZAK_BR",   "N",  6, 0} )
