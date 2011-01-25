@@ -291,6 +291,28 @@ do case
 			return (DE_REFRESH)		
 		endif
 		return (DE_CONT)
+	
+	case Ch==ASC("I") .or. Ch==ASC("i")
+		// ispravka veze fiskalnog racuna
+		nFisc_rn := field->fisc_rn
+		nT_frn := nFisc_rn
+		Box(,1,40)
+			
+			@ m_x+1,m_y+2 SAY "veza fisk.racun broj:" GET nFisc_rn
+			
+			read
+
+		BoxC()
+
+		if LastKey() <> K_ESC
+			if nT_frn <> nFisc_rn
+				replace field->fisc_rn with nFisc_rn
+				return (DE_REFRESH)
+			endif
+		endif
+
+		return (DE_CONT)
+
     	Case Ch==Asc("T").or.Ch==Asc("t")
       		select doks
 		set cursor on

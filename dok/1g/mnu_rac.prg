@@ -532,6 +532,8 @@ local cTime
 local nFis_err := 0
 private cPartner
 
+altd()
+
 SELECT DOKS
 cStalRac:=NarBrDok(cIdPos,VD_RN)
 
@@ -649,9 +651,13 @@ do while .t.
    	@ m_x+1,m_y+2 SAY "Nacin placanja " GET cIdVrsteP pict "@!" valid p_Vrstep(@cIdVrstep)
    	read
 	 
-	if cIdVrstep<>gGotPlac .and. IzFMKINI("POS","PartnerPlacanje","N")=="D"
+	if gFc_use == "D"
 		lGetPartner:=.t.
-	endif  	
+	else
+	   if cIdVrstep<>gGotPlac .and. IzFMKINI("POS","PartnerPlacanje","N")=="D"
+		lGetPartner:=.t.
+	   endif  	
+	endif
 	
 	// ako se koristi varijanta evidentiranja podataka o vp pozovi formu
 	if gEvidPl=="D"

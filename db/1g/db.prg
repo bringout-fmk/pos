@@ -796,6 +796,13 @@ enddo
 SELECT PRIPRZ
 __dbPack()
 
+if gFc_use == "D"
+	nTArea := SELECT()
+	// generisi plu kodove za nove sifre
+	gen_all_plu( .t. )
+	select (nTArea)
+endif
+
 return
 *}
 
@@ -1690,26 +1697,57 @@ return
 // -------------------------------------
 // storniranje racuna
 // -------------------------------------
-function storno_rn()
-local cSt_rn := SPACE(6)
-local dSt_date := DATE()
-local cSt_fisc := SPACE(10)
+function storno_rn( lSilent, cSt_rn, dSt_date, cSt_fisc )
 local nTArea := SELECT()
 private GetList := {}
 
+if lSilent == nil
+	lSilent := .f.
+endif
+if cSt_rn == nil
+	cSt_rn := SPACE(6)
+endif
+if dSt_date == nil
+	dSt_date := DATE()
+endif
+if cSt_fisc == nil
+	cSt_fisc := SPACE(10)
+endif
+
 Box(,3,55)
+	
 	@ m_x + 1, m_y + 2 SAY "stornirati pos racun broj:" GET cSt_rn 
 	@ m_x + 2, m_y + 2 SAY "od datuma:" GET dSt_date
-	@ m_x + 3, m_y + 2 SAY "broj fiskalnog isjecka:" GET cSt_fisc
+	
 	read
+	
+	cSt_rn := PADL( ALLTRIM(cSt_rn), 6 )
+
+	if EMPTY( cSt_fisc )
+		select doks
+		seek gIdPos + "42" + DTOS(dSt_date) + cSt_rn
+		cSt_fisc := PADR( ALLTRIM( STR( doks->fisc_rn )), 10 )
+	endif
+
+	@ m_x + 3, m_y + 2 SAY "broj fiskalnog isjecka:" GET cSt_fisc
+	
+	read
+
 BoxC()
+
+if LastKey() == K_ESC
+
+	select ( nTArea )
+	return
+
+endif
 
 if EMPTY( cSt_rn )
 	select ( nTArea )
 	return
 endif
 
-cSt_rn := PADL( ALLTRIM(cSt_rn), 6 )
+//cSt_rn := PADL( ALLTRIM(cSt_rn), 6 )
 
 // napuni pripremu sa stavkama racuna za storno
 select pos
@@ -1730,9 +1768,10 @@ do while !EOF() .and. field->idpos == gIdPos ;
 	select _pripr
 	append blank
 	
-	_brdok := ALLTRIM(_brdok) + "S"
+	_brdok := PADL( ALLTRIM(_brdok) + "S", 6 )
 	_kolicina := ( _kolicina * -1 )
 	_robanaz := roba->naz
+	_datum := gDatum
 
 	gather()
 
@@ -1752,14 +1791,18 @@ enddo
 
 select ( nTArea )
 
-// ovo refreshira pripremu
-oBrowse:goBottom()
-oBrowse:refreshAll()
-oBrowse:dehilite()
+if lSilent == .f.
 
-do while !oBrowse:Stabilize().and.((Ch:=INKEY())==0)
-enddo
-	
+	// ovo refreshira pripremu
+	oBrowse:goBottom()
+	oBrowse:refreshAll()
+	oBrowse:dehilite()
+
+	do while !oBrowse:Stabilize().and.((Ch:=INKEY())==0)
+	enddo
+
+endif
+
 return
 
 

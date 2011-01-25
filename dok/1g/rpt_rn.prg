@@ -980,6 +980,8 @@ select &cPosDB
 // checksum
 nCSum := 0
 
+altd()
+
 // matrica aRacuni moze da sadrzi vise racuna, u svakom slucaju sadrzi 1 racun
 // aRacuni : {DOKS->IdPos, DOKS->(BrDok), DOKS->IdVrsteP, DOKS->Datum})
 
@@ -1193,7 +1195,7 @@ else
 endif
 
 // zaokruzenje
-nFZaokr := zaokr_5pf( nUTotal )
+//nFZaokr := zaokr_5pf( nUTotal )
 
 // dodaj zapis u drn.dbf
 add_drn(cStalRac, dDatRn, nil, nil, cTime, Round(nUBPDV,2), Round(nUPopust,2), Round(nUBPDVPopust,2), Round(nUPDV,2), Round(nUTotal - nFZaokr,2), nCSum, 0, nFZaokr, 0)
@@ -1250,6 +1252,8 @@ if (lPrepis == nil)
 	lPrepis := .f.
 endif
 
+altd()
+
 if (cIdVrsteP == nil)
 	cIdVrsteP := ""
 endif
@@ -1271,8 +1275,12 @@ if lOnlyFill
 	return 
 endif
 
-// ispisi racun
-rb_print(lStartPrint)
+if gFc_use == "D" .and. gFc_txrn == "N"
+	// fiskalni racun - ne stampati !
+else
+	// ispisi racun
+	rb_print(lStartPrint)
+endif
 
 return cTime
 

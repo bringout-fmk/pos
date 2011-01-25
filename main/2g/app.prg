@@ -642,6 +642,7 @@ public gFc_cp5 := SPACE(100)
 public gIOSA := SPACE(16)
 public gFc_konv := "5"
 public gFc_tout := 3
+public gFc_txrn := "D"
 
 if gModul=="HOPS"
 	gVodiTreb:="D"
@@ -679,6 +680,7 @@ Rpar("fE",@gFc_error)
 Rpar("fI",@gIOSA)
 Rpar("fK",@gFc_konv)
 Rpar("fT",@gFc_tout)
+Rpar("fX",@gFc_txrn)
 
 Rpar("F1",@gFirNaziv)
 Rpar("F2",@gFirAdres)

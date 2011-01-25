@@ -214,6 +214,19 @@ if UPPER(CHR(LASTKEY()))=="F"
 	return DE_REFRESH
 endif
 
+if UPPER(CHR(LASTKEY()))=="S"
+	
+	// storno racuna
+	storno_rn( .t., doks->brdok, doks->datum, ;
+		PADR( ALLTRIM(STR(doks->fisc_rn)), 10 ) )
+
+	msgbeep("Storno racun se nalazi u pripremi !")
+
+	select doks
+	return DE_REFRESH
+
+endif
+
 if UPPER(CHR(LASTKEY()))=="Z"
   	PushWa()
 	print_zak_br(doks->zak_br)

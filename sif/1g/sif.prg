@@ -401,7 +401,7 @@ for i:=1 to LEN(ImeKol)
 next
 
 if KLevel="3"
-	aZabrane:={K_CTRL_T,K_CTRL_N,K_F4,K_F2,K_CTRL_F9}
+	aZabrane:={K_CTRL_F9}
 elseif KLevel="2"
   	aZabrane:={K_CTRL_T,K_F4,K_F2,K_CTRL_F9}
 else

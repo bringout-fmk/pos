@@ -152,12 +152,24 @@ _fc_cmd()
 // iscitaj error
 nErr := fp_r_error( ALLTRIM(gFc_path), gFc_tout, @nFisc_no )
 
+// fiskalni racun ne moze biti 0
+if nFisc_no <= 0
+	nErr := 1
+endif
+
 if nErr <> 0
 	
 	msgbeep("Postoji greska !!!")
 
 else
 	msgbeep("Kreiran fiskalni racun broj: " + ALLTRIM(STR(nFisc_no)) )
+	
+	if nFisc_no <> 0
+		// upisi broj fiskalnog racuna u doks
+		select doks
+		replace field->fisc_rn with nFisc_no
+	endif
+
 endif
 
 return nErr
