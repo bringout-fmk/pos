@@ -142,6 +142,9 @@ if nCtrl = 0
 	return nErr
 endif
 
+// pobrisi answer fajl
+fp_d_answer( ALLTRIM(gFc_path) )
+
 // idemo sada na upis rn u fiskalni fajl
 fp_pos_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), aRn, aKupac, ;
 	lStorno, gFc_error )

@@ -641,7 +641,7 @@ public gFc_cp4 := SPACE(100)
 public gFc_cp5 := SPACE(100)
 public gIOSA := SPACE(16)
 public gFc_konv := "5"
-public gFc_tout := 3
+public gFc_tout := 300
 public gFc_txrn := "D"
 
 if gModul=="HOPS"

@@ -177,7 +177,7 @@ AADD(aNiz,{"Putanja izl.fajla", "gFc_path", , "@S50", })
 AADD(aNiz,{"Naziv izl.fajla", "gFc_name", , "@S20", })
 
 AADD(aNiz,{"Provjera greske kod prodaje", "gFc_error", , "@!", })
-AADD(aNiz,{"Timeout fiskalnih operacija", "gFc_tout", , "99", })
+AADD(aNiz,{"Timeout fiskalnih operacija", "gFc_tout", , "9999", })
 
 AADD(aNiz,{"IOSA broj", "gIOSA", , "@S16", })
 
