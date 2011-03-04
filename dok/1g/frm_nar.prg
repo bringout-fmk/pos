@@ -247,7 +247,11 @@ do while .t.
 	@ m_x+2,m_y+25 SAY SPACE (40)
 	set cursor on
 
-	cDSFINI:=IzFMKINI('SifRoba','DuzSifra','10')
+	if gDuzSifre <> nil .and. gDuzSifre > 0
+		cDSFINI := ALLTRIM(STR(gDuzSifre))
+	else
+		cDSFINI := IzFMKINI('SifRoba','DuzSifra','10')
+	endif
 	
 	@ m_x+2,m_y+5 SAY " Artikal:" GET _idroba PICT "@!S10" when {|| _idroba:=padr(_idroba,VAL(cDSFINI)),.t.} VALID PostRoba(@_idroba, 2, 27).and. NarProvDuple (_idroba) 
 	@ m_x+3,m_y+5 SAY "  Cijena:" GET _Cijena  picture "99999.999" when (roba->tip=="T" .or. gPopZcj=="D")

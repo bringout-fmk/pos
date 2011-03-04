@@ -235,7 +235,12 @@ if !fSadAz
   		_TMarza2:="%"
   		fMarza:=" "
 		@ m_x+2,m_y+25 SAY SPACE(40)
-		cDSFINI:=IzFMKIni('SifRoba','DuzSifra','10')
+		
+		if gDuzSifre <> nil .and. gDuzSifre > 0
+			cDSFINI := ALLTRIM(STR(gDuzSifre))
+		else
+			cDSFINI:=IzFMKIni('SifRoba','DuzSifra','10')
+		endif
 
 		@ m_x+2,m_y+5 SAY " Artikal:" GET _idroba pict "@!S"+cDSFINI when {|| _idroba:=padr(_idroba,VAL(cDSFINI)),.t.} VALID EVAL (bRSblok, 2, 25).and.(gDupliArt=="D" .or. ZadProvDuple(_idroba))
 		@ m_x+4,m_y+5 SAY "Kolicina:" GET _Kolicina PICTURE "999999.999" WHEN{|| OsvPrikaz(),ShowGets(),.t.} VALID ZadKolOK(_Kolicina)

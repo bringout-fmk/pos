@@ -512,6 +512,10 @@ public gDuploSif:=""
 public gFmkSif:=""
 public gRNALSif := ""
 public gRNALKum := ""
+
+public gOperSys := PADR("XP", 10)
+public gDuzSifre := 13
+
 // postavljanje globalnih varijabli
 public gLocPort:="LPT1"
 public gIdCijena:="1"
@@ -643,6 +647,7 @@ public gIOSA := SPACE(16)
 public gFc_konv := "5"
 public gFc_tout := 300
 public gFc_txrn := "D"
+public gFc_acd := "P"
 
 if gModul=="HOPS"
 	gVodiTreb:="D"
@@ -681,6 +686,7 @@ Rpar("fI",@gIOSA)
 Rpar("fK",@gFc_konv)
 Rpar("fT",@gFc_tout)
 Rpar("fX",@gFc_txrn)
+Rpar("fC",@gFc_acd)
 
 Rpar("F1",@gFirNaziv)
 Rpar("F2",@gFirAdres)
@@ -783,6 +789,10 @@ Rpar("D8",@gDuploSif)
 Rpar("D9",@gFmkSif)
 Rpar("gS",@gRNALSif)
 Rpar("gK",@gRNALKum)
+
+Rpar("gB",@gDuzSifre)
+Rpar("gX",@gOperSys)
+
 
 cPom:=SC_Opisi[1]
 Rpar("nc",@cPom)

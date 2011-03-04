@@ -17,6 +17,8 @@ do case
 		nErr := _tring_rn( cIdPos, dDat, cBrRn )
 	case ALLTRIM(gFc_type) == "FPRINT"
 		nErr := _fprint_rn( cIdPos, dDat, cBrRn )
+	case ALLTRIM(gFc_type) == "HCP"
+		nErr := _hcp_rn( cIdPos, dDat, cBrRn )
 
 endcase
 
@@ -91,6 +93,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 	nPopust := 0
 	nPLU := 0
 	nPLU_price := 0
+	cPLU_bk := ""
 
 	if pos->(FIELDPOS("C_1")) <> 0
 		// ovo je broj racuna koji se stornira 
@@ -104,6 +107,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 
 	nPLU := roba->fisc_plu
 	nPLU_price := roba->cijena1
+	cPLU_bk := roba->barkod
 
 	select pos
 
@@ -129,7 +133,8 @@ do while !EOF() .and. field->idpos == cIdPos ;
 		cT_c_1, ;
 		nPLU, ;
 		nPLU_price, ;
-		nPopust } )
+		nPopust, ;
+		cPLU_bk } )
 
 	skip
 enddo
@@ -260,6 +265,108 @@ return nErr
 // --------------------------------------------
 // stampa fiskalnog racuna TRING (www.kase.ba)
 // --------------------------------------------
+function _hcp_rn( cIdPos, dDat, cBrRn )
+local aRn := {}
+local aKupac := nil
+local nTArea := SELECT()
+local nRbr := 1
+local nCtrl := 0
+local lStorno := .t.
+local nErr := 0
+local nPLU := 0
+local nPLU_price := 0
+local nPopust := 0
+local cPLU_bk := ""
+local nTotal := 0
+
+//O_DRN
+// vraca ukupan iznos racuna
+//nTotal := get_rb_ukupno()
+
+// pronadji u bazi racun
+select pos
+set order to tag "1"
+go top
+seek cIdPos + "42" + DTOS(dDat) + cBrRn
+
+do while !EOF() .and. field->idpos == cIdPos ;
+		.and. field->brdok == cBrRn
+	
+	if field->kolicina > 0
+		lStorno := .f.
+	endif
+
+	cT_c_1 := ""
+	nPopust := 0
+	nPLU_price := 0
+
+	if pos->(FIELDPOS("C_1")) <> 0
+		// ovo je broj racuna koji se stornira 
+		cT_c_1 := field->c_1
+	endif
+
+	cArtikal := field->idroba
+
+	select roba
+	seek cArtikal
+
+	nPLU := roba->fisc_plu
+	nPLU_price := roba->cijena1
+	cPLU_bk := roba->barkod
+
+	select pos
+	
+	if field->ncijena > 0
+		nPopust := ( field->ncijena / field->cijena ) * 100
+	endif
+
+	++ nCtrl
+
+	// kolicina uvijek ide apsolutna vrijednost
+	// storno racun fiskalni stampac tretira kao regularni unos
+
+	cRobaNaz := ""
+	_fix_naz( roba->naz, @cRobaNaz )
+	
+	AADD( aRn, { cBrRn, ;
+		ALLTRIM(STR( ++nRbr )), ;
+		field->idroba, ;
+		cRobaNaz, ;
+		field->cijena, ;
+		field->ncijena, ;
+		ABS( field->kolicina ), ;
+		field->idtarifa, ;
+		cT_c_1, ;
+		field->datum, ;
+		roba->jmj, ;
+		nPLU, ;
+		nPLU_price, ;
+		nPopust, ;
+		cPLU_bk } )
+
+	skip
+enddo
+
+select (nTArea)
+
+if nCtrl = 0
+	msgbeep("fiskal: nema stavki za stampu !!!")
+	nErr := 1
+	return nErr
+endif
+
+// idemo sada na upis rn u fiskalni fajl
+nErr := fc_hcp_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
+	aRn, aKupac, lStorno, gFc_error, nTotal )
+
+return nErr
+
+
+
+
+// --------------------------------------------
+// stampa fiskalnog racuna TRING (www.kase.ba)
+// --------------------------------------------
 function _tring_rn( cIdPos, dDat, cBrRn )
 local aRn := {}
 local aKupac := nil
@@ -317,7 +424,8 @@ do while !EOF() .and. field->idpos == cIdPos ;
 		_g_tar(field->idtarifa), ;
 		cT_c_1, ;
 		field->datum, ;
-		roba->jmj, nPLU } )
+		roba->jmj, ;
+		nPLU } )
 
 	skip
 enddo

@@ -69,6 +69,8 @@ Rpar("n7",@gGotPlac)
 Rpar("nX",@gDugPlac)
 Rpar("gS",@gRNALSif)
 Rpar("gK",@gRNALKum)
+Rpar("gB",@gDuzSifre)
+Rpar("gX",@gOperSys)
 
 gServerPath:=padr(gServerPath,40)
 gKalkDest:=padr(gKalkDest,40)
@@ -102,9 +104,10 @@ AADD(aNiz,{"Azuriraj u pomocnu bazu" , "gDuplo",, "@!", "gDuplo$'DN'"})
 AADD(aNiz,{"Direktorij kumulativa za pom bazu","gDuploKum",, "@!",})
 AADD(aNiz,{"Direktorij sifrarnika za pom bazu","gDuplosif",, "@!",})
 AADD(aNiz, {"Direktorij sifrarnika FMK        ","gFMKSif",, "@!",})
-AADD(aNiz, {"RNAL sifrarnik","gRNALSif",, "@S50",})
-AADD(aNiz, {"RNAL kumulativ","gRNALKum",, "@S50",})
-VarEdit(aNiz,5,2,24,78,"PARAMETRI RADA PROGRAMA - PODACI KASE","B1")
+AADD(aNiz, {"Duzina sifre artikla u unosu","gDuzSifre",, "99",})
+AADD(aNiz, {"Operativni sistem","gOperSys",, "@!",})
+
+VarEdit(aNiz,2,2,24,78,"PARAMETRI RADA PROGRAMA - PODACI KASE","B1")
 
 BosTipke()
 
@@ -130,6 +133,8 @@ if LASTKEY()<>K_ESC
     	Wpar("D9",trim(gFmkSif),.f.)   // pathove ne diraj
     	Wpar("gS",trim(gRNALSif),.f.)   // pathove ne diraj
     	Wpar("gK",trim(gRNALKum),.f.)   // pathove ne diraj
+    	Wpar("gB",gDuzSifre, .t.,"D")
+    	Wpar("gX",gOperSys, .t.,"D")
     	MsgC()
 endif
 
@@ -167,6 +172,7 @@ Rpar("fI",@gIOSA)
 Rpar("fK",@gFC_konv)
 Rpar("fT",@gFC_tout)
 Rpar("fX",@gFC_txrn)
+Rpar("fC",@gFC_acd)
 
 UsTipke()
 set cursor on
@@ -180,6 +186,7 @@ AADD(aNiz,{"Provjera greske kod prodaje", "gFc_error", , "@!", })
 AADD(aNiz,{"Timeout fiskalnih operacija", "gFc_tout", , "9999", })
 
 AADD(aNiz,{"IOSA broj", "gIOSA", , "@S16", })
+AADD(aNiz,{"'kod' artikla je (I)d, (P)lu, (B)arkod", "gFc_acd", , "@!", })
 
 AADD(aNiz,{"param ($1)", "gFc_cp1", , "@S50", })
 AADD(aNiz,{"param ($2)", "gFc_cp2", , "@S50", })
@@ -194,7 +201,7 @@ AADD(aNiz,{"Stampati i pos racun ?", "gFc_txrn", ,"@!", })
 
 AADD(aNiz,{"Koristiti fiskalne funkcije", "gFc_use", ,"@!", })
 
-VarEdit(aNiz,7,2,24,78,"Fiskalni parametri","B1")
+VarEdit(aNiz,5,2,24,78,"Fiskalni parametri","B1")
 
 BosTipke()
 
@@ -216,6 +223,7 @@ if LASTKEY()<>K_ESC
     	Wpar("fK",gFc_konv, .t.,"D")
     	Wpar("fT",gFc_tout, .t.,"D")
     	Wpar("fX",gFc_txrn, .t.,"D")
+    	Wpar("fC",gFc_acd, .t.,"D")
     	MsgC()
 endif
 

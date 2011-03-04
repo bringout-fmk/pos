@@ -526,13 +526,10 @@ return
  */
  
 function StampAzur(cIdPos, cRadRac)
-*{
 
 local cTime
 local nFis_err := 0
 private cPartner
-
-altd()
 
 SELECT DOKS
 cStalRac:=NarBrDok(cIdPos,VD_RN)
