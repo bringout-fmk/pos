@@ -72,7 +72,7 @@ if gPVrsteP
 endif
 
 AADD(opc,"F. fiskalni izvjestaji i komande")
-AADD(opcexe,{|| mnu_f_rpt() })
+AADD(opcexe,{|| fisc_rpt() })
 
 Menu_SC("izvt")
 return .f.

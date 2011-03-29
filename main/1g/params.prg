@@ -174,6 +174,7 @@ Rpar("fT",@gFC_tout)
 Rpar("fX",@gFC_txrn)
 Rpar("fC",@gFC_acd)
 Rpar("fR",@gFC_alen)
+Rpar("fN",@gFC_nftxt)
 
 UsTipke()
 set cursor on
@@ -200,6 +201,7 @@ AADD(aNiz,{"Komandna linija", "gFc_cmd", , "@S50", })
 AADD(aNiz,{"Konverzija znakova", "gFc_konv", , "@!", })
 
 AADD(aNiz,{"Stampati i pos racun ?", "gFc_txrn", ,"@!", })
+AADD(aNiz,{"Stampati broj dokumenta ?", "gFc_nftxt", ,"@!", })
 
 AADD(aNiz,{"Koristiti fiskalne funkcije", "gFc_use", ,"@!", })
 
@@ -227,6 +229,7 @@ if LASTKEY()<>K_ESC
     	Wpar("fX",gFc_txrn, .t.,"D")
     	Wpar("fC",gFc_acd, .t.,"D")
     	Wpar("fR",gFc_alen, .t.,"D")
+    	Wpar("fN",gFc_nftxt, .t.,"D")
     	MsgC()
 endif
 

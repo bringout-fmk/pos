@@ -64,6 +64,7 @@ local nFisc_no := 0
 local aKupac := {}
 local cPartner := ""
 local nTotal := 0
+local nNF_txt := ALLTRIM( cIdPos ) + "-" + ALLTRIM( cBrRn )
 local cVr_placanja := "0"
 
 select doks
@@ -119,6 +120,10 @@ do while !EOF() .and. field->idpos == cIdPos ;
 	seek cArtikal
 
 	nPLU := roba->fisc_plu
+
+	// generisi PLU iz parametara
+	nPLU := auto_plu()
+
 	nPLU_price := roba->cijena1
 	cPLU_bk := roba->barkod
 
@@ -185,6 +190,12 @@ if nErr <> 0
 	msgbeep("Postoji greska !!!")
 
 else
+	if gFC_nftxt == "D"
+		// printaj non-fiscal tekst
+		// u ovom slucaju broj racuna
+		fp_nf_txt( ALLTRIM( gFC_path), ALLTRIM( gFC_name), cNF_txt )
+	endif
+
 	msgbeep("Kreiran fiskalni racun broj: " + ALLTRIM(STR(nFisc_no)) )
 	
 	if nFisc_no <> 0

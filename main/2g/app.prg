@@ -649,6 +649,7 @@ public gFc_tout := 300
 public gFc_txrn := "D"
 public gFc_acd := "P"
 public gFc_alen := 32
+public gFc_nftxt := "N"
 
 if gModul=="HOPS"
 	gVodiTreb:="D"
@@ -689,6 +690,7 @@ Rpar("fT",@gFc_tout)
 Rpar("fX",@gFc_txrn)
 Rpar("fC",@gFc_acd)
 Rpar("fR",@gFc_alen)
+Rpar("fN",@gFc_nftxt)
 
 Rpar("F1",@gFirNaziv)
 Rpar("F2",@gFirAdres)
