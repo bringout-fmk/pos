@@ -52,10 +52,45 @@ do case
     AADD(opc,"6. polog u uredjaj    ")
     AADD(opcexe,{|| hcp_polog( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
     			gFc_error ) })
-    AADD(opc,"7. reset prodaje    ")
-    AADD(opcexe,{|| hcp_reset( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
+    AADD(opc,"7. posalji cmd.ok    ")
+    AADD(opcexe,{|| hcp_s_cmd( ALLTRIM(gFC_path) ) })
+
+    // za TREMOL uredjaje
+  case ALLTRIM(gFc_type) == "TREMOL" 
+    
+    AADD(opc,"------ izvjestaji -----------------------")
+    AADD(opcexe,{|| .f. })
+    
+    AADD(opc,"1. dnevni fiskalni izvjestaj (Z rep.)    ")
+    AADD(opcexe,{|| trm_z_rpt( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
+    			gFc_error ) })
+    
+    AADD(opc,"2. izvjestaj po artiklima (Z rep.)    ")
+    AADD(opcexe,{|| trm_z_item( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
+    			gFc_error ) })
+   
+    AADD(opc,"3. presjek stanja (X rep.)    ")
+    AADD(opcexe,{|| trm_x_rpt( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
     			gFc_error ) })
  
+    AADD(opc,"4. izvjestaj po artiklima (X rep.)    ")
+    AADD(opcexe,{|| trm_x_item( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
+    			gFc_error ) })
+   
+    AADD(opc,"------ ostale komande --------------------")
+    AADD(opcexe,{|| .f. })
+
+    AADD(opc,"5. kopija racuna    ")
+    AADD(opcexe,{|| trm_rn_copy( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
+    			gFc_error ) })
+    AADD(opc,"6. reset artikala    ")
+    AADD(opcexe,{|| fc_trm_rplu( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
+    			gFc_error ) })
+    AADD(opc,"7. polog u uredjaj    ")
+    AADD(opcexe,{|| trm_polog( ALLTRIM(gFC_path), ALLTRIM(gFC_name), ;
+    			gFc_error ) })
+
+
   // ostali uredjaji
   otherwise
    

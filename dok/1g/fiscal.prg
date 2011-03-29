@@ -19,12 +19,24 @@ do case
 		nErr := _fprint_rn( cIdPos, dDat, cBrRn )
 	case ALLTRIM(gFc_type) == "HCP"
 		nErr := _hcp_rn( cIdPos, dDat, cBrRn )
+	case ALLTRIM(gFc_type) == "TREMOL"
+		nErr := _trm_rn( cIdPos, dDat, cBrRn )
 
 endcase
 
 if gFC_error == "D" .and. nErr > 0
-	// ima greska
-	msgbeep("Problem sa stampanjem na fiskalni stampac !!!")
+	
+	if ALLTRIM( gFc_type ) == "TREMOL"
+		
+		nErr := _trm_rn( cIdPos, dDat, cBrRn, "2" )
+
+		if nErr > 0
+			msgbeep("Problem sa stampanjem na fiskalni stampac !!!")
+		endif
+	else
+		// ima greska
+		msgbeep("Problem sa stampanjem na fiskalni stampac !!!")
+	endif
 endif
 
 // ako ne provjeravamo greske uvijek vrati 0
@@ -51,7 +63,8 @@ local nPLU_price := 0
 local nFisc_no := 0
 local aKupac := {}
 local cPartner := ""
-
+local nTotal := 0
+local cVr_placanja := "0"
 
 select doks
 set order to tag "1"
@@ -132,9 +145,11 @@ do while !EOF() .and. field->idpos == cIdPos ;
 		field->idtarifa, ;
 		cT_c_1, ;
 		nPLU, ;
-		nPLU_price, ;
+		field->cijena, ;
 		nPopust, ;
-		cPLU_bk } )
+		cPLU_bk, ;
+		cVr_placanja, ;
+		nTotal } )
 
 	skip
 enddo
@@ -263,7 +278,137 @@ return nErr
 
 
 // --------------------------------------------
-// stampa fiskalnog racuna TRING (www.kase.ba)
+// stampa fiskalnog racuna TREMOL 
+// --------------------------------------------
+function _trm_rn( cIdPos, dDat, cBrRn, cContinue )
+local aRn := {}
+local aKupac := nil
+local nTArea := SELECT()
+local nRbr := 1
+local nCtrl := 0
+local lStorno := .t.
+local nErr := 0
+local nPLU := 0
+local nPLU_price := 0
+local nPopust := 0
+local cPLU_bk := ""
+local nTotal := 0
+local cPartner := ""
+
+if cContinue == nil
+	cContinue := "0"
+endif
+
+select doks
+set order to tag "1"
+go top
+seek cIdPos + "42" + DTOS(dDat) + cBrRn
+// ovo je partner
+cPartner := field->idgost
+
+if !EMPTY( cPartner )
+	
+	// imamo partnera, moramo ga dodati u matricu za racun
+	
+	O_RNGOST
+	select rngost
+	go top
+	seek cPartner
+	
+	aKupac := {}
+
+	if !EMPTY( rngost->jib )
+	   AADD( aKupac, { rngost->jib, rngost->naz, ;
+		rngost->adresa, rngost->ptt, rngost->mjesto } )
+	endif
+
+endif
+
+
+// pronadji u bazi racun
+select pos
+set order to tag "1"
+go top
+seek cIdPos + "42" + DTOS(dDat) + cBrRn
+
+do while !EOF() .and. field->idpos == cIdPos ;
+		.and. field->brdok == cBrRn
+	
+	if field->kolicina > 0
+		lStorno := .f.
+	endif
+
+	cT_c_1 := ""
+	nPopust := 0
+	nPLU_price := 0
+
+	if pos->(FIELDPOS("C_1")) <> 0
+		// ovo je broj racuna koji se stornira 
+		cT_c_1 := field->c_1
+	endif
+
+	cArtikal := field->idroba
+
+	select roba
+	seek cArtikal
+
+	nPLU := roba->fisc_plu
+	nPLU_price := roba->cijena1
+	cPLU_bk := roba->barkod
+
+	select pos
+	
+	if field->ncijena > 0
+		nPopust := ( field->ncijena / field->cijena ) * 100
+	endif
+
+	++ nCtrl
+
+	// kolicina uvijek ide apsolutna vrijednost
+	// storno racun fiskalni stampac tretira kao regularni unos
+
+	cRobaNaz := ""
+	_fix_naz( roba->naz, @cRobaNaz )
+	
+	AADD( aRn, { cBrRn, ;
+		ALLTRIM(STR( ++nRbr )), ;
+		field->idroba, ;
+		cRobaNaz, ;
+		field->cijena, ;
+		field->ncijena, ;
+		ABS( field->kolicina ), ;
+		field->idtarifa, ;
+		cT_c_1, ;
+		field->datum, ;
+		roba->jmj, ;
+		nPLU, ;
+		nPLU_price, ;
+		nPopust, ;
+		cPLU_bk } )
+
+	skip
+enddo
+
+select (nTArea)
+
+if nCtrl = 0
+	msgbeep("fiskal: nema stavki za stampu !!!")
+	nErr := 1
+	return nErr
+endif
+
+// idemo sada na upis rn u fiskalni fajl
+nErr := fc_trm_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
+	aRn, aKupac, lStorno, gFc_error, cContinue )
+
+return nErr
+
+
+
+
+
+// --------------------------------------------
+// stampa fiskalnog racuna HCP
 // --------------------------------------------
 function _hcp_rn( cIdPos, dDat, cBrRn )
 local aRn := {}
@@ -278,10 +423,36 @@ local nPLU_price := 0
 local nPopust := 0
 local cPLU_bk := ""
 local nTotal := 0
+local cPartner := ""
 
 //O_DRN
 // vraca ukupan iznos racuna
 //nTotal := get_rb_ukupno()
+
+select doks
+set order to tag "1"
+go top
+seek cIdPos + "42" + DTOS(dDat) + cBrRn
+// ovo je partner
+cPartner := field->idgost
+
+if !EMPTY( cPartner )
+	
+	// imamo partnera, moramo ga dodati u matricu za racun
+	
+	O_RNGOST
+	select rngost
+	go top
+	seek cPartner
+
+	aKupac := {}
+
+	if !EMPTY( rngost->jib )
+	   AADD( aKupac, { rngost->jib, rngost->naz, ;
+		rngost->adresa, rngost->ptt, rngost->mjesto } )
+	endif
+
+endif
 
 // pronadji u bazi racun
 select pos

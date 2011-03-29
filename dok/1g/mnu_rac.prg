@@ -581,6 +581,16 @@ if (!EMPTY(cTime))
 		// stampa fiskalnog racuna, vraca ERR
 		nErr := fisc_rn( cIdPos, gDatum, cStalRac )
 		
+		// da li je nestalo trake ?
+		// -20 signira na nestanak trake !
+		if nErr = -20
+			if Pitanje(,"Da li je nestalo trake (D/N)?", "N") == ;
+				"N"
+				// setuj kao da je greska
+				nErr := 20
+			endif
+		endif
+
 		// ako postoji ERR vrati racun
 		if nErr > 0 .and. gFC_error == "D"
 			// vrati racun u pripremu...
