@@ -121,8 +121,10 @@ do while !EOF() .and. field->idpos == cIdPos ;
 
 	nPLU := roba->fisc_plu
 
-	// generisi PLU iz parametara
-	nPLU := auto_plu()
+	if gFC_acd == "D"
+		// generisi PLU iz parametara
+		nPLU := auto_plu()
+	endif
 
 	nPLU_price := roba->cijena1
 	cPLU_bk := roba->barkod
@@ -173,9 +175,6 @@ fp_d_answer( ALLTRIM(gFc_path) )
 // idemo sada na upis rn u fiskalni fajl
 fp_pos_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), aRn, aKupac, ;
 	lStorno, gFc_error )
-
-// pokreni komandu ako postoji
-_fc_cmd()
 
 // iscitaj error
 nErr := fp_r_error( ALLTRIM(gFc_path), gFc_tout, @nFisc_no )

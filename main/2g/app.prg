@@ -633,6 +633,7 @@ public gFirTel := SPACE(20)
 
 // fiskalni parametri
 public gFc_type := SPACE(20)
+public gFc_device := "P"
 public gFc_path := SPACE(100)
 public gFc_name := SPACE(11)
 public gFc_error := "D"
@@ -647,9 +648,10 @@ public gIOSA := SPACE(16)
 public gFc_konv := "5"
 public gFc_tout := 300
 public gFc_txrn := "D"
-public gFc_acd := "P"
+public gFc_acd := "D"
 public gFc_alen := 32
 public gFc_nftxt := "N"
+public gFc_pdv := "D"
 
 if gModul=="HOPS"
 	gVodiTreb:="D"
@@ -691,6 +693,8 @@ Rpar("fX",@gFc_txrn)
 Rpar("fC",@gFc_acd)
 Rpar("fR",@gFc_alen)
 Rpar("fN",@gFc_nftxt)
+Rpar("fO",@gFc_pdv)
+Rpar("fD",@gFc_device)
 
 Rpar("F1",@gFirNaziv)
 Rpar("F2",@gFirAdres)

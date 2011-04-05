@@ -175,11 +175,17 @@ Rpar("fX",@gFC_txrn)
 Rpar("fC",@gFC_acd)
 Rpar("fR",@gFC_alen)
 Rpar("fN",@gFC_nftxt)
+Rpar("fO",@gFC_pdv)
+Rpar("fD",@gFC_device)
 
 UsTipke()
 set cursor on
 
+AADD(aNiz,{"PDV obveznik", "gFc_pdv", , "@!", })
+
 AADD(aNiz,{"Tip fiskalne kase", "gFc_type", , "@S20", })
+AADD(aNiz,{"[K] kasa-printer [P] printer ?", "gFc_device", , "@!", })
+AADD(aNiz,{"IOSA broj", "gIOSA", , "@S16", })
 
 AADD(aNiz,{"Putanja izl.fajla", "gFc_path", , "@S50", })
 AADD(aNiz,{"Naziv izl.fajla", "gFc_name", , "@S20", })
@@ -187,16 +193,8 @@ AADD(aNiz,{"Naziv izl.fajla", "gFc_name", , "@S20", })
 AADD(aNiz,{"Provjera greske kod prodaje", "gFc_error", , "@!", })
 AADD(aNiz,{"Timeout fiskalnih operacija", "gFc_tout", , "9999", })
 
-AADD(aNiz,{"IOSA broj", "gIOSA", , "@S16", })
-AADD(aNiz,{"'kod' artikla je (I)d, (P)lu, (B)arkod", "gFc_acd", , "@!", })
+AADD(aNiz,{"'kod' artikla je (I)Id, (P/D)Plu, (B)Barkod", "gFc_acd", , "@!", })
 AADD(aNiz,{"Duzina naziva artikla", "gFc_alen", , "99", })
-
-AADD(aNiz,{"param ($1)", "gFc_cp1", , "@S50", })
-AADD(aNiz,{"param ($2)", "gFc_cp2", , "@S50", })
-AADD(aNiz,{"param ($3)", "gFc_cp3", , "@S50", })
-AADD(aNiz,{"param ($4)", "gFc_cp4", , "@S50", })
-AADD(aNiz,{"param ($5)", "gFc_cp5", , "@S50", })
-AADD(aNiz,{"Komandna linija", "gFc_cmd", , "@S50", })
 
 AADD(aNiz,{"Konverzija znakova", "gFc_konv", , "@!", })
 
@@ -230,6 +228,8 @@ if LASTKEY()<>K_ESC
     	Wpar("fC",gFc_acd, .t.,"D")
     	Wpar("fR",gFc_alen, .t.,"D")
     	Wpar("fN",gFc_nftxt, .t.,"D")
+    	Wpar("fO",gFc_pdv, .t.,"D")
+    	Wpar("fD",gFc_device, .t.,"D")
     	MsgC()
 endif
 
