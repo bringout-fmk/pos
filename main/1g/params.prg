@@ -177,6 +177,7 @@ Rpar("fR",@gFC_alen)
 Rpar("fN",@gFC_nftxt)
 Rpar("fO",@gFC_pdv)
 Rpar("fD",@gFC_device)
+Rpar("fZ",@gFC_pinit)
 
 UsTipke()
 set cursor on
@@ -194,6 +195,7 @@ AADD(aNiz,{"Provjera greske kod prodaje", "gFc_error", , "@!", })
 AADD(aNiz,{"Timeout fiskalnih operacija", "gFc_tout", , "9999", })
 
 AADD(aNiz,{"'kod' artikla je (I)Id, (P/D)Plu, (B)Barkod", "gFc_acd", , "@!", })
+AADD(aNiz,{"inicijalni PLU", "gFc_pinit", , "99999", })
 AADD(aNiz,{"Duzina naziva artikla", "gFc_alen", , "99", })
 
 AADD(aNiz,{"Konverzija znakova", "gFc_konv", , "@!", })
@@ -230,6 +232,7 @@ if LASTKEY()<>K_ESC
     	Wpar("fN",gFc_nftxt, .t.,"D")
     	Wpar("fO",gFc_pdv, .t.,"D")
     	Wpar("fD",gFc_device, .t.,"D")
+    	Wpar("fZ",gFc_pinit, .t.,"D")
     	MsgC()
 endif
 

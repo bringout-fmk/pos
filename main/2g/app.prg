@@ -652,6 +652,7 @@ public gFc_acd := "D"
 public gFc_alen := 32
 public gFc_nftxt := "N"
 public gFc_pdv := "D"
+public gFc_pinit := 10
 
 if gModul=="HOPS"
 	gVodiTreb:="D"
@@ -695,6 +696,7 @@ Rpar("fR",@gFc_alen)
 Rpar("fN",@gFc_nftxt)
 Rpar("fO",@gFc_pdv)
 Rpar("fD",@gFc_device)
+Rpar("fZ",@gFc_pinit)
 
 Rpar("F1",@gFirNaziv)
 Rpar("F2",@gFirAdres)
