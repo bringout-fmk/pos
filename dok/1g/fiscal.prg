@@ -540,6 +540,20 @@ endif
 nErr := fc_hcp_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
 	aRn, aKupac, lStorno, gFc_error, nTotal )
 
+if nErr = 0 .and. lStorno = .f.
+	
+	// vrati broj racuna
+	nFisc_no := hcp_fisc_no( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
+			gFc_error )
+	if nFisc_no > 0
+		// upisi u doks vezu sa racunom
+		select doks
+		replace field->fisc_rn with nFisc_no
+	
+	endif
+endif
+
+
 return nErr
 
 

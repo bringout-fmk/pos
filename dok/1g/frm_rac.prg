@@ -203,6 +203,8 @@ if UPPER(CHR(LASTKEY()))=="P"
   	return DE_REFRESH
 endif
 
+
+
 if UPPER(CHR(LASTKEY()))=="F"
 	// stampa poreske fakture
 	aVezani:={{IdPos, BrDok, IdVd, datum}}
@@ -234,6 +236,29 @@ if UPPER(CHR(LASTKEY()))=="Z"
 	PopWa()
 	return DE_REFRESH
 endif
+
+// setovanje veze sa brojem fiskalnog racuna
+if ch == K_CTRL_R
+	
+	// ako nema polja ... nista
+	if doks->(FIELDPOS("FISC_RN")) = 0
+		return DE_CONT
+	endif
+	
+	nFisc_no := doks->fisc_rn
+
+	Box(,1,30)
+		@ m_x + 1, m_y + 2 SAY "Broj fiskalnog racuna: " GET nFisc_no
+		read
+	BoxC()
+
+	if LastKey() <> K_ESC
+		replace doks->fisc_rn with nFisc_no
+		return DE_REFRESH
+	endif
+
+endif
+
 
 cLast:=UPPER(CHR(LASTKEY()))
 if KLevel="0".and.(cLast=="D".or.cLast == "S" .or. cLast=="V" )
