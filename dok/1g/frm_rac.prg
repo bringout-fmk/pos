@@ -247,14 +247,17 @@ if ch == K_CTRL_R
 	
 	nFisc_no := doks->fisc_rn
 
-	Box(,1,30)
+	Box(,1,40)
 		@ m_x + 1, m_y + 2 SAY "Broj fiskalnog racuna: " GET nFisc_no
 		read
 	BoxC()
 
 	if LastKey() <> K_ESC
+		
 		replace doks->fisc_rn with nFisc_no
-		return DE_REFRESH
+		
+		return DE_CONT
+	
 	endif
 
 endif
