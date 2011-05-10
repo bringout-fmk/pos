@@ -169,6 +169,11 @@ if nCtrl = 0
 	return nErr
 endif
 
+// provjeri stavke racuna, kolicine, cijene
+if fp_check( @aRn ) < 0
+	return 1
+endif
+
 // pobrisi answer fajl
 fp_d_answer( ALLTRIM(gFc_path) )
 
