@@ -413,7 +413,6 @@ endif
 if (nArea==-1 .or. nArea==(F_PROMVP))
 
 	
-	altd()
 	cImeDbf:=KUMPATH+"PROMVP.DBF"
 	cImeCdx:=KUMPATH+"PROMVP.CDX"
 	if FILE(cImeDbf)
@@ -628,13 +627,15 @@ if (nArea==-1 .or. nArea==(F_ROBA))
 
 	select (F_ROBA)
 	use (SIFPATH+"roba")
-
-	if fieldpos("BARKOD") <> 0
+	if roba->(fieldpos("BARKOD")) <> 0
 	  use
 	  CREATE_INDEX ("BARKOD", "BARKOD", SIFPATH+"ROBA")
 	endif
-
-	if fieldpos("FISC_PLU") <> 0
+	
+	altd()
+	select (F_ROBA)
+	use (SIFPATH+"roba")
+	if roba->(fieldpos("FISC_PLU")) <> 0
 	  use
 	  CREATE_INDEX ("PLU", "str(fisc_plu,10)", SIFPATH+"ROBA")
 	endif
