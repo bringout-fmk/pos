@@ -128,6 +128,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 
 	nPLU_price := roba->cijena1
 	cPLU_bk := roba->barkod
+	cPLU_jmj := roba->jmj
 
 	select pos
 
@@ -156,7 +157,9 @@ do while !EOF() .and. field->idpos == cIdPos ;
 		nPopust, ;
 		cPLU_bk, ;
 		cVr_placanja, ;
-		nTotal } )
+		nTotal, ;
+		dDat, ;
+		cPlu_JMJ } )
 
 	skip
 enddo
@@ -370,6 +373,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 	nPLU := roba->fisc_plu
 	nPLU_price := roba->cijena1
 	cPLU_bk := roba->barkod
+	cPLU_jmj := roba->jmj
 
 	select pos
 	
@@ -390,16 +394,17 @@ do while !EOF() .and. field->idpos == cIdPos ;
 		field->idroba, ;
 		cRobaNaz, ;
 		field->cijena, ;
-		field->ncijena, ;
 		ABS( field->kolicina ), ;
 		field->idtarifa, ;
 		cT_c_1, ;
-		field->datum, ;
-		roba->jmj, ;
 		nPLU, ;
 		nPLU_price, ;
 		nPopust, ;
-		cPLU_bk } )
+		cPLU_bk, ;
+		"", ;
+		nTotal, ;
+		dDat, ;
+		cPLU_jmj } )
 
 	skip
 enddo
@@ -499,6 +504,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 	nPLU := roba->fisc_plu
 	nPLU_price := roba->cijena1
 	cPLU_bk := roba->barkod
+	cPLU_jmj := roba->jmj
 
 	select pos
 	
@@ -519,16 +525,17 @@ do while !EOF() .and. field->idpos == cIdPos ;
 		field->idroba, ;
 		cRobaNaz, ;
 		field->cijena, ;
-		field->ncijena, ;
 		ABS( field->kolicina ), ;
 		field->idtarifa, ;
 		cT_c_1, ;
-		field->datum, ;
-		roba->jmj, ;
 		nPLU, ;
 		nPLU_price, ;
 		nPopust, ;
-		cPLU_bk } )
+		cPLU_bk, ;
+		"", ;
+		nTotal, ;
+		dDat, ;
+		cPLU_jmj } )
 
 	skip
 enddo
