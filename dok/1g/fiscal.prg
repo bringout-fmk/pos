@@ -401,7 +401,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 		nPLU_price, ;
 		nPopust, ;
 		cPLU_bk, ;
-		"", ;
+		"0", ;
 		nTotal, ;
 		dDat, ;
 		cPLU_jmj } )
@@ -532,7 +532,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 		nPLU_price, ;
 		nPopust, ;
 		cPLU_bk, ;
-		"", ;
+		"0", ;
 		nTotal, ;
 		dDat, ;
 		cPLU_jmj } )
