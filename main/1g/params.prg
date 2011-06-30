@@ -155,7 +155,7 @@ local cPom:=""
 O_PARAMS
 private cHistory:=" "
 private aHistory:={}
-private cSection:="1"
+private cSection:="F"
 
 Rpar("f1",@gFc_type)
 Rpar("f2",@gFc_path)
@@ -179,6 +179,7 @@ Rpar("fO",@gFC_pdv)
 Rpar("fD",@gFC_device)
 Rpar("fZ",@gFC_pinit)
 Rpar("fX",@gFC_chk)
+Rpar("fS",@gFC_path2)
 
 UsTipke()
 set cursor on
@@ -190,6 +191,7 @@ AADD(aNiz,{"[K] kasa-printer [P] printer ?", "gFc_device", , "@!", })
 AADD(aNiz,{"IOSA broj", "gIOSA", , "@S16", })
 
 AADD(aNiz,{"Putanja izl.fajla", "gFc_path", , "@S50", })
+AADD(aNiz,{"Sekundarna putanja", "gFc_path2", , "@S50", })
 AADD(aNiz,{"Naziv izl.fajla", "gFc_name", , "@S20", })
 
 AADD(aNiz,{"Provjera greske kod prodaje", "gFc_error", , "@!", })
@@ -236,6 +238,7 @@ if LASTKEY()<>K_ESC
     	Wpar("fD",gFc_device, .t.,"D")
     	Wpar("fZ",gFc_pinit, .t.,"D")
     	Wpar("fX",gFc_chk, .t.,"D")
+    	Wpar("fS",gFc_path2, .t.,"D")
     	MsgC()
 endif
 

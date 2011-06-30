@@ -312,6 +312,7 @@ local nPopust := 0
 local cPLU_bk := ""
 local nTotal := 0
 local cPartner := ""
+local nFisc_no := 0
 
 if cContinue == nil
 	cContinue := "0"
@@ -421,8 +422,38 @@ endif
 nErr := fc_trm_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
 	aRn, aKupac, lStorno, gFc_error, cContinue )
 
-return nErr
 
+if gFc_error == "D" .and. cContinue <> "2"
+	
+	// naziv fajla
+	cFName := trm_filename( cBrRn )
+
+	if trm_read_out( ALLTRIM(gFc_path), cFName )
+		
+		// procitaj poruku greske
+		nErr := trm_r_error( ALLTRIM(gFc_path), ALLTRIM(cFName), ;
+			gFc_tout, @nFisc_no ) 
+
+	
+		if nErr = 0 .and. !lStorno .and. nFisc_no > 0
+
+			msgbeep("Kreiran fiskalni racun: " + ;
+				ALLTRIM(STR( nFisc_no )))
+				
+			// upisi u doks vezu sa racunom
+			select doks
+			replace field->fisc_rn with nFisc_no
+
+		endif
+	
+		// obrisi fajl
+		FERASE( ALLTRIM(gFc_path) + ALLTRIM(cFName) )
+
+	endif
+
+endif
+
+return nErr
 
 
 

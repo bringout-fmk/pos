@@ -31,7 +31,7 @@ do while .t.
   
 	if (cKorSif == "SIGMAX")
 		gIdRadnik := "XXXX" 
-		gKorIme   := "SIGMA COM SERVIS"
+		gKorIme   := "bring.out servis"
 		gSTRAD  := "A"      
 		cLevel := L_SYSTEM
 		EXIT

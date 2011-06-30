@@ -614,10 +614,6 @@ public gStrValuta:=space(4)
 // upit o nacinu placanja
 public gUpitNp := "N"  
 
-O_PARAMS
-private cSection:="1"
-private cHistory:=" "
-private aHistory:={}
 
 // podaci kase - zaglavlje
 public gFirNaziv := SPACE(35)
@@ -635,6 +631,7 @@ public gFirTel := SPACE(20)
 public gFc_type := SPACE(20)
 public gFc_device := "P"
 public gFc_path := SPACE(100)
+public gFc_path2 := SPACE(100)
 public gFc_name := SPACE(11)
 public gFc_error := "D"
 public gFc_use := "N"
@@ -677,6 +674,11 @@ else
 	gDisplay:="N"
 endif
 
+O_PARAMS
+private cSection:="F"
+private cHistory:=" "
+private aHistory:={}
+
 Rpar("f1",@gFc_type)
 Rpar("f2",@gFc_path)
 Rpar("f3",@gFc_name)
@@ -699,6 +701,12 @@ Rpar("fO",@gFc_pdv)
 Rpar("fD",@gFc_device)
 Rpar("fZ",@gFc_pinit)
 Rpar("fX",@gFc_chk)
+Rpar("fS",@gFc_path2)
+
+O_PARAMS
+private cSection:="1"
+private cHistory:=" "
+private aHistory:={}
 
 Rpar("F1",@gFirNaziv)
 Rpar("F2",@gFirAdres)
