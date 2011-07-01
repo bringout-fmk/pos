@@ -651,6 +651,7 @@ public gFc_nftxt := "N"
 public gFc_pdv := "D"
 public gFc_pinit := 10
 public gFC_chk := "1"
+public gFC_pauto := 0
 
 if gModul=="HOPS"
 	gVodiTreb:="D"
@@ -702,6 +703,7 @@ Rpar("fD",@gFc_device)
 Rpar("fZ",@gFc_pinit)
 Rpar("fX",@gFc_chk)
 Rpar("fS",@gFc_path2)
+Rpar("fA",@gFc_pauto)
 
 O_PARAMS
 private cSection:="1"
