@@ -187,6 +187,17 @@ fp_pos_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), aRn, aKupac, ;
 // iscitaj error
 nErr := fp_r_error( ALLTRIM(gFc_path), gFc_tout, @nFisc_no )
 
+if nErr = -9
+	// nema answer fajla, da nije do trake ?
+	if Pitanje(,"Da li je nestalo trake ?","N") == "D"
+		if Pitanje(,"Zamjenite traku i pritisnite 'D'","D") == "D"
+			// iscitaj error
+			nErr := fp_r_error( ALLTRIM(gFc_path), ;
+				gFc_tout, @nFisc_no )
+		endif
+	endif
+endif
+
 // fiskalni racun ne moze biti 0
 if nFisc_no <= 0
 	nErr := 1
