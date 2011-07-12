@@ -652,6 +652,7 @@ public gFc_pdv := "D"
 public gFc_pinit := 10
 public gFC_chk := "1"
 public gFC_pauto := 0
+public gFC_dlist := "N"
 
 if gModul=="HOPS"
 	gVodiTreb:="D"
