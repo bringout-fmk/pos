@@ -644,7 +644,7 @@ public gFc_cp5 := SPACE(100)
 public gIOSA := SPACE(16)
 public gFc_konv := "5"
 public gFc_tout := 300
-public gFc_txrn := "D"
+public gFc_txrn := "N"
 public gFc_acd := "D"
 public gFc_alen := 32
 public gFc_nftxt := "N"
@@ -695,7 +695,7 @@ Rpar("fE",@gFc_error)
 Rpar("fI",@gIOSA)
 Rpar("fK",@gFc_konv)
 Rpar("fT",@gFc_tout)
-Rpar("fX",@gFc_txrn)
+Rpar("fP",@gFc_txrn)
 Rpar("fC",@gFc_acd)
 Rpar("fR",@gFc_alen)
 Rpar("fN",@gFc_nftxt)
