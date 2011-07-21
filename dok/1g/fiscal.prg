@@ -141,8 +141,8 @@ do while !EOF() .and. field->idpos == cIdPos ;
 	// kolicina uvijek ide apsolutna vrijednost
 	// storno racun fiskalni stampac tretira kao regularni unos
 
-	cRobaNaz := ""
-	_fix_naz( roba->naz, @cRobaNaz )
+	cRobaNaz := fp_f_naz( roba->naz )
+	// _fix_naz( roba->naz, @cRobaNaz )
 
 	AADD( aRn, { cBrRn, ;
 		ALLTRIM(STR(++nRbr)), ;
