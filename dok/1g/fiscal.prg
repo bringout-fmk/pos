@@ -97,8 +97,10 @@ go top
 seek cIdPos + "42" + DTOS(dDat) + cBrRn
 
 do while !EOF() .and. field->idpos == cIdPos ;
+		.and. field->idvd == "42" ;
+		.and. field->datum == DTOS(dDat) ;
 		.and. field->brdok == cBrRn
-	
+
 	if field->kolicina > 0
 		lStorno := .f.
 	endif
@@ -246,7 +248,10 @@ go top
 seek cIdPos + "42" + DTOS(dDat) + cBrRn
 
 do while !EOF() .and. field->idpos == cIdPos ;
+		.and. field->idvd == "42" ;
+		.and. field->datum == DTOS(dDat) ;
 		.and. field->brdok == cBrRn
+
 	
 	if field->kolicina > 0
 		lStorno := .f.
@@ -362,6 +367,8 @@ go top
 seek cIdPos + "42" + DTOS(dDat) + cBrRn
 
 do while !EOF() .and. field->idpos == cIdPos ;
+		.and. field->idvd == "42" ;
+		.and. field->datum == DTOS(dDat) ;
 		.and. field->brdok == cBrRn
 	
 	if field->kolicina > 0
@@ -523,6 +530,8 @@ go top
 seek cIdPos + "42" + DTOS(dDat) + cBrRn
 
 do while !EOF() .and. field->idpos == cIdPos ;
+		.and. field->idvd == "42" ;
+		.and. field->datum == DTOS(dDat) ;
 		.and. field->brdok == cBrRn
 	
 	if field->kolicina > 0
@@ -633,8 +642,10 @@ go top
 seek cIdPos + "42" + DTOS(dDat) + cBrRn
 
 do while !EOF() .and. field->idpos == cIdPos ;
+		.and. field->idvd == "42" ;
+		.and. field->datum == DTOS(dDat) ;
 		.and. field->brdok == cBrRn
-	
+
 	if field->kolicina > 0
 		lStorno := .f.
 	endif
