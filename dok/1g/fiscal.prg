@@ -180,14 +180,15 @@ if fp_check( @aRn ) < 0
 endif
 
 // pobrisi answer fajl
-fp_d_answer( ALLTRIM(gFc_path) )
+fp_d_answer( ALLTRIM(gFc_path), ALLTRIM(gFc_name) )
 
 // idemo sada na upis rn u fiskalni fajl
 fp_pos_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), aRn, aKupac, ;
 	lStorno, gFc_error )
 
 // iscitaj error
-nErr := fp_r_error( ALLTRIM(gFc_path), gFc_tout, @nFisc_no )
+nErr := fp_r_error( ALLTRIM(gFc_path), ;
+		ALLTRIM(gFc_name), gFc_tout, @nFisc_no )
 
 if nErr = -9
 	// nema answer fajla, da nije do trake ?
@@ -195,6 +196,7 @@ if nErr = -9
 		if Pitanje(,"Zamjenite traku i pritisnite 'D'","D") == "D"
 			// iscitaj error
 			nErr := fp_r_error( ALLTRIM(gFc_path), ;
+				ALLTRIM(gFc_path), ;
 				gFc_tout, @nFisc_no )
 		endif
 	endif

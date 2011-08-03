@@ -181,6 +181,7 @@ Rpar("fZ",@gFC_pinit)
 Rpar("fX",@gFC_chk)
 Rpar("fS",@gFC_path2)
 Rpar("fA",@gFC_pauto)
+Rpar("fB",@gFC_answ)
 
 UsTipke()
 set cursor on
@@ -194,6 +195,7 @@ AADD(aNiz,{"IOSA broj", "gIOSA", , "@S16", })
 AADD(aNiz,{"Putanja izl.fajla", "gFc_path", , "@S50", })
 AADD(aNiz,{"Sekundarna putanja", "gFc_path2", , "@S50", })
 AADD(aNiz,{"Naziv izl.fajla", "gFc_name", , "@S20", })
+AADD(aNiz,{"Naziv odgovora", "gFc_answ", , "@S20", })
 
 AADD(aNiz,{"Provjera greske kod prodaje", "gFc_error", , "@!", })
 AADD(aNiz,{"Timeout fiskalnih operacija", "gFc_tout", , "9999", })
@@ -211,7 +213,7 @@ AADD(aNiz,{"Automatski polog", "gFc_pauto", ,"999999.99", })
 
 AADD(aNiz,{"Koristiti fiskalne funkcije", "gFc_use", ,"@!", })
 
-VarEdit(aNiz,5,2,24,78,"Fiskalni parametri","B1")
+VarEdit(aNiz,2,2,24,78,"Fiskalni parametri","B1")
 
 BosTipke()
 
@@ -242,6 +244,7 @@ if LASTKEY()<>K_ESC
     	Wpar("fX",gFc_chk, .t.,"D")
     	Wpar("fS",gFc_path2, .t.,"D")
     	Wpar("fA",gFc_pauto, .t.,"D")
+    	Wpar("fB",gFc_answ, .t.,"D")
     	MsgC()
 endif
 

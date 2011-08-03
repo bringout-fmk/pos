@@ -633,6 +633,7 @@ public gFc_device := "P"
 public gFc_path := SPACE(100)
 public gFc_path2 := SPACE(100)
 public gFc_name := SPACE(11)
+public gFc_answ := PADR("ANSWER.TXT", 40)
 public gFc_error := "D"
 public gFc_use := "N"
 public gFc_cmd := SPACE(100)
@@ -705,6 +706,7 @@ Rpar("fZ",@gFc_pinit)
 Rpar("fX",@gFc_chk)
 Rpar("fS",@gFc_path2)
 Rpar("fA",@gFc_pauto)
+Rpar("fB",@gFc_answ)
 
 O_PARAMS
 private cSection:="1"
