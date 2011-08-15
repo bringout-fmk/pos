@@ -634,6 +634,7 @@ public gFc_path := SPACE(100)
 public gFc_path2 := SPACE(100)
 public gFc_name := SPACE(11)
 public gFc_answ := PADR("ANSWER.TXT", 40)
+public gFc_serial := PADR("010001", 15)
 public gFc_error := "D"
 public gFc_use := "N"
 public gFc_cmd := SPACE(100)
@@ -707,6 +708,7 @@ Rpar("fX",@gFc_chk)
 Rpar("fS",@gFc_path2)
 Rpar("fA",@gFc_pauto)
 Rpar("fB",@gFc_answ)
+Rpar("fY",@gFc_serial)
 
 O_PARAMS
 private cSection:="1"

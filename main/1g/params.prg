@@ -182,6 +182,7 @@ Rpar("fX",@gFC_chk)
 Rpar("fS",@gFC_path2)
 Rpar("fA",@gFC_pauto)
 Rpar("fB",@gFC_answ)
+Rpar("fY",@gFC_serial)
 
 UsTipke()
 set cursor on
@@ -191,6 +192,7 @@ AADD(aNiz,{"PDV obveznik", "gFc_pdv", , "@!", })
 AADD(aNiz,{"Tip fiskalne kase", "gFc_type", , "@S20", })
 AADD(aNiz,{"[K] kasa-printer [P] printer ?", "gFc_device", , "@!", })
 AADD(aNiz,{"IOSA broj", "gIOSA", , "@S16", })
+AADD(aNiz,{"serijski broj", "gFc_serial", , "@S10", })
 
 AADD(aNiz,{"Putanja izl.fajla", "gFc_path", , "@S50", })
 AADD(aNiz,{"Sekundarna putanja", "gFc_path2", , "@S50", })
@@ -245,6 +247,7 @@ if LASTKEY()<>K_ESC
     	Wpar("fS",gFc_path2, .t.,"D")
     	Wpar("fA",gFc_pauto, .t.,"D")
     	Wpar("fB",gFc_answ, .t.,"D")
+    	Wpar("fY",gFc_serial, .t.,"D")
     	MsgC()
 endif
 
