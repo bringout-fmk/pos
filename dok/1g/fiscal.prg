@@ -208,7 +208,12 @@ if nFisc_no <= 0
 endif
 
 if nErr <> 0
-	
+
+	// pobrisati out fajl obavezno
+	// da ne bi otisao greskom na uredjaj kad proradi
+
+	fp_d_out( ALLTRIM(gFc_path) + ALLTRIM(gFc_name) )
+
 	msgbeep("Postoji greska !!!")
 
 else
