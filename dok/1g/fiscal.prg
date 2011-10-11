@@ -483,11 +483,11 @@ if gFc_error == "D" .and. cContinue <> "2"
 
 		endif
 	
-		// obrisi fajl
-		FERASE( ALLTRIM(gFc_path) + ALLTRIM(cFName) )
-
 	endif
-
+	
+	// obrisi fajl
+	// da ne bi ostao kada server proradi ako je greska
+	FERASE( ALLTRIM(gFc_path) + ALLTRIM(cFName) )
 endif
 
 return nErr

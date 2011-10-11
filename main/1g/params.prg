@@ -224,6 +224,7 @@ AADD(aNiz,{"Provjera kolicina, cijena (1/2)", "gFc_chk", ,"@!", })
 AADD(aNiz,{"Stampati i pos racun ?", "gFc_txrn", ,"@!", })
 AADD(aNiz,{"Stampati broj dokumenta ?", "gFc_nftxt", ,"@!", })
 AADD(aNiz,{"Automatski polog", "gFc_pauto", ,"999999.99", })
+AADD(aNiz,{"Restart server (D/N)?", "gFc_restart", ,"@!", })
 
 AADD(aNiz,{"Koristiti fiskalne funkcije", "gFc_use", ,"@!", })
 
@@ -260,6 +261,7 @@ if LASTKEY()<>K_ESC
     	Wpar("fA",gFc_pauto, .t.,"D")
     	Wpar("fB",gFc_answ, .t.,"D")
     	Wpar("fY",gFc_serial, .t.,"D")
+    	Wpar("fG",gFc_restart, .t.,"D")
     	MsgC()
 endif
 
