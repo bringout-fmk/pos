@@ -12,6 +12,9 @@
 
 #include "pos.ch"
 
+
+static __device := 0
+
 // --------------------------------------
 // stampa fiskalnog racuna
 // --------------------------------------
@@ -137,7 +140,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 
 	if gFC_acd == "D"
 		// generisi PLU iz parametara
-		nPLU := auto_plu()
+		nPLU := auto_plu(nil, nil, __device)
 	endif
 
 	nPLU_price := roba->cijena1
@@ -571,7 +574,16 @@ do while !EOF() .and. field->idpos == cIdPos ;
 	select roba
 	seek cArtikal
 
-	nPLU := roba->fisc_plu
+	nPLU := 0
+
+	if roba->(FIELDPOS("BARKOD")) <> 0
+		nPLU := roba->fisc_plu
+	endif
+
+	if gFc_acd == "D"
+		nPLU := auto_plu( nil, nil, __device )
+	endif
+
 	nPLU_price := roba->cijena1
 	cPLU_bk := roba->barkod
 	cPLU_jmj := roba->jmj
