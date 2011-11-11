@@ -515,6 +515,7 @@ local nPopust := 0
 local cPLU_bk := ""
 local nTotal := 0
 local cPartner := ""
+local cVrsta_pl := "0"
 
 //O_DRN
 // vraca ukupan iznos racuna
@@ -526,6 +527,7 @@ go top
 seek cIdPos + "42" + DTOS(dDat) + cBrRn
 // ovo je partner
 cPartner := field->idgost
+cVrsta_pl := _hcp_vr_pl( field->idvrstep )
 
 if !EMPTY( cPartner )
 	
@@ -614,7 +616,7 @@ do while !EOF() .and. field->idpos == cIdPos ;
 		nPLU_price, ;
 		nPopust, ;
 		cPLU_bk, ;
-		"0", ;
+		cVrsta_pl, ;
 		nTotal, ;
 		dDat, ;
 		cPLU_jmj } )
@@ -650,6 +652,40 @@ endif
 
 return nErr
 
+// --------------------------------------------
+// vrati vrstu placanja
+// --------------------------------------------
+static function _hcp_vr_pl( cIdVrsta )
+local cVrsta := "0"
+local nTArea := SELECT()
+local cVrstaNaz := ""
+
+if EMPTY(cIdVrsta) .or. cIdVrsta == "01"
+	// ovo je gotovina
+	return cVrsta
+endif
+
+O_VRSTEP
+select vrstep
+set order to tag "ID"
+seek cIdVrsta
+
+cVrstaNaz := ALLTRIM( vrstep->naz )
+
+do case 
+	case "KARTICA" $ cVrstaNaz
+		cVrsta := "1"
+	case "CEK" $ cVrsteNaz
+		cVrsta := "2"
+	case "VAUCER" $ cVrsteNaz
+		cVrsta := "3"
+	otherwise
+		cVrsta := "0"
+endcase 
+
+select (nTArea)
+
+return cVrsta
 
 
 
