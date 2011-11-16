@@ -636,11 +636,11 @@ endif
 nErr := fc_hcp_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
 	aRn, aKupac, lStorno, gFc_error, nTotal )
 
-if nErr = 0 .and. lStorno = .f.
+if nErr = 0
 	
 	// vrati broj racuna
 	nFisc_no := hcp_fisc_no( ALLTRIM(gFc_path), ALLTRIM(gFc_name), ;
-			gFc_error )
+			gFc_error, lStorno )
 	if nFisc_no > 0
 		// upisi u doks vezu sa racunom
 		select doks
