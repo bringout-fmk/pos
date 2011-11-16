@@ -12,20 +12,8 @@
 
 #include "pos.ch"
 
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
  
-
-/*! \fn MMenuProdavac()
-*   \brief Glavni menij nivo prodavac
-*   \param gVodiTreb=="D"
-*   \param gRadniRac=="D"
-*/
 function MMenuProdavac()
-*{
 private opc:={}
 private opcexe:={}
 private Izbor:=1
@@ -68,12 +56,6 @@ if IsPlanika()
 	AADD(opc,"M. poruke")
 	AADD(opcexe,{|| Mnu_Poruke() })
 endif
-if IsPlNS()
-	if gFissta=="D"
-		AADD(opc,"F. fiskalni stampac ")
-		AADD(opcexe,{|| Fissta_mnu() })
-	endif
-endif
 
 if gnDebug==5
 	AADD(opc,"X. TEST COM PORT")
@@ -85,7 +67,11 @@ if IsPdv()
 	AADD(opc,"P. porezna faktura za posljednji racun")
 	AADD(opcexe, {|| f7_pf_traka()})
 endif
-	 
+
+if gFc_use == "D"
+	AADD(opc,"T. kopija fiskalnog racuna")
+	AADD(opcexe, {|| fisc_rn_kopija() })
+endif
 
 Menu_SC("prod")
 
@@ -96,13 +82,12 @@ if gRadniRac=="N" .and. gVodiTreb=="D"
     	Trebovanja()
 endif
 
-CLOSERET
+close all
 return
-*}
+
 
 
 function MnuZakljRacuna()
-*{
 private opc:={}
 private opcexe:={}
 private Izbor:=1
