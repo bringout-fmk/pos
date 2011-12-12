@@ -233,25 +233,41 @@ do case
     	case Ch==K_ENTER
       		do case
         		case DOKS->IdVd==VD_RN
+				
 				cOdg:="D"
+				
 				if glRetroakt
 					cOdg:=Pitanje(,"Stampati tekuci racun? (D-da,N-ne,S-sve racune u izabranom periodu)","D","DNS")
 				endif
+				
 				if cOdg=="S"
+					
 					nRecNo:=RECNO()
+					
 					ctIdPos:=gIdPos
-					seek ctIdPos+VD_RN
+					seek ctIdPos + VD_RN
+					
 					START PRINT CRET
+					
 					do while !eof() .and. IdPos+IdVd==ctIdPos+VD_RN
-		          			if (datum <= dDat1)
-							aVezani:={{IdPos, BrDok, IdVd, datum}}
-		          				StampaPrep(IdPos, dtos(datum)+BrDok, aVezani, .f., glRetroakt)
-		          			endif
-						select DOKS
-						skip 1
+		          			aVezani := {}
+						
+						if ( datum <= dDat1 )
+							
+							AADD( aVezani, { IdPos, BrDok, IdVd, datum} )
+		          			
+		          				StampaPrep(IdPos, dtos(datum)+BrDok, aVezani, .f., .t. )
+						endif
+						
+						select doks
+						skip 
 					enddo
+					
 					END PRINT
+
+					select doks
 					go (nRecNo)
+
 				elseif cOdg=="D"
 	          			aVezani:={{IdPos, BrDok, IdVd, datum}}
 	          			StampaPrep(IdPos, dtos(datum)+BrDok, aVezani, .t.)

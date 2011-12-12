@@ -452,8 +452,10 @@ RETURN
 *}
 
 
-function StampaPrep(cIdPos, cDatBrDok, aVezani, fEkran, lViseOdjednom, lOnlyFill)
-*{
+
+function StampaPrep(cIdPos, cDatBrDok, aVezani, ;
+	fEkran, lViseRn, lOnlyFill)
+
 local cDbf
 local cIdRadnik
 local nCnt
@@ -480,9 +482,11 @@ if lOnlyFill == nil
 	lOnlyFill := .f.
 endif
 
-if lViseOdjednom==nil
-	lViseOdjednom:=.f.
+if lViseRn == nil
+	lViseRn := .f.
 endif
+
+altd()
 
 select doks
 set order to tag "1"
@@ -514,21 +518,6 @@ for nCnt:=1 to LEN(aVezani)
 			//
 		endif
 		
-		//select pom
-    		//seek POS->IdRoba+POS->IdCijena+STR (POS->Cijena, 10, 3)
-    		//if Found()
-      		//	replace Kolicina WITH Kolicina+POS->Kolicina
-    		//else
-      		//	Append Blank  
-      		//	replace IdRoba WITH POS->IdRoba
-		//	replace IdCijena WITH POS->IdCijena
-		//	replace Cijena WITH POS->Cijena
-		//	replace Kolicina WITH POS->Kolicina
-              	//	replace NCijena WITH pos->ncijena
-              	//	replace datum WITH pos->datum
-    		//endif
-   		//select pos
-    		
 		nIznos+=pos->(kolicina*cijena)
     		select odj
 		seek pos->idodj
@@ -555,7 +544,7 @@ select pos
 
 if !gStariObrPor
 	if IsPDV()
-		PDVStampaRac(cIdPos, doks->brdok, .t., doks->idvrstep, doks->datum, aVezani, lViseOdjednom, lOnlyFill)
+		PDVStampaRac( cIdPos, doks->brdok, .t., doks->idvrstep, doks->datum, aVezani, lViseRn, lOnlyFill )
 	else
 		StampaRac(cIdPos, doks->brdok, .t., doks->idvrstep, doks->datum, aVezani)
 	endif
@@ -978,6 +967,7 @@ O_DOKSPF
 O_TARIFA
 O__POS
 
+
 firma_params_fill()
 gvars_fill()
 
@@ -1192,7 +1182,7 @@ for i:=1 to LEN(aRacuni)
 		++ nCSum
 
 		// dodaj stavku u rn.dbf
-		add_rn(cStalRac, STR(nCSum, 3), "", cIdRoba, cRobaNaz, cJmj, nKolicina, Round(nCjenPDV,3), Round(nCjenBPDV,3), Round(nCjen2PDV,3), Round(nCjen2BPDV,3), Round(nPopust,2), Round(nPPDV,2), Round(nVPDV,3), Round(nUkStavka,3), 0, 0)
+		add_rn( cStalRac, STR(nCSum, 3), "", cIdRoba, cRobaNaz, cJmj, nKolicina, Round(nCjenPDV,3), Round(nCjenBPDV,3), Round(nCjen2PDV,3), Round(nCjen2BPDV,3), Round(nPopust,2), Round(nPPDV,2), Round(nVPDV,3), Round(nUkStavka,3), 0, 0)
 
 		select &cPosDB
   		skip
@@ -1210,7 +1200,7 @@ endif
 //nFZaokr := zaokr_5pf( nUTotal )
 
 // dodaj zapis u drn.dbf
-add_drn(cStalRac, dDatRn, nil, nil, cTime, Round(nUBPDV,2), Round(nUPopust,2), Round(nUBPDVPopust,2), Round(nUPDV,2), Round(nUTotal - nFZaokr,2), nCSum, 0, nFZaokr, 0)
+add_drn( cStalRac, dDatRn, nil, nil, cTime, Round(nUBPDV,2), Round(nUPopust,2), Round(nUBPDVPopust,2), Round(nUPDV,2), Round(nUTotal - nFZaokr,2), nCSum, 0, nFZaokr, 0)
 	
 // mjesto nastanka racuna
 add_drntext("R01", gRnMjesto)
@@ -1252,8 +1242,10 @@ return
 
 
 
-function PDVStampaRac(cIdPos, cBrDok, lPrepis, cIdVrsteP, dDatumRn, aRacuni, lViseOdjednom, lOnlyFill)
-*{
+function PDVStampaRac( cIdPos, cBrDok, lPrepis, ;
+		cIdVrsteP, dDatumRn, aRacuni, ;
+		lViseRn, lOnlyFill)
+
 local cTime
 
 if (lOnlyFill == nil)
@@ -1278,7 +1270,8 @@ endif
 fill_rb_traka(cIdPos, cBrDok, dDatumRn, lPrepis, aRacuni, @cTime)
 
 lStartPrint := .t.
-if lViseOdjednom == .t.
+
+if lViseRn == .t.
 	lStartPrint := .f.
 endif
 
