@@ -29,6 +29,7 @@ static PIC_UKUPNO := "9999999.99"
 *{
 function RealKase
 parameters fZaklj,dDat0,dDat1,cVarijanta
+local aPorezi := {}
 
 private cIdOdj:=SPACE(2)
 private cRadnici:=SPACE(60)
@@ -77,7 +78,6 @@ SET ORDER TO TAG "NAZ"
 
 TblCrePom()
 
-altd()
 // TblCrePom prilikom kreiranja indeksa zatvori sve tabele
 ODbRpt()
 
@@ -144,18 +144,22 @@ endif
 
 if (cRD $ "OB") 
 	// prikaz realizacije po odjeljenjima
-	RealPoOdj(fPrik, @nTotal2, @nTotal3)
+	RealPoOdj( fPrik, @nTotal2, @nTotal3, @aPorezi )
 endif 
 
 if !fZaklj
+
 	//Porezi po tarifama
 	if IsPDV()
 		PDVPorPoTar(dDat0, dDat1, cIdPos, nil, cIdodj)
 	else
 		PorPoTar(dDat0, dDat1, cIdPos, nil, cIdodj)
 	endif
+
 	if ROUND(ABS(nTotal2)+ABS(nTotal3),4)<>0
+
 		ODbRpt()
+
 		if IsPDV()
 			PDVPorPoTar(dDat0,dDat1,cIdPos,"3")  // STA JE OVO? => APOTEKE!!
 		else
@@ -757,12 +761,57 @@ cHead := cStr1 + PADL("vrijednost", LEN_TRAKA - LEN(cStr1))
 return
 
 
+// dodaj u matricu sa porezima stavku
+static function _a_to_porezi( aPorezi, cTarifa, nStopa, nIznSaPDV )
+local nScan
+local nOsnovica
+local nPorez
+
+// porezna matrica
+// aPorezi = { idtarifa, uk_sa_pdv, osnovica, pdv }
+
+// izracunaj porez
+if nStopa <> 0
+	nOsnovica := ROUND( nIznSaPDV / ( 1 + ( nStopa / 100) ), 2 )
+	nPorez := ROUND( nOsnovica * ( nStopa / 100 ), 2 )
+else
+	nOsnovica := nIznSaPDV
+	nPorez := 0
+endif
+
+// potrazi ga u matrici pa dodaj ili saberi
+
+nScan := ASCAN( aPorezi, {|xVar| xVar[1] == cTarifa })
+
+if nScan <> 0
+
+	// dodaj na ukupni iznos sa PDV
+	aPorezi[ nScan, 2 ] := ( aPorezi[ nScan, 2 ] + nIznSaPDV )
+	// dodaj na ukupnu osnovicu
+	aPorezi[ nScan, 3 ] := ( aPorezi[ nScan, 3 ] + nOsnovica )
+	// dodaj na ukupni porez
+	aPorezi[ nScan, 4 ] := ( aPorezi[ nScan, 4 ] + nPorez )
+else
+		
+	AADD( aPorezi, { cTarifa, cIznSaPDV, nOsnovica, nPorez } )
+
+endif
+
+return
+
+
+
+
 /*! \fn RealPoOdj(fPrik, nTotal2, nTotal3)
  *  \brief Prikaz realizacije po odjeljenjima
  */
 
-static function RealPoOdj(fPrik, nTotal2, nTotal3)
-*{
+static function RealPoOdj(fPrik, nTotal2, nTotal3, aPorezi )
+local nTStopa
+
+// porezna matrica
+aPorezi := {}
+
 if (fPrik $ "PO")
 	// daj mi pazar
 	?
@@ -873,9 +922,19 @@ if (fPrik $ "RO").or.cK1=="D"
 			SELECT POM
 			do while !eof() .and. POM->(IdPos)+eval(bOdj)==(_IdPos+_IdOdj)
 				_IdRoba:=POM->IdRoba
+				
 				SELECT ROBA
 				HSEEK _IdRoba
+				
+				SELECT tarifa
+				HSEEK roba->idtarifa
+				
+				nTStopa := tarifa->opp
+				
+				SELECT ROBA
+				
 				? _IdRoba, LEFT(ROBA->Naz,25), "("+ROBA->Jmj+")"
+				
 				if cK1=="D"
 					_K2:=roba->k2
 					if roba->tip $ "TU"  // usluge ili tarife
@@ -908,6 +967,10 @@ if (fPrik $ "RO").or.cK1=="D"
 					nRobaKol+=nKol
 					nRobaIzn2+=nIzn2
 					nRobaIzn3+=nIzn3
+						
+					// dodaj u poreznu matricu
+					_a_to_porezi( @aPorezi, tarifa->id, nTStopa, nIzn )
+
 					nSetova++
 					SELECT POM
 				enddo

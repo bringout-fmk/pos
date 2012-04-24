@@ -668,6 +668,7 @@ public gFC_chk := "1"
 public gFC_pauto := 0
 public gFC_dlist := "N"
 public gFc_restart := "N"
+public gFc_tmpxml := "N"
 
 if gModul=="HOPS"
 	gVodiTreb:="D"
@@ -723,6 +724,7 @@ Rpar("fA",@gFc_pauto)
 Rpar("fB",@gFc_answ)
 Rpar("fY",@gFc_serial)
 Rpar("fG",@gFc_restart)
+Rpar("fJ",@gFc_tmpxml)
 
 O_PARAMS
 private cSection:="1"

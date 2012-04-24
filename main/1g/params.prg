@@ -11,20 +11,12 @@
 
 
 #include "pos.ch"
-
-/*
- * ----------------------------------------------------------------
- *                                     Copyright Sigma-com software 
- * ----------------------------------------------------------------
- */
  
-
 /*! \fn Parametri()
  *  \brief Glavni menij za izbor podesavanja parametara rada programa		
  */
 
 function Parametri()
-*{
 private opc:={}
 private opcexe:={}
 private Izbor:=1
@@ -46,7 +38,6 @@ AADD(opcexe,{|| FiscalPar()})
 
 Menu_SC("par")
 return .f.
-*}
 
 
 /*! \fn ParPodKase()
@@ -195,6 +186,7 @@ Rpar("fS",@gFC_path2)
 Rpar("fA",@gFC_pauto)
 Rpar("fB",@gFC_answ)
 Rpar("fY",@gFC_serial)
+Rpar("fJ",@gFC_tmpxml)
 
 UsTipke()
 set cursor on
@@ -225,10 +217,11 @@ AADD(aNiz,{"Stampati i pos racun ?", "gFc_txrn", ,"@!", })
 AADD(aNiz,{"Stampati broj dokumenta ?", "gFc_nftxt", ,"@!", })
 AADD(aNiz,{"Automatski polog", "gFc_pauto", ,"999999.99", })
 AADD(aNiz,{"Restart server (D/N)?", "gFc_restart", ,"@!", })
+AADD(aNiz,{"Koristiti xml tmp kopiranje (D/N)?", "gFc_tmpxml", ,"@!", })
 
 AADD(aNiz,{"Koristiti fiskalne funkcije", "gFc_use", ,"@!", })
 
-VarEdit(aNiz,2,2,24,78,"Fiskalni parametri","B1")
+VarEdit(aNiz,2,2,26,78,"Fiskalni parametri","B1")
 
 BosTipke()
 
@@ -262,6 +255,7 @@ if LASTKEY()<>K_ESC
     	Wpar("fB",gFc_answ, .t.,"D")
     	Wpar("fY",gFc_serial, .t.,"D")
     	Wpar("fG",gFc_restart, .t.,"D")
+    	Wpar("fJ",gFc_tmpxml, .t.,"D")
     	MsgC()
 endif
 
