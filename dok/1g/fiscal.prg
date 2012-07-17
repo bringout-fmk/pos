@@ -63,7 +63,7 @@ return nErr
 
 
 // -------------------------------------
-// stampa fiskalnog racuna FLINK
+// stampa fiskalnog racuna FPRINT
 // -------------------------------------
 function _fprint_rn( cIdPos, dDat, cBrRn )
 local aRn := {}
@@ -262,6 +262,26 @@ local nCtrl := 0
 local lStorno := .t.
 local nErr := 0
 local nPLU := 0
+local cVr_placanja := "0"
+local nTotal := 0
+
+// 0 - gotovina
+// 1 - kredit
+// 2 - cek
+// 3 - virman
+
+select doks
+set order to tag "1"
+go top
+seek cIdPos + "42" + DTOS(dDat) + cBrRn
+
+// vrsta placanja
+cVr_placanja := _fl_vr_pl( field->idvrstep )
+
+if cVr_placanja <> "0"
+	// uzmi total
+	nTotal := RacIznos( cIdPos, "42", dDat, cBrRn )
+endif
 
 // pronadji u bazi racun
 select pos
@@ -310,7 +330,10 @@ do while !EOF() .and. field->idpos == cIdPos ;
 		field->cijena, ;
 		ABS( field->kolicina ), ;
 		_g_tar(field->idtarifa), ;
-		cT_c_1, nPLU } )
+		cT_c_1, ;
+		nPLU, ;
+		cVr_placanja, ;
+		nTotal } )
 
 	skip
 enddo
@@ -325,9 +348,6 @@ endif
 
 // idemo sada na upis rn u fiskalni fajl
 nErr := fc_pos_rn( ALLTRIM(gFc_path), ALLTRIM(gFc_name), aRn, lStorno, gFc_error )
-
-// pokreni komandu ako postoji
-_fc_cmd()
 
 return nErr
 
@@ -497,7 +517,6 @@ return nErr
 
 
 
-
 // --------------------------------------------
 // stampa fiskalnog racuna HCP
 // --------------------------------------------
@@ -651,6 +670,43 @@ endif
 
 
 return nErr
+
+// --------------------------------------------
+// vrati vrstu placanja
+// --------------------------------------------
+static function _fl_vr_pl( cIdVrsta )
+local cVrsta := "0"
+local nTArea := SELECT()
+local cVrstaNaz := ""
+
+if EMPTY(cIdVrsta) .or. cIdVrsta == "01"
+	// ovo je gotovina
+	return cVrsta
+endif
+
+O_VRSTEP
+select vrstep
+set order to tag "ID"
+seek cIdVrsta
+
+cVrstaNaz := ALLTRIM( vrstep->naz )
+
+do case 
+	case "KARTICA" $ cVrstaNaz
+		cVrsta := "1"
+	case "CEK" $ cVrstaNaz
+		cVrsta := "2"
+	case "VIRMAN" $ cVrstaNaz
+		cVrsta := "3"
+	otherwise
+		cVrsta := "0"
+endcase 
+
+select (nTArea)
+
+return cVrsta
+
+
 
 // --------------------------------------------
 // vrati vrstu placanja
