@@ -382,7 +382,7 @@ set order to tag "1"
 go top
 seek cIdPos + "42" + DTOS(dDat) + cBrRn
 cPartner := field->idgost
-cVrsta_pl := _tops_vr_pl( field->idvrstep )
+cVrsta_pl := _trm_vr_pl( field->idvrstep )
 
 if !EMPTY( cPartner )
 	
@@ -538,7 +538,7 @@ set order to tag "1"
 go top
 seek cIdPos + "42" + DTOS(dDat) + cBrRn
 cPartner := field->idgost
-cVrsta_pl := _tops_vr_pl( field->idvrstep )
+cVrsta_pl := _hcp_vr_pl( field->idvrstep )
 
 if !EMPTY( cPartner )
 	
@@ -699,10 +699,48 @@ select (nTArea)
 return cVrsta
 
 
+
+// --------------------------------------------
+// vrati vrstu placanja tremol
+// --------------------------------------------
+static function _trm_vr_pl( cIdVrsta )
+local cVrsta := "0"
+local nTArea := SELECT()
+local cVrstaNaz := ""
+
+if EMPTY(cIdVrsta) .or. cIdVrsta == "01"
+	return cVrsta
+endif
+
+O_VRSTEP
+select vrstep
+set order to tag "ID"
+seek cIdVrsta
+
+cVrstaNaz := ALLTRIM( vrstep->naz )
+
+do case 
+	case "KARTICA" $ cVrstaNaz
+		cVrsta := "2"
+	case "CEK" $ cVrsteNaz
+		cVrsta := "1"
+	case ( "VIRMAN" $ cVrsteNaz ) .or. ( "VAUCER" $ cVrsteNaz )
+		cVrsta := "3"
+	otherwise
+		cVrsta := "0"
+endcase 
+
+select (nTArea)
+
+return cVrsta
+
+
+
+
 // --------------------------------------------
 // vrati vrstu placanja
 // --------------------------------------------
-static function _tops_vr_pl( cIdVrsta )
+static function _hcp_vr_pl( cIdVrsta )
 local cVrsta := "0"
 local nTArea := SELECT()
 local cVrstaNaz := ""
